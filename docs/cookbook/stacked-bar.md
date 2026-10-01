@@ -1,0 +1,198 @@
+# Stacked and 100% stacked bars
+
+> **Question type:** Part-to-whole · Magnitude
+> **Use for:** how a total, or a set of totals, breaks down into ≤ 5 parts across groups · **Avoid when:** readers must compare the middle segments precisely → use [grouped bars](bar.md) or [small multiples](small-multiples.md)
+
+![Technology uses contingent labor at more than 4x the average rate of other functions](../../examples/output/stacked-100.png)
+
+## When to use
+- **100% stacked bars:** to compare the **mix** across groups when the share is the story and the group sizes are not (workforce type by function, proficiency levels by team, survey response by business unit).
+- **Stacked bars/columns (absolute):** when the reader needs **both the total and its breakdown** (planned FTE by sourcing lever by year, hires by channel by quarter).
+- **Columns** for a few periods (≤ ~8 years or quarters). **Horizontal bars** for named groups (functions, sites, peers).
+- **Ordered segments** (tenure bands, proficiency 1–5, agree/disagree scales) work well, because the segment order carries meaning.
+
+## When not to use
+- Several middle segments must be compared precisely across bars: only the segments on a common edge are easy to compare → use [grouped bars](bar.md) or [small multiples](small-multiples.md).
+- There is only **one** whole → use a single 100% bar, or a [donut](donut-pie.md) with ≤ 5 parts.
+- Composition over many periods → use a [stacked area](stacked-area.md) chart. For a bridge from one total to another → use a [waterfall](waterfall.md).
+- Many parts or a hierarchy (skills portfolio, cost by org level) → use a [treemap](treemap.md).
+- More than 5 segments that all matter → regroup them, or split the chart.
+
+## McKesson spec
+
+| Element | Rule |
+|---|---|
+| Color | **Default: greys plus one story color.** The segment the headline is about gets `chart.focus` `#005A8C` (or `chart.accent` `#EF8200` when it must pop). Other segments use `chart.context` `#B4B0A5` and `chart.context_light` `#DEDBD1`. Use the categorical order (`#005A8C`, `#EF8200`, `#00AF9D`, `#143359`, `#66C4FF`) only when every segment must be told apart. Ordered segments use sequential blue steps (`#B6E2FA` → `#143359`), or the diverging orange–blue scale with the neutral midpoint `#EFEDE7` for agree/disagree scales. Put a 1–1.5 pt **white separator** between segments. |
+| Labels | Center segment labels inside segments that are wide enough (≥ ~8%). Use `mv.text_on()`: white on blue/navy, navy on greys and light fills. Drop labels below ~4%. Put the story segment's values **outside the bar end**, bold, in `#A75B00` (orange story) or `#143359`. Absolute stacks get a **bold navy total** above or beside each stack. Bold the focus group's category label. |
+| Axes / gridlines | With segment labels and totals: no value axis and no gridlines. **Exception:** when segments are too thin to label, keep a light value axis with gridlines in `chart.grid` `#E6E4DE` at round steps, with the unit in the subtitle. Keep a thin zero baseline in `chart.axis` `#8C8C8C`. |
+| Sort / order | Put the **story segment on a common edge**: the baseline for absolute stacks, the first or last segment for 100% bars. Never put it in the middle. Sort bars by the story segment's share (100%) or by total (absolute), unless time or a natural order applies. Keep segment order and colors identical across bars, charts and the deck. |
+| Proportions | Bar : gap ≈ 2 : 1 (Excel Gap Width 50%, Series Overlap 100%; matplotlib `height≈0.62–0.67`). 100% bars span the full width: no 0–100 axis needed. |
+| Limits | **≤ 5 segments** (`chart.limits.stacked_segments`); group the rest into "Other" in `#DEDBD1`. ≤ 2 highlighted segments. Every bar is based on **n ≥ 10** people. Show "n = …" or the total beside 100% bars when the group sizes differ a lot. |
+| Key / legend | Prefer direct labels: name the segments on the first bar, or beside the last column. Otherwise use **one horizontal key, top-left**, in stack order (left → right = baseline → end). |
+
+## Do / don't
+
+| Do | Don't |
+|---|---|
+| Put the segment you're talking about on the baseline (or at either end of a 100% bar) | Bury the story segment in the middle of the stack, where nothing aligns |
+| Grey out the non-story segments and color only the one the headline names | Use five equally strong colors when only one segment matters |
+| Keep ≤ 5 segments and group the tail into "Other" | Stack 8–10 thin slivers no one can read |
+| Order the key exactly like the stack and place it top-left | Use a legend in a different order from the segments, or at the bottom |
+| Label segments directly; if they can't be labelled, keep a light gridded axis so values are readable | Show unlabelled segments with no axis at all |
+| Say "share" or "proportionally" in the headline when using 100% bars | Imply absolute differences from a 100% chart |
+| On live slides, build up: totals first → story segment vs. grey "Other" → full breakdown, adding each key entry when its segment appears | Show the full 5-segment chart and legend on the first click |
+
+## Workforce examples
+- **Firm, internal:** *Headline:* "Technology uses contingent labor at more than 4x the average rate of other functions". *Subtitle:* "Workforce composition by function, 2026 (% of workers)". *Data:* [`examples/data/workforce_mix.csv`](../../examples/data/workforce_mix.csv), HRIS plus vendor-management (contingent) records.
+- **SWP plan, firm/team:** *Headline:* "Reskilling closes about 40% of the FY28 Data & AI gap; external hiring still has to cover nearly half". *Subtitle:* "Planned sources to close the Data & AI capability gap, FY26–FY28 (FTE)". *Data:* the strategic workforce plan scenario model. Absolute stacked columns: *Build (reskill)* on the baseline in `#005A8C`; *Buy*, *Borrow* and *Automate* in greys; navy totals on top.
+- **Sector, external:** *Headline:* "Technology and data roles make up 9% of our workforce, well below the 14% peer median". *Subtitle:* "Workforce mix by role family, McKesson vs. five healthcare-distribution and pharmacy peers, 2026 (% of employees)". *Data:* external workforce estimates from public professional profiles and job postings. The *Tech & data* segment goes first (left edge) in focus blue, and the McKesson row label is bold.
+
+## Build it
+
+### Python — matplotlib + `mckviz`
+```python
+# verified runnable (from the repo root)
+from pathlib import Path
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from matplotlib.patches import Rectangle
+
+import mckviz as mv
+
+mv.use()
+C = mv.colors
+
+df = pd.read_csv(Path("examples/data/workforce_mix.csv")).sort_values("contingent_pct", ignore_index=True)
+focus = "Technology"
+others = df.contingent_pct[df.function != focus].mean()
+ratio = df.contingent_pct[df.function == focus].iloc[0] / others
+# Story segment goes last (right end) in the accent; the rest stay in context greys.
+parts = [("employee_ft_pct", "Full-time", C.context),
+         ("employee_pt_pct", "Part-time", C.context_light),
+         ("contingent_pct", "Contingent", C.accent)]
+
+fig, ax = plt.subplots(figsize=(10, 4.8))
+left = np.zeros(len(df))
+for col, name, color in parts:
+    ax.barh(df.function, df[col], left=left, color=color, height=0.62, edgecolor="white", linewidth=1.5)
+    for y, (x0, w) in enumerate(zip(left, df[col])):
+        if col == "contingent_pct":                       # focus values outside the bar end
+            hi = df.function[y] == focus
+            ax.text(101, y, f"{w:.0f}%", ha="left", va="center", fontsize=10 if hi else 9,
+                    color=C.negative_text, fontweight="bold" if hi else "medium")
+        elif w >= 4:                                      # skip labels that won't fit
+            ax.text(x0 + w / 2, y, f"{w:.0f}%", ha="center", va="center", fontsize=9, color=mv.text_on(color))
+    left += df[col].to_numpy()
+
+handles = [Rectangle((0, 0), 1, 1, color=c) for _, _, c in parts]
+ax.legend(handles, [n for _, n, _ in parts], loc="lower left", bbox_to_anchor=(0, 1.0), ncols=3,
+          fontsize=9, handlelength=1, handleheight=1, borderaxespad=0.2)   # key top-left, in stack order
+mv.clean_axes(ax, keep=(), grid=None)
+ax.set_xticks([])
+ax.set_xlim(0, 112)
+for lbl in ax.get_yticklabels():
+    if lbl.get_text() == focus:
+        lbl.set_fontweight("bold")
+        lbl.set_color(C.headline)
+
+mv.titles(fig, f"Technology uses contingent labor at more than {int(ratio)}x the average rate of other functions",
+          "Workforce composition by function, 2026 (% of workers)")
+mv.source(fig, "Source: Synthetic data for illustration only",
+          footnote="Contingent = agency temps, independent contractors and SOW workers on assignment at period end.")
+mv.save(fig, "out/stacked-100.png", dpi=200)
+```
+For **absolute** stacks, use the same loop with `ax.bar(..., bottom=running)`, put the story series first (on the baseline), and add totals with `ax.text(x, total, f"{total:,.0f}", ha="center", va="bottom", fontweight="bold", color=C.total)`.
+
+### Python — Plotly / HTML
+```python
+# verified: builds without error
+from pathlib import Path
+
+import pandas as pd
+import plotly.graph_objects as go
+
+import mckviz as mv
+
+mv.use()  # registers + activates the "mck" Plotly template
+C = mv.colors
+
+df = pd.read_csv(Path("examples/data/workforce_mix.csv")).sort_values("contingent_pct", ignore_index=True)
+parts = [("employee_ft_pct", "Full-time", C.context), ("employee_pt_pct", "Part-time", C.context_light),
+         ("contingent_pct", "Contingent", C.accent)]
+fig = go.Figure()
+for col, name, color in parts:
+    fig.add_bar(y=df.function, x=df[col], name=name, orientation="h", marker_color=color,
+                marker_line={"color": "white", "width": 1.5},
+                text=[f"{v:.0f}%" if v >= 4 else "" for v in df[col]], textposition="inside",
+                insidetextanchor="middle", hovertemplate="%{y}: %{x:.0f}% " + name.lower() + "<extra></extra>")
+fig.update_layout(barmode="stack", bargap=0.38,
+                  legend={"orientation": "h", "x": 0, "xanchor": "left", "y": 1.02, "yanchor": "bottom",
+                          "traceorder": "normal"})   # key top-left, in stack order
+fig.update_xaxes(visible=False, range=[0, 100])
+fig.update_yaxes(showgrid=False, ticksuffix="  ")
+mv.pl_finish(fig, "Technology uses contingent labor at more than 4x the average rate of other functions",
+             "Workforce composition by function, 2026 (% of workers)", "Source: Synthetic data for illustration only")
+Path("out").mkdir(exist_ok=True)
+fig.write_html("out/stacked-100.html", include_plotlyjs="cdn")
+```
+If the data are counts rather than shares, use `barnorm="percent"` in `update_layout` and put the counts and n in `hovertemplate`. Suppress groups with n < 10 before plotting.
+
+### Excel and PowerPoint
+1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin). Install them from `dist/office/` as described in [bar.md](bar.md#excel-and-powerpoint).
+2. Select the data, then **Insert › Charts › Insert Column or Bar Chart › 100% Stacked Bar** (or **Stacked Column** for absolute values). For horizontal bars, set **Format Axis › Categories in reverse order** so the sheet order runs top-down.
+3. **Chart Design › Select Data › Legend Entries (Series)**: use the ▲▼ arrows so the story series is **first** (baseline/left) or **last** (right end). Never leave it in the middle.
+4. **Format Data Series › Series Options › Gap Width 50%**, Series Overlap 100%. For each series, set **Fill › Solid** (story `005A8C` or `EF8200`; others `B4B0A5` and `DEDBD1`) and **Border › Solid line, White, 1.5 pt**.
+5. **Chart Elements (+) › Data Labels › Center**. Click a tiny segment's label twice and press Delete for anything below ~4%. Set the labels to Libre Franklin 11–12 pt, navy on grey and white on blue.
+6. Delete the gridlines and the value axis (100% charts). For absolute stacks whose segments can't all be labelled, keep the axis and set the gridlines to `E6E4DE`, 0.75 pt.
+7. Legend: **Format Legend › Legend Position › Top**, then drag it to the left edge so it aligns with the headline. Check that the key order matches the stack.
+8. Totals for absolute stacked columns: add a **Total** series (sum of segments), then **Change Series Chart Type › Line** for that series. Set **Line: No line**, **Marker: None**, and **Data Labels › Above**, bold Navy `143359`. Delete "Total" from the legend.
+9. PowerPoint build-up (2–5 slides; keep the headline, axis and bar order identical). Slide 1: totals only, one color, labelled. Slide 2: the story segment vs. one grey "Other" segment, with only the focus bar's segment colored. Slide 3: the full breakdown, with the key entries added. To **mask** rather than hide bars, set the other bars' fill **Transparency 60%** and keep the focus bar solid.
+
+### Power BI
+- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
+- Use the **100% stacked bar chart** (or **Stacked column chart**). Set **Legend › Position: Top left**, **Data labels** on, **Gridlines** off, and the value axis off.
+- Set the series colors under **Format › Bars › Colors** (story series `#005A8C`/`#EF8200`, others `#B4B0A5`/`#DEDBD1`). Set the segment order with the order of the legend field's sort column.
+- Absolute stacks: turn on **Total labels** (bold, `#143359`).
+- To sort bars by the story segment's share, add a `Contingent %` measure to **Tooltips**, then **⋯ › Sort axis › Contingent %**.
+- Minimum n: add a visual-level filter `Headcount ≥ 10`, or blank the measure: `Mix % (safe) = IF([Headcount] < 10, BLANK(), [Mix %])`.
+
+### R — ggplot2 (optional)
+```r
+library(ggplot2); library(dplyr); library(tidyr); library(readr)
+source("dist/r/theme_mck.R")
+
+mix <- read_csv("examples/data/workforce_mix.csv") |>
+  mutate(fn = reorder(`function`, contingent_pct)) |>
+  pivot_longer(ends_with("_pct"), names_to = "type", values_to = "pct") |>
+  mutate(type = factor(type, levels = c("employee_ft_pct", "employee_pt_pct", "contingent_pct"),
+                       labels = c("Full-time", "Part-time", "Contingent")))
+
+ggplot(mix, aes(pct, fn, fill = type)) +
+  geom_col(width = 0.62, color = "white", linewidth = 0.6, position = position_stack(reverse = TRUE)) +
+  geom_text(aes(label = ifelse(pct >= 4, paste0(pct, "%"), "")),
+            position = position_stack(vjust = 0.5, reverse = TRUE), size = 3.2, color = mck_colors$headline) +
+  scale_fill_manual(values = c("Full-time" = mck_colors$context, "Part-time" = mck_colors$context_light,
+                               "Contingent" = mck_colors$accent)) +
+  labs(title = "Technology uses contingent labor at more than 4x the average rate of other functions",
+       subtitle = "Workforce composition by function, 2026 (% of workers)",
+       caption = "Source: Synthetic data for illustration only", x = NULL, y = NULL) +
+  theme_mck() +   # legend top-left, in level (= stack) order
+  theme(axis.text.x = element_blank(), panel.grid = element_blank(), axis.line.x = element_blank())
+```
+
+## QA specifics
+- [ ] ≤ 5 segments; the story segment sits on a common edge (baseline, first or last), never in the middle.
+- [ ] Only the story segment(s) are colored (≤ 2); the rest are context greys, with white separators between segments.
+- [ ] The key (if any) is top-left and in exactly the stack order; segment colors are identical across bars and charts.
+- [ ] 100% bars sum to 100% (check rounding), and the headline talks about **share**, not size. Group sizes or n are shown when they differ a lot.
+- [ ] Absolute stacks show totals; the value axis starts at 0, and unlabelled segments have a light gridded axis.
+- [ ] No bar is based on fewer than 10 people; tiny segments (< ~4%) are unlabelled but still drawn, or grouped into "Other".
+
+## Inspiration
+- [p029 — Stacked bar chart](../../reference/inspiration-mckinsey/pages/p029-stacked-bar-chart.md)
+- [Bar chart spreads (hi-res)](../../reference/inspiration-mckinsey/pages/hires-bar-chart-spreads.md)
+- [p082 — Presentations](../../reference/inspiration-mckinsey/pages/p082-presentations.md)

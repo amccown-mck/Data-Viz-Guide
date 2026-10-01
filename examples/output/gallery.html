@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>McKesson data-viz gallery (interactive)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8"></script>
+<style>
+/* GENERATED from tokens/tokens.json - do not edit by hand. */
+:root {
+  --mck-blue: #005A8C;
+  --mck-navy: #143359;
+  --mck-orange: #EF8200;
+  --mck-sand: #DEDBD1;
+  --mck-deep-navy: #0B3266;
+  --mck-sand-light: #EFEDE7;
+  --mck-text: #505050;
+  --mck-lime-light: #F7FCDC;
+  --mck-lime-mid: #E8F795;
+  --mck-lime-base: #D9F14E;
+  --mck-green-light: #B3E7D2;
+  --mck-green-mid: #66CFA4;
+  --mck-green-base: #00AF68;
+  --mck-green-dark: #00622C;
+  --mck-mint-light: #B4F0DE;
+  --mck-mint-mid: #69E2BC;
+  --mck-mint-base: #05CE90;
+  --mck-mint-dark: #008264;
+  --mck-teal-light: #B3E7E2;
+  --mck-teal-mid: #66CFC4;
+  --mck-teal-base: #00AF9D;
+  --mck-teal-dark: #00737A;
+  --mck-sky-light: #B3ECFF;
+  --mck-sky-mid: #66D8FF;
+  --mck-sky-base: #00BEFF;
+  --mck-sky-dark: #0074D0;
+  --mck-azure-light: #B6E2FA;
+  --mck-azure-mid: #66C4FF;
+  --mck-azure-base: #009EFF;
+  --mck-azure-dark: #0A5FBC;
+  --mck-amber-light: #FFE9B3;
+  --mck-amber-mid: #FFD366;
+  --mck-amber-base: #FFB502;
+  --mck-text-headline: #143359;
+  --mck-text-primary: #505050;
+  --mck-text-muted: #737373;
+  --mck-text-inverse: #FFFFFF;
+  --mck-surface-default: #FFFFFF;
+  --mck-surface-subtle: #EFEDE7;
+  --mck-surface-dark: #0B3266;
+  --mck-chart-axis: #8C8C8C;
+  --mck-chart-grid: #E6E4DE;
+  --mck-chart-context: #B4B0A5;
+  --mck-chart-context-light: #DEDBD1;
+  --mck-chart-focus: #005A8C;
+  --mck-chart-accent: #EF8200;
+  --mck-chart-total: #143359;
+  --mck-chart-annotation: #143359;
+  --mck-chart-focus-on-dark: #66C4FF;
+  --mck-chart-context-on-dark: #5A7194;
+  --mck-semantic-positive: #00AF9D;
+  --mck-semantic-positive-text: #00737A;
+  --mck-semantic-negative: #EF8200;
+  --mck-semantic-negative-text: #A75B00;
+  --mck-semantic-neutral: #B4B0A5;
+  --mck-cat-1: #005A8C;
+  --mck-cat-2: #EF8200;
+  --mck-cat-3: #00AF9D;
+  --mck-cat-4: #143359;
+  --mck-cat-5: #66C4FF;
+  --mck-cat-6: #FFB502;
+  --mck-cat-7: #00622C;
+  --mck-cat-8: #D9F14E;
+  --mck-seq-blue-1: #E6F3FB;
+  --mck-seq-blue-2: #B6E2FA;
+  --mck-seq-blue-3: #66C4FF;
+  --mck-seq-blue-4: #009EFF;
+  --mck-seq-blue-5: #0A5FBC;
+  --mck-seq-blue-6: #143359;
+  --mck-seq-teal-1: #E6F7F5;
+  --mck-seq-teal-2: #B3E7E2;
+  --mck-seq-teal-3: #66CFC4;
+  --mck-seq-teal-4: #00AF9D;
+  --mck-seq-teal-5: #00737A;
+  --mck-seq-teal-6: #004B4F;
+  --mck-seq-orange-1: #FFF3E0;
+  --mck-seq-orange-2: #FFD9A8;
+  --mck-seq-orange-3: #F7B25C;
+  --mck-seq-orange-4: #EF8200;
+  --mck-seq-orange-5: #A75B00;
+  --mck-seq-orange-6: #6B3A00;
+  --mck-div-1: #A75B00;
+  --mck-div-2: #EF8200;
+  --mck-div-3: #F7C180;
+  --mck-div-4: #EFEDE7;
+  --mck-div-5: #99BDD1;
+  --mck-div-6: #005A8C;
+  --mck-div-7: #143359;
+  --mck-font: 'Libre Franklin', 'Franklin Gothic Book', Arial, Helvetica, sans-serif;
+  --mck-headline-size: 22px;
+  --mck-headline-weight: 700;
+  --mck-headline-color: #143359;
+  --mck-subtitle-size: 15px;
+  --mck-subtitle-weight: 400;
+  --mck-subtitle-color: #505050;
+  --mck-label-size: 13px;
+  --mck-label-weight: 500;
+  --mck-label-color: #505050;
+  --mck-tick-size: 12px;
+  --mck-tick-weight: 400;
+  --mck-tick-color: #737373;
+  --mck-annotation-size: 13px;
+  --mck-annotation-weight: 400;
+  --mck-annotation-color: #143359;
+  --mck-footnote-size: 11px;
+  --mck-footnote-weight: 300;
+  --mck-footnote-color: #737373;
+  --mck-kpi-size: 56px;
+  --mck-kpi-weight: 300;
+  --mck-kpi-color: #143359;
+  --mck-pad: 24px;
+}
+/* Libre Franklin: load from Google Fonts in your <head>, or @font-face from /fonts in this repo.
+   <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"> */
+
+.mck-chart {
+  font-family: var(--mck-font);
+  color: var(--mck-text-primary);
+  background: var(--mck-surface-default);
+  padding: var(--mck-pad);
+  max-width: 960px;
+}
+.mck-chart--dark { background: var(--mck-surface-dark); color: var(--mck-text-inverse); }
+.mck-chart--dark .mck-headline, .mck-chart--dark .mck-subtitle, .mck-chart--dark .mck-footnote { color: var(--mck-text-inverse); }
+.mck-headline {
+  font-size: var(--mck-headline-size); font-weight: var(--mck-headline-weight);
+  color: var(--mck-headline-color); line-height: 1.2; margin: 0 0 6px; max-width: 60ch;
+}
+.mck-subtitle {
+  font-size: var(--mck-subtitle-size); font-weight: var(--mck-subtitle-weight);
+  color: var(--mck-subtitle-color); margin: 0 0 12px;
+}
+.mck-plot { width: 100%; }
+.mck-footnote {
+  font-size: var(--mck-footnote-size); font-weight: var(--mck-footnote-weight);
+  color: var(--mck-footnote-color); margin-top: 16px; line-height: 1.4;
+}
+.mck-callout { font-size: var(--mck-annotation-size); color: var(--mck-annotation-color); }
+.mck-callout strong { font-weight: 700; display: block; }
+.mck-kpi { font-size: var(--mck-kpi-size); font-weight: var(--mck-kpi-weight); color: var(--mck-kpi-color); line-height: 1; }
+.mck-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: var(--mck-label-size); margin-bottom: 8px; }
+.mck-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; background: var(--swatch); }
+@media (max-width: 600px) {
+  .mck-chart { padding: 16px; }
+  .mck-headline { font-size: 18px; }
+  .mck-subtitle { font-size: 13px; }
+}
+
+body { margin: 0; background: var(--mck-surface-subtle); font-family: var(--mck-font); }
+main { display: grid; gap: 24px; padding: 32px; max-width: 1040px; margin: 0 auto; }
+.page-title { font-weight: 300; font-size: 34px; color: var(--mck-blue); margin: 0; }
+.page-title strong { font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+<h1 class="page-title"><strong>Workforce</strong> intelligence gallery</h1>
+
+<figure class="mck-chart">
+  <h2 class="mck-headline">Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate</h2>
+  <p class="mck-subtitle">Voluntary attrition by job family, FY26 (%)</p>
+  <div class="mck-plot"><div style="height:440px; width:100%;">                            <div id="28d68543-611f-4436-8b87-7f3e80337bcd" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("28d68543-611f-4436-8b87-7f3e80337bcd")) {                    Plotly.newPlot(                        "28d68543-611f-4436-8b87-7f3e80337bcd",                        [{"customdata":{"dtype":"i2","bdata":"sAS8AigK\u002fAiEA1IDeAUcDBguOBg="},"hovertemplate":"%{y}\u003cbr\u003e%{x:.1f}% attrition\u003cbr\u003e%{customdata:,} employees\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#005A8C","#005A8C"]},"orientation":"h","text":["7.4%","8.1%","9.8%","10.6%","11.8%","12.9%","14.2%","18.9%","24.1%","27.4%"],"textposition":"outside","x":{"dtype":"f8","bdata":"mpmZmZmZHUAzMzMzMzMgQJqZmZmZmSNAMzMzMzMzJUCamZmZmZknQM3MzMzMzClAZmZmZmZmLEBmZmZmZuYyQJqZmZmZGThAZmZmZmZmO0A="},"y":["Finance","HR","Software Engineering","Sales","Supply Chain Planning","Data & Analytics","Specialty Nursing","Customer Care","Distribution Center Associate","Pharmacy Technician"],"type":"bar"}],                        {"template":{"data":{"bar":[{"cliponaxis":false,"marker":{"line":{"width":0}},"textfont":{"size":13},"type":"bar"}],"pie":[{"direction":"clockwise","hole":0.62,"marker":{"line":{"color":"#FFFFFF","width":2}},"sort":true,"type":"pie"}],"scatter":[{"line":{"width":2.0},"marker":{"size":6},"type":"scatter"}]},"layout":{"annotationdefaults":{"align":"left","font":{"color":"#143359","size":13},"showarrow":false},"bargap":0.33,"bargroupgap":0.08,"colorscale":{"diverging":[[0.0,"#A75B00"],[0.16666666666666666,"#EF8200"],[0.3333333333333333,"#F7C180"],[0.5,"#EFEDE7"],[0.6666666666666666,"#99BDD1"],[0.8333333333333334,"#005A8C"],[1.0,"#143359"]],"sequential":[[0.0,"#E6F3FB"],[0.2,"#B6E2FA"],[0.4,"#66C4FF"],[0.6,"#009EFF"],[0.8,"#0A5FBC"],[1.0,"#143359"]]},"colorway":["#005A8C","#EF8200","#00AF9D","#143359","#66C4FF","#FFB502","#00622C","#D9F14E"],"font":{"color":"#505050","family":"Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif","size":13},"hoverlabel":{"bgcolor":"#143359","bordercolor":"#143359","font":{"color":"#FFFFFF","family":"Libre Franklin","size":13}},"legend":{"font":{"color":"#505050","size":13},"orientation":"h","title":{"text":""},"x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":72,"l":64,"r":32,"t":96},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","shapedefaults":{"line":{"color":"#8C8C8C","width":1}},"title":{"font":{"color":"#143359","size":22,"weight":700},"pad":{"l":24},"subtitle":{"font":{"color":"#505050","size":15}},"x":0,"xanchor":"left","xref":"container"},"xaxis":{"automargin":true,"linecolor":"#8C8C8C","linewidth":1.0,"showgrid":false,"showline":true,"tickfont":{"color":"#737373","size":12},"ticks":"","title":{"font":{"color":"#737373","size":12},"standoff":8},"zeroline":false},"yaxis":{"automargin":true,"gridcolor":"#E6E4DE","gridwidth":0.75,"linecolor":"#8C8C8C","linewidth":1.0,"showgrid":true,"showline":false,"tickfont":{"color":"#737373","size":12},"ticks":"","title":{"font":{"color":"#737373","size":12},"standoff":8},"zeroline":false}}},"shapes":[{"line":{"color":"#143359","dash":"dot","width":1},"type":"line","x0":19.9,"x1":19.9,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"font":{"size":12},"text":"Enterprise 19.9%","x":19.9,"y":1,"yanchor":"bottom","yref":"paper"}],"xaxis":{"visible":false,"range":[0,31.509999999999994]},"yaxis":{"showgrid":false,"showline":false,"ticksuffix":"  "},"margin":{"t":36,"l":8,"r":8,"b":8},"autosize":true},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div></div>
+  <figcaption class="mck-footnote">Source: Synthetic data for illustration only</figcaption>
+</figure>
+
+<figure class="mck-chart">
+  <h2 class="mck-headline">Without action, Data &amp; AI demand outruns internal supply by ~620 FTE by 2030</h2>
+  <p class="mck-subtitle">Forecast Data &amp; AI roles, FTE, 2024–2030 (base scenario)</p>
+  <div class="mck-plot"><div style="height:440px; width:100%;">                            <div id="c684dd33-6a67-4b2c-8ac2-d87f1ad7e758" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("c684dd33-6a67-4b2c-8ac2-d87f1ad7e758")) {                    Plotly.newPlot(                        "c684dd33-6a67-4b2c-8ac2-d87f1ad7e758",                        [{"hovertemplate":"%{y:,} FTE\u003cextra\u003eInternal supply\u003c\u002fextra\u003e","line":{"color":"#005A8C"},"mode":"lines","name":"Internal supply","x":{"dtype":"i2","bdata":"6AfpB+oH6wfsB+0H7gc="},"y":{"dtype":"i2","bdata":"UgNkA3cDigOfA7YDzQM="},"type":"scatter"},{"fill":"tonexty","fillcolor":"rgba(239,130,0,0.12)","hovertemplate":"%{y:,} FTE\u003cextra\u003eDemand\u003c\u002fextra\u003e","line":{"color":"#143359"},"mode":"lines","name":"Demand","x":{"dtype":"i2","bdata":"6AfpB+oH6wfsB+0H7gc="},"y":{"dtype":"i2","bdata":"UgOwAxcEigQKBZgFNgY="},"type":"scatter"}],                        {"template":{"data":{"bar":[{"cliponaxis":false,"marker":{"line":{"width":0}},"textfont":{"size":13},"type":"bar"}],"pie":[{"direction":"clockwise","hole":0.62,"marker":{"line":{"color":"#FFFFFF","width":2}},"sort":true,"type":"pie"}],"scatter":[{"line":{"width":2.0},"marker":{"size":6},"type":"scatter"}]},"layout":{"annotationdefaults":{"align":"left","font":{"color":"#143359","size":13},"showarrow":false},"bargap":0.33,"bargroupgap":0.08,"colorscale":{"diverging":[[0.0,"#A75B00"],[0.16666666666666666,"#EF8200"],[0.3333333333333333,"#F7C180"],[0.5,"#EFEDE7"],[0.6666666666666666,"#99BDD1"],[0.8333333333333334,"#005A8C"],[1.0,"#143359"]],"sequential":[[0.0,"#E6F3FB"],[0.2,"#B6E2FA"],[0.4,"#66C4FF"],[0.6,"#009EFF"],[0.8,"#0A5FBC"],[1.0,"#143359"]]},"colorway":["#005A8C","#EF8200","#00AF9D","#143359","#66C4FF","#FFB502","#00622C","#D9F14E"],"font":{"color":"#505050","family":"Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif","size":13},"hoverlabel":{"bgcolor":"#143359","bordercolor":"#143359","font":{"color":"#FFFFFF","family":"Libre Franklin","size":13}},"legend":{"font":{"color":"#505050","size":13},"orientation":"h","title":{"text":""},"x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":72,"l":64,"r":32,"t":96},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","shapedefaults":{"line":{"color":"#8C8C8C","width":1}},"title":{"font":{"color":"#143359","size":22,"weight":700},"pad":{"l":24},"subtitle":{"font":{"color":"#505050","size":15}},"x":0,"xanchor":"left","xref":"container"},"xaxis":{"automargin":true,"linecolor":"#8C8C8C","linewidth":1.0,"showgrid":false,"showline":true,"tickfont":{"color":"#737373","size":12},"ticks":"","title":{"font":{"color":"#737373","size":12},"standoff":8},"zeroline":false},"yaxis":{"automargin":true,"gridcolor":"#E6E4DE","gridwidth":0.75,"linecolor":"#8C8C8C","linewidth":1.0,"showgrid":true,"showline":false,"tickfont":{"color":"#737373","size":12},"ticks":"","title":{"font":{"color":"#737373","size":12},"standoff":8},"zeroline":false}}},"annotations":[{"font":{"color":"#143359","size":13},"text":"\u003cb\u003eDemand\u003c\u002fb\u003e 1,590","x":2030,"xanchor":"left","xshift":8,"y":1590},{"font":{"color":"#005A8C","size":13},"text":"\u003cb\u003eInternal supply\u003c\u002fb\u003e 973","x":2030,"xanchor":"left","xshift":8,"y":973},{"font":{"color":"#A75B00","size":14},"text":"\u003cb\u003eGap: 617 FTE\u003c\u002fb\u003e","x":2030,"xanchor":"right","xshift":-8,"y":1281.5}],"margin":{"r":8,"t":36,"l":8,"b":8},"showlegend":false,"hovermode":"x unified","yaxis":{"range":[800,1669.5],"tickformat":","},"xaxis":{"dtick":1},"autosize":true},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div></div>
+  <figcaption class="mck-footnote">Supply = current headcount − projected attrition + planned internal moves; excludes external hiring.<br>Source: Synthetic data for illustration only</figcaption>
+</figure>
+
+<figure class="mck-chart">
+  <h2 class="mck-headline">Four support roles carry the highest gen AI exposure – start redesign and reskilling there</h2>
+  <p class="mck-subtitle">Share of task hours exposed to gen AI vs. median pay by role; bubble size = headcount. Hover for detail.</p>
+  <div class="mck-plot"><div style="height:440px; width:100%;">                            <div id="db644133-a662-4319-b613-2f1fa0ad6039" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("db644133-a662-4319-b613-2f1fa0ad6039")) {                    Plotly.newPlot(                        "db644133-a662-4319-b613-2f1fa0ad6039",                        [{"customdata":[["Customer Care",3100],["Claims & Billing Specialist",1900],["Finance Operations",800],["HR Operations",450],["Software Engineering",2600],["Data & Analytics",850],["Sales",2300],["Pharmacy Technician",6200],["Distribution Center Associate",11800],["Specialty Nursing",1400],["Supply Chain Planning",900],["Marketing",600]],"hovertemplate":"\u003cb\u003e%{customdata[0]}\u003c\u002fb\u003e\u003cbr\u003e%{y}% of task hours exposed\u003cbr\u003e$%{x}K median pay\u003cbr\u003e%{customdata[1]:,} people\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#005A8C","#005A8C","#005A8C","#005A8C","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5","#B4B0A5"],"line":{"color":"white","width":1},"opacity":0.9,"size":{"dtype":"i2","bdata":"HAxsByADwgEoClID\u002fAg4GBgueAWEA1gC"},"sizemode":"area","sizeref":6.555555555555555},"mode":"markers+text","text":["Customer Care","Claims & Billing Specialist","Finance Operations","HR Operations","","","","","","","",""],"textfont":{"color":"#143359","size":12},"textposition":"middle right","x":{"dtype":"i2","bdata":"MAA0AEcAPgCKAHkAYAApACcAXgBYAFwA"},"y":{"dtype":"i1","bdata":"Oj83MykuHBYJDiYx"},"type":"scatter"}],                        {"template":{"data":{"bar":[{"cliponaxis":false,"marker":{"line":{"width":0}},"textfont":{"size":13},"type":"bar"}],"pie":[{"direction":"clockwise","hole":0.62,"marker":{"line":{"color":"#FFFFFF","width":2}},"sort":true,"type":"pie"}],"scatter":[{"line":{"width":2.0},"marker":{"size":6},"type":"scatter"}]},"layout":{"annotationdefaults":{"align":"left","font":{"color":"#143359","size":13},"showarrow":false},"bargap":0.33,"bargroupgap":0.08,"colorscale":{"diverging":[[0.0,"#A75B00"],[0.16666666666666666,"#EF8200"],[0.3333333333333333,"#F7C180"],[0.5,"#EFEDE7"],[0.6666666666666666,"#99BDD1"],[0.8333333333333334,"#005A8C"],[1.0,"#143359"]],"sequential":[[0.0,"#E6F3FB"],[0.2,"#B6E2FA"],[0.4,"#66C4FF"],[0.6,"#009EFF"],[0.8,"#0A5FBC"],[1.0,"#143359"]]},"colorway":["#005A8C","#EF8200","#00AF9D","#143359","#66C4FF","#FFB502","#00622C","#D9F14E"],"font":{"color":"#505050","family":"Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif","size":13},"hoverlabel":{"bgcolor":"#143359","bordercolor":"#143359","font":{"color":"#FFFFFF","family":"Libre Franklin","size":13}},"legend":{"font":{"color":"#505050","size":13},"orientation":"h","title":{"text":""},"x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":72,"l":64,"r":32,"t":96},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","shapedefaults":{"line":{"color":"#8C8C8C","width":1}},"title":{"font":{"color":"#143359","size":22,"weight":700},"pad":{"l":24},"subtitle":{"font":{"color":"#505050","size":15}},"x":0,"xanchor":"left","xref":"container"},"xaxis":{"automargin":true,"linecolor":"#8C8C8C","linewidth":1.0,"showgrid":false,"showline":true,"tickfont":{"color":"#737373","size":12},"ticks":"","title":{"font":{"color":"#737373","size":12},"standoff":8},"zeroline":false},"yaxis":{"automargin":true,"gridcolor":"#E6E4DE","gridwidth":0.75,"linecolor":"#8C8C8C","linewidth":1.0,"showgrid":true,"showline":false,"tickfont":{"color":"#737373","size":12},"ticks":"","title":{"font":{"color":"#737373","size":12},"standoff":8},"zeroline":false}}},"shapes":[{"fillcolor":"#EFEDE7","layer":"below","line":{"width":0},"type":"rect","x0":0,"x1":1,"xref":"x domain","y0":50,"y1":75,"yref":"y"}],"annotations":[{"font":{"size":11},"text":"\u003cb\u003eHigh exposure: 50%+ of task hours\u003c\u002fb\u003e","x":1,"xanchor":"right","xref":"paper","y":74,"yanchor":"top"}],"xaxis":{"title":{"text":"Median base pay ($K)"},"range":[28,155],"tickprefix":"$","ticksuffix":"K"},"yaxis":{"title":{"text":""},"range":[0,75],"ticksuffix":"%"},"margin":{"t":36,"l":8,"r":8,"b":8},"autosize":true},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div></div>
+  <figcaption class="mck-footnote">Exposure = share of task hours matched to gen-AI-capable activities in an external task taxonomy.<br>Source: Synthetic data for illustration only</figcaption>
+</figure>
+
+<figure class="mck-chart">
+  <h2 class="mck-headline">Distribution centers are our strongest internal talent engine – 440 promotions and moves in two years</h2>
+  <p class="mck-subtitle">Internal moves between job families, trailing 24 months (number of moves)</p>
+  <div class="mck-plot"><div style="height:440px; width:100%;">                            <div id="a60dca62-3b9e-4009-8ed4-3a1d14fdebc5" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("a60dca62-3b9e-4009-8ed4-3a1d14fdebc5")) {                    Plotly.newPlot(                        "a60dca62-3b9e-4009-8ed4-3a1d14fdebc5",                        [{"arrangement":"snap","link":{"color":["rgba(180,176,165,0.45)","rgba(180,176,165,0.45)","rgba(180,176,165,0.45)","rgba(180,176,165,0.45)","rgba(0,90,140,0.55)","rgba(0,90,140,0.55)","rgba(180,176,165,0.45)","rgba(180,176,165,0.45)","rgba(180,176,165,0.45)"],"hovertemplate":"%{source.label} → %{target.label}: %{value:,} moves\u003cextra\u003e\u003c\u002fextra\u003e","source":[0,0,1,1,2,2,3,4,1],"target":[5,1,4,6,3,7,6,8,8],"value":{"dtype":"i2","bdata":"NgGMAHgAIwC0AAQBPABaAEsA"}},"node":{"color":["#B4B0A5","#B4B0A5","#005A8C","#005A8C","#B4B0A5","#B4B0A5","#B4B0A5","#005A8C","#B4B0A5"],"label":["Pharmacy Technician","Customer Care","DC Associate","Supply Chain Planning","Sales","Specialty Pharmacy Ops","Data & Analytics","DC Leadership","Customer Success"],"line":{"width":0},"pad":18,"thickness":14},"valueformat":",","type":"sankey"}],                        {"template":{"data":{"bar":[{"cliponaxis":false,"marker":{"line":{"width":0}},"textfont":{"size":13},"type":"bar"}],"pie":[{"direction":"clockwise","hole":0.62,"marker":{"line":{"color":"#FFFFFF","width":2}},"sort":true,"type":"pie"}],"scatter":[{"line":{"width":2.0},"marker":{"size":6},"type":"scatter"}]},"layout":{"annotationdefaults":{"align":"left","font":{"color":"#143359","size":13},"showarrow":false},"bargap":0.33,"bargroupgap":0.08,"colorscale":{"diverging":[[0.0,"#A75B00"],[0.16666666666666666,"#EF8200"],[0.3333333333333333,"#F7C180"],[0.5,"#EFEDE7"],[0.6666666666666666,"#99BDD1"],[0.8333333333333334,"#005A8C"],[1.0,"#143359"]],"sequential":[[0.0,"#E6F3FB"],[0.2,"#B6E2FA"],[0.4,"#66C4FF"],[0.6,"#009EFF"],[0.8,"#0A5FBC"],[1.0,"#143359"]]},"colorway":["#005A8C","#EF8200","#00AF9D","#143359","#66C4FF","#FFB502","#00622C","#D9F14E"],"font":{"color":"#505050","family":"Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif","size":13},"hoverlabel":{"bgcolor":"#143359","bordercolor":"#143359","font":{"color":"#FFFFFF","family":"Libre Franklin","size":13}},"legend":{"font":{"color":"#505050","size":13},"orientation":"h","title":{"text":""},"x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":72,"l":64,"r":32,"t":96},"paper_bgcolor":"#FFFFFF","plot_bgcolor":"#FFFFFF","shapedefaults":{"line":{"color":"#8C8C8C","width":1}},"title":{"font":{"color":"#143359","size":22,"weight":700},"pad":{"l":24},"subtitle":{"font":{"color":"#505050","size":15}},"x":0,"xanchor":"left","xref":"container"},"xaxis":{"automargin":true,"linecolor":"#8C8C8C","linewidth":1.0,"showgrid":false,"showline":true,"tickfont":{"color":"#737373","size":12},"ticks":"","title":{"font":{"color":"#737373","size":12},"standoff":8},"zeroline":false},"yaxis":{"automargin":true,"gridcolor":"#E6E4DE","gridwidth":0.75,"linecolor":"#8C8C8C","linewidth":1.0,"showgrid":true,"showline":false,"tickfont":{"color":"#737373","size":12},"ticks":"","title":{"font":{"color":"#737373","size":12},"standoff":8},"zeroline":false}}},"font":{"size":12},"margin":{"t":36,"l":8,"r":8,"b":8},"autosize":true},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div></div>
+  <figcaption class="mck-footnote">Source: Synthetic data for illustration only</figcaption>
+</figure>
+</main>
+</body>
+</html>

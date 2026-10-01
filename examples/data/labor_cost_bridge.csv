@@ -1,0 +1,8 @@
+step,value_musd,kind
+FY25 labor cost,4210.0,total
+Merit & market adjustments,139.0,delta
+Net new hires,96.0,delta
+Attrition backfill lag,-58.0,delta
+Automation savings,-71.0,delta
+Contractor conversion,-24.0,delta
+FY26 labor cost,4292.0,total

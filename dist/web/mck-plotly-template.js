@@ -1,0 +1,224 @@
+// GENERATED from tokens/tokens.json. Usage: Plotly.newPlot(el, data, {template: MCK_PLOTLY_TEMPLATE, ...})
+window.MCK_PLOTLY_TEMPLATE = {
+  "layout": {
+    "font": {
+      "family": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
+      "size": 13,
+      "color": "#505050"
+    },
+    "title": {
+      "font": {
+        "size": 22,
+        "color": "#143359",
+        "weight": 700
+      },
+      "x": 0,
+      "xanchor": "left",
+      "xref": "container",
+      "pad": {
+        "l": 24
+      },
+      "subtitle": {
+        "font": {
+          "size": 15,
+          "color": "#505050"
+        }
+      }
+    },
+    "colorway": [
+      "#005A8C",
+      "#EF8200",
+      "#00AF9D",
+      "#143359",
+      "#66C4FF",
+      "#FFB502",
+      "#00622C",
+      "#D9F14E"
+    ],
+    "paper_bgcolor": "#FFFFFF",
+    "plot_bgcolor": "#FFFFFF",
+    "margin": {
+      "l": 64,
+      "r": 32,
+      "t": 96,
+      "b": 72
+    },
+    "bargap": 0.33,
+    "bargroupgap": 0.08,
+    "xaxis": {
+      "showgrid": false,
+      "zeroline": false,
+      "showline": true,
+      "linecolor": "#8C8C8C",
+      "linewidth": 1.0,
+      "ticks": "",
+      "tickfont": {
+        "size": 12,
+        "color": "#737373"
+      },
+      "title": {
+        "font": {
+          "size": 12,
+          "color": "#737373"
+        },
+        "standoff": 8
+      },
+      "automargin": true
+    },
+    "yaxis": {
+      "showgrid": true,
+      "zeroline": false,
+      "showline": false,
+      "linecolor": "#8C8C8C",
+      "linewidth": 1.0,
+      "ticks": "",
+      "tickfont": {
+        "size": 12,
+        "color": "#737373"
+      },
+      "title": {
+        "font": {
+          "size": 12,
+          "color": "#737373"
+        },
+        "standoff": 8
+      },
+      "automargin": true,
+      "gridcolor": "#E6E4DE",
+      "gridwidth": 0.75
+    },
+    "legend": {
+      "orientation": "h",
+      "x": 0,
+      "xanchor": "left",
+      "y": 1.02,
+      "yanchor": "bottom",
+      "font": {
+        "size": 13,
+        "color": "#505050"
+      },
+      "title": {
+        "text": ""
+      }
+    },
+    "hoverlabel": {
+      "bgcolor": "#143359",
+      "bordercolor": "#143359",
+      "font": {
+        "family": "Libre Franklin",
+        "color": "#FFFFFF",
+        "size": 13
+      }
+    },
+    "colorscale": {
+      "sequential": [
+        [
+          0.0,
+          "#E6F3FB"
+        ],
+        [
+          0.2,
+          "#B6E2FA"
+        ],
+        [
+          0.4,
+          "#66C4FF"
+        ],
+        [
+          0.6,
+          "#009EFF"
+        ],
+        [
+          0.8,
+          "#0A5FBC"
+        ],
+        [
+          1.0,
+          "#143359"
+        ]
+      ],
+      "diverging": [
+        [
+          0.0,
+          "#A75B00"
+        ],
+        [
+          0.16666666666666666,
+          "#EF8200"
+        ],
+        [
+          0.3333333333333333,
+          "#F7C180"
+        ],
+        [
+          0.5,
+          "#EFEDE7"
+        ],
+        [
+          0.6666666666666666,
+          "#99BDD1"
+        ],
+        [
+          0.8333333333333334,
+          "#005A8C"
+        ],
+        [
+          1.0,
+          "#143359"
+        ]
+      ]
+    },
+    "annotationdefaults": {
+      "font": {
+        "size": 13,
+        "color": "#143359"
+      },
+      "showarrow": false,
+      "align": "left"
+    },
+    "shapedefaults": {
+      "line": {
+        "color": "#8C8C8C",
+        "width": 1
+      }
+    }
+  },
+  "data": {
+    "scatter": [
+      {
+        "line": {
+          "width": 2.0
+        },
+        "marker": {
+          "size": 6
+        }
+      }
+    ],
+    "bar": [
+      {
+        "marker": {
+          "line": {
+            "width": 0
+          }
+        },
+        "textfont": {
+          "size": 13
+        },
+        "cliponaxis": false
+      }
+    ],
+    "pie": [
+      {
+        "hole": 0.62,
+        "sort": true,
+        "direction": "clockwise",
+        "marker": {
+          "line": {
+            "color": "#FFFFFF",
+            "width": 2
+          }
+        }
+      }
+    ]
+  }
+};

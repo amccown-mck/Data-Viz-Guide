@@ -1,0 +1,126 @@
+{
+  "$schema_version": "0.1.0",
+  "$description": "Single source of truth for McKesson data-visualization design tokens. Edit here, then run `python tokens/build.py` to regenerate every platform file in dist/. Brand values extracted from the McKesson Social Media Guide (2023/24) and FY26 Impact Report (2026); data-viz roles are this kit's own.",
+
+  "brand": {
+    "core": {
+      "blue":   { "value": "#005A8C", "description": "McKesson Blue. Primary brand color; default single-series fill; 'focus' color." },
+      "navy":   { "value": "#143359", "description": "McKesson Navy. Headlines, totals, secondary dark series." },
+      "orange": { "value": "#EF8200", "description": "McKesson Orange. Core accent (the '20%'). Use for the one element that must pop." },
+      "sand":   { "value": "#DEDBD1", "description": "Warm grey. Backgrounds, de-emphasized fills." }
+    },
+    "core_2026": {
+      "deep_navy":  { "value": "#0B3266", "description": "Dominant dark in the FY26 Impact Report; dark slide / card backgrounds." },
+      "sand_light": { "value": "#EFEDE7", "description": "Light warm grey panel background (FY26)." },
+      "text":       { "value": "#505050", "description": "Body text color (FY26)." }
+    },
+    "extended": {
+      "$description": "Extended Audience Palette. Each family maps loosely to a business area, but any color may be used in data viz. Order within a family: light, mid, base, dark.",
+      "lime":  { "business": "Culture / People / Patients", "light": "#F7FCDC", "mid": "#E8F795", "base": "#D9F14E", "dark": null },
+      "green": { "business": "Pharmacy",                    "light": "#B3E7D2", "mid": "#66CFA4", "base": "#00AF68", "dark": "#00622C" },
+      "mint":  { "business": "Biopharma",                   "light": "#B4F0DE", "mid": "#69E2BC", "base": "#05CE90", "dark": "#008264" },
+      "teal":  { "business": "Oncology / Specialty",        "light": "#B3E7E2", "mid": "#66CFC4", "base": "#00AF9D", "dark": "#00737A" },
+      "sky":   { "business": "Providers",                   "light": "#B3ECFF", "mid": "#66D8FF", "base": "#00BEFF", "dark": "#0074D0" },
+      "azure": { "business": "Health Systems",              "light": "#B6E2FA", "mid": "#66C4FF", "base": "#009EFF", "dark": "#0A5FBC" },
+      "amber": { "business": "Payer",                       "light": "#FFE9B3", "mid": "#FFD366", "base": "#FFB502", "dark": null }
+    },
+    "proportion_rule": "Use the core palette for ~80% of a piece and accent colors for ~20%."
+  },
+
+  "color": {
+    "text": {
+      "headline": { "value": "#143359", "description": "Insight headline (bold)." },
+      "primary":  { "value": "#505050", "description": "Subtitles, data labels, body. 8.1:1 on white." },
+      "muted":    { "value": "#737373", "description": "Axis ticks, footnotes, source. 4.7:1 on white (AA)." },
+      "inverse":  { "value": "#FFFFFF" }
+    },
+    "surface": {
+      "default": { "value": "#FFFFFF" },
+      "subtle":  { "value": "#EFEDE7", "description": "Panels, callout boxes, shaded periods." },
+      "dark":    { "value": "#0B3266", "description": "Dark slides / dim rooms / social cards." }
+    },
+    "chart": {
+      "axis":         { "value": "#8C8C8C", "description": "Baseline and axis lines (thin)." },
+      "grid":         { "value": "#E6E4DE", "description": "Gridlines, only when needed (lighter than axis)." },
+      "context":      { "value": "#B4B0A5", "description": "De-emphasized data marks (the 'everything else' grey)." },
+      "context_light":{ "value": "#DEDBD1", "description": "De-emphasized fills in stacks/areas; masked columns." },
+      "focus":        { "value": "#005A8C", "description": "Primary highlight against grey context; default single-series fill." },
+      "accent":       { "value": "#EF8200", "description": "Secondary highlight; the one item that must pop against blue." },
+      "total":        { "value": "#143359", "description": "Totals / subtotals (waterfalls, stacked totals)." },
+      "annotation":   { "value": "#143359", "description": "Callout text and leader lines." },
+      "focus_on_dark":  { "value": "#66C4FF", "description": "Highlight on dark surfaces." },
+      "context_on_dark":{ "value": "#5A7194", "description": "De-emphasized marks on dark surfaces." }
+    },
+    "semantic": {
+      "positive":      { "value": "#00AF9D", "description": "Increase / gain / favorable (teal)." },
+      "positive_text": { "value": "#00737A" },
+      "negative":      { "value": "#EF8200", "description": "Decrease / loss / unfavorable (orange). Blue-orange is CVD-safe; avoid red-green." },
+      "negative_text": { "value": "#A75B00" },
+      "neutral":       { "value": "#B4B0A5" }
+    },
+    "categorical": {
+      "$description": "Ordered. Use the first N; prefer <= 6. Beyond 6, group into 'Other' (context grey). Positions 7-8 are for fills only (low contrast lines).",
+      "values": ["#005A8C", "#EF8200", "#00AF9D", "#143359", "#66C4FF", "#FFB502", "#00622C", "#D9F14E"]
+    },
+    "sequential": {
+      "blue":  ["#E6F3FB", "#B6E2FA", "#66C4FF", "#009EFF", "#0A5FBC", "#143359"],
+      "teal":  ["#E6F7F5", "#B3E7E2", "#66CFC4", "#00AF9D", "#00737A", "#004B4F"],
+      "orange":["#FFF3E0", "#FFD9A8", "#F7B25C", "#EF8200", "#A75B00", "#6B3A00"]
+    },
+    "diverging": {
+      "orange_blue": {
+        "description": "Negative (orange) to positive (blue) with warm-neutral midpoint. CVD-safe.",
+        "values": ["#A75B00", "#EF8200", "#F7C180", "#EFEDE7", "#99BDD1", "#005A8C", "#143359"]
+      }
+    },
+    "social": {
+      "$description": "High-contrast three-tone combos for social / single-KPI cards (background + 1-2 foreground).",
+      "combos": [
+        { "background": "#0B3266", "foreground": ["#FFFFFF", "#66C4FF", "#EF8200"] },
+        { "background": "#005A8C", "foreground": ["#FFFFFF", "#D9F14E"] },
+        { "background": "#EFEDE7", "foreground": ["#143359", "#EF8200"] },
+        { "background": "#FFFFFF", "foreground": ["#143359", "#005A8C", "#EF8200"] }
+      ]
+    }
+  },
+
+  "typography": {
+    "family": {
+      "primary": "Libre Franklin",
+      "fallback_web": "'Libre Franklin', 'Franklin Gothic Book', Arial, Helvetica, sans-serif",
+      "fallback_office": "Arial",
+      "source": "Open-source (SIL OFL) via Google Fonts or BrandHQ. Install locally for Office; load from Google Fonts for HTML."
+    },
+    "weight": { "light": 300, "regular": 400, "medium": 500, "semibold": 600, "bold": 700, "extrabold": 800 },
+    "roles": {
+      "$description": "size_px for screen/HTML at 1x; size_pt for 16:9 slides (13.33 x 7.5 in). Never go below the 'footnote' size.",
+      "headline":   { "weight": 700, "size_px": 22, "size_pt": 24, "color": "text.headline",  "note": "Insight headline: the 'so what', full sentence, <= 2 lines." },
+      "subtitle":   { "weight": 400, "size_px": 15, "size_pt": 14, "color": "text.primary",   "note": "Neutral chart title: metric, unit, scope, period." },
+      "label":      { "weight": 500, "size_px": 13, "size_pt": 12, "color": "text.primary",   "note": "Direct data labels, series labels." },
+      "tick":       { "weight": 400, "size_px": 12, "size_pt": 11, "color": "text.muted",     "note": "Axis tick labels and category labels." },
+      "annotation": { "weight": 400, "size_px": 13, "size_pt": 12, "color": "chart.annotation", "note": "Callout body; callout title uses bold." },
+      "footnote":   { "weight": 300, "size_px": 11, "size_pt": 9,  "color": "text.muted",     "note": "Footnotes and 'Source:' line." },
+      "kpi":        { "weight": 300, "size_px": 56, "size_pt": 54, "color": "text.headline",  "note": "Big-number callouts (light weight, brand style)." }
+    },
+    "slide_title_style": "Brand signature: bold lead word(s) + light remainder, e.g. '**Attrition** is concentrated in two job families'."
+  },
+
+  "chart": {
+    "bar": { "band_fill": 0.67, "note": "Bar width ~2x the gap between bars." },
+    "line": { "width_px": 2.0, "width_pt": 2.25, "context_width_px": 1.25, "note": "Data lines ~2x axis stroke." },
+    "axis": { "width_px": 1.0, "width_pt": 0.75 },
+    "grid": { "width_px": 0.75, "dash": "solid" },
+    "marker": { "size_px": 6 },
+    "donut": { "hole": 0.62, "max_segments": 5 },
+    "limits": {
+      "categorical_series": 6,
+      "highlighted_series": 2,
+      "stacked_segments": 5,
+      "pie_segments": 5,
+      "lines_before_greying": 4,
+      "charts_per_slide": 2
+    },
+    "aspect": { "slide_full": "16:9", "slide_half": "4:3", "web_inline": "16:10", "mobile": "4:5", "social_square": "1:1" },
+    "spacing": { "padding_px": 24, "headline_gap_px": 6, "footnote_gap_px": 16 }
+  }
+}

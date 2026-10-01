@@ -1,0 +1,51 @@
+# GENERATED from tokens/tokens.json - McKesson data-viz matplotlib style
+# Use via: import mckviz; mckviz.use()   (also registers the bundled Libre Franklin fonts)
+font.family: sans-serif
+font.sans-serif: Libre Franklin, Arial, DejaVu Sans
+font.size: 12
+text.color: 505050
+
+figure.facecolor: white
+figure.dpi: 110
+savefig.dpi: 300
+savefig.bbox: tight
+savefig.pad_inches: 0.25
+figure.figsize: 10, 5.625
+
+axes.facecolor: white
+axes.edgecolor: 8C8C8C
+axes.linewidth: 0.75
+axes.spines.top: False
+axes.spines.right: False
+axes.spines.left: False
+axes.grid: True
+axes.grid.axis: y
+axes.axisbelow: True
+axes.labelcolor: 737373
+axes.labelsize: 11
+axes.titlesize: 14
+axes.titleweight: normal
+axes.titlelocation: left
+axes.titlecolor: 505050
+axes.prop_cycle: cycler('color', ['005A8C', 'EF8200', '00AF9D', '143359', '66C4FF', 'FFB502', '00622C', 'D9F14E'])
+axes.xmargin: 0.02
+
+grid.color: E6E4DE
+grid.linewidth: 0.75
+
+xtick.color: 737373
+ytick.color: 737373
+xtick.labelsize: 11
+ytick.labelsize: 11
+xtick.major.size: 0
+ytick.major.size: 0
+xtick.major.pad: 6
+ytick.major.pad: 6
+
+lines.linewidth: 2.25
+lines.solid_capstyle: round
+patch.linewidth: 0
+
+legend.frameon: False
+legend.fontsize: 12
+legend.labelcolor: 505050

@@ -1,0 +1,43 @@
+business_unit,driver,delta_vs_benchmark_pts
+Corporate,Growth,2
+Corporate,Manager support,4
+Corporate,Recognition,1
+Corporate,Workload,3
+Corporate,Tools & tech,1
+Corporate,Belonging,5
+Corporate,Pay fairness,-1
+Medical-Surgical,Growth,-1
+Medical-Surgical,Manager support,3
+Medical-Surgical,Recognition,2
+Medical-Surgical,Workload,-5
+Medical-Surgical,Tools & tech,0
+Medical-Surgical,Belonging,6
+Medical-Surgical,Pay fairness,1
+Oncology & Multispecialty,Growth,-3
+Oncology & Multispecialty,Manager support,1
+Oncology & Multispecialty,Recognition,-2
+Oncology & Multispecialty,Workload,-11
+Oncology & Multispecialty,Tools & tech,-6
+Oncology & Multispecialty,Belonging,4
+Oncology & Multispecialty,Pay fairness,-4
+RxTS,Growth,1
+RxTS,Manager support,-2
+RxTS,Recognition,3
+RxTS,Workload,-4
+RxTS,Tools & tech,2
+RxTS,Belonging,3
+RxTS,Pay fairness,-6
+Technology,Growth,6
+Technology,Manager support,1
+Technology,Recognition,4
+Technology,Workload,-7
+Technology,Tools & tech,8
+Technology,Belonging,3
+Technology,Pay fairness,-3
+U.S. Pharmaceutical,Growth,-6
+U.S. Pharmaceutical,Manager support,-4
+U.S. Pharmaceutical,Recognition,2
+U.S. Pharmaceutical,Workload,-8
+U.S. Pharmaceutical,Tools & tech,-1
+U.S. Pharmaceutical,Belonging,5
+U.S. Pharmaceutical,Pay fairness,0

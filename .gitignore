@@ -10,7 +10,7 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
+# dist/ is intentionally tracked: it holds generated theme files for non-technical users
 downloads/
 eggs/
 .eggs/
