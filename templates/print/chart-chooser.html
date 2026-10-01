@@ -1,0 +1,131 @@
+<!doctype html>
+<!-- One-page chart chooser. Printed to dist/print/chart-chooser.pdf by tools/build_print.py.
+     Mirrors docs/choosing-a-chart.md; icons are drawn from the color tokens in dist/web/mck-viz.css. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Chart chooser</title>
+<link rel="stylesheet" href="../../dist/web/mck-viz.css">
+<link rel="stylesheet" href="print.css">
+<style>
+  .steps { display: flex; gap: 10pt; margin-bottom: 9pt; font-size: 9pt; }
+  .steps span { display: flex; align-items: center; gap: 5pt; }
+  .steps b { display: inline-block; width: 14pt; height: 14pt; border-radius: 50%; background: var(--mck-chart-focus);
+             color: #fff; text-align: center; line-height: 14pt; font-size: 8pt; }
+  .steps i { color: var(--mck-chart-context); font-style: normal; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 8pt; flex: 1; min-height: 0; }
+  .card { border: 0.75pt solid var(--mck-chart-grid); border-top: 2.5pt solid var(--mck-chart-focus); padding: 6pt 8pt;
+          display: grid; grid-template-columns: 74pt 1fr; grid-template-rows: auto 1fr; column-gap: 8pt; }
+  .card h2 { grid-column: 1 / -1; margin: 0 0 1pt; display: flex; justify-content: space-between; align-items: baseline; }
+  .card h2 small { font-weight: 400; color: var(--mck-text-muted); font-size: 7.5pt; }
+  .card .q { grid-column: 1 / -1; color: var(--mck-text-primary); font-style: italic; margin-bottom: 4pt; }
+  .card svg { width: 74pt; height: 48pt; }
+  .first { font-weight: 700; color: var(--mck-text-headline); font-size: 9.5pt; margin-bottom: 2pt; }
+  .row { display: grid; grid-template-columns: 34pt 1fr; gap: 0 4pt; margin-bottom: 1.5pt; }
+  .row .k { font-size: 7pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3pt; color: var(--mck-text-muted);
+            padding-top: 1pt; }
+  .row .care { color: var(--mck-semantic-negative-text); }
+  .ex { grid-column: 1 / -1; color: var(--mck-text-muted); font-size: 7.5pt; margin-top: 2pt; }
+  .checks { margin-top: 8pt; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8pt; }
+  .checks div { background: var(--mck-surface-subtle); padding: 5pt 6pt; font-size: 8pt; }
+  .checks strong { display: block; color: var(--mck-text-headline); }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <h1><strong>Chart</strong> chooser</h1>
+    <p>Pick the chart from the question, not from habit · McKesson data-viz guide</p>
+  </header>
+  <div class="steps">
+    <span><b>1</b> Write the question the chart answers</span><i>→</i>
+    <span><b>2</b> Find its type below and start with the first choice</span><i>→</i>
+    <span><b>3</b> Run the sanity checks at the bottom</span><i>→</i>
+    <span><b>4</b> Follow the cookbook page for the build</span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="checks">
+    <div><strong>More than ~12 categories?</strong>Sort horizontal bars by value, or group the tail into "Other".</div>
+    <div><strong>Values clustered far from zero?</strong>Don't truncate bars: use a dot plot or show the gap to benchmark.</div>
+    <div><strong>Two units over time?</strong>No dual axes: use two aligned charts, or index both to 100.</div>
+    <div><strong>Many groups, same measure?</strong>Small multiples on a shared scale, focus group highlighted in each.</div>
+    <div><strong>Pie with 8 slices?</strong>Use a sorted bar. Pies and donuts take 5 parts at most.</div>
+  </div>
+  <footer>
+    <span>Mirrors docs/choosing-a-chart.md · each chart has a page in docs/cookbook/ with spec, do/don't and Python, Excel, PowerPoint and Power BI steps</span>
+    <span>Generated from tokens/tokens.json</span>
+  </footer>
+</div>
+
+<script>
+const css = getComputedStyle(document.documentElement);
+const t = n => css.getPropertyValue(`--mck-${n}`).trim();
+const G = t("chart-context"), GL = t("chart-context-light"), B = t("chart-focus"), O = t("chart-accent"),
+      N = t("chart-total"), AX = t("chart-axis");
+const NS = "http://www.w3.org/2000/svg";
+function add(svg, tag, a) { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); svg.appendChild(e); return e; }
+const rect = (s, x, y, w, h, f) => add(s, "rect", { x, y, width: w, height: h, fill: f });
+const line = (s, x1, y1, x2, y2, c, w = 1, dash) => add(s, "line", { x1, y1, x2, y2, stroke: c, "stroke-width": w, ...(dash ? { "stroke-dasharray": dash } : {}) });
+const poly = (s, pts, c, w = 2) => add(s, "polyline", { points: pts.map(p => p.join(",")).join(" "), fill: "none", stroke: c, "stroke-width": w, "stroke-linejoin": "round" });
+const circ = (s, cx, cy, r, f, o = 1) => add(s, "circle", { cx, cy, r, fill: f, "fill-opacity": o });
+
+// Icons: 100 x 64 viewBox, grey context + one blue focus, like the charts themselves
+const icons = {
+  bar(s) { [[48, G], [70, B], [40, G], [28, G], [20, G]].map(([w, f], i) => rect(s, 8, 6 + i * 11.5, w, 7.5, f)); line(s, 8, 2, 8, 62, AX); },
+  stacked(s) { [[50, 30, 20], [62, 26, 12], [40, 30, 30]].forEach(([a, b, c], i) => { const y = 8 + i * 18;
+    rect(s, 4, y, a * .9, 12, G); rect(s, 4 + a * .9, y, b * .9, 12, GL); rect(s, 4 + (a + b) * .9, y, c * .9, 12, i == 2 ? O : B); }); },
+  line(s) { line(s, 6, 58, 96, 58, AX); poly(s, [[8, 46], [30, 42], [52, 44], [74, 36], [94, 30]], G, 1.5);
+    poly(s, [[8, 40], [30, 34], [52, 26], [74, 18], [94, 8]], B, 2.5); circ(s, 94, 8, 2.5, B); },
+  ranking(s) { [[18, 50, G], [26, 22, B], [34, 34, G], [42, 12, B], [50, 44, G]].forEach(([y1, y2, c]) => {
+      line(s, 22, y1 + 4, 78, y2 + 4, c, c == B ? 2.5 : 1.2); circ(s, 22, y1 + 4, 2.5, c); circ(s, 78, y2 + 4, 2.5, c); }); },
+  distribution(s) { const h = [4, 10, 18, 28, 36, 30, 20, 12, 8, 6, 4, 3];
+    h.forEach((v, i) => rect(s, 6 + i * 7.5, 58 - v, 7, v, i >= 8 ? B : G)); line(s, 66, 6, 66, 60, N, 1, "2 2"); line(s, 4, 58, 98, 58, AX); },
+  scatter(s) { line(s, 6, 58, 96, 58, AX); line(s, 6, 4, 6, 58, AX);
+    [[16, 48, 3, G], [26, 42, 4, G], [34, 44, 2.5, G], [44, 34, 5, G], [56, 30, 3, G], [64, 22, 4, B], [76, 16, 6, B], [86, 12, 3.5, B], [50, 40, 3, G], [70, 34, 2.5, G]]
+      .forEach(([x, y, r, f]) => circ(s, x, y, r, f, .85)); },
+  sankey(s) { const band = (y1a, y1b, y2a, y2b, c, o) => add(s, "path", { d: `M10,${y1a} C50,${y1a} 50,${y2a} 90,${y2a} L90,${y2b} C50,${y2b} 50,${y1b} 10,${y1b} Z`, fill: c, "fill-opacity": o });
+    band(4, 22, 4, 16, G, .45); band(22, 34, 40, 52, G, .45); band(36, 60, 18, 38, B, .55);
+    rect(s, 6, 4, 4, 30, G); rect(s, 6, 36, 4, 24, B); rect(s, 90, 4, 4, 12, G); rect(s, 90, 18, 4, 20, B); rect(s, 90, 40, 4, 12, G); },
+  map(s) { const shades = [t("seq-blue-1"), t("seq-blue-2"), t("seq-blue-3"), t("seq-blue-4"), t("seq-blue-5"), t("seq-blue-6")];
+    [[0, 0, 2], [1, 0, 1], [2, 0, 3], [3, 0, 2], [0, 1, 4], [1, 1, 5], [2, 1, 3], [3, 1, 1], [0, 2, 1], [1, 2, 2], [2, 2, 4], [3, 2, 0]]
+      .forEach(([c, r, k]) => rect(s, 12 + c * 19.5, 4 + r * 19.5, 18.5, 18.5, shades[k])); },
+  kpi(s) { add(s, "text", { x: 4, y: 40, "font-size": 34, "font-weight": 300, fill: N, "font-family": "Libre Franklin" }).textContent = "75%";
+    rect(s, 4, 50, 92, 5, GL); rect(s, 4, 50, 69, 5, B); },
+};
+
+const cards = [
+  ["Magnitude", "bar.md", "How big? Which is bigger, and by how much?", "bar", "Sorted bar / column",
+   "Dot plot (values far from zero), proportional bubbles (huge ranges)", "Pictograms", "Attrition by job family; open reqs by site"],
+  ["Part-to-whole", "stacked-bar.md", "What is it made of? How does a total break down?", "stacked", "100% stacked bar",
+   "Waterfall (bridge between totals), treemap (hierarchies, many parts)", "Donut / pie: 5 parts max, one whole", "Workforce mix; FY25 → FY26 labor cost bridge"],
+  ["Change over time", "line.md", "How is it moving? When did it change?", "line", "Line, focus series in blue",
+   "Columns (few periods), stacked area (composition + total), small multiples", "Bubble timeline (events)", "Monthly attrition; SWP demand vs. supply"],
+  ["Ranking", "slope-bump.md", "Who's on top? Who moved?", "ranking", "Sorted bar; slope for change in rank",
+   "Bump chart (rank over 3+ periods)", "Heat table (see tables.md)", "Top skills in postings, 2023 → 2026"],
+  ["Distribution", "distribution.md", "How spread out? What's typical? Where are the outliers?", "distribution", "Histogram, strip or box plot",
+   "Dot plot of medians", "An average with no spread", "Compa-ratio within band; span of control; tenure"],
+  ["Correlation", "scatter-bubble.md", "Do two measures move together?", "scatter", "Scatter / bubble scatter",
+   "Heatmap (two categories × one measure)", "Dual axis: use two aligned charts", "Engagement vs. attrition by team; gen-AI exposure vs. pay"],
+  ["Relationships & flows", "sankey.md", "How do things connect, or move between states?", "sankey", "Sankey (flows between states)",
+   "Parallel coordinates (multi-measure profiles)", "Venn: 3 sets max", "Internal mobility between job families"],
+  ["Geo-spatial", "maps.md", "Where?", "map", "Choropleth (rates by area)",
+   "Bubble map (counts at locations)", "Dot density", "Talent availability by metro; headcount by DC"],
+  ["Single number", "kpi-big-number.md", "What is the one figure to remember?", "kpi", "KPI / big number",
+   "Progress bar or ring for % of a target", "Speedometers, 3D gauges", "75% of critical roles have a ready successor"],
+];
+const grid = document.getElementById("grid");
+for (const [name, page, q, icon, first, also, care, ex] of cards) {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `<h2>${name}<small>cookbook/${page}</small></h2><div class="q">${q}</div>
+    <svg viewBox="0 0 100 64" role="img" aria-label="${first}"></svg>
+    <div><div class="first">${first}</div>
+      <div class="row"><span class="k">Also</span><span>${also}</span></div>
+      <div class="row"><span class="k care">Care</span><span>${care}</span></div></div>
+    <div class="ex">e.g. ${ex}</div>`;
+  grid.appendChild(card);
+  icons[icon](card.querySelector("svg"));
+}
+</script>
+</body>
+</html>

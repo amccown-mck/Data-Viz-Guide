@@ -18,6 +18,7 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 | Cookbook | 23 chart pages (including distribution, tables, venn) plus `_template.md` | `docs/cookbook/` |
 | Agent assets | `AGENTS.md`, `CLAUDE.md`, Copilot instructions, path-scoped instructions, `mck-chart` skill, portable rules | `AGENTS.md`, `.github/`, `.claude/skills/`, `dist/agents/` |
 | Office starters | `.potx` template, starter deck (4 native charts), chart workbook (palette, 4 charts, heat table), set-up guide; checked by rendering in PowerPoint/Excel | `dist/office/`, `office/build_office.py`, `docs/office-setup.md` |
+| Print sheets | One-page consultant cheat sheet and chart chooser (PDF), colors read from tokens | `dist/print/`, `templates/print/`, `tools/build_print.py` |
 | HTML starter | Self-contained chart-card page using `dist/web/` | `templates/html/chart-card.html` |
 | Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook | `tools/check_snippets.py` |
 
@@ -26,8 +27,7 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 1. ~~**Finish the cookbook.**~~ Done: `distribution`, `tables` and `venn` pages added, with gallery charts and verified snippets.
 2. ~~**Agent assets.**~~ Done: expanded `AGENTS.md`; `CLAUDE.md` and `.github/copilot-instructions.md` point to it; path-scoped `.github/instructions/viz-{python,web,r}.instructions.md`; the `mck-chart` workflow skill (`.github/skills/`, with a Claude Code shim in `.claude/skills/`); the portable rules file is generated from `agents/mck-viz-rules.template.md` into `dist/agents/mck-viz-rules.md` by `tokens/build.py`.
 3. ~~**HTML starter.**~~ Done: `templates/html/chart-card.html` (bar + line cards, token colors via CSS variables, drawn after the font loads, top key on phones). `gallery.html` checked at 1060 px and 390 px and fixed: clipped labels (Plotly cached fallback-font widths), bold focus labels, footnote, rgba literals → `mv.rgba()`, stable div ids. Known gaps on phones: the longest bold bar label still clips slightly at 390 px, the line-end labels touch the steep demand line, and the Sankey is cramped. Port the template's mobile key swap if the gallery is used on phones.
-4. **Excel / PowerPoint (priority 2 audience).** Partly done: `office/build_office.py` generates `dist/office/McKesson-DataViz.potx`, `McKesson-DataViz-Starter.pptx` (native bar highlight, line, waterfall, 100% stacked) and `McKesson-DataViz-Charts.xlsx`; set-up how-to in `docs/office-setup.md`. Still to do:
-   - Write a one-page consultant cheat sheet and a chart-chooser PDF.
+4. ~~**Excel / PowerPoint (priority 2 audience).**~~ Done: `office/build_office.py` generates `dist/office/McKesson-DataViz.potx`, `McKesson-DataViz-Starter.pptx` (native bar highlight, line, waterfall, 100% stacked) and `McKesson-DataViz-Charts.xlsx`; set-up how-to in `docs/office-setup.md`; one-page `dist/print/cheat-sheet.pdf` and `chart-chooser.pdf` (sources in `templates/print/`, printed by `tools/build_print.py`).
 5. **Power BI (priority 3).** Load `dist/powerbi/mckesson-dataviz-theme.json` into Desktop and validate it. Libre Franklin isn't a Power BI Service font, so confirm how the fallback renders.
 6. **R (nice-to-have).** Smoke-test `dist/r/theme_mck.R` with ggplot2 and add 2–3 examples.
 7. **QA automation.** Add a lint script that checks a matplotlib or Plotly figure against the rules: more than 6 colors, a missing headline or source, legend vs. direct labels, and so on.
@@ -43,6 +43,7 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 .\.venv\Scripts\python.exe examples\python\gallery_matplotlib.py
 .\.venv\Scripts\python.exe examples\python\gallery_plotly.py
 .\.venv\Scripts\python.exe office\build_office.py                # regenerate .pptx/.potx/.xlsx in dist/office
+.\.venv\Scripts\python.exe tools\build_print.py                    # cheat sheet + chart chooser PDFs (needs Chrome or Edge)
 .\.venv\Scripts\python.exe tools\check_snippets.py                # run every verified cookbook snippet (~40 s)
 ```
 

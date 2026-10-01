@@ -86,9 +86,9 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 | `examples/python/` | Gallery scripts that render `examples/output/` | Yes |
 | `agents/` | Templates for portable agent rules (built into `dist/agents/`) | Yes |
 | `office/` | `build_office.py`: generates the `.pptx`, `.potx` and `.xlsx` in `dist/office/` | Yes, then rerun it |
-| `templates/` | Copy-and-edit starters (HTML chart card) | Yes |
+| `templates/` | Copy-and-edit starters (HTML chart card) and the print sources for the one-page PDFs (`templates/print/`, built by `tools/build_print.py`) | Yes |
 | `reference/` | Paraphrased inspiration notes. No source images are ever committed | Rarely |
-| `tools/` | Brand-extraction helpers and `check_snippets.py` | Yes |
+| `tools/` | Brand-extraction helpers, `check_snippets.py`, `build_print.py` | Yes |
 
 ### Commands (Windows PowerShell, from the repo root)
 ```powershell

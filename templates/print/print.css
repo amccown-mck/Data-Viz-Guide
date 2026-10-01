@@ -1,0 +1,34 @@
+/* Shared print styles for the one-page PDFs in templates/print/. Colors come from dist/web/mck-viz.css variables. */
+@font-face { font-family: "Libre Franklin"; font-weight: 300; src: url("../../fonts/LibreFranklin/LibreFranklin-Light.ttf"); }
+@font-face { font-family: "Libre Franklin"; font-weight: 400; src: url("../../fonts/LibreFranklin/LibreFranklin-Regular.ttf"); }
+@font-face { font-family: "Libre Franklin"; font-weight: 500; src: url("../../fonts/LibreFranklin/LibreFranklin-Medium.ttf"); }
+@font-face { font-family: "Libre Franklin"; font-weight: 600; src: url("../../fonts/LibreFranklin/LibreFranklin-SemiBold.ttf"); }
+@font-face { font-family: "Libre Franklin"; font-weight: 700; src: url("../../fonts/LibreFranklin/LibreFranklin-Bold.ttf"); }
+
+@page { size: 11in 8.5in; margin: 0.4in 0.45in; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: var(--mck-font); color: var(--mck-text-primary); font-size: 8.9pt; line-height: 1.3;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.sheet { width: 10.1in; height: 7.7in; display: flex; flex-direction: column; overflow: hidden; }
+header { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1.5pt solid var(--mck-chart-total);
+         padding-bottom: 5pt; margin-bottom: 9pt; }
+h1 { font-size: 22pt; font-weight: 300; color: var(--mck-blue); margin: 0; letter-spacing: -0.2pt; }
+h1 strong { font-weight: 700; }
+header p { margin: 0; color: var(--mck-text-muted); font-size: 8.5pt; }
+h2 { font-size: 10pt; font-weight: 700; color: var(--mck-text-headline); margin: 0 0 4pt; }
+h3 { font-size: 8.5pt; font-weight: 700; color: var(--mck-text-headline); margin: 0 0 2pt; text-transform: uppercase;
+     letter-spacing: 0.4pt; }
+p { margin: 0 0 4pt; }
+ul { margin: 0; padding-left: 11pt; }
+li { margin-bottom: 2pt; }
+.muted { color: var(--mck-text-muted); }
+.focus { color: var(--mck-chart-focus); font-weight: 700; }
+.neg { color: var(--mck-semantic-negative-text); font-weight: 700; }
+.panel { background: var(--mck-surface-subtle); padding: 7pt 8pt; border-radius: 2pt; }
+.swatch { display: inline-block; width: 11pt; height: 11pt; vertical-align: -2pt; margin-right: 4pt; border-radius: 1pt; }
+.hex { font-family: Consolas, "Courier New", monospace; font-size: 7.5pt; color: var(--mck-text-muted); }
+footer { margin-top: auto; padding-top: 5pt; border-top: 0.5pt solid var(--mck-chart-grid); font-size: 7pt;
+         color: var(--mck-text-muted); font-weight: 300; display: flex; justify-content: space-between; }

@@ -10,6 +10,7 @@ Do this once per computer, and every chart you make in Office will start with Mc
 | PowerPoint template | 16:9, theme applied, left-aligned navy titles, no slides | [`dist/office/McKesson-DataViz.potx`](../dist/office/McKesson-DataViz.potx) |
 | Starter deck | Native, editable sample charts: bar highlight, line, waterfall, 100% stacked bar | [`dist/office/McKesson-DataViz-Starter.pptx`](../dist/office/McKesson-DataViz-Starter.pptx) |
 | Chart workbook | Palette sheet, the same four charts in Excel, and a heat-table scorecard | [`dist/office/McKesson-DataViz-Charts.xlsx`](../dist/office/McKesson-DataViz-Charts.xlsx) |
+| One-page PDFs | Cheat sheet (anatomy, colors, checklist) and chart chooser | [`dist/print/cheat-sheet.pdf`](../dist/print/cheat-sheet.pdf), [`dist/print/chart-chooser.pdf`](../dist/print/chart-chooser.pdf) |
 
 ## 1. Install the fonts
 - **Windows:** open `fonts/LibreFranklin`, select all the `.ttf` files, right-click and choose **Install** (or **Install for all users** if you have admin rights). Restart Excel and PowerPoint.
@@ -61,5 +62,6 @@ All of these files are generated, so never edit them in `dist/` by hand. After c
 ```powershell
 .\.venv\Scripts\python.exe tokens\build.py           # theme XML, CSS, Plotly, ... (dist/)
 .\.venv\Scripts\python.exe office\build_office.py    # .pptx, .potx, .xlsx (dist/office/)
+.\.venv\Scripts\python.exe tools\build_print.py       # cheat sheet + chart chooser PDFs (dist/print/)
 ```
 `office/build_office.py` needs `python-pptx`, `xlsxwriter` and `pandas`. It swaps the McKesson theme into each package itself, and removes xlsxwriter's `defaultThemeVersion` attribute, without which Excel ignores the embedded theme.
