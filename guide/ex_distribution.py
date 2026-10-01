@@ -30,7 +30,7 @@ FAM_T = {"Distribution Center Associate": "DC Assoc.", "Pharmacy Technician": "P
          "Supply Chain Planner": "SC Planner"}
 TEXT.update(
     ds_strip_headline=(f"One in {WORD[round(100 / ST.low[FOCUS])]} pharmacy technicians is paid below 0.90 of range "
-                       f"midpoint, about {_ratio:.0f}x the share in any other job family"),
+                       f"midpoint, about {_ratio:.0f}× the share in any other job family"),
     ds_strip_subtitle="Compa-ratio (base pay ÷ salary-range midpoint) by job family, U.S. regular employees, Mar 2026",
     ds_n_people=f"{len(CR):,}",
     ds_focus_low=f"{ST.low[FOCUS]:.0f}%",

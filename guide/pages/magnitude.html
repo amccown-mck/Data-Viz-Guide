@@ -162,15 +162,16 @@
   </div>
   <div class="stage top">
     <div class="panel">
-      <div class="platform"><h5>PowerPoint and Excel</h5><p>Start from the starter deck or chart workbook in <code>dist/office/</code>. Insert a clustered bar, sort the data ascending (so the largest is on top), set <strong>Gap Width 50%</strong>, fill all bars with Context grey and the focus bars with Focus blue. Add data labels at Outside End; delete the value axis, gridlines, legend and chart title. The slide title is the headline.</p></div>
-      <div class="platform"><h5>Power BI</h5><p>Import <code>mckesson-dataviz-theme.json</code> and sort the bars by the measure. Drive the highlight from a measure, not by clicking bars: a <code>Bar color</code> measure returns the focus blue when attrition is above 20% and context grey otherwise, applied through <strong>Colors › fx › Field value</strong>. Turn on data labels; turn off the X axis and gridlines. See <a href="../../docs/powerbi-setup.md">docs/powerbi-setup.md</a>.</p></div>
-      <div class="platform"><h5>Python</h5><div><p>matplotlib with <code>mckviz</code>; Plotly uses the same helpers (<code>mv.pl_highlight</code>).</p>
-<pre class="snip">bars = ax.barh(df.job_family, df.rate, height=0.67,
-               color=mv.highlight(df.job_family, focus=focus))
-mv.label_bars(ax, bars, fmt="{:.1f}%")
-mv.clean_axes(ax, keep=("left",), grid=None); ax.set_xticks([])
-mv.titles(fig, headline, subtitle); mv.source(fig, source)
-mv.lint(fig)   # checks colors, zero baseline, labels vs. axis</pre></div></div>
+      <div class="platform"><h5>PowerPoint and Excel</h5><p>Start from the starter deck or chart workbook in <code>dist/office/</code>. A clustered bar sorted ascending (largest on top), <strong>Gap Width 50%</strong>, bars Context grey and the focus bars Focus blue, labels Outside End; delete the value axis, gridlines, legend and chart title. The slide title is the headline.</p></div>
+      <div class="platform"><h5>Power BI</h5><p>Import <code>mckesson-dataviz-theme.json</code> and sort the bars by the measure. Drive the highlight from a measure, not by clicking bars: a <code>Bar color</code> measure returns the focus blue when attrition is above the enterprise-rate measure and context grey otherwise, applied through <strong>Colors › fx › Field value</strong>. Data labels on; X axis and gridlines off (<a href="../../docs/powerbi-setup.md">set-up</a>).</p></div>
+      <div class="platform"><h5>Python</h5><div><p>matplotlib with <code>mckviz</code> (Plotly: <code>mv.pl_highlight</code>), on the example data:</p>
+<pre class="snip">df = pd.read_csv("examples/data/attrition_by_job_family.csv").sort_values("vol_attrition_pct")
+hot = df.job_family[df.vol_attrition_pct > df.enterprise_rate_pct]  # above enterprise
+band = mv.TOKENS["chart"]["bar"]["band_fill"]  # bar about 2x the gap
+bars = ax.barh(df.job_family, df.vol_attrition_pct, height=band,
+               color=mv.highlight(df.job_family, focus=hot))
+mv.label_bars(ax, bars, fmt="{:.1f}%"); mv.clean_axes(ax, keep=("left",), grid=None)
+mv.titles(fig, headline, subtitle); mv.source(fig, source); mv.lint(fig)</pre></div></div>
       <div class="platform"><h5>HTML</h5><p>Copy <code>templates/html/chart-card.html</code>: headline, subtitle and source are HTML, colors come from CSS variables such as <code>var(--mck-chart-focus)</code>, and the chart is drawn after the font loads.</p></div>
       <div class="platform"><h5>R</h5><p><code>source("dist/r/theme_mck.R")</code>, then <code>geom_col(aes(fill = job_family), width = 0.67)</code> + <code>scale_fill_manual(values = mck_highlight(levels(df$job_family), focus = focus), guide = "none")</code> + <code>theme_mck()</code>.</p></div>
       <div class="platform"><h5>Coding agents</h5><p>"Make a McKesson bar chart of voluntary attrition by job family, FY26, highlighting the families above the enterprise rate." The <code>mck-chart</code> skill runs the workflow and returns the chart, a chart brief and alt text.</p></div>

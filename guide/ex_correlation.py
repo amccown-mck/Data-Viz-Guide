@@ -112,7 +112,7 @@ ROLE_SHORT = {"Claims & Billing Specialist": "Claims & Billing", "Distribution C
               "Finance Operations": "Finance Ops", "Pharmacy Technician": "Pharmacy Tech",
               "Specialty Nursing": "Specialty Nursing", "Data & Analytics": "Data & Analytics"}
 TEXT["corr_sc_headline"] = (f"{word(len(EXPO_FOCUS), True)} support roles have half or more of their task hours exposed to "
-                            f"gen AI, {EXPO_FOCUS_AVG / EXPO_AVG:.0f}x the {EXPO_AVG:.0f}% workforce average")
+                            f"gen AI, {EXPO_FOCUS_AVG / EXPO_AVG:.0f}× the {EXPO_AVG:.0f}% workforce average")
 TEXT["corr_sc_subtitle"] = "Share of task hours exposed to gen AI vs. median base pay, by role, FY26; bubble area = headcount"
 TEXT["corr_sc_avg"] = f"{EXPO_AVG:.0f}%"
 

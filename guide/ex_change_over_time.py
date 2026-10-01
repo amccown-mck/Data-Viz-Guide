@@ -77,7 +77,7 @@ _since = WR[WR.quarter >= "2023"].groupby("sub_sector").roles_affected.sum().sor
 TEXT["bt_top"] = f"{_since.iloc[0]:,}"
 TEXT["bt_ratio"] = f"{_since.iloc[0] / _since.iloc[1]:.1f}"
 TEXT["bt_headline"] = (f"Pharma manufacturers have announced {TEXT['bt_top']} job cuts since 2023, "
-                       f"{TEXT['bt_ratio']}x the next healthcare sub-sector")
+                       f"{TEXT['bt_ratio']}× the next healthcare sub-sector")
 TEXT["bt_subtitle"] = "Announced workforce reductions by healthcare sub-sector, 2020–Q2 2026 (bubble area = roles affected)"
 
 RB = _csv("regretted_attrition_bu")

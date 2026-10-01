@@ -34,6 +34,7 @@ OUT = ROOT / "dist" / "guide"
 PDF = OUT / "McKesson-DataViz-Guide.pdf"
 STANDALONE = OUT / "McKesson-DataViz-Guide.html"
 PRINT_OUT = ROOT / "dist" / "print"
+REPO_URL = "https://github.com/amccown-mck/Data-Viz-Guide"   # kit files are linked here from the PDF and standalone file
 sys.path[:0] = [str(SRC)]
 
 # (file stem, nav label, folio section, kind). Order = reading order = PDF order.
@@ -186,6 +187,17 @@ def single_doc_links(body: str, first_of: dict[str, str], present: set[str]) -> 
                   else f'<a {m.group(1)}{m.group(3)}>', body)
 
 
+def repo_links(body: str) -> str:
+    """Links to kit files (../office/..., ../../docs/...) are relative to dist/guide/, which only works inside the repo
+    or the release bundle. In files that travel on their own (the PDFs, the standalone HTML), point them at GitHub."""
+    def fix(m):
+        target = (OUT / m.group(1)).resolve()
+        rel = target.relative_to(ROOT).as_posix()
+        kind = "tree" if target.is_dir() else "blob"
+        return f'href="{REPO_URL}/{kind}/main/{rel}{m.group(2) or ""}"'
+    return re.sub(r'href="((?:\.\./)+[^"#]*)(#[^"]*)?"', fix, body)
+
+
 def main() -> None:
     import exhibits
 
@@ -213,7 +225,7 @@ def main() -> None:
         print(f"wrote {(OUT / f'{stem}.html').relative_to(ROOT)}")
 
     every = set(stem_of)
-    all_single = single_doc_links("\n".join(singles[s] for s, *_ in PAGES), first_of, every)
+    all_single = repo_links(single_doc_links("\n".join(singles[s] for s, *_ in PAGES), first_of, every))
     (OUT / "print.html").write_text(LAYOUT.format(title="McKesson Data Visualization Guide", head=LINKED_CSS, topbar="",
                                                   body=all_single, script=""), encoding="utf-8")
     for name, ids in ONE_PAGERS.items():                     # print sources for the one-page PDFs
@@ -288,18 +300,13 @@ def write_standalone(all_single: str) -> None:
         end = starts[k + 1][0] if k + 1 < len(starts) else len(body)
         parts.append(f'<div class="page" data-page="{stem}">\n{body[i:end]}</div>\n')
     body = "".join(parts)
-    # Files that live in the starter kit (../office/..., ../../docs/...) can't travel with one file: keep the name,
-    # drop the link, and say where it lives.
-    body = re.sub(r'<a href="(?:\.\./)+([^"#]+)"[^>]*>(.*?)</a>',
-                  lambda m: f'<span class="ext" title="In the starter kit: {m.group(1)}">{m.group(2)}</span>', body,
-                  flags=re.S)
     body = re.sub(r'src="img/([\w-]+\.png)"', lambda m: f'src="{_data_uri(OUT / "img" / m.group(1), "image/png")}"', body)
     bar = topbar("__standalone__", lambda s: f"#{first_of[s]}")
     bar = re.sub(r'<a (class="tool" )?href="#([\w-]+)"',
                  lambda m: f'<a {m.group(1) or ""}data-page="{next(s for s in first_of if first_of[s] == m.group(2))}" '
                            f'href="#{m.group(2)}"', bar)
-    note = ('<p class="standalone-note">This is the standalone copy of the guide: one file that works offline. Templates, '
-            'themes and code live in the starter kit repo.</p>')
+    note = ('<p class="standalone-note">This is the standalone copy of the guide: one file that works offline. Links to '
+            'templates, themes and code open the starter kit on GitHub; the release bundle has them as files.</p>')
     body = body.replace('<p class="small">Inspired by the structure', note + '\n    <p class="small">Inspired by the structure', 1)
     STANDALONE.write_text(LAYOUT.format(title="McKesson Data Visualization Guide", head=f"<style>\n{css}\n</style>",
                                         topbar=bar, body=body, script=STANDALONE_JS), encoding="utf-8")
@@ -332,6 +339,9 @@ document.fonts.ready.then(() => {
         bad.push((i + 1) + ':' + (el.parentElement.className.split(' ')[0]) + '>' + el.tagName.toLowerCase() +
                  ':' + Math.round(Math.max(r.bottom - limit, top - r.top)) + 'px');
     }
+    for (const el of s.querySelectorAll('.ex-wrap, pre.snip, .panel, .card'))      // sideways: scrollbars in the PDF
+      if (el.scrollWidth > el.clientWidth + 1)
+        bad.push((i + 1) + ':' + el.className.split(' ')[0] + ':' + (el.scrollWidth - el.clientWidth) + 'px wide');
   });
   document.body.setAttribute('data-overflow', bad.join(' '));
 });

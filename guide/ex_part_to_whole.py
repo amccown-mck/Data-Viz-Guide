@@ -214,7 +214,7 @@ def donut(ax, labels, values, colors, *, start=90, width=0.32, size=MINI, center
 MIX = _csv("workforce_mix").sort_values("contingent_pct")
 TECH = float(MIX.contingent_pct[MIX.function == "Technology"].iloc[0])
 OTHERS = float(MIX.contingent_pct[MIX.function != "Technology"].mean())
-TEXT["mix_headline"] = (f"Technology uses contingent labor at more than {int(TECH / OTHERS)}x the average rate of "
+TEXT["mix_headline"] = (f"Technology uses contingent labor at more than {int(TECH / OTHERS)}× the average rate of "
                         "other functions")
 TEXT["mix_subtitle"] = "Workforce composition by function, 2026 (% of workers)"
 

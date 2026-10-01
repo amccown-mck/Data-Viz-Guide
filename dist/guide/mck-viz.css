@@ -166,7 +166,7 @@
 .mck-table .bar { display: inline-block; height: 10px; background: var(--mck-chart-context); vertical-align: middle; margin-right: 6px; }
 /* Inline bars after the number, all growing from one left edge: <td class="num">6,200<span class="bars"><span class="bar" style="width:80%"></span></span></td>.
    Give the total row an empty <span class="bars"></span> so its number lines up. */
-.mck-table .bars { display: inline-block; width: 52px; margin-left: 8px; text-align: left; vertical-align: middle; line-height: 0; }
+.mck-table .bars { display: inline-block; width: 44px; margin-left: 8px; text-align: left; vertical-align: middle; line-height: 0; }
 .mck-table .bars .bar { margin-right: 0; }
 .mck-table tr.is-focus .bar { background: var(--mck-chart-focus); }
 @media (max-width: 600px) {

@@ -16310,7 +16310,8 @@ L 129.607477 64.616822
 <pre class="snip">link_color = {"progressed": mv.rgba(C.focus, 0.55),       # one color per transfer type
               "dropped": mv.rgba(C.context, 0.45), "not_placed": mv.rgba(C.negative, 0.65)}
 go.Sankey(node=dict(color=C.total, thickness=6),
-          link=dict(source=src, target=dst, value=people, color=[link_color[t] for t in kind]))</pre></div></div>
+          link=dict(source=src, target=dst, value=people,
+                    color=[link_color[t] for t in kind]))</pre></div></div>
       <div class="platform"><h5>HTML</h5><p>Plotly <code>Sankey</code> with semi-transparent links; <code>Parcoords</code> lets readers brush and reorder axes; the Venn as filled <code>path</code> shapes with hover off.</p></div>
       <div class="platform"><h5>R</h5><p><code>ggalluvial::geom_alluvium()</code> for Sankey-style flows; <code>geom_line()</code> over min–max scaled long data for parallel coordinates; <code>sf::st_intersection()</code> for Venn regions.</p></div>
     </div>

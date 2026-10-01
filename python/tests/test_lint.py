@@ -155,3 +155,15 @@ def test_label_line_ends_nudges_close_labels_apart():
     gaps = [b - a for a, b in zip(pos, pos[1:])]
     assert min(gaps) >= 0.99 * (mv._role("label")["size_pt"] - 1) * 1.25, gaps
     plt.close(fig)
+
+
+def test_lint_prints_on_a_console_that_cannot_encode_symbols(monkeypatch):
+    import io
+    import sys
+    ascii_out = io.TextIOWrapper(io.BytesIO(), encoding="ascii")        # like a Windows pipe in CI
+    monkeypatch.setattr(sys, "stdout", ascii_out)
+    fig, ax = plt.subplots()
+    ax.pie([1] * 7)
+    found = mv.lint(fig)                                                 # findings contain "≤"; must not raise
+    assert any(f.rule == "pie-max-5" for f in found)
+    plt.close(fig)

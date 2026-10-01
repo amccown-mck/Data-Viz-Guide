@@ -11,7 +11,7 @@ This is the McKesson data-visualization starter kit. It covers principles, desig
 | Learning the house style | [The guide](dist/guide/index.html) ([PDF](dist/guide/McKesson-DataViz-Guide.pdf)) |
 | Making any chart | [docs/principles.md](docs/principles.md) → [docs/choosing-a-chart.md](docs/choosing-a-chart.md) → [docs/qa-checklist.md](docs/qa-checklist.md) |
 | Wanting it on one page | [Chart chooser](dist/guide/chooser.html) and [cheat sheet](dist/guide/cheat-sheet.html) in the guide, or as PDFs to print or pin: [chooser](dist/print/chart-chooser.pdf), [cheat sheet](dist/print/cheat-sheet.pdf) |
-| Coding in Python | `pip install -e ./python`, then `import mckviz as mv; mv.use()`. Examples are in [examples/python/](examples/python/) |
+| Coding in Python | Clone this repo, then `pip install -e "./python[examples]"` (the `examples` extra adds Plotly and pandas), then `import mckviz as mv; mv.use()`. Examples are in [examples/python/](examples/python/) |
 | Building HTML / JS | Start from [templates/html/chart-card.html](templates/html/chart-card.html); themes in [dist/web/](dist/web/): CSS variables, Plotly template, Vega-Lite config |
 | Using Excel / PowerPoint | [docs/office-setup.md](docs/office-setup.md): install the fonts and theme, then start from the template, starter deck and chart workbook in [dist/office/](dist/office/) |
 | Using Power BI | [docs/powerbi-setup.md](docs/powerbi-setup.md), then import [dist/powerbi/mckesson-dataviz-theme.json](dist/powerbi/mckesson-dataviz-theme.json) |

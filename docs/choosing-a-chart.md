@@ -18,22 +18,24 @@ Pick the chart from the **question**, not from habit. First name the question ty
 
 ## Step 2 — Choose from the short list
 
-| Question type | First choice | Also good | Use with care |
+This table mirrors the chart chooser in the guide (`dist/guide/chooser.html`); keep the two in step. **Avoid** lists charts that look right for the question but mislead or slow the reader.
+
+| Question type | Start with | Also | Avoid |
 |---|---|---|---|
-| Magnitude | [Bar / column](cookbook/bar.md) | [Dot plot](cookbook/dot-plot-dumbbell.md) (non-zero baselines), [proportional bubbles](cookbook/bubble-chart.md) (huge ranges) | Pictograms/infographics |
-| Part-to-whole | [100% stacked bar](cookbook/stacked-bar.md) | [Waterfall](cookbook/waterfall.md) (bridges), [treemap](cookbook/treemap.md) (hierarchies, many parts) | [Donut / pie](cookbook/donut-pie.md) (≤ 5 parts, one whole) |
-| Change over time | [Line](cookbook/line.md) | [Column](cookbook/bar.md) (few periods, discrete), [stacked area](cookbook/stacked-area.md) (composition + total), [small multiples](cookbook/small-multiples.md) | [Bubble timeline](cookbook/bubble-timeline.md) (events) |
-| Ranking | [Sorted bar](cookbook/bar.md) | [Slope / bump](cookbook/slope-bump.md) (change in rank between 2+ points) | Tables with heat (see [tables](cookbook/tables.md)) |
-| Distribution | [Histogram / box / beeswarm](cookbook/distribution.md) | [Dot plot](cookbook/dot-plot-dumbbell.md) | Averages alone (hide the spread) |
-| Correlation | [Scatter / bubble scatter](cookbook/scatter-bubble.md) | [Heatmap](cookbook/heatmap.md) (two categorical dimensions) | [Dual axis](cookbook/dual-axis.md) (avoid if possible) |
-| Relationships & flows | [Sankey](cookbook/sankey.md) (flows between states) | [Parallel coordinates](cookbook/parallel-coordinates.md) (multi-attribute profiles) | [Venn](cookbook/venn.md) (≤ 3 sets) |
-| Geo-spatial | [Choropleth](cookbook/maps.md) (rates by area) | [Bubble map](cookbook/maps.md) (counts by location) | [Dot density](cookbook/maps.md) |
-| Single number | [KPI / big number](cookbook/kpi-big-number.md) | Ring/progress gauge (for % of a target) | Speedometers, 3D gauges |
+| Magnitude | [Sorted bar](cookbook/bar.md) | [Dot plot](cookbook/dot-plot-dumbbell.md) for values far from zero; paired bars; [proportional bubbles](cookbook/bubble-chart.md) for huge ranges | Rainbow, 3D or cut-off bars |
+| Part-to-whole | [100% stacked bar](cookbook/stacked-bar.md) | [Waterfall](cookbook/waterfall.md) between totals; [treemap](cookbook/treemap.md) for many parts | Pies or [donuts](cookbook/donut-pie.md) over 5 slices |
+| Change over time | [Line](cookbook/line.md), focus series in blue | [Stacked area](cookbook/stacked-area.md); [small multiples](cookbook/small-multiples.md); [bubble timeline](cookbook/bubble-timeline.md) for events | Ten colored lines |
+| Ranking | [Sorted bar](cookbook/bar.md); [slope](cookbook/slope-bump.md) for change in rank | [Dumbbell](cookbook/dot-plot-dumbbell.md) for us vs. them; [heat table](cookbook/tables.md) | A color for every line |
+| Distribution | [Strip plot or histogram](cookbook/distribution.md) | Box plot to compare many groups | An average with no spread |
+| Correlation | [Scatter or bubble scatter](cookbook/scatter-bubble.md) | [Heatmap](cookbook/heatmap.md): two categories, one measure | [Dual axes](cookbook/dual-axis.md) |
+| Relationships & flows | [Sankey](cookbook/sankey.md) | [Parallel coordinates](cookbook/parallel-coordinates.md); [Venn](cookbook/venn.md), 3 sets max | A color per stage |
+| Geo-spatial | [Choropleth](cookbook/maps.md) for rates | Bubble map for counts; world map; zoom-in with a locator | Counts on a choropleth |
+| Single number | [Big number](cookbook/kpi-big-number.md) with a comparison | Progress bar or ring for a target | Speedometers |
 
 ## Step 3 — Sanity checks
 
 - **More than ~12 categories?** Use horizontal bars sorted by value, or group the long tail into "Other".
-- **Values tightly clustered far from zero** (e.g., engagement 71–78)? Don't truncate bars — use a dot plot or show the **difference from benchmark**.
+- **Values tightly clustered far from zero** (e.g., engagement scores of 66–77)? Don't truncate bars — use a dot plot or show the **difference from benchmark**.
 - **Two measures with different units over time?** Don't reach for dual axes — use two aligned charts, or index both to 100.
 - **Comparing many groups on the same measure over time?** Use small multiples with a shared scale, and highlight the focus group in each.
 - **The audience will explore it themselves?** That's a dashboard — see [formats.md](formats.md#dashboards-power-bi--fabric).

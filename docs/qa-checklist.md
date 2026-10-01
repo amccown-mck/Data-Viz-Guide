@@ -7,12 +7,12 @@ Run this before any chart leaves your hands. Agents: run it on your own output a
 ## Message
 - [ ] Headline is a **full-sentence insight**, ≤ 2 lines, no final period, balanced line breaks.
 - [ ] Every claim in the headline is **visibly supported** (recompute counts, multipliers, "all/most/none").
-- [ ] Subtitle states **metric, unit, scope and period** — and nothing opinionated.
+- [ ] Subtitle states **metric, unit, scope and period**, and nothing opinionated.
 - [ ] The chart type matches the question ([choosing-a-chart.md](choosing-a-chart.md)).
 - [ ] One message per chart; ≤ 2 charts per slide.
 
 ## Color and emphasis
-- [ ] Highlight follows the headline: grey context, blue focus, navy accent — **≤ 2 highlighted** items. Orange appears only where something is worse (negative, below target).
+- [ ] Highlight follows the headline: grey context, blue focus, navy accent; **≤ 2 highlighted** items. Orange appears only where something is worse (negative, below target).
 - [ ] Categorical colors (if any) come from the fixed order, ≤ 6, consistent across the deck.
 - [ ] No red–green contrasts; nothing encoded by color alone.
 - [ ] Focus category labels are bolded/colored to echo the highlight.
@@ -39,12 +39,12 @@ Run this before any chart leaves your hands. Agents: run it on your own output a
 ## Source and ethics
 - [ ] Footnotes define metrics and caveats.
 - [ ] Source line names the system(s), **as-of date** and **population**.
-- [ ] No group smaller than the **minimum n** (default 10) — including in tooltips, filters and drill-downs.
+- [ ] No group smaller than the **minimum n** (default 10), including in tooltips, filters and drill-downs.
 - [ ] Protected attributes used only for approved analyses, aggregated.
 - [ ] Forecasts/estimates are labelled and show a range or scenario.
 
 ## Accessibility and delivery
 - [ ] Text contrast ≥ 4.5:1; fills < 3:1 carry labels.
 - [ ] Alt text / text summary provided (headline + key numbers).
-- [ ] Exported at the right format: native Office chart, SVG/PDF for print, PNG @ 300 dpi, or responsive HTML.
+- [ ] Right format: native Office chart, SVG/PDF or 300 dpi PNG for print, 200 dpi PNG for screens, or responsive HTML.
 - [ ] Mobile/dark variants checked if the chart will be shown that way.

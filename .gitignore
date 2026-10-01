@@ -225,3 +225,8 @@ out/
 
 # agent worktrees
 .claude/worktrees/
+
+# Internal brand files (templates, brand PDFs): local reference only, never committed
+reference/mckesson-branding/
+# Guide build intermediate (the PDF is printed from it)
+dist/guide/print.html

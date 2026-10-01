@@ -13,7 +13,7 @@ def _inline(md: str) -> str:
     s = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", s)
     s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
-    return s.replace(" — ", ": ").replace("—", ":")
+    return s.replace(" — ", ", ").replace("—", ", ")
 
 
 def qa_checklist() -> str:

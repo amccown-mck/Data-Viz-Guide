@@ -99,9 +99,11 @@ main { max-width: 1280px; margin: 0 auto; }
 .card.sm .card-sub { font-size: 12px; margin-bottom: 8px; }
 .card.sm .card-foot { font-size: 11px; margin-top: 6px; }
 .ex-wrap { overflow-x: auto; }
+@media print { .ex-wrap { overflow: visible; } }
 svg.ex { display: block; width: 100%; height: auto; max-width: var(--w); }
-.ex-wrap.min svg.ex { min-width: min(var(--w), 520px); }
+.ex-wrap.min svg.ex { min-width: 0; }
 @media screen and (max-width: 560px) {      /* wide exhibits scroll rather than shrink below readable sizes */
+  .ex-wrap.min svg.ex { min-width: min(var(--w), 520px); }
   .ex-wrap.min::before { content: "Swipe to see the full chart \2192"; display: block; font-size: 11px;
                          color: var(--g-muted); margin-bottom: 4px; }
 }
@@ -204,7 +206,8 @@ pre.snip { margin: 6px 0 0; background: var(--g-stage); padding: 10px 12px; over
 .cover .bars div.f { background: var(--mck-chart-focus-on-dark); }
 .cover .folio { color: rgb(255 255 255 / 0.65); }
 .toc { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 36px; }
-.toc li { display: grid; grid-template-columns: 34px 1fr; padding: 11px 0; border-top: 1px solid var(--g-rule); margin: 0; }
+.toc li { display: grid; grid-template-columns: 34px 1fr auto; column-gap: 8px; padding: 9px 0; border-top: 1px solid var(--g-rule); margin: 0; }
+.toc .pg { font-size: 12px; color: var(--g-muted); font-variant-numeric: tabular-nums; padding-top: 2px; }
 .toc .no { font-size: 12px; font-weight: 600; color: var(--g-blue); padding-top: 2px; }
 .toc a, .toc .soon { font-size: 15px; font-weight: 600; color: var(--g-ink); text-decoration: none; }
 .toc a:hover { text-decoration: underline; }

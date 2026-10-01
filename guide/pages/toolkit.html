@@ -48,7 +48,8 @@
       <div class="platform"><h5>Fonts (everyone)</h5><p>Install the Libre Franklin TTFs from <code>fonts/LibreFranklin/</code> (right-click › Install for all users). Without them, Office and Power BI fall back to Arial or Segoe UI.</p></div>
       <div class="platform"><h5>PowerPoint and Excel</h5><p>Copy <code>dist/office/Theme Colors/McKesson Data Viz.xml</code> to <code>%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\</code> and the Theme Fonts file to <code>…\Theme Fonts\</code>. Then <strong>Design › Variants › Colors / Fonts</strong> (PowerPoint) or <strong>Page Layout › Colors / Fonts</strong> (Excel). New decks start from <code>McKesson-DataViz.potx</code>.</p></div>
       <div class="platform"><h5>Power BI</h5><p><strong>View › Themes › Browse for themes</strong> and pick <code>dist/powerbi/mckesson-dataviz-theme.json</code>. Viewers without Libre Franklin see Segoe UI, so leave room in labels.</p></div>
-      <div class="platform"><h5>Python</h5><div><pre class="snip">pip install -e ./python[examples]
+      <div class="platform"><h5>Python</h5><div><pre class="snip">git clone https://github.com/amccown-mck/Data-Viz-Guide  # then, in it:
+pip install -e "./python[examples]"   # editable, so the fonts are found
 import mckviz as mv
 mv.use()          # fonts, matplotlib style, Plotly template "mck"
 C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></div>
@@ -86,7 +87,7 @@ C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></di
     <div class="grid g2" style="align-items: start">
       <div class="panel">
         <h4>Ask for a chart like this</h4>
-        <p class="note" style="background:var(--g-stage);padding:10px 12px">"Make a McKesson chart of voluntary attrition by job family for FY26 from <code>attrition.csv</code>, for a leadership deck. Highlight the families above the enterprise rate."</p>
+        <p class="note" style="background:var(--g-stage);padding:10px 12px">"Make a McKesson chart of voluntary attrition by job family for FY26 from <code>examples/data/attrition_by_job_family.csv</code>, for a leadership deck. Highlight the families above the enterprise rate."</p>
         <h4 style="margin-top:14px">What comes back</h4>
         <p class="note">The <code>mck-chart</code> skill walks the five steps (question, chart type, build, headline, QA), runs <code>mv.lint</code>, looks at the rendered chart, and returns the file, a chart brief and alt text.</p>
       </div>
@@ -100,7 +101,7 @@ Headline:    Two frontline job families lose
              about 1 in 4 people a year ...
 Subtitle:    Voluntary attrition by job
              family, FY26 (%)
-Source:      Workday HCM, 31 Mar 2026
+Source:      Workday HCM (synthetic), 31 Mar 2026
 Min n check: smallest group 700 (>= 10)
 QA:          pass</pre>
       </div>

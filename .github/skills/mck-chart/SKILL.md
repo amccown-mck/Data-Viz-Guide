@@ -10,7 +10,7 @@ Work through the five steps in order. Keep a short **chart brief** as you go and
 Question:     <one sentence the chart answers>
 Mode:         explanatory | exploratory          Medium: slide | report | web | mobile | dashboard
 Chart:        <type> (docs/cookbook/<page>.md)    Why: <question type → first choice / alternative>
-Focus:        <what is blue>   Accent: <optional single orange item>   Context: everything else, grey
+Focus:        <what is blue>   Accent: <optional single navy exception>   Context: everything else, grey
 Headline:     <insight sentence, numbers computed from data>
 Subtitle:     <metric, unit, scope, period>
 Source:       Source: <system>, as of <date>; <population>

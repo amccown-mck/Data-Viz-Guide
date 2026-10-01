@@ -90,7 +90,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 | `guide/` | The browsable guide: `pages/*.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{html:…}}`, `{{folio}}` placeholders), `exhibits.py` (every chart in the guide, drawn from tokens and data), `guide.css`. Built into `dist/guide/` (plus a standalone single-file `McKesson-DataViz-Guide.html` and the one-page PDFs in `dist/print/`) by `tools/build_guide.py`. Link to another spread with `{{link:spread-id}}` and cite its PDF page with `{{page:spread-id}}` | Yes, then rerun it |
 | `templates/` | Copy-and-edit starters (HTML chart card) | Yes |
 | `reference/` | Paraphrased inspiration notes. No source images are ever committed | Rarely |
-| `tools/` | Brand-extraction helpers, `check_snippets.py`, `build_guide.py` | Yes |
+| `tools/` | `build_guide.py` (the guide, PDFs, standalone file), `check_snippets.py`, `lint_charts.py`, `check_powerbi_theme.py`, `render_pdf_pages.py` (PDF pages to PNG contact sheets, for review) | Yes |
 
 ### Commands (Windows PowerShell, from the repo root)
 ```powershell

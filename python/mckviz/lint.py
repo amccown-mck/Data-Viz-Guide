@@ -325,6 +325,16 @@ def _lint_plotly(fig, headline, subtitle, source) -> list[Finding]:
 
 
 # ----------------------------------------------------------------------------------------------- entry point
+def _print_safe(text: str) -> None:
+    """Print findings even where stdout can't encode ≤, −, × (a Windows console or a pipe in CI)."""
+    import sys
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        enc = getattr(sys.stdout, "encoding", None) or "ascii"
+        print(text.encode(enc, errors="replace").decode(enc, errors="replace"))
+
+
 def lint(fig, *, headline: str | None = None, subtitle: str | None = None, source: str | None = None,
          strict: bool = False, quiet: bool = False) -> list[Finding]:
     """Lint a matplotlib Figure or a Plotly Figure against the house rules. Returns the findings (errors first)."""
@@ -335,7 +345,7 @@ def lint(fig, *, headline: str | None = None, subtitle: str | None = None, sourc
         findings = _lint_matplotlib(fig, headline, subtitle, source)
     findings = sorted(dict.fromkeys(findings), key=lambda f: LEVELS.index(f.level))
     if not quiet:
-        print("\n".join(map(str, findings)) if findings else "lint: no findings")
+        _print_safe("\n".join(map(str, findings)) if findings else "lint: no findings")
     if strict and any(f.level == "error" for f in findings):
         raise LintError("; ".join(str(f) for f in findings if f.level == "error"))
     return findings
