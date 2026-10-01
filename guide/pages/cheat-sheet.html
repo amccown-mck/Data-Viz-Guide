@@ -1,0 +1,78 @@
+<section class="spread" id="cheat-sheet">
+  <div class="rail">
+    <p class="eyebrow">Cheat sheet</p>
+    <h2 class="title"><b>Cheat</b> sheet</h2>
+    <h3>Check before you send</h3>
+    <ul class="checklist cs-check">
+      <li>The headline is an insight, and every number in it is true</li>
+      <li>Subtitle: metric, unit, scope and period</li>
+      <li>Grey context; at most 2 highlights, matching the headline</li>
+      <li>Values labelled; value axis, gridlines and legend deleted</li>
+      <li>Bars start at zero; no dual axes</li>
+      <li>Sorted by value, or in a natural order</li>
+      <li>True minus (−), explicit + on changes, "pts" for point changes</li>
+      <li>Metric defined; source names system, date and population</li>
+      <li>No group under <strong>{{text:min_n}} people</strong>, even in hover text</li>
+      <li>Nothing overlaps or clips; nothing below 9 pt</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g3 cs">
+      <div class="tile">
+        <p class="step">1 · Every chart, one anatomy</p>
+        <div class="cs-card">
+          <p class="cs-head">{{text:bar_headline}}<span class="mk">1</span></p>
+          <p class="cs-sub">{{text:bar_subtitle}}<span class="mk">2</span></p>
+          {{exhibit:cs_bars}}
+          <p class="cs-foot">Source: Workday HCM (synthetic), FY26<span class="mk">4</span></p>
+        </div>
+        <p class="note cs-key"><span class="mk">1</span> Headline = the insight · <span class="mk">2</span> Subtitle = the measure · <span class="mk">3</span> Grey context, blue focus, values on the bars · <span class="mk">4</span> Source</p>
+      </div>
+      <div class="tile">
+        <p class="step">2 · Write the headline last</p>
+        <p class="note">Who or what + verb + number + so what. Compute every number from the data.</p>
+        <div class="ladder cs-ladder">
+          <div class="k bad">Label</div><div>Attrition by job family</div>
+          <div class="k bad">Vague</div><div>Attrition varies across job families</div>
+          <div class="k good">Insight</div><div>Two frontline job families lose about 1 in 4 people a year</div>
+        </div>
+      </div>
+      <div class="tile">
+        <p class="step">3 · Grey first, then color the point</p>
+        {{html:cs_roles}}
+        <p class="note cs-small">At most 2 highlights. Orange never highlights; it means worse. Amber is never used.</p>
+      </div>
+      <div class="tile">
+        <p class="step">4 · Type (Libre Franklin, 16:9 slide)</p>
+        {{html:cs_type}}
+        <p class="note cs-small">One chart: the slide title is its headline. Two charts: each gets its own SemiBold insight headline.</p>
+      </div>
+      <div class="tile">
+        <p class="step">5 · Pick the chart from the question</p>
+        <ul class="cs-pick">
+          <li>How big? <a href="{{link:bar}}">Sorted bar</a></li>
+          <li>Made of what? <a href="{{link:stacked-bar}}">100% bar</a>, <a href="{{link:waterfall}}">waterfall</a></li>
+          <li>Over time? <a href="{{link:line}}">Line</a></li>
+          <li>Who moved? <a href="{{link:slope}}">Slope</a>, <a href="{{link:dumbbell}}">dumbbell</a></li>
+          <li>How spread? <a href="{{link:strip}}">Strip</a>, <a href="{{link:histogram}}">histogram</a></li>
+          <li>Related? <a href="{{link:scatter}}">Scatter</a></li>
+          <li>Flows? <a href="{{link:sankey}}">Sankey</a> · Where? <a href="{{link:choropleth}}">Map</a></li>
+          <li>One number? <a href="{{link:big-number}}">Big number</a></li>
+        </ul>
+        <p class="note cs-small">Full version: the <a href="{{link:chooser}}">chart chooser</a>.</p>
+      </div>
+      <div class="tile">
+        <p class="step">6 · Never</p>
+        <ul class="cs-never">
+          <li>Red vs. green, rainbows, or color as the only cue</li>
+          <li>3D, shadows, gradients, borders</li>
+          <li>Truncated bars or dual axes</li>
+          <li>A legend where labels fit</li>
+          <li>More than 2 charts on a slide</li>
+          <li>Pictures of charts: use native, editable charts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>

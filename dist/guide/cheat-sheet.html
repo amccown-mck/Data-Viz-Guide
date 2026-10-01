@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>McKesson Data Visualization Guide: Cheat sheet</title>
+<link rel="stylesheet" href="mck-viz.css">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="formats.html">Formats</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html" aria-current=page>Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
+<main>
+<section class="spread" id="cheat-sheet">
+  <div class="rail">
+    <p class="eyebrow">Cheat sheet</p>
+    <h2 class="title"><b>Cheat</b> sheet</h2>
+    <h3>Check before you send</h3>
+    <ul class="checklist cs-check">
+      <li>The headline is an insight, and every number in it is true</li>
+      <li>Subtitle: metric, unit, scope and period</li>
+      <li>Grey context; at most 2 highlights, matching the headline</li>
+      <li>Values labelled; value axis, gridlines and legend deleted</li>
+      <li>Bars start at zero; no dual axes</li>
+      <li>Sorted by value, or in a natural order</li>
+      <li>True minus (−), explicit + on changes, "pts" for point changes</li>
+      <li>Metric defined; source names system, date and population</li>
+      <li>No group under <strong>10 people</strong>, even in hover text</li>
+      <li>Nothing overlaps or clips; nothing below 9 pt</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g3 cs">
+      <div class="tile">
+        <p class="step">1 · Every chart, one anatomy</p>
+        <div class="cs-card">
+          <p class="cs-head">Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate<span class="mk">1</span></p>
+          <p class="cs-sub">Voluntary attrition by job family, FY26 (%)<span class="mk">2</span></p>
+          <div class="ex-wrap"><svg class="ex" style="--w:300px" role="img" aria-label="Five job families' voluntary attrition; Pharmacy Technician and DC Associate in blue above the 19.9% enterprise rate." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 118" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="cs_bars-figure_1">
+  <g id="cs_bars-patch_1">
+   <path d="M 0 118 
+L 300 118 
+L 300 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="cs_bars-axes_1">
+   <g id="cs_bars-patch_2">
+    <path d="M 85.570469 116 
+L 295.901165 116 
+L 295.901165 3.165704 
+L 85.570469 3.165704 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="cs_bars-matplotlib.axis_1"/>
+   <g id="cs_bars-matplotlib.axis_2">
+    <g id="cs_bars-ytick_1">
+     <g id="cs_bars-line2d_1"/>
+     <g id="cs_bars-text_1">
+      <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="79.570469" y="108.711206" transform="rotate(-0 79.570469 108.711206)">Data &amp; Analytics</text>
+     </g>
+    </g>
+    <g id="cs_bars-ytick_2">
+     <g id="cs_bars-line2d_2"/>
+     <g id="cs_bars-text_2">
+      <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="79.570469" y="88.915715" transform="rotate(-0 79.570469 88.915715)">Specialty Nursing</text>
+     </g>
+    </g>
+    <g id="cs_bars-ytick_3">
+     <g id="cs_bars-line2d_3"/>
+     <g id="cs_bars-text_3">
+      <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="79.570469" y="69.120225" transform="rotate(-0 79.570469 69.120225)">Customer Care</text>
+     </g>
+    </g>
+    <g id="cs_bars-ytick_4">
+     <g id="cs_bars-line2d_4"/>
+     <g id="cs_bars-text_4">
+      <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #143359" x="79.570469" y="49.324734" transform="rotate(-0 79.570469 49.324734)">DC Associate</text>
+     </g>
+    </g>
+    <g id="cs_bars-ytick_5">
+     <g id="cs_bars-line2d_5"/>
+     <g id="cs_bars-text_5">
+      <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #143359" x="79.570469" y="29.529244" transform="rotate(-0 79.570469 29.529244)">Pharmacy Tech</text>
+     </g>
+    </g>
+   </g>
+   <g id="cs_bars-patch_3">
+    <path d="M 85.570469 110.754195 
+L 165.372409 110.754195 
+L 165.372409 97.491216 
+L 85.570469 97.491216 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="cs_bars-patch_4">
+    <path d="M 85.570469 90.958704 
+L 173.414465 90.958704 
+L 173.414465 77.695726 
+L 85.570469 77.695726 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="cs_bars-patch_5">
+    <path d="M 85.570469 71.163214 
+L 202.489591 71.163214 
+L 202.489591 57.900235 
+L 85.570469 57.900235 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="cs_bars-patch_6">
+    <path d="M 85.570469 51.367723 
+L 234.657815 51.367723 
+L 234.657815 38.104745 
+L 85.570469 38.104745 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #005a8c"/>
+   </g>
+   <g id="cs_bars-patch_7">
+    <path d="M 85.570469 31.572233 
+L 255.072265 31.572233 
+L 255.072265 18.309254 
+L 85.570469 18.309254 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #005a8c"/>
+   </g>
+   <g id="cs_bars-patch_8">
+    <path d="M 85.570469 116 
+L 85.570469 3.165704 
+" style="fill: none; stroke: #8c8c8c; stroke-width: 0.75; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="cs_bars-line2d_6">
+    <path d="M 208.675788 116 
+L 208.675788 3.165704 
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: none; stroke-dasharray: 2.25,2.25; stroke-dashoffset: 0; stroke: #143359; stroke-width: 0.9"/>
+   </g>
+   <g id="cs_bars-text_6">
+    <g id="cs_bars-patch_9">
+     <path d="M 171.280788 14.593449 
+L 246.070788 14.593449 
+L 246.070788 0.625449 
+L 171.280788 0.625449 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="208.675788" y="10.849449" transform="rotate(-0 208.675788 10.849449)">Enterprise 19.9%</text>
+   </g>
+   <g id="cs_bars-text_7">
+    <g id="cs_bars-patch_10">
+     <path d="M 168.802409 110.449706 
+L 197.539909 110.449706 
+L 197.539909 97.795706 
+L 168.802409 97.795706 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="169.372409" y="107.542706" transform="rotate(-0 169.372409 107.542706)">12.9%</text>
+   </g>
+   <g id="cs_bars-text_8">
+    <g id="cs_bars-patch_11">
+     <path d="M 176.844465 90.654215 
+L 205.534465 90.654215 
+L 205.534465 78.000215 
+L 176.844465 78.000215 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="177.414465" y="87.747215" transform="rotate(-0 177.414465 87.747215)">14.2%</text>
+   </g>
+   <g id="cs_bars-text_9">
+    <g id="cs_bars-patch_12">
+     <path d="M 205.919591 70.858725 
+L 235.227091 70.858725 
+L 235.227091 58.204725 
+L 205.919591 58.204725 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="206.489591" y="67.951725" transform="rotate(-0 206.489591 67.951725)">18.9%</text>
+   </g>
+   <g id="cs_bars-text_10">
+    <g id="cs_bars-patch_13">
+     <path d="M 238.087815 51.063234 
+L 266.777815 51.063234 
+L 266.777815 38.409234 
+L 238.087815 38.409234 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="238.657815" y="48.156234" transform="rotate(-0 238.657815 48.156234)">24.1%</text>
+   </g>
+   <g id="cs_bars-text_11">
+    <g id="cs_bars-patch_14">
+     <path d="M 258.502265 31.267744 
+L 288.397577 31.267744 
+L 288.397577 18.613744 
+L 258.502265 18.613744 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="259.072265" y="28.360744" transform="rotate(-0 259.072265 28.360744)">27.4%</text>
+   </g>
+   <g id="cs_bars-text_12">
+    <g id="cs_bars-patch_15">
+     <path d="M 295.072265 35.200744 
+C 297.528045 35.200744 299.883574 34.225051 301.620074 32.488552 
+C 303.356573 30.752053 304.332265 28.396524 304.332265 25.940744 
+C 304.332265 23.484963 303.356573 21.129434 301.620074 19.392935 
+C 299.883574 17.656436 297.528045 16.680744 295.072265 16.680744 
+C 292.616484 16.680744 290.260955 17.656436 288.524456 19.392935 
+C 286.787957 21.129434 285.812265 23.484963 285.812265 25.940744 
+C 285.812265 28.396524 286.787957 30.752053 288.524456 32.488552 
+C 290.260955 34.225051 292.616484 35.200744 295.072265 35.200744 
+z
+" style="fill: #ffffff; stroke: #143359; stroke-width: 1.3; stroke-linejoin: miter"/>
+    </g>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="295.072265" y="29.540744" transform="rotate(-0 295.072265 29.540744)">3</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="cs_bars-pcaecf74054">
+   <rect x="85.570469" y="3.165704" width="210.330696" height="112.834296"/>
+  </clipPath>
+ </defs>
+</svg></div>
+          <p class="cs-foot">Source: Workday HCM (synthetic), FY26<span class="mk">4</span></p>
+        </div>
+        <p class="note cs-key"><span class="mk">1</span> Headline = the insight · <span class="mk">2</span> Subtitle = the measure · <span class="mk">3</span> Grey context, blue focus, values on the bars · <span class="mk">4</span> Source</p>
+      </div>
+      <div class="tile">
+        <p class="step">2 · Write the headline last</p>
+        <p class="note">Who or what + verb + number + so what. Compute every number from the data.</p>
+        <div class="ladder cs-ladder">
+          <div class="k bad">Label</div><div>Attrition by job family</div>
+          <div class="k bad">Vague</div><div>Attrition varies across job families</div>
+          <div class="k good">Insight</div><div>Two frontline job families lose about 1 in 4 people a year</div>
+        </div>
+      </div>
+      <div class="tile">
+        <p class="step">3 · Grey first, then color the point</p>
+        <div class="cs-role"><span class="sw" style="background:#B4B0A5"></span><span><b>Context</b> everything else</span><code>#B4B0A5</code></div><div class="cs-role"><span class="sw" style="background:#005A8C"></span><span><b>Focus</b> what the headline names</span><code>#005A8C</code></div><div class="cs-role"><span class="sw" style="background:#143359"></span><span><b>Accent (navy)</b> the one exception</span><code>#143359</code></div><div class="cs-role"><span class="sw" style="background:#66C4FF"></span><span><b>Light blue</b> a series, in the uniform pattern</span><code>#66C4FF</code></div><div class="cs-role"><span class="sw" style="background:#EF8200"></span><span><b>Orange</b> worse only: below target, shrinking</span><code>#EF8200</code></div><div class="cs-role"><span class="sw" style="background:#143359"></span><span><b>Total</b> totals, targets (dashed)</span><code>#143359</code></div>
+        <p class="note cs-small">At most 2 highlights. Orange never highlights; it means worse. Amber is never used.</p>
+      </div>
+      <div class="tile">
+        <p class="step">4 · Type (Libre Franklin, 16:9 slide)</p>
+        <table class="cs-table"><tbody><tr><td>Slide title</td><td>Bold</td><td class="num">24 pt</td></tr><tr><td>Chart headline</td><td>SemiBold</td><td class="num">18 pt</td></tr><tr><td>Subtitle</td><td>Regular</td><td class="num">14 pt</td></tr><tr><td>Data labels</td><td>Medium</td><td class="num">12 pt</td></tr><tr><td>Axis, categories</td><td>Regular</td><td class="num">11 pt</td></tr><tr><td>Footnote, source</td><td>Light</td><td class="num">9 pt</td></tr><tr><td>Big number</td><td>Bold</td><td class="num">54 pt</td></tr></tbody></table>
+        <p class="note cs-small">One chart: the slide title is its headline. Two charts: each gets its own SemiBold insight headline.</p>
+      </div>
+      <div class="tile">
+        <p class="step">5 · Pick the chart from the question</p>
+        <ul class="cs-pick">
+          <li>How big? <a href="magnitude.html#bar">Sorted bar</a></li>
+          <li>Made of what? <a href="part-to-whole.html#stacked-bar">100% bar</a>, <a href="part-to-whole.html#waterfall">waterfall</a></li>
+          <li>Over time? <a href="change-over-time.html#line">Line</a></li>
+          <li>Who moved? <a href="ranking.html#slope">Slope</a>, <a href="ranking.html#dumbbell">dumbbell</a></li>
+          <li>How spread? <a href="distribution.html#strip">Strip</a>, <a href="distribution.html#histogram">histogram</a></li>
+          <li>Related? <a href="correlation.html#scatter">Scatter</a></li>
+          <li>Flows? <a href="flows.html#sankey">Sankey</a> · Where? <a href="geo.html#choropleth">Map</a></li>
+          <li>One number? <a href="single-number.html#big-number">Big number</a></li>
+        </ul>
+        <p class="note cs-small">Full version: the <a href="chooser.html#chooser">chart chooser</a>.</p>
+      </div>
+      <div class="tile">
+        <p class="step">6 · Never</p>
+        <ul class="cs-never">
+          <li>Red vs. green, rainbows, or color as the only cue</li>
+          <li>3D, shadows, gradients, borders</li>
+          <li>Truncated bars or dual axes</li>
+          <li>A legend where labels fit</li>
+          <li>More than 2 charts on a slide</li>
+          <li>Pictures of charts: use native, editable charts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Cheat sheet</span><span class="n">95</span></div>
+</section>
+
+</main>
+</body>
+</html>

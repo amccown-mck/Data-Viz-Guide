@@ -1,0 +1,118 @@
+<section class="spread" id="chooser">
+  <div class="rail">
+    <p class="eyebrow">Chart chooser</p>
+    <h2 class="title"><b>Chart</b> chooser</h2>
+    <p class="lede">Pick the chart from the question, not from habit.</p>
+    <ol class="steps">
+      <li><span class="mk">1</span><span>Write the question the chart answers in one sentence.</span></li>
+      <li><span class="mk">2</span><span>Find the question type and start with its first choice.</span></li>
+      <li><span class="mk">3</span><span>Check the traps on the next page.</span></li>
+      <li><span class="mk">4</span><span>Follow the chart's page to build it.</span></li>
+    </ol>
+    <p class="small">Every chart name links to its page in this guide. <b>Avoid</b> lists the charts that look right for the question but mislead or slow the reader.</p>
+  </div>
+  <div class="stage">
+    <div class="chooser">
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_magnitude}}<div><h4><a href="{{link:bar}}">Magnitude</a></h4><p class="q">How big? Which is bigger, by how much?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:bar}}">Sorted bar</a></dd>
+          <dt>Also</dt><dd><a href="{{link:dumbbell}}">Dot plot</a> for values far from zero; <a href="{{link:bar-variants}}">paired bars</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:bar-best-practice}}">Rainbow, 3D or cut-off bars</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_part}}<div><h4><a href="{{link:stacked-bar}}">Part-to-whole</a></h4><p class="q">What is it made of? How does a total break down?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:stacked-bar}}">100% stacked bar</a></dd>
+          <dt>Also</dt><dd><a href="{{link:waterfall}}">Waterfall</a> between totals; <a href="{{link:treemap}}">treemap</a> for many parts</dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:donut-best-practice}}">Pies over 5 slices</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_time}}<div><h4><a href="{{link:line}}">Change over time</a></h4><p class="q">How is it moving? When did it change?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:line}}">Line</a>, focus series in blue</dd>
+          <dt>Also</dt><dd><a href="{{link:stacked-area}}">Stacked area</a>; <a href="{{link:small-multiples}}">small multiples</a>; <a href="{{link:bubble-timeline}}">bubble timeline</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:line-best-practice}}">Ten colored lines</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_ranking}}<div><h4><a href="{{link:slope}}">Ranking</a></h4><p class="q">Who's on top? Who moved?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:bar}}">Sorted bar</a>; <a class="first" href="{{link:slope}}">slope</a> for change</dd>
+          <dt>Also</dt><dd><a href="{{link:dumbbell}}">Dumbbell</a> for us vs. them; <a href="{{link:heat-table}}">heat table</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:slope-best-practice}}">A color for every line</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_distribution}}<div><h4><a href="{{link:strip}}">Distribution</a></h4><p class="q">How spread out? What's typical?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:strip}}">Strip plot</a> or <a class="first" href="{{link:histogram}}">histogram</a></dd>
+          <dt>Also</dt><dd><a href="{{link:distribution-variants}}">Box plot</a> to compare many groups</dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:distribution-best-practice}}">An average with no spread</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_correlation}}<div><h4><a href="{{link:scatter}}">Correlation</a></h4><p class="q">Do two measures move together?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:scatter}}">Scatter</a> or bubble scatter</dd>
+          <dt>Also</dt><dd><a href="{{link:heatmap}}">Heatmap</a>: two categories, one measure</dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:dual-axis}}">Dual axes</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_flows}}<div><h4><a href="{{link:sankey}}">Relationships and flows</a></h4><p class="q">How do things connect or move?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:sankey}}">Sankey</a></dd>
+          <dt>Also</dt><dd><a href="{{link:parallel-coordinates}}">Parallel coordinates</a>; <a href="{{link:venn}}">Venn</a>, 3 sets max</dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:sankey-best-practice}}">A color per stage</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_geo}}<div><h4><a href="{{link:choropleth}}">Geo-spatial</a></h4><p class="q">Where? Does place matter?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:choropleth}}">Choropleth</a> for rates</dd>
+          <dt>Also</dt><dd><a href="{{link:bubble-map}}">Bubble map</a> for counts; <a href="{{link:map-variants}}">zoom-ins</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:maps-best-practice}}">Counts on a choropleth</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top">{{exhibit:ch_icon_single}}<div><h4><a href="{{link:big-number}}">Single number</a></h4><p class="q">What one figure should they remember?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="{{link:big-number}}">Big number</a> with a comparison</dd>
+          <dt>Also</dt><dd><a href="{{link:progress-ring}}">Progress bar or ring</a> for a target</dd>
+          <dt class="no">Avoid</dt><dd><a href="{{link:single-number-best-practice}}">Speedometers</a></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="chooser-traps">
+  <div class="rail">
+    <p class="eyebrow">Chart chooser</p>
+    <h2 class="title"><b>Before you build:</b> the common traps</h2>
+    <p class="lede">The right chart type can still go wrong. If you are about to do one of these, use the fix instead.</p>
+    <p class="small">The page numbers refer to this guide's PDF; on screen, each fix links to its page.</p>
+  </div>
+  <div class="stage">
+    <div class="panel traps">
+      <div class="trap"><span class="x">About to</span><span class="ok">Instead</span><span></span></div>
+      <div class="trap"><span>Cut the bar axis so small differences show</span><span>Bars from zero; a <a href="{{link:dumbbell}}">dot plot</a> for a narrow range</span><a href="{{link:bar-best-practice}}">p. {{page:bar-best-practice}}</a></div>
+      <div class="trap"><span>Give each bar its own color</span><span>Grey bars, the one that matters in blue</span><a href="{{link:bar-best-practice}}">p. {{page:bar-best-practice}}</a></div>
+      <div class="trap"><span>Put two units on two axes</span><span>Two aligned panels, or index both to 100</span><a href="{{link:dual-axis}}">p. {{page:dual-axis}}</a></div>
+      <div class="trap"><span>Draw ten lines in ten colors</span><span>All grey, one or two in blue; or small multiples</span><a href="{{link:line-best-practice}}">p. {{page:line-best-practice}}</a></div>
+      <div class="trap"><span>Make a pie with eight slices</span><span>A sorted bar; donuts take five parts at most</span><a href="{{link:donut-best-practice}}">p. {{page:donut-best-practice}}</a></div>
+      <div class="trap"><span>Stack eight segments in a bar</span><span>Five at most, the story segment blue on the baseline</span><a href="{{link:stacked-best-practice}}">p. {{page:stacked-best-practice}}</a></div>
+      <div class="trap"><span>Color a waterfall green up, red down</span><span>Favorable teal, unfavorable orange; or grey with one blue</span><a href="{{link:waterfall-best-practice}}">p. {{page:waterfall-best-practice}}</a></div>
+      <div class="trap"><span>Map raw counts by state</span><span>Map rates; show counts as bubbles</span><a href="{{link:maps-best-practice}}">p. {{page:maps-best-practice}}</a></div>
+      <div class="trap"><span>Show a KPI as a speedometer</span><span>A big number with a comparison, or a bar to target</span><a href="{{link:single-number-best-practice}}">p. {{page:single-number-best-practice}}</a></div>
+      <div class="trap"><span>Paste a 30-row table to make one point</span><span>Chart the point; keep the table for the appendix</span><a href="{{link:heat-table}}">p. {{page:heat-table}}</a></div>
+      <div class="trap"><span>Put four charts on one slide</span><span>Two at most, each with its own insight headline</span><a href="{{link:two-charts}}">p. {{page:two-charts}}</a></div>
+      <div class="trap"><span>Show a team of 7 people</span><span>Suppress or combine groups under 10</span><a href="{{link:people-data}}">p. {{page:people-data}}</a></div>
+    </div>
+  </div>
+  {{folio}}
+</section>

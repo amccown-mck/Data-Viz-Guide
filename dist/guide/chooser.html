@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>McKesson Data Visualization Guide: Chart chooser</title>
+<link rel="stylesheet" href="mck-viz.css">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="formats.html">Formats</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html" aria-current=page>Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
+<main>
+<section class="spread" id="chooser">
+  <div class="rail">
+    <p class="eyebrow">Chart chooser</p>
+    <h2 class="title"><b>Chart</b> chooser</h2>
+    <p class="lede">Pick the chart from the question, not from habit.</p>
+    <ol class="steps">
+      <li><span class="mk">1</span><span>Write the question the chart answers in one sentence.</span></li>
+      <li><span class="mk">2</span><span>Find the question type and start with its first choice.</span></li>
+      <li><span class="mk">3</span><span>Check the traps on the next page.</span></li>
+      <li><span class="mk">4</span><span>Follow the chart's page to build it.</span></li>
+    </ol>
+    <p class="small">Every chart name links to its page in this guide. <b>Avoid</b> lists the charts that look right for the question but mislead or slow the reader.</p>
+  </div>
+  <div class="stage">
+    <div class="chooser">
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the magnitude chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_magnitude-figure_1">
+  <g id="ch_icon_magnitude-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_magnitude-axes_1">
+   <g id="ch_icon_magnitude-patch_2">
+    <path d="M 7.9968 12.15 
+L 74.4576 12.15 
+L 74.4576 6.21 
+L 7.9968 6.21 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_magnitude-patch_3">
+    <path d="M 7.9968 21.06 
+L 62.0928 21.06 
+L 62.0928 15.12 
+L 7.9968 15.12 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_magnitude-patch_4">
+    <path d="M 7.9968 29.97 
+L 48.1824 29.97 
+L 48.1824 24.03 
+L 7.9968 24.03 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_magnitude-patch_5">
+    <path d="M 7.9968 38.88 
+L 38.9088 38.88 
+L 38.9088 32.94 
+L 7.9968 32.94 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_magnitude-patch_6">
+    <path d="M 7.9968 47.79 
+L 31.1808 47.79 
+L 31.1808 41.85 
+L 7.9968 41.85 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_magnitude-line2d_1">
+    <path d="M 7.9968 50.76 
+L 7.9968 3.24 
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: none; stroke: #8c8c8c; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_magnitude-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="magnitude.html#bar">Magnitude</a></h4><p class="q">How big? Which is bigger, by how much?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="magnitude.html#bar">Sorted bar</a></dd>
+          <dt>Also</dt><dd><a href="ranking.html#dumbbell">Dot plot</a> for values far from zero; <a href="magnitude.html#bar-variants">paired bars</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="magnitude.html#bar-best-practice">Rainbow, 3D or cut-off bars</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the part chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_part-figure_1">
+  <g id="ch_icon_part-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_part-axes_1">
+   <g id="ch_icon_part-patch_2">
+    <path d="M 6.4512 18.09 
+L 27.78048 18.09 
+L 27.78048 8.4375 
+L 6.4512 8.4375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_part-patch_3">
+    <path d="M 28.55328 18.09 
+L 69.789888 18.09 
+L 69.789888 8.4375 
+L 28.55328 8.4375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_part-patch_4">
+    <path d="M 70.562688 18.09 
+L 77.5488 18.09 
+L 77.5488 8.4375 
+L 70.562688 8.4375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #dedbd1"/>
+   </g>
+   <g id="ch_icon_part-patch_5">
+    <path d="M 6.4512 32.94 
+L 12.139008 32.94 
+L 12.139008 23.2875 
+L 6.4512 23.2875 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_part-patch_6">
+    <path d="M 12.911808 32.94 
+L 69.789888 32.94 
+L 69.789888 23.2875 
+L 12.911808 23.2875 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_part-patch_7">
+    <path d="M 70.562688 32.94 
+L 77.5488 32.94 
+L 77.5488 23.2875 
+L 70.562688 23.2875 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #dedbd1"/>
+   </g>
+   <g id="ch_icon_part-patch_8">
+    <path d="M 6.4512 47.79 
+L 11.428032 47.79 
+L 11.428032 38.1375 
+L 6.4512 38.1375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_part-patch_9">
+    <path d="M 12.200832 47.79 
+L 62.680128 47.79 
+L 62.680128 38.1375 
+L 12.200832 38.1375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_part-patch_10">
+    <path d="M 63.452928 47.79 
+L 77.5488 47.79 
+L 77.5488 38.1375 
+L 63.452928 38.1375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #dedbd1"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_part-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="part-to-whole.html#stacked-bar">Part-to-whole</a></h4><p class="q">What is it made of? How does a total break down?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="part-to-whole.html#stacked-bar">100% stacked bar</a></dd>
+          <dt>Also</dt><dd><a href="part-to-whole.html#waterfall">Waterfall</a> between totals; <a href="part-to-whole.html#treemap">treemap</a> for many parts</dd>
+          <dt class="no">Avoid</dt><dd><a href="part-to-whole.html#donut-best-practice">Pies over 5 slices</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the time chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_time-figure_1">
+  <g id="ch_icon_time-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_time-axes_1">
+   <g id="ch_icon_time-line2d_1">
+    <path d="M 7.9968 21.06 
+L 19.3312 22.545 
+L 30.6656 20.3175 
+L 42 23.2875 
+L 53.3344 21.8025 
+L 64.6688 24.03 
+L 76.0032 22.545 
+" clip-path="url(#ch_icon_time-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_time-line2d_2">
+    <path d="M 7.9968 34.425 
+L 19.3312 31.455 
+L 30.6656 28.485 
+L 42 25.515 
+L 53.3344 19.575 
+L 64.6688 13.635 
+L 76.0032 9.18 
+" clip-path="url(#ch_icon_time-ped6c4f7576)" style="fill: none; stroke: #005a8c; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_time-line2d_3">
+    <path d="M 6.4512 47.79 
+L 77.5488 47.79 
+" clip-path="url(#ch_icon_time-ped6c4f7576)" style="fill: none; stroke: #8c8c8c; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_time-PathCollection_1">
+    <defs>
+     <path id="ch_icon_time-m1c23f1e1fd" d="M 0 1.732051 
+C 0.459345 1.732051 0.899939 1.549551 1.224745 1.224745 
+C 1.549551 0.899939 1.732051 0.459345 1.732051 0 
+C 1.732051 -0.459345 1.549551 -0.899939 1.224745 -1.224745 
+C 0.899939 -1.549551 0.459345 -1.732051 0 -1.732051 
+C -0.459345 -1.732051 -0.899939 -1.549551 -1.224745 -1.224745 
+C -1.549551 -0.899939 -1.732051 -0.459345 -1.732051 0 
+C -1.732051 0.459345 -1.549551 0.899939 -1.224745 1.224745 
+C -0.899939 1.549551 -0.459345 1.732051 0 1.732051 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_time-ped6c4f7576)">
+     <use xlink:href="#ch_icon_time-m1c23f1e1fd" x="76.0032" y="9.18" style="fill: #005a8c"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_time-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="change-over-time.html#line">Change over time</a></h4><p class="q">How is it moving? When did it change?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="change-over-time.html#line">Line</a>, focus series in blue</dd>
+          <dt>Also</dt><dd><a href="change-over-time.html#stacked-area">Stacked area</a>; <a href="change-over-time.html#small-multiples">small multiples</a>; <a href="change-over-time.html#bubble-timeline">bubble timeline</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="change-over-time.html#line-best-practice">Ten colored lines</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the ranking chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_ranking-figure_1">
+  <g id="ch_icon_ranking-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_ranking-axes_1">
+   <g id="ch_icon_ranking-line2d_1">
+    <path d="M 20.3616 10.665 
+L 63.6384 28.485 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_1">
+    <defs>
+     <path id="ch_icon_ranking-m4ce5396f0b" d="M 0 1.581139 
+C 0.419323 1.581139 0.821528 1.41454 1.118034 1.118034 
+C 1.41454 0.821528 1.581139 0.419323 1.581139 0 
+C 1.581139 -0.419323 1.41454 -0.821528 1.118034 -1.118034 
+C 0.821528 -1.41454 0.419323 -1.581139 0 -1.581139 
+C -0.419323 -1.581139 -0.821528 -1.41454 -1.118034 -1.118034 
+C -1.41454 -0.821528 -1.581139 -0.419323 -1.581139 0 
+C -1.581139 0.419323 -1.41454 0.821528 -1.118034 1.118034 
+C -0.821528 1.41454 -0.419323 1.581139 0 1.581139 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="20.3616" y="10.665" style="fill: #b4b0a5"/>
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="63.6384" y="28.485" style="fill: #b4b0a5"/>
+    </g>
+   </g>
+   <g id="ch_icon_ranking-line2d_2">
+    <path d="M 20.3616 28.485 
+L 63.6384 37.395 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_2">
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="20.3616" y="28.485" style="fill: #b4b0a5"/>
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="63.6384" y="37.395" style="fill: #b4b0a5"/>
+    </g>
+   </g>
+   <g id="ch_icon_ranking-line2d_3">
+    <path d="M 20.3616 37.395 
+L 63.6384 19.575 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_3">
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="20.3616" y="37.395" style="fill: #b4b0a5"/>
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="63.6384" y="19.575" style="fill: #b4b0a5"/>
+    </g>
+   </g>
+   <g id="ch_icon_ranking-line2d_4">
+    <path d="M 20.3616 46.305 
+L 63.6384 46.305 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_4">
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="20.3616" y="46.305" style="fill: #b4b0a5"/>
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="63.6384" y="46.305" style="fill: #b4b0a5"/>
+    </g>
+   </g>
+   <g id="ch_icon_ranking-line2d_5">
+    <path d="M 20.3616 19.575 
+L 63.6384 10.665 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #005a8c; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_5">
+    <defs>
+     <path id="ch_icon_ranking-m584b72711e" d="M 0 1.581139 
+C 0.419323 1.581139 0.821528 1.41454 1.118034 1.118034 
+C 1.41454 0.821528 1.581139 0.419323 1.581139 0 
+C 1.581139 -0.419323 1.41454 -0.821528 1.118034 -1.118034 
+C 0.821528 -1.41454 0.419323 -1.581139 0 -1.581139 
+C -0.419323 -1.581139 -0.821528 -1.41454 -1.118034 -1.118034 
+C -1.41454 -0.821528 -1.581139 -0.419323 -1.581139 0 
+C -1.581139 0.419323 -1.41454 0.821528 -1.118034 1.118034 
+C -0.821528 1.41454 -0.419323 1.581139 0 1.581139 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m584b72711e" x="20.3616" y="19.575" style="fill: #005a8c"/>
+     <use xlink:href="#ch_icon_ranking-m584b72711e" x="63.6384" y="10.665" style="fill: #005a8c"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_ranking-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="ranking.html#slope">Ranking</a></h4><p class="q">Who's on top? Who moved?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="magnitude.html#bar">Sorted bar</a>; <a class="first" href="ranking.html#slope">slope</a> for change</dd>
+          <dt>Also</dt><dd><a href="ranking.html#dumbbell">Dumbbell</a> for us vs. them; <a href="ranking.html#heat-table">heat table</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="ranking.html#slope-best-practice">A color for every line</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the distribution chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_distribution-figure_1">
+  <g id="ch_icon_distribution-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_distribution-axes_1">
+   <g id="ch_icon_distribution-patch_2">
+    <path d="M 7.9968 46.305 
+L 13.4064 46.305 
+L 13.4064 42.147 
+L 7.9968 42.147 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_3">
+    <path d="M 14.1792 46.305 
+L 19.5888 46.305 
+L 19.5888 36.9495 
+L 14.1792 36.9495 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_4">
+    <path d="M 20.3616 46.305 
+L 25.7712 46.305 
+L 25.7712 28.6335 
+L 20.3616 28.6335 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_5">
+    <path d="M 26.544 46.305 
+L 31.9536 46.305 
+L 31.9536 18.2385 
+L 26.544 18.2385 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_6">
+    <path d="M 32.7264 46.305 
+L 38.136 46.305 
+L 38.136 8.883 
+L 32.7264 8.883 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_7">
+    <path d="M 38.9088 46.305 
+L 44.3184 46.305 
+L 44.3184 14.0805 
+L 38.9088 14.0805 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_8">
+    <path d="M 45.0912 46.305 
+L 50.5008 46.305 
+L 50.5008 23.436 
+L 45.0912 23.436 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_9">
+    <path d="M 51.2736 46.305 
+L 56.6832 46.305 
+L 56.6832 31.752 
+L 51.2736 31.752 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_distribution-patch_10">
+    <path d="M 57.456 46.305 
+L 62.8656 46.305 
+L 62.8656 36.9495 
+L 57.456 36.9495 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_distribution-patch_11">
+    <path d="M 63.6384 46.305 
+L 69.048 46.305 
+L 69.048 40.068 
+L 63.6384 40.068 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_distribution-patch_12">
+    <path d="M 69.8208 46.305 
+L 75.2304 46.305 
+L 75.2304 42.147 
+L 69.8208 42.147 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_distribution-line2d_1">
+    <path d="M 6.4512 46.305 
+L 77.5488 46.305 
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: none; stroke: #8c8c8c; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_distribution-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="distribution.html#strip">Distribution</a></h4><p class="q">How spread out? What's typical?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="distribution.html#strip">Strip plot</a> or <a class="first" href="distribution.html#histogram">histogram</a></dd>
+          <dt>Also</dt><dd><a href="distribution.html#distribution-variants">Box plot</a> to compare many groups</dd>
+          <dt class="no">Avoid</dt><dd><a href="distribution.html#distribution-best-practice">An average with no spread</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the correlation chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_correlation-figure_1">
+  <g id="ch_icon_correlation-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_correlation-axes_1">
+   <g id="ch_icon_correlation-PathCollection_1">
+    <defs>
+     <path id="ch_icon_correlation-C0_0_bc6c2c3bd1" d="M 0 1.581139 
+C 0.419323 1.581139 0.821528 1.41454 1.118034 1.118034 
+C 1.41454 0.821528 1.581139 0.419323 1.581139 -0 
+C 1.581139 -0.419323 1.41454 -0.821528 1.118034 -1.118034 
+C 0.821528 -1.41454 0.419323 -1.581139 0 -1.581139 
+C -0.419323 -1.581139 -0.821528 -1.41454 -1.118034 -1.118034 
+C -1.41454 -0.821528 -1.581139 -0.419323 -1.581139 0 
+C -1.581139 0.419323 -1.41454 0.821528 -1.118034 1.118034 
+C -0.821528 1.41454 -0.419323 1.581139 0 1.581139 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="69.391501" y="8.232865" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="42.700315" y="24.52149" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="71.443291" y="2.237514" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="16.085606" y="46.246223" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="48.637167" y="20.907661" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="34.363907" y="32.410542" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="60.66474" y="11.081628" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="21.878008" y="44.470384" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="64.975979" y="13.791084" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="44.716633" y="22.029364" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="66.866545" y="17.8733" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="40.587539" y="20.758509" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="37.703002" y="25.875768" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="59.863842" y="10.475814" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="71.932275" y="4.310803" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="33.945927" y="33.02256" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="70.991306" y="12.635393" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="68.524127" y="11.290804" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="22.073666" y="31.598873" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="48.729642" y="17.054008" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="54.665558" y="20.869965" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="69.375895" y="12.639917" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+   </g>
+   <g id="ch_icon_correlation-line2d_1">
+    <path d="M 7.9968 4.725 
+L 7.9968 47.79 
+L 77.5488 47.79 
+" clip-path="url(#ch_icon_correlation-ped6c4f7576)" style="fill: none; stroke: #8c8c8c; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_correlation-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="correlation.html#scatter">Correlation</a></h4><p class="q">Do two measures move together?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="correlation.html#scatter">Scatter</a> or bubble scatter</dd>
+          <dt>Also</dt><dd><a href="correlation.html#heatmap">Heatmap</a>: two categories, one measure</dd>
+          <dt class="no">Avoid</dt><dd><a href="correlation.html#dual-axis">Dual axes</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the flows chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_flows-figure_1">
+  <g id="ch_icon_flows-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_flows-axes_1">
+   <g id="ch_icon_flows-FillBetweenPolyCollection_1">
+    <defs>
+     <path id="ch_icon_flows-m56f49be6ef" d="M 14.1792 -49.275 
+L 14.1792 -35.91 
+L 16.097876 -35.925526 
+L 18.016552 -35.970645 
+L 19.935228 -36.043162 
+L 21.853903 -36.140888 
+L 23.772579 -36.261629 
+L 25.691255 -36.403194 
+L 27.609931 -36.56339 
+L 29.528607 -36.740027 
+L 31.447283 -36.930911 
+L 33.365959 -37.133851 
+L 35.284634 -37.346655 
+L 37.20331 -37.567131 
+L 39.121986 -37.793086 
+L 41.040662 -38.02233 
+L 42.959338 -38.25267 
+L 44.878014 -38.481914 
+L 46.79669 -38.707869 
+L 48.715366 -38.928345 
+L 50.634041 -39.141149 
+L 52.552717 -39.344089 
+L 54.471393 -39.534973 
+L 56.390069 -39.71161 
+L 58.308745 -39.871806 
+L 60.227421 -40.013371 
+L 62.146097 -40.134112 
+L 64.064772 -40.231838 
+L 65.983448 -40.304355 
+L 67.902124 -40.349474 
+L 69.8208 -40.365 
+L 69.8208 -49.275 
+L 69.8208 -49.275 
+L 67.902124 -49.275 
+L 65.983448 -49.275 
+L 64.064772 -49.275 
+L 62.146097 -49.275 
+L 60.227421 -49.275 
+L 58.308745 -49.275 
+L 56.390069 -49.275 
+L 54.471393 -49.275 
+L 52.552717 -49.275 
+L 50.634041 -49.275 
+L 48.715366 -49.275 
+L 46.79669 -49.275 
+L 44.878014 -49.275 
+L 42.959338 -49.275 
+L 41.040662 -49.275 
+L 39.121986 -49.275 
+L 37.20331 -49.275 
+L 35.284634 -49.275 
+L 33.365959 -49.275 
+L 31.447283 -49.275 
+L 29.528607 -49.275 
+L 27.609931 -49.275 
+L 25.691255 -49.275 
+L 23.772579 -49.275 
+L 21.853903 -49.275 
+L 19.935228 -49.275 
+L 18.016552 -49.275 
+L 16.097876 -49.275 
+L 14.1792 -49.275 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_flows-ped6c4f7576)">
+     <use xlink:href="#ch_icon_flows-m56f49be6ef" x="0" y="54" style="fill: #b4b0a5; fill-opacity: 0.5"/>
+    </g>
+   </g>
+   <g id="ch_icon_flows-FillBetweenPolyCollection_2">
+    <defs>
+     <path id="ch_icon_flows-m7d3dcfe965" d="M 14.1792 -35.91 
+L 14.1792 -25.515 
+L 16.097876 -25.473596 
+L 18.016552 -25.353281 
+L 19.935228 -25.159901 
+L 21.853903 -24.899299 
+L 23.772579 -24.577323 
+L 25.691255 -24.199817 
+L 27.609931 -23.772626 
+L 29.528607 -23.301596 
+L 31.447283 -22.792571 
+L 33.365959 -22.251398 
+L 35.284634 -21.68392 
+L 37.20331 -21.095985 
+L 39.121986 -20.493436 
+L 41.040662 -19.88212 
+L 42.959338 -19.26788 
+L 44.878014 -18.656564 
+L 46.79669 -18.054015 
+L 48.715366 -17.46608 
+L 50.634041 -16.898602 
+L 52.552717 -16.357429 
+L 54.471393 -15.848404 
+L 56.390069 -15.377374 
+L 58.308745 -14.950183 
+L 60.227421 -14.572677 
+L 62.146097 -14.250701 
+L 64.064772 -13.990099 
+L 65.983448 -13.796719 
+L 67.902124 -13.676404 
+L 69.8208 -13.635 
+L 69.8208 -24.03 
+L 69.8208 -24.03 
+L 67.902124 -24.071404 
+L 65.983448 -24.191719 
+L 64.064772 -24.385099 
+L 62.146097 -24.645701 
+L 60.227421 -24.967677 
+L 58.308745 -25.345183 
+L 56.390069 -25.772374 
+L 54.471393 -26.243404 
+L 52.552717 -26.752429 
+L 50.634041 -27.293602 
+L 48.715366 -27.86108 
+L 46.79669 -28.449015 
+L 44.878014 -29.051564 
+L 42.959338 -29.66288 
+L 41.040662 -30.27712 
+L 39.121986 -30.888436 
+L 37.20331 -31.490985 
+L 35.284634 -32.07892 
+L 33.365959 -32.646398 
+L 31.447283 -33.187571 
+L 29.528607 -33.696596 
+L 27.609931 -34.167626 
+L 25.691255 -34.594817 
+L 23.772579 -34.972323 
+L 21.853903 -35.294299 
+L 19.935228 -35.554901 
+L 18.016552 -35.748281 
+L 16.097876 -35.868596 
+L 14.1792 -35.91 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_flows-ped6c4f7576)">
+     <use xlink:href="#ch_icon_flows-m7d3dcfe965" x="0" y="54" style="fill: #b4b0a5; fill-opacity: 0.5"/>
+    </g>
+   </g>
+   <g id="ch_icon_flows-FillBetweenPolyCollection_3">
+    <defs>
+     <path id="ch_icon_flows-m69feea92c1" d="M 14.1792 -24.03 
+L 14.1792 -6.21 
+L 16.097876 -6.277281 
+L 18.016552 -6.472793 
+L 19.935228 -6.787037 
+L 21.853903 -7.210513 
+L 23.772579 -7.733725 
+L 25.691255 -8.347172 
+L 27.609931 -9.041358 
+L 29.528607 -9.806782 
+L 31.447283 -10.633947 
+L 33.365959 -11.513354 
+L 35.284634 -12.435504 
+L 37.20331 -13.3909 
+L 39.121986 -14.370041 
+L 41.040662 -15.363431 
+L 42.959338 -16.361569 
+L 44.878014 -17.354959 
+L 46.79669 -18.3341 
+L 48.715366 -19.289496 
+L 50.634041 -20.211646 
+L 52.552717 -21.091053 
+L 54.471393 -21.918218 
+L 56.390069 -22.683642 
+L 58.308745 -23.377828 
+L 60.227421 -23.991275 
+L 62.146097 -24.514487 
+L 64.064772 -24.937963 
+L 65.983448 -25.252207 
+L 67.902124 -25.447719 
+L 69.8208 -25.515 
+L 69.8208 -38.88 
+L 69.8208 -38.88 
+L 67.902124 -38.828245 
+L 65.983448 -38.677851 
+L 64.064772 -38.436126 
+L 62.146097 -38.110374 
+L 60.227421 -37.707904 
+L 58.308745 -37.236021 
+L 56.390069 -36.702032 
+L 54.471393 -36.113244 
+L 52.552717 -35.476964 
+L 50.634041 -34.800497 
+L 48.715366 -34.091151 
+L 46.79669 -33.356231 
+L 44.878014 -32.603045 
+L 42.959338 -31.8389 
+L 41.040662 -31.0711 
+L 39.121986 -30.306955 
+L 37.20331 -29.553769 
+L 35.284634 -28.818849 
+L 33.365959 -28.109503 
+L 31.447283 -27.433036 
+L 29.528607 -26.796756 
+L 27.609931 -26.207968 
+L 25.691255 -25.673979 
+L 23.772579 -25.202096 
+L 21.853903 -24.799626 
+L 19.935228 -24.473874 
+L 18.016552 -24.232149 
+L 16.097876 -24.081755 
+L 14.1792 -24.03 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_flows-ped6c4f7576)">
+     <use xlink:href="#ch_icon_flows-m69feea92c1" x="0" y="54" style="fill: #005a8c; fill-opacity: 0.6"/>
+    </g>
+   </g>
+   <g id="ch_icon_flows-patch_2">
+    <path d="M 9.5424 18.09 
+L 14.1792 18.09 
+L 14.1792 5.4675 
+L 9.5424 5.4675 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_flows-patch_3">
+    <path d="M 9.5424 28.485 
+L 14.1792 28.485 
+L 14.1792 18.8325 
+L 9.5424 18.8325 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_flows-patch_4">
+    <path d="M 9.5424 47.79 
+L 14.1792 47.79 
+L 14.1792 30.7125 
+L 9.5424 30.7125 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_flows-patch_5">
+    <path d="M 69.8208 13.635 
+L 74.4576 13.635 
+L 74.4576 5.4675 
+L 69.8208 5.4675 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_flows-patch_6">
+    <path d="M 69.8208 28.485 
+L 74.4576 28.485 
+L 74.4576 15.8625 
+L 69.8208 15.8625 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_flows-patch_7">
+    <path d="M 69.8208 47.79 
+L 74.4576 47.79 
+L 74.4576 30.7125 
+L 69.8208 30.7125 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_flows-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="flows.html#sankey">Relationships and flows</a></h4><p class="q">How do things connect or move?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="flows.html#sankey">Sankey</a></dd>
+          <dt>Also</dt><dd><a href="flows.html#parallel-coordinates">Parallel coordinates</a>; <a href="flows.html#venn">Venn</a>, 3 sets max</dd>
+          <dt class="no">Avoid</dt><dd><a href="flows.html#sankey-best-practice">A color per stage</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the geo chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_geo-figure_1">
+  <g id="ch_icon_geo-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_geo-axes_1">
+   <g id="ch_icon_geo-patch_2">
+    <path d="M 9.5424 18.09 
+L 22.2936 18.09 
+L 22.2936 4.35375 
+L 9.5424 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #b6e2fa"/>
+   </g>
+   <g id="ch_icon_geo-patch_3">
+    <path d="M 23.0664 18.09 
+L 35.8176 18.09 
+L 35.8176 4.35375 
+L 23.0664 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+   <g id="ch_icon_geo-patch_4">
+    <path d="M 36.5904 18.09 
+L 49.3416 18.09 
+L 49.3416 4.35375 
+L 36.5904 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #0a5fbc"/>
+   </g>
+   <g id="ch_icon_geo-patch_5">
+    <path d="M 50.1144 18.09 
+L 62.8656 18.09 
+L 62.8656 4.35375 
+L 50.1144 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+   <g id="ch_icon_geo-patch_6">
+    <path d="M 63.6384 18.09 
+L 76.3896 18.09 
+L 76.3896 4.35375 
+L 63.6384 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #b6e2fa"/>
+   </g>
+   <g id="ch_icon_geo-patch_7">
+    <path d="M 9.5424 32.94 
+L 22.2936 32.94 
+L 22.2936 19.20375 
+L 9.5424 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+   <g id="ch_icon_geo-patch_8">
+    <path d="M 23.0664 32.94 
+L 35.8176 32.94 
+L 35.8176 19.20375 
+L 23.0664 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #143359"/>
+   </g>
+   <g id="ch_icon_geo-patch_9">
+    <path d="M 36.5904 32.94 
+L 49.3416 32.94 
+L 49.3416 19.20375 
+L 36.5904 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #009eff"/>
+   </g>
+   <g id="ch_icon_geo-patch_10">
+    <path d="M 50.1144 32.94 
+L 62.8656 32.94 
+L 62.8656 19.20375 
+L 50.1144 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #b6e2fa"/>
+   </g>
+   <g id="ch_icon_geo-patch_11">
+    <path d="M 63.6384 32.94 
+L 76.3896 32.94 
+L 76.3896 19.20375 
+L 63.6384 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #e6f3fb"/>
+   </g>
+   <g id="ch_icon_geo-patch_12">
+    <path d="M 9.5424 47.79 
+L 22.2936 47.79 
+L 22.2936 34.05375 
+L 9.5424 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #e6f3fb"/>
+   </g>
+   <g id="ch_icon_geo-patch_13">
+    <path d="M 23.0664 47.79 
+L 35.8176 47.79 
+L 35.8176 34.05375 
+L 23.0664 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #b6e2fa"/>
+   </g>
+   <g id="ch_icon_geo-patch_14">
+    <path d="M 36.5904 47.79 
+L 49.3416 47.79 
+L 49.3416 34.05375 
+L 36.5904 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+   <g id="ch_icon_geo-patch_15">
+    <path d="M 50.1144 47.79 
+L 62.8656 47.79 
+L 62.8656 34.05375 
+L 50.1144 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #0a5fbc"/>
+   </g>
+   <g id="ch_icon_geo-patch_16">
+    <path d="M 63.6384 47.79 
+L 76.3896 47.79 
+L 76.3896 34.05375 
+L 63.6384 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_geo-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="geo.html#choropleth">Geo-spatial</a></h4><p class="q">Where? Does place matter?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="geo.html#choropleth">Choropleth</a> for rates</dd>
+          <dt>Also</dt><dd><a href="geo.html#bubble-map">Bubble map</a> for counts; <a href="geo.html#map-variants">zoom-ins</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="geo.html#maps-best-practice">Counts on a choropleth</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the single chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_single-figure_1">
+  <g id="ch_icon_single-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_single-axes_1">
+   <g id="ch_icon_single-patch_2">
+    <path d="M 6.4512 46.305 
+L 77.5488 46.305 
+L 77.5488 41.85 
+L 6.4512 41.85 
+z
+" clip-path="url(#ch_icon_single-ped6c4f7576)" style="fill: #dedbd1"/>
+   </g>
+   <g id="ch_icon_single-patch_3">
+    <path d="M 6.4512 46.305 
+L 59.7744 46.305 
+L 59.7744 41.85 
+L 6.4512 41.85 
+z
+" clip-path="url(#ch_icon_single-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_single-text_1">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="6.4512" y="33.075" transform="rotate(-0 6.4512 33.075)">75%</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_single-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="single-number.html#big-number">Single number</a></h4><p class="q">What one figure should they remember?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="single-number.html#big-number">Big number</a> with a comparison</dd>
+          <dt>Also</dt><dd><a href="single-number.html#progress-ring">Progress bar or ring</a> for a target</dd>
+          <dt class="no">Avoid</dt><dd><a href="single-number.html#single-number-best-practice">Speedometers</a></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Chart chooser</span><span class="n">4</span></div>
+</section>
+
+<section class="spread" id="chooser-traps">
+  <div class="rail">
+    <p class="eyebrow">Chart chooser</p>
+    <h2 class="title"><b>Before you build:</b> the common traps</h2>
+    <p class="lede">The right chart type can still go wrong. If you are about to do one of these, use the fix instead.</p>
+    <p class="small">The page numbers refer to this guide's PDF; on screen, each fix links to its page.</p>
+  </div>
+  <div class="stage">
+    <div class="panel traps">
+      <div class="trap"><span class="x">About to</span><span class="ok">Instead</span><span></span></div>
+      <div class="trap"><span>Cut the bar axis so small differences show</span><span>Bars from zero; a <a href="ranking.html#dumbbell">dot plot</a> for a narrow range</span><a href="magnitude.html#bar-best-practice">p. 19</a></div>
+      <div class="trap"><span>Give each bar its own color</span><span>Grey bars, the one that matters in blue</span><a href="magnitude.html#bar-best-practice">p. 19</a></div>
+      <div class="trap"><span>Put two units on two axes</span><span>Two aligned panels, or index both to 100</span><a href="correlation.html#dual-axis">p. 62</a></div>
+      <div class="trap"><span>Draw ten lines in ten colors</span><span>All grey, one or two in blue; or small multiples</span><a href="change-over-time.html#line-best-practice">p. 35</a></div>
+      <div class="trap"><span>Make a pie with eight slices</span><span>A sorted bar; donuts take five parts at most</span><a href="part-to-whole.html#donut-best-practice">p. 31</a></div>
+      <div class="trap"><span>Stack eight segments in a bar</span><span>Five at most, the story segment blue on the baseline</span><a href="part-to-whole.html#stacked-best-practice">p. 24</a></div>
+      <div class="trap"><span>Color a waterfall green up, red down</span><span>Favorable teal, unfavorable orange; or grey with one blue</span><a href="part-to-whole.html#waterfall-best-practice">p. 27</a></div>
+      <div class="trap"><span>Map raw counts by state</span><span>Map rates; show counts as bubbles</span><a href="geo.html#maps-best-practice">p. 77</a></div>
+      <div class="trap"><span>Show a KPI as a speedometer</span><span>A big number with a comparison, or a bar to target</span><a href="single-number.html#single-number-best-practice">p. 83</a></div>
+      <div class="trap"><span>Paste a 30-row table to make one point</span><span>Chart the point; keep the table for the appendix</span><a href="ranking.html#heat-table">p. 50</a></div>
+      <div class="trap"><span>Put four charts on one slide</span><span>Two at most, each with its own insight headline</span><a href="formats.html#two-charts">p. 88</a></div>
+      <div class="trap"><span>Show a team of 7 people</span><span>Suppress or combine groups under 10</span><a href="fundamentals.html#people-data">p. 15</a></div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Chart chooser</span><span class="n">5</span></div>
+</section>
+
+</main>
+</body>
+</html>

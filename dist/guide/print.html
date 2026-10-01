@@ -37,7 +37,7 @@
       <div class="tile">
         <p class="step">Consultants and analysts</p>
         <h4>Decks, reports, workbooks</h4>
-        <p class="note">Read <a href="fundamentals.html">Fundamentals</a> once, then use the chart pages as you build. Keep the cheat sheet next to you.</p>
+        <p class="note">Read <a href="#question-first">Fundamentals</a> once, then use the chart pages as you build. Keep the cheat sheet next to you.</p>
         <ul class="note">
           <li>PowerPoint template and starter deck</li>
           <li>Excel chart workbook with the palette</li>
@@ -91,21 +91,1150 @@
   </div>
   <div class="stage plain top">
     <ol class="toc">
-      <li><span class="no">01</span><span><a href="fundamentals.html">Fundamentals</a><small>Question first, how readers read, anatomy, headlines, color, type, clutter, honest scales, people data, accessibility</small></span></li>
-      <li><span class="no">02</span><span><a href="magnitude.html">Magnitude</a><small>Bar and column charts: anatomy, variants, best practice, build it</small></span></li>
-      <li><span class="no">03</span><span><a href="part-to-whole.html">Part-to-whole</a><small>Stacked bars, waterfalls, treemaps, donuts: anatomy, variants, best practice, build it</small></span></li>
-      <li><span class="no">04</span><span><a href="change-over-time.html">Change over time</a><small>Line, stacked area, bubble timeline, small multiples</small></span></li>
-      <li><span class="no">05</span><span><a href="ranking.html">Ranking</a><small>Slope, bump, dot plot and dumbbell, heat table</small></span></li>
-      <li><span class="no">06</span><span><a href="distribution.html">Distribution</a><small>Histogram, strip, box plot</small></span></li>
-      <li><span class="no">07</span><span><a href="correlation.html">Correlation</a><small>Scatter and bubble, heatmaps, why not dual axes</small></span></li>
-      <li><span class="no">08</span><span><a href="flows.html">Relationships and flows</a><small>Sankey, parallel coordinates, Venn</small></span></li>
-      <li><span class="no">09</span><span><a href="geo.html">Geo-spatial</a><small>Choropleth, bubble map, dot density</small></span></li>
-      <li><span class="no">10</span><span><a href="single-number.html">Single number</a><small>KPI and big number, progress to target</small></span></li>
-      <li><span class="no">11</span><span><a href="formats.html">Formats</a><small>Slides, reports and print, web and mobile, dashboards, interactivity, animation, social</small></span></li>
-      <li><span class="no">12</span><span><a href="toolkit.html">Toolkit</a><small>Downloads, set-up for each tool, the QA checklist, guidance for agents</small></span></li>
+      <li><span class="no">01</span><span><a href="#question-first">Fundamentals</a><small>Question first, how readers read, anatomy, headlines, color, type, clutter, honest scales, people data, accessibility</small></span></li>
+      <li><span class="no">02</span><span><a href="#bar">Magnitude</a><small>Bar and column charts: anatomy, variants, best practice, build it</small></span></li>
+      <li><span class="no">03</span><span><a href="#stacked-bar">Part-to-whole</a><small>Stacked bars, waterfalls, treemaps, donuts: anatomy, variants, best practice, build it</small></span></li>
+      <li><span class="no">04</span><span><a href="#line">Change over time</a><small>Line, stacked area, bubble timeline, small multiples</small></span></li>
+      <li><span class="no">05</span><span><a href="#slope">Ranking</a><small>Slope, bump, dot plot and dumbbell, heat table</small></span></li>
+      <li><span class="no">06</span><span><a href="#strip">Distribution</a><small>Histogram, strip, box plot</small></span></li>
+      <li><span class="no">07</span><span><a href="#scatter">Correlation</a><small>Scatter and bubble, heatmaps, why not dual axes</small></span></li>
+      <li><span class="no">08</span><span><a href="#sankey">Relationships and flows</a><small>Sankey, parallel coordinates, Venn</small></span></li>
+      <li><span class="no">09</span><span><a href="#choropleth">Geo-spatial</a><small>Choropleth, bubble map, dot density</small></span></li>
+      <li><span class="no">10</span><span><a href="#big-number">Single number</a><small>KPI and big number, progress to target</small></span></li>
+      <li><span class="no">11</span><span><a href="#presentations">Formats</a><small>Slides, reports and print, web and mobile, dashboards, interactivity, animation, social</small></span></li>
+      <li><span class="no">12</span><span><a href="#kit">Toolkit</a><small>Downloads, set-up for each tool, the QA checklist, guidance for agents</small></span></li>
     </ol>
   </div>
   <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">3</span></div>
+</section>
+
+<section class="spread" id="chooser">
+  <div class="rail">
+    <p class="eyebrow">Chart chooser</p>
+    <h2 class="title"><b>Chart</b> chooser</h2>
+    <p class="lede">Pick the chart from the question, not from habit.</p>
+    <ol class="steps">
+      <li><span class="mk">1</span><span>Write the question the chart answers in one sentence.</span></li>
+      <li><span class="mk">2</span><span>Find the question type and start with its first choice.</span></li>
+      <li><span class="mk">3</span><span>Check the traps on the next page.</span></li>
+      <li><span class="mk">4</span><span>Follow the chart's page to build it.</span></li>
+    </ol>
+    <p class="small">Every chart name links to its page in this guide. <b>Avoid</b> lists the charts that look right for the question but mislead or slow the reader.</p>
+  </div>
+  <div class="stage">
+    <div class="chooser">
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the magnitude chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_magnitude-figure_1">
+  <g id="ch_icon_magnitude-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_magnitude-axes_1">
+   <g id="ch_icon_magnitude-patch_2">
+    <path d="M 7.9968 12.15 
+L 74.4576 12.15 
+L 74.4576 6.21 
+L 7.9968 6.21 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_magnitude-patch_3">
+    <path d="M 7.9968 21.06 
+L 62.0928 21.06 
+L 62.0928 15.12 
+L 7.9968 15.12 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_magnitude-patch_4">
+    <path d="M 7.9968 29.97 
+L 48.1824 29.97 
+L 48.1824 24.03 
+L 7.9968 24.03 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_magnitude-patch_5">
+    <path d="M 7.9968 38.88 
+L 38.9088 38.88 
+L 38.9088 32.94 
+L 7.9968 32.94 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_magnitude-patch_6">
+    <path d="M 7.9968 47.79 
+L 31.1808 47.79 
+L 31.1808 41.85 
+L 7.9968 41.85 
+z
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_magnitude-line2d_1">
+    <path d="M 7.9968 50.76 
+L 7.9968 3.24 
+" clip-path="url(#ch_icon_magnitude-ped6c4f7576)" style="fill: none; stroke: #8c8c8c; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_magnitude-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#bar">Magnitude</a></h4><p class="q">How big? Which is bigger, by how much?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#bar">Sorted bar</a></dd>
+          <dt>Also</dt><dd><a href="#dumbbell">Dot plot</a> for values far from zero; <a href="#bar-variants">paired bars</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="#bar-best-practice">Rainbow, 3D or cut-off bars</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the part chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_part-figure_1">
+  <g id="ch_icon_part-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_part-axes_1">
+   <g id="ch_icon_part-patch_2">
+    <path d="M 6.4512 18.09 
+L 27.78048 18.09 
+L 27.78048 8.4375 
+L 6.4512 8.4375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_part-patch_3">
+    <path d="M 28.55328 18.09 
+L 69.789888 18.09 
+L 69.789888 8.4375 
+L 28.55328 8.4375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_part-patch_4">
+    <path d="M 70.562688 18.09 
+L 77.5488 18.09 
+L 77.5488 8.4375 
+L 70.562688 8.4375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #dedbd1"/>
+   </g>
+   <g id="ch_icon_part-patch_5">
+    <path d="M 6.4512 32.94 
+L 12.139008 32.94 
+L 12.139008 23.2875 
+L 6.4512 23.2875 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_part-patch_6">
+    <path d="M 12.911808 32.94 
+L 69.789888 32.94 
+L 69.789888 23.2875 
+L 12.911808 23.2875 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_part-patch_7">
+    <path d="M 70.562688 32.94 
+L 77.5488 32.94 
+L 77.5488 23.2875 
+L 70.562688 23.2875 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #dedbd1"/>
+   </g>
+   <g id="ch_icon_part-patch_8">
+    <path d="M 6.4512 47.79 
+L 11.428032 47.79 
+L 11.428032 38.1375 
+L 6.4512 38.1375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_part-patch_9">
+    <path d="M 12.200832 47.79 
+L 62.680128 47.79 
+L 62.680128 38.1375 
+L 12.200832 38.1375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_part-patch_10">
+    <path d="M 63.452928 47.79 
+L 77.5488 47.79 
+L 77.5488 38.1375 
+L 63.452928 38.1375 
+z
+" clip-path="url(#ch_icon_part-ped6c4f7576)" style="fill: #dedbd1"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_part-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#stacked-bar">Part-to-whole</a></h4><p class="q">What is it made of? How does a total break down?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#stacked-bar">100% stacked bar</a></dd>
+          <dt>Also</dt><dd><a href="#waterfall">Waterfall</a> between totals; <a href="#treemap">treemap</a> for many parts</dd>
+          <dt class="no">Avoid</dt><dd><a href="#donut-best-practice">Pies over 5 slices</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the time chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_time-figure_1">
+  <g id="ch_icon_time-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_time-axes_1">
+   <g id="ch_icon_time-line2d_1">
+    <path d="M 7.9968 21.06 
+L 19.3312 22.545 
+L 30.6656 20.3175 
+L 42 23.2875 
+L 53.3344 21.8025 
+L 64.6688 24.03 
+L 76.0032 22.545 
+" clip-path="url(#ch_icon_time-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_time-line2d_2">
+    <path d="M 7.9968 34.425 
+L 19.3312 31.455 
+L 30.6656 28.485 
+L 42 25.515 
+L 53.3344 19.575 
+L 64.6688 13.635 
+L 76.0032 9.18 
+" clip-path="url(#ch_icon_time-ped6c4f7576)" style="fill: none; stroke: #005a8c; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_time-line2d_3">
+    <path d="M 6.4512 47.79 
+L 77.5488 47.79 
+" clip-path="url(#ch_icon_time-ped6c4f7576)" style="fill: none; stroke: #8c8c8c; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_time-PathCollection_1">
+    <defs>
+     <path id="ch_icon_time-m1c23f1e1fd" d="M 0 1.732051 
+C 0.459345 1.732051 0.899939 1.549551 1.224745 1.224745 
+C 1.549551 0.899939 1.732051 0.459345 1.732051 0 
+C 1.732051 -0.459345 1.549551 -0.899939 1.224745 -1.224745 
+C 0.899939 -1.549551 0.459345 -1.732051 0 -1.732051 
+C -0.459345 -1.732051 -0.899939 -1.549551 -1.224745 -1.224745 
+C -1.549551 -0.899939 -1.732051 -0.459345 -1.732051 0 
+C -1.732051 0.459345 -1.549551 0.899939 -1.224745 1.224745 
+C -0.899939 1.549551 -0.459345 1.732051 0 1.732051 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_time-ped6c4f7576)">
+     <use xlink:href="#ch_icon_time-m1c23f1e1fd" x="76.0032" y="9.18" style="fill: #005a8c"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_time-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#line">Change over time</a></h4><p class="q">How is it moving? When did it change?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#line">Line</a>, focus series in blue</dd>
+          <dt>Also</dt><dd><a href="#stacked-area">Stacked area</a>; <a href="#small-multiples">small multiples</a>; <a href="#bubble-timeline">bubble timeline</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="#line-best-practice">Ten colored lines</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the ranking chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_ranking-figure_1">
+  <g id="ch_icon_ranking-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_ranking-axes_1">
+   <g id="ch_icon_ranking-line2d_1">
+    <path d="M 20.3616 10.665 
+L 63.6384 28.485 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_1">
+    <defs>
+     <path id="ch_icon_ranking-m4ce5396f0b" d="M 0 1.581139 
+C 0.419323 1.581139 0.821528 1.41454 1.118034 1.118034 
+C 1.41454 0.821528 1.581139 0.419323 1.581139 0 
+C 1.581139 -0.419323 1.41454 -0.821528 1.118034 -1.118034 
+C 0.821528 -1.41454 0.419323 -1.581139 0 -1.581139 
+C -0.419323 -1.581139 -0.821528 -1.41454 -1.118034 -1.118034 
+C -1.41454 -0.821528 -1.581139 -0.419323 -1.581139 0 
+C -1.581139 0.419323 -1.41454 0.821528 -1.118034 1.118034 
+C -0.821528 1.41454 -0.419323 1.581139 0 1.581139 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="20.3616" y="10.665" style="fill: #b4b0a5"/>
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="63.6384" y="28.485" style="fill: #b4b0a5"/>
+    </g>
+   </g>
+   <g id="ch_icon_ranking-line2d_2">
+    <path d="M 20.3616 28.485 
+L 63.6384 37.395 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_2">
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="20.3616" y="28.485" style="fill: #b4b0a5"/>
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="63.6384" y="37.395" style="fill: #b4b0a5"/>
+    </g>
+   </g>
+   <g id="ch_icon_ranking-line2d_3">
+    <path d="M 20.3616 37.395 
+L 63.6384 19.575 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_3">
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="20.3616" y="37.395" style="fill: #b4b0a5"/>
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="63.6384" y="19.575" style="fill: #b4b0a5"/>
+    </g>
+   </g>
+   <g id="ch_icon_ranking-line2d_4">
+    <path d="M 20.3616 46.305 
+L 63.6384 46.305 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #b4b0a5; stroke-width: 1.2; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_4">
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="20.3616" y="46.305" style="fill: #b4b0a5"/>
+     <use xlink:href="#ch_icon_ranking-m4ce5396f0b" x="63.6384" y="46.305" style="fill: #b4b0a5"/>
+    </g>
+   </g>
+   <g id="ch_icon_ranking-line2d_5">
+    <path d="M 20.3616 19.575 
+L 63.6384 10.665 
+" clip-path="url(#ch_icon_ranking-ped6c4f7576)" style="fill: none; stroke: #005a8c; stroke-width: 2.4; stroke-linecap: round"/>
+   </g>
+   <g id="ch_icon_ranking-PathCollection_5">
+    <defs>
+     <path id="ch_icon_ranking-m584b72711e" d="M 0 1.581139 
+C 0.419323 1.581139 0.821528 1.41454 1.118034 1.118034 
+C 1.41454 0.821528 1.581139 0.419323 1.581139 0 
+C 1.581139 -0.419323 1.41454 -0.821528 1.118034 -1.118034 
+C 0.821528 -1.41454 0.419323 -1.581139 0 -1.581139 
+C -0.419323 -1.581139 -0.821528 -1.41454 -1.118034 -1.118034 
+C -1.41454 -0.821528 -1.581139 -0.419323 -1.581139 0 
+C -1.581139 0.419323 -1.41454 0.821528 -1.118034 1.118034 
+C -0.821528 1.41454 -0.419323 1.581139 0 1.581139 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_ranking-ped6c4f7576)">
+     <use xlink:href="#ch_icon_ranking-m584b72711e" x="20.3616" y="19.575" style="fill: #005a8c"/>
+     <use xlink:href="#ch_icon_ranking-m584b72711e" x="63.6384" y="10.665" style="fill: #005a8c"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_ranking-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#slope">Ranking</a></h4><p class="q">Who's on top? Who moved?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#bar">Sorted bar</a>; <a class="first" href="#slope">slope</a> for change</dd>
+          <dt>Also</dt><dd><a href="#dumbbell">Dumbbell</a> for us vs. them; <a href="#heat-table">heat table</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="#slope-best-practice">A color for every line</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the distribution chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_distribution-figure_1">
+  <g id="ch_icon_distribution-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_distribution-axes_1">
+   <g id="ch_icon_distribution-patch_2">
+    <path d="M 7.9968 46.305 
+L 13.4064 46.305 
+L 13.4064 42.147 
+L 7.9968 42.147 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_3">
+    <path d="M 14.1792 46.305 
+L 19.5888 46.305 
+L 19.5888 36.9495 
+L 14.1792 36.9495 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_4">
+    <path d="M 20.3616 46.305 
+L 25.7712 46.305 
+L 25.7712 28.6335 
+L 20.3616 28.6335 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_5">
+    <path d="M 26.544 46.305 
+L 31.9536 46.305 
+L 31.9536 18.2385 
+L 26.544 18.2385 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_6">
+    <path d="M 32.7264 46.305 
+L 38.136 46.305 
+L 38.136 8.883 
+L 32.7264 8.883 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_7">
+    <path d="M 38.9088 46.305 
+L 44.3184 46.305 
+L 44.3184 14.0805 
+L 38.9088 14.0805 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_8">
+    <path d="M 45.0912 46.305 
+L 50.5008 46.305 
+L 50.5008 23.436 
+L 45.0912 23.436 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_distribution-patch_9">
+    <path d="M 51.2736 46.305 
+L 56.6832 46.305 
+L 56.6832 31.752 
+L 51.2736 31.752 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_distribution-patch_10">
+    <path d="M 57.456 46.305 
+L 62.8656 46.305 
+L 62.8656 36.9495 
+L 57.456 36.9495 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_distribution-patch_11">
+    <path d="M 63.6384 46.305 
+L 69.048 46.305 
+L 69.048 40.068 
+L 63.6384 40.068 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_distribution-patch_12">
+    <path d="M 69.8208 46.305 
+L 75.2304 46.305 
+L 75.2304 42.147 
+L 69.8208 42.147 
+z
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_distribution-line2d_1">
+    <path d="M 6.4512 46.305 
+L 77.5488 46.305 
+" clip-path="url(#ch_icon_distribution-ped6c4f7576)" style="fill: none; stroke: #8c8c8c; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_distribution-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#strip">Distribution</a></h4><p class="q">How spread out? What's typical?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#strip">Strip plot</a> or <a class="first" href="#histogram">histogram</a></dd>
+          <dt>Also</dt><dd><a href="#distribution-variants">Box plot</a> to compare many groups</dd>
+          <dt class="no">Avoid</dt><dd><a href="#distribution-best-practice">An average with no spread</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the correlation chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_correlation-figure_1">
+  <g id="ch_icon_correlation-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_correlation-axes_1">
+   <g id="ch_icon_correlation-PathCollection_1">
+    <defs>
+     <path id="ch_icon_correlation-C0_0_bc6c2c3bd1" d="M 0 1.581139 
+C 0.419323 1.581139 0.821528 1.41454 1.118034 1.118034 
+C 1.41454 0.821528 1.581139 0.419323 1.581139 -0 
+C 1.581139 -0.419323 1.41454 -0.821528 1.118034 -1.118034 
+C 0.821528 -1.41454 0.419323 -1.581139 0 -1.581139 
+C -0.419323 -1.581139 -0.821528 -1.41454 -1.118034 -1.118034 
+C -1.41454 -0.821528 -1.581139 -0.419323 -1.581139 0 
+C -1.581139 0.419323 -1.41454 0.821528 -1.118034 1.118034 
+C -0.821528 1.41454 -0.419323 1.581139 0 1.581139 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="69.391501" y="8.232865" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="42.700315" y="24.52149" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="71.443291" y="2.237514" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="16.085606" y="46.246223" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="48.637167" y="20.907661" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="34.363907" y="32.410542" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="60.66474" y="11.081628" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="21.878008" y="44.470384" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="64.975979" y="13.791084" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="44.716633" y="22.029364" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="66.866545" y="17.8733" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="40.587539" y="20.758509" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="37.703002" y="25.875768" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="59.863842" y="10.475814" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="71.932275" y="4.310803" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="33.945927" y="33.02256" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="70.991306" y="12.635393" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="68.524127" y="11.290804" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="22.073666" y="31.598873" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="48.729642" y="17.054008" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="54.665558" y="20.869965" style="fill: #b4b0a5; fill-opacity: 0.9"/>
+    </g>
+    <g clip-path="url(#ch_icon_correlation-ped6c4f7576)">
+     <use xlink:href="#ch_icon_correlation-C0_0_bc6c2c3bd1" x="69.375895" y="12.639917" style="fill: #005a8c; fill-opacity: 0.9"/>
+    </g>
+   </g>
+   <g id="ch_icon_correlation-line2d_1">
+    <path d="M 7.9968 4.725 
+L 7.9968 47.79 
+L 77.5488 47.79 
+" clip-path="url(#ch_icon_correlation-ped6c4f7576)" style="fill: none; stroke: #8c8c8c; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_correlation-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#scatter">Correlation</a></h4><p class="q">Do two measures move together?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#scatter">Scatter</a> or bubble scatter</dd>
+          <dt>Also</dt><dd><a href="#heatmap">Heatmap</a>: two categories, one measure</dd>
+          <dt class="no">Avoid</dt><dd><a href="#dual-axis">Dual axes</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the flows chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_flows-figure_1">
+  <g id="ch_icon_flows-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_flows-axes_1">
+   <g id="ch_icon_flows-FillBetweenPolyCollection_1">
+    <defs>
+     <path id="ch_icon_flows-m56f49be6ef" d="M 14.1792 -49.275 
+L 14.1792 -35.91 
+L 16.097876 -35.925526 
+L 18.016552 -35.970645 
+L 19.935228 -36.043162 
+L 21.853903 -36.140888 
+L 23.772579 -36.261629 
+L 25.691255 -36.403194 
+L 27.609931 -36.56339 
+L 29.528607 -36.740027 
+L 31.447283 -36.930911 
+L 33.365959 -37.133851 
+L 35.284634 -37.346655 
+L 37.20331 -37.567131 
+L 39.121986 -37.793086 
+L 41.040662 -38.02233 
+L 42.959338 -38.25267 
+L 44.878014 -38.481914 
+L 46.79669 -38.707869 
+L 48.715366 -38.928345 
+L 50.634041 -39.141149 
+L 52.552717 -39.344089 
+L 54.471393 -39.534973 
+L 56.390069 -39.71161 
+L 58.308745 -39.871806 
+L 60.227421 -40.013371 
+L 62.146097 -40.134112 
+L 64.064772 -40.231838 
+L 65.983448 -40.304355 
+L 67.902124 -40.349474 
+L 69.8208 -40.365 
+L 69.8208 -49.275 
+L 69.8208 -49.275 
+L 67.902124 -49.275 
+L 65.983448 -49.275 
+L 64.064772 -49.275 
+L 62.146097 -49.275 
+L 60.227421 -49.275 
+L 58.308745 -49.275 
+L 56.390069 -49.275 
+L 54.471393 -49.275 
+L 52.552717 -49.275 
+L 50.634041 -49.275 
+L 48.715366 -49.275 
+L 46.79669 -49.275 
+L 44.878014 -49.275 
+L 42.959338 -49.275 
+L 41.040662 -49.275 
+L 39.121986 -49.275 
+L 37.20331 -49.275 
+L 35.284634 -49.275 
+L 33.365959 -49.275 
+L 31.447283 -49.275 
+L 29.528607 -49.275 
+L 27.609931 -49.275 
+L 25.691255 -49.275 
+L 23.772579 -49.275 
+L 21.853903 -49.275 
+L 19.935228 -49.275 
+L 18.016552 -49.275 
+L 16.097876 -49.275 
+L 14.1792 -49.275 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_flows-ped6c4f7576)">
+     <use xlink:href="#ch_icon_flows-m56f49be6ef" x="0" y="54" style="fill: #b4b0a5; fill-opacity: 0.5"/>
+    </g>
+   </g>
+   <g id="ch_icon_flows-FillBetweenPolyCollection_2">
+    <defs>
+     <path id="ch_icon_flows-m7d3dcfe965" d="M 14.1792 -35.91 
+L 14.1792 -25.515 
+L 16.097876 -25.473596 
+L 18.016552 -25.353281 
+L 19.935228 -25.159901 
+L 21.853903 -24.899299 
+L 23.772579 -24.577323 
+L 25.691255 -24.199817 
+L 27.609931 -23.772626 
+L 29.528607 -23.301596 
+L 31.447283 -22.792571 
+L 33.365959 -22.251398 
+L 35.284634 -21.68392 
+L 37.20331 -21.095985 
+L 39.121986 -20.493436 
+L 41.040662 -19.88212 
+L 42.959338 -19.26788 
+L 44.878014 -18.656564 
+L 46.79669 -18.054015 
+L 48.715366 -17.46608 
+L 50.634041 -16.898602 
+L 52.552717 -16.357429 
+L 54.471393 -15.848404 
+L 56.390069 -15.377374 
+L 58.308745 -14.950183 
+L 60.227421 -14.572677 
+L 62.146097 -14.250701 
+L 64.064772 -13.990099 
+L 65.983448 -13.796719 
+L 67.902124 -13.676404 
+L 69.8208 -13.635 
+L 69.8208 -24.03 
+L 69.8208 -24.03 
+L 67.902124 -24.071404 
+L 65.983448 -24.191719 
+L 64.064772 -24.385099 
+L 62.146097 -24.645701 
+L 60.227421 -24.967677 
+L 58.308745 -25.345183 
+L 56.390069 -25.772374 
+L 54.471393 -26.243404 
+L 52.552717 -26.752429 
+L 50.634041 -27.293602 
+L 48.715366 -27.86108 
+L 46.79669 -28.449015 
+L 44.878014 -29.051564 
+L 42.959338 -29.66288 
+L 41.040662 -30.27712 
+L 39.121986 -30.888436 
+L 37.20331 -31.490985 
+L 35.284634 -32.07892 
+L 33.365959 -32.646398 
+L 31.447283 -33.187571 
+L 29.528607 -33.696596 
+L 27.609931 -34.167626 
+L 25.691255 -34.594817 
+L 23.772579 -34.972323 
+L 21.853903 -35.294299 
+L 19.935228 -35.554901 
+L 18.016552 -35.748281 
+L 16.097876 -35.868596 
+L 14.1792 -35.91 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_flows-ped6c4f7576)">
+     <use xlink:href="#ch_icon_flows-m7d3dcfe965" x="0" y="54" style="fill: #b4b0a5; fill-opacity: 0.5"/>
+    </g>
+   </g>
+   <g id="ch_icon_flows-FillBetweenPolyCollection_3">
+    <defs>
+     <path id="ch_icon_flows-m69feea92c1" d="M 14.1792 -24.03 
+L 14.1792 -6.21 
+L 16.097876 -6.277281 
+L 18.016552 -6.472793 
+L 19.935228 -6.787037 
+L 21.853903 -7.210513 
+L 23.772579 -7.733725 
+L 25.691255 -8.347172 
+L 27.609931 -9.041358 
+L 29.528607 -9.806782 
+L 31.447283 -10.633947 
+L 33.365959 -11.513354 
+L 35.284634 -12.435504 
+L 37.20331 -13.3909 
+L 39.121986 -14.370041 
+L 41.040662 -15.363431 
+L 42.959338 -16.361569 
+L 44.878014 -17.354959 
+L 46.79669 -18.3341 
+L 48.715366 -19.289496 
+L 50.634041 -20.211646 
+L 52.552717 -21.091053 
+L 54.471393 -21.918218 
+L 56.390069 -22.683642 
+L 58.308745 -23.377828 
+L 60.227421 -23.991275 
+L 62.146097 -24.514487 
+L 64.064772 -24.937963 
+L 65.983448 -25.252207 
+L 67.902124 -25.447719 
+L 69.8208 -25.515 
+L 69.8208 -38.88 
+L 69.8208 -38.88 
+L 67.902124 -38.828245 
+L 65.983448 -38.677851 
+L 64.064772 -38.436126 
+L 62.146097 -38.110374 
+L 60.227421 -37.707904 
+L 58.308745 -37.236021 
+L 56.390069 -36.702032 
+L 54.471393 -36.113244 
+L 52.552717 -35.476964 
+L 50.634041 -34.800497 
+L 48.715366 -34.091151 
+L 46.79669 -33.356231 
+L 44.878014 -32.603045 
+L 42.959338 -31.8389 
+L 41.040662 -31.0711 
+L 39.121986 -30.306955 
+L 37.20331 -29.553769 
+L 35.284634 -28.818849 
+L 33.365959 -28.109503 
+L 31.447283 -27.433036 
+L 29.528607 -26.796756 
+L 27.609931 -26.207968 
+L 25.691255 -25.673979 
+L 23.772579 -25.202096 
+L 21.853903 -24.799626 
+L 19.935228 -24.473874 
+L 18.016552 -24.232149 
+L 16.097876 -24.081755 
+L 14.1792 -24.03 
+z
+"/>
+    </defs>
+    <g clip-path="url(#ch_icon_flows-ped6c4f7576)">
+     <use xlink:href="#ch_icon_flows-m69feea92c1" x="0" y="54" style="fill: #005a8c; fill-opacity: 0.6"/>
+    </g>
+   </g>
+   <g id="ch_icon_flows-patch_2">
+    <path d="M 9.5424 18.09 
+L 14.1792 18.09 
+L 14.1792 5.4675 
+L 9.5424 5.4675 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_flows-patch_3">
+    <path d="M 9.5424 28.485 
+L 14.1792 28.485 
+L 14.1792 18.8325 
+L 9.5424 18.8325 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_flows-patch_4">
+    <path d="M 9.5424 47.79 
+L 14.1792 47.79 
+L 14.1792 30.7125 
+L 9.5424 30.7125 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_flows-patch_5">
+    <path d="M 69.8208 13.635 
+L 74.4576 13.635 
+L 74.4576 5.4675 
+L 69.8208 5.4675 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="ch_icon_flows-patch_6">
+    <path d="M 69.8208 28.485 
+L 74.4576 28.485 
+L 74.4576 15.8625 
+L 69.8208 15.8625 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_flows-patch_7">
+    <path d="M 69.8208 47.79 
+L 74.4576 47.79 
+L 74.4576 30.7125 
+L 69.8208 30.7125 
+z
+" clip-path="url(#ch_icon_flows-ped6c4f7576)" style="fill: #b4b0a5"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_flows-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#sankey">Relationships and flows</a></h4><p class="q">How do things connect or move?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#sankey">Sankey</a></dd>
+          <dt>Also</dt><dd><a href="#parallel-coordinates">Parallel coordinates</a>; <a href="#venn">Venn</a>, 3 sets max</dd>
+          <dt class="no">Avoid</dt><dd><a href="#sankey-best-practice">A color per stage</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the geo chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_geo-figure_1">
+  <g id="ch_icon_geo-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_geo-axes_1">
+   <g id="ch_icon_geo-patch_2">
+    <path d="M 9.5424 18.09 
+L 22.2936 18.09 
+L 22.2936 4.35375 
+L 9.5424 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #b6e2fa"/>
+   </g>
+   <g id="ch_icon_geo-patch_3">
+    <path d="M 23.0664 18.09 
+L 35.8176 18.09 
+L 35.8176 4.35375 
+L 23.0664 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+   <g id="ch_icon_geo-patch_4">
+    <path d="M 36.5904 18.09 
+L 49.3416 18.09 
+L 49.3416 4.35375 
+L 36.5904 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #0a5fbc"/>
+   </g>
+   <g id="ch_icon_geo-patch_5">
+    <path d="M 50.1144 18.09 
+L 62.8656 18.09 
+L 62.8656 4.35375 
+L 50.1144 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+   <g id="ch_icon_geo-patch_6">
+    <path d="M 63.6384 18.09 
+L 76.3896 18.09 
+L 76.3896 4.35375 
+L 63.6384 4.35375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #b6e2fa"/>
+   </g>
+   <g id="ch_icon_geo-patch_7">
+    <path d="M 9.5424 32.94 
+L 22.2936 32.94 
+L 22.2936 19.20375 
+L 9.5424 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+   <g id="ch_icon_geo-patch_8">
+    <path d="M 23.0664 32.94 
+L 35.8176 32.94 
+L 35.8176 19.20375 
+L 23.0664 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #143359"/>
+   </g>
+   <g id="ch_icon_geo-patch_9">
+    <path d="M 36.5904 32.94 
+L 49.3416 32.94 
+L 49.3416 19.20375 
+L 36.5904 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #009eff"/>
+   </g>
+   <g id="ch_icon_geo-patch_10">
+    <path d="M 50.1144 32.94 
+L 62.8656 32.94 
+L 62.8656 19.20375 
+L 50.1144 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #b6e2fa"/>
+   </g>
+   <g id="ch_icon_geo-patch_11">
+    <path d="M 63.6384 32.94 
+L 76.3896 32.94 
+L 76.3896 19.20375 
+L 63.6384 19.20375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #e6f3fb"/>
+   </g>
+   <g id="ch_icon_geo-patch_12">
+    <path d="M 9.5424 47.79 
+L 22.2936 47.79 
+L 22.2936 34.05375 
+L 9.5424 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #e6f3fb"/>
+   </g>
+   <g id="ch_icon_geo-patch_13">
+    <path d="M 23.0664 47.79 
+L 35.8176 47.79 
+L 35.8176 34.05375 
+L 23.0664 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #b6e2fa"/>
+   </g>
+   <g id="ch_icon_geo-patch_14">
+    <path d="M 36.5904 47.79 
+L 49.3416 47.79 
+L 49.3416 34.05375 
+L 36.5904 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+   <g id="ch_icon_geo-patch_15">
+    <path d="M 50.1144 47.79 
+L 62.8656 47.79 
+L 62.8656 34.05375 
+L 50.1144 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #0a5fbc"/>
+   </g>
+   <g id="ch_icon_geo-patch_16">
+    <path d="M 63.6384 47.79 
+L 76.3896 47.79 
+L 76.3896 34.05375 
+L 63.6384 34.05375 
+z
+" clip-path="url(#ch_icon_geo-ped6c4f7576)" style="fill: #66c4ff"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_geo-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#choropleth">Geo-spatial</a></h4><p class="q">Where? Does place matter?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#choropleth">Choropleth</a> for rates</dd>
+          <dt>Also</dt><dd><a href="#bubble-map">Bubble map</a> for counts; <a href="#map-variants">zoom-ins</a></dd>
+          <dt class="no">Avoid</dt><dd><a href="#maps-best-practice">Counts on a choropleth</a></dd>
+        </dl>
+      </div>
+      <div class="ch-card">
+        <div class="ch-top"><div class="ex-wrap"><svg class="ex" style="--w:84px" role="img" aria-label="Icon for the single chart family." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 84 54" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="ch_icon_single-figure_1">
+  <g id="ch_icon_single-patch_1">
+   <path d="M 0 54 
+L 84 54 
+L 84 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="ch_icon_single-axes_1">
+   <g id="ch_icon_single-patch_2">
+    <path d="M 6.4512 46.305 
+L 77.5488 46.305 
+L 77.5488 41.85 
+L 6.4512 41.85 
+z
+" clip-path="url(#ch_icon_single-ped6c4f7576)" style="fill: #dedbd1"/>
+   </g>
+   <g id="ch_icon_single-patch_3">
+    <path d="M 6.4512 46.305 
+L 59.7744 46.305 
+L 59.7744 41.85 
+L 6.4512 41.85 
+z
+" clip-path="url(#ch_icon_single-ped6c4f7576)" style="fill: #005a8c"/>
+   </g>
+   <g id="ch_icon_single-text_1">
+    <text style="font-weight: 700; font-size: 21px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="6.4512" y="33.075" transform="rotate(-0 6.4512 33.075)">75%</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="ch_icon_single-ped6c4f7576">
+   <rect x="3.36" y="3.24" width="77.28" height="47.52"/>
+  </clipPath>
+ </defs>
+</svg></div><div><h4><a href="#big-number">Single number</a></h4><p class="q">What one figure should they remember?</p></div></div>
+        <dl>
+          <dt>Start with</dt><dd><a class="first" href="#big-number">Big number</a> with a comparison</dd>
+          <dt>Also</dt><dd><a href="#progress-ring">Progress bar or ring</a> for a target</dd>
+          <dt class="no">Avoid</dt><dd><a href="#single-number-best-practice">Speedometers</a></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Chart chooser</span><span class="n">4</span></div>
+</section>
+
+<section class="spread" id="chooser-traps">
+  <div class="rail">
+    <p class="eyebrow">Chart chooser</p>
+    <h2 class="title"><b>Before you build:</b> the common traps</h2>
+    <p class="lede">The right chart type can still go wrong. If you are about to do one of these, use the fix instead.</p>
+    <p class="small">The page numbers refer to this guide's PDF; on screen, each fix links to its page.</p>
+  </div>
+  <div class="stage">
+    <div class="panel traps">
+      <div class="trap"><span class="x">About to</span><span class="ok">Instead</span><span></span></div>
+      <div class="trap"><span>Cut the bar axis so small differences show</span><span>Bars from zero; a <a href="#dumbbell">dot plot</a> for a narrow range</span><a href="#bar-best-practice">p. 19</a></div>
+      <div class="trap"><span>Give each bar its own color</span><span>Grey bars, the one that matters in blue</span><a href="#bar-best-practice">p. 19</a></div>
+      <div class="trap"><span>Put two units on two axes</span><span>Two aligned panels, or index both to 100</span><a href="#dual-axis">p. 62</a></div>
+      <div class="trap"><span>Draw ten lines in ten colors</span><span>All grey, one or two in blue; or small multiples</span><a href="#line-best-practice">p. 35</a></div>
+      <div class="trap"><span>Make a pie with eight slices</span><span>A sorted bar; donuts take five parts at most</span><a href="#donut-best-practice">p. 31</a></div>
+      <div class="trap"><span>Stack eight segments in a bar</span><span>Five at most, the story segment blue on the baseline</span><a href="#stacked-best-practice">p. 24</a></div>
+      <div class="trap"><span>Color a waterfall green up, red down</span><span>Favorable teal, unfavorable orange; or grey with one blue</span><a href="#waterfall-best-practice">p. 27</a></div>
+      <div class="trap"><span>Map raw counts by state</span><span>Map rates; show counts as bubbles</span><a href="#maps-best-practice">p. 77</a></div>
+      <div class="trap"><span>Show a KPI as a speedometer</span><span>A big number with a comparison, or a bar to target</span><a href="#single-number-best-practice">p. 83</a></div>
+      <div class="trap"><span>Paste a 30-row table to make one point</span><span>Chart the point; keep the table for the appendix</span><a href="#heat-table">p. 50</a></div>
+      <div class="trap"><span>Put four charts on one slide</span><span>Two at most, each with its own insight headline</span><a href="#two-charts">p. 88</a></div>
+      <div class="trap"><span>Show a team of 7 people</span><span>Suppress or combine groups under 10</span><a href="#people-data">p. 15</a></div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Chart chooser</span><span class="n">5</span></div>
 </section>
 
 <section class="spread" id="question-first">
@@ -691,7 +1820,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">4</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">6</span></div>
 </section>
 
 <section class="spread" id="how-readers-read">
@@ -1493,7 +2622,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">5</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">7</span></div>
 </section>
 
 <section class="spread" id="anatomy">
@@ -1836,7 +2965,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">6</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">8</span></div>
 </section>
 
 <section class="spread" id="headline">
@@ -2253,7 +3382,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">7</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">9</span></div>
 </section>
 
 <section class="spread" id="color">
@@ -2852,7 +3981,7 @@ z
       <div class="role"><span class="sw" style="background:#B4B0A5"></span><span><strong>Context</strong> · everything the reader should see but not focus on</span><code>#B4B0A5</code></div><div class="role"><span class="sw" style="background:#005A8C"></span><span><strong>Focus</strong> · what the headline names</span><code>#005A8C</code></div><div class="role"><span class="sw" style="background:#143359"></span><span><strong>Accent</strong> · the one exception that must pop (navy, not orange)</span><code>#143359</code></div><div class="role"><span class="sw" style="background:#66C4FF"></span><span><strong>Light blue</strong> · the series when navy marks the exception</span><code>#66C4FF</code></div><div class="role"><span class="sw" style="background:#EF8200"></span><span><strong>Orange</strong> · only when it means worse: below target, shrinking, a shortfall</span><code>#EF8200</code></div><div class="role"><span class="sw" style="background:#143359"></span><span><strong>Total and benchmark</strong> · totals, targets, reference lines</span><code>#143359</code></div><div class="role"><span class="sw" style="background:#DEDBD1"></span><span><strong>Context light</strong> · de-emphasized fills in stacks and areas</span><code>#DEDBD1</code></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">8</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">10</span></div>
 </section>
 
 <section class="spread" id="palettes">
@@ -3541,7 +4670,7 @@ z
       <div class="palette-row"><h5>Diverging<small>Centered on 0 or a target</small></h5><div><div class="swatches" style="grid-template-columns:repeat(7,1fr)"><div style="background:#A75B00"></div><div style="background:#EF8200"></div><div style="background:#F7C180"></div><div style="background:#EFEDE7"></div><div style="background:#99BDD1"></div><div style="background:#005A8C"></div><div style="background:#143359"></div></div><div class="hexes" style="grid-template-columns:repeat(7,1fr)"><span>A75B00</span><span>EF8200</span><span>F7C180</span><span>EFEDE7</span><span>99BDD1</span><span>005A8C</span><span>143359</span></div></div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">9</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">11</span></div>
 </section>
 
 <section class="spread" id="type">
@@ -3574,7 +4703,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">10</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">12</span></div>
 </section>
 
 <section class="spread" id="declutter">
@@ -4345,7 +5474,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">11</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">13</span></div>
 </section>
 
 <section class="spread" id="honest-scales">
@@ -5364,7 +6493,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">12</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">14</span></div>
 </section>
 
 <section class="spread" id="people-data">
@@ -5399,7 +6528,7 @@ z
       <p class="note">A rule in a slide is easy to forget; a rule in the measure can't be skipped. In Power BI: <code>IF([Headcount] &lt; 10, BLANK(), [Engagement])</code>. In Python, drop or merge small groups before plotting, and keep individual values out of hover text.</p>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">13</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">15</span></div>
 </section>
 
 <section class="spread" id="accessibility">
@@ -6084,7 +7213,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">14</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Fundamentals</span><span class="n">16</span></div>
 </section>
 
 <section class="spread" id="bar">
@@ -6522,7 +7651,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">15</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">17</span></div>
 </section>
 
 <section class="spread" id="bar-variants">
@@ -7252,7 +8381,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">16</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">18</span></div>
 </section>
 
 <section class="spread" id="bar-best-practice">
@@ -8238,7 +9367,7 @@ L 198 122.698
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">17</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">19</span></div>
 </section>
 
 <section class="spread" id="bar-best-practice-2">
@@ -9796,7 +10925,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">18</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">20</span></div>
 </section>
 
 <section class="spread" id="bar-build">
@@ -9831,7 +10960,7 @@ mv.lint(fig)   # checks colors, zero baseline, labels vs. axis</pre></div></div>
       <div class="platform"><h5>Coding agents</h5><p>"Make a McKesson bar chart of voluntary attrition by job family, FY26, highlighting the families above the enterprise rate." The <code>mck-chart</code> skill runs the workflow and returns the chart, a chart brief and alt text.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">19</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">21</span></div>
 </section>
 
 <section class="spread" id="stacked-bar">
@@ -10216,7 +11345,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">20</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">22</span></div>
 </section>
 
 <section class="spread" id="stacked-variants">
@@ -11063,7 +12192,7 @@ L 298 171.486
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">21</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">23</span></div>
 </section>
 
 <section class="spread" id="stacked-best-practice">
@@ -12558,7 +13687,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">22</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">24</span></div>
 </section>
 
 <section class="spread" id="waterfall">
@@ -12906,7 +14035,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">23</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">25</span></div>
 </section>
 
 <section class="spread" id="waterfall-variants">
@@ -13764,7 +14893,7 @@ L 298 162.396
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">24</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">26</span></div>
 </section>
 
 <section class="spread" id="waterfall-best-practice">
@@ -15365,7 +16494,7 @@ L 194.230769 116.561228
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">25</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">27</span></div>
 </section>
 
 <section class="spread" id="treemap">
@@ -15627,7 +16756,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">26</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">28</span></div>
 </section>
 
 <section class="spread" id="treemap-best-practice">
@@ -16536,7 +17665,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">27</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">29</span></div>
 </section>
 
 <section class="spread" id="donut">
@@ -16745,7 +17874,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">28</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">30</span></div>
 </section>
 
 <section class="spread" id="donut-best-practice">
@@ -17467,7 +18596,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">29</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">31</span></div>
 </section>
 
 <section class="spread" id="part-to-whole-build">
@@ -17496,7 +18625,7 @@ mv.lint(fig)    # flags > 6 colors, legends, and bars that don't start at zero</
       <div class="platform"><h5>R</h5><p><code>geom_col(position = "fill")</code> for 100% stacks; <code>treemapify::geom_treemap()</code> for treemaps; waterfalls with <code>geom_rect()</code>. Colors from <code>mck_highlight()</code>.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">30</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Part-to-whole</span><span class="n">32</span></div>
 </section>
 
 <section class="spread" id="line">
@@ -17941,7 +19070,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">31</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">33</span></div>
 </section>
 
 <section class="spread" id="line-variants">
@@ -18594,7 +19723,7 @@ L 231.576923 185.106061
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">32</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">34</span></div>
 </section>
 
 <section class="spread" id="line-best-practice">
@@ -19758,7 +20887,7 @@ L 198 123.304
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">33</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">35</span></div>
 </section>
 
 <section class="spread" id="line-best-practice-2">
@@ -21279,7 +22408,7 @@ L 192.884615 120.54
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">34</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">36</span></div>
 </section>
 
 <section class="spread" id="stacked-area">
@@ -21601,7 +22730,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">35</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">37</span></div>
 </section>
 
 <section class="spread" id="stacked-area-best-practice">
@@ -22768,7 +23897,7 @@ L 198 138
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">36</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">38</span></div>
 </section>
 
 <section class="spread" id="bubble-timeline">
@@ -23522,7 +24651,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">37</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">39</span></div>
 </section>
 
 <section class="spread" id="bubble-timeline-best-practice">
@@ -27821,7 +28950,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">38</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">40</span></div>
 </section>
 
 <section class="spread" id="small-multiples">
@@ -28855,7 +29984,7 @@ L 614.432842 249.281175
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">39</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">41</span></div>
 </section>
 
 <section class="spread" id="small-multiples-best-practice">
@@ -35182,7 +36311,7 @@ L 192.092632 102.72745
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">40</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">42</span></div>
 </section>
 
 <section class="spread" id="change-over-time-build">
@@ -35214,7 +36343,7 @@ mv.label_line_ends(ax, fmt="{:.1f}")      # names at the ends, nudged apart</pre
       <div class="platform"><h5>R</h5><p><code>geom_line()</code> with <code>mck_highlight()</code> colors and <code>geom_text()</code> end labels; <code>geom_area()</code> for stacks; <code>facet_wrap(~ unit)</code> keeps a shared scale by default.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">41</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Change over time</span><span class="n">43</span></div>
 </section>
 
 <section class="spread" id="slope">
@@ -35560,7 +36689,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">42</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">44</span></div>
 </section>
 
 <section class="spread" id="slope-variants">
@@ -36490,7 +37619,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">43</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">45</span></div>
 </section>
 
 <section class="spread" id="slope-best-practice">
@@ -37819,7 +38948,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">44</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">46</span></div>
 </section>
 
 <section class="spread" id="dumbbell">
@@ -38324,7 +39453,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">45</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">47</span></div>
 </section>
 
 <section class="spread" id="dot-variants">
@@ -39320,7 +40449,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">46</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">48</span></div>
 </section>
 
 <section class="spread" id="dot-best-practice">
@@ -41104,7 +42233,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">47</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">49</span></div>
 </section>
 
 <section class="spread" id="heat-table">
@@ -41142,7 +42271,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">48</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">50</span></div>
 </section>
 
 <section class="spread" id="heat-table-best-practice">
@@ -42467,7 +43596,7 @@ L 198 19.87268
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">49</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">51</span></div>
 </section>
 
 <section class="spread" id="ranking-build">
@@ -42501,7 +43630,7 @@ ax.set_ylim(len(ranks) + 0.5, 0.5); ax.axis("off")</pre></div></div>
       <div class="platform"><h5>R</h5><p><code>geom_line()</code> + <code>geom_point()</code> with <code>scale_y_reverse()</code>; <code>geom_segment()</code> under two <code>geom_point()</code> layers for dumbbells; <code>gt</code> with <code>data_color(method = "bin")</code> for heat tables.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">50</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Ranking</span><span class="n">52</span></div>
 </section>
 
 <section class="spread" id="strip">
@@ -44640,7 +45769,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">51</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">53</span></div>
 </section>
 
 <section class="spread" id="histogram">
@@ -45255,7 +46384,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">52</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">54</span></div>
 </section>
 
 <section class="spread" id="distribution-variants">
@@ -48455,7 +49584,7 @@ L 294 174.8
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">53</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">55</span></div>
 </section>
 
 <section class="spread" id="distribution-best-practice">
@@ -52237,7 +53366,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">54</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">56</span></div>
 </section>
 
 <section class="spread" id="distribution-best-practice-2">
@@ -64207,7 +65336,7 @@ L 145.957499 119.591723
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">55</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">57</span></div>
 </section>
 
 <section class="spread" id="distribution-build">
@@ -64241,7 +65370,7 @@ ax.axvspan(0.68, 0.90, color=C.surface_subtle, zorder=0)</pre></div></div>
       <div class="platform"><h5>R</h5><p><code>geom_jitter()</code> under <code>geom_boxplot(fill = NA, outlier.shape = NA)</code>; <code>geom_histogram(breaks = ...)</code> with explicit edges; <code>facet_wrap()</code> keeps one scale.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">56</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Distribution</span><span class="n">58</span></div>
 </section>
 
 <section class="spread" id="scatter">
@@ -67754,7 +68883,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">57</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">59</span></div>
 </section>
 
 <section class="spread" id="scatter-variants">
@@ -68675,7 +69804,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">58</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">60</span></div>
 </section>
 
 <section class="spread" id="scatter-best-practice">
@@ -70049,7 +71178,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">59</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">61</span></div>
 </section>
 
 <section class="spread" id="dual-axis">
@@ -70922,7 +72051,7 @@ L 215.829104 117.612364
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">60</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">62</span></div>
 </section>
 
 <section class="spread" id="heatmap">
@@ -71658,7 +72787,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">61</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">63</span></div>
 </section>
 
 <section class="spread" id="heatmap-variants">
@@ -73735,7 +74864,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">62</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">64</span></div>
 </section>
 
 <section class="spread" id="heatmap-best-practice">
@@ -78074,7 +79203,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">63</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">65</span></div>
 </section>
 
 <section class="spread" id="correlation-build">
@@ -78106,7 +79235,7 @@ ax.imshow(m, cmap=ListedColormap(mv.DIVERGING), norm=norm)</pre></div></div>
       <div class="platform"><h5>R</h5><p><code>geom_point(aes(size = headcount))</code> + <code>scale_size_area()</code>; <code>geom_tile()</code> + <code>scale_fill_mck_div(limits = c(-10.5, 10.5))</code>; <code>facet_wrap(~ measure, ncol = 1, scales = "free_y")</code> for aligned panels.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">64</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Correlation</span><span class="n">66</span></div>
 </section>
 
 <section class="spread" id="sankey">
@@ -78471,7 +79600,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">65</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">67</span></div>
 </section>
 
 <section class="spread" id="sankey-best-practice">
@@ -80665,7 +81794,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">66</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">68</span></div>
 </section>
 
 <section class="spread" id="parallel-coordinates">
@@ -84154,7 +85283,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">67</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">69</span></div>
 </section>
 
 <section class="spread" id="parallel-coordinates-best-practice">
@@ -85732,7 +86861,7 @@ L 146.8 97.954098
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">68</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">70</span></div>
 </section>
 
 <section class="spread" id="venn">
@@ -87232,7 +88361,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">69</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">71</span></div>
 </section>
 
 <section class="spread" id="venn-best-practice">
@@ -94383,7 +95512,7 @@ L 129.607477 64.616822
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">70</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">72</span></div>
 </section>
 
 <section class="spread" id="flows-build">
@@ -94414,7 +95543,7 @@ go.Sankey(node=dict(color=C.total, thickness=6),
       <div class="platform"><h5>R</h5><p><code>ggalluvial::geom_alluvium()</code> for Sankey-style flows; <code>geom_line()</code> over min–max scaled long data for parallel coordinates; <code>sf::st_intersection()</code> for Venn regions.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">71</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">73</span></div>
 </section>
 
 <section class="spread" id="choropleth">
@@ -95200,7 +96329,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">72</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">74</span></div>
 </section>
 
 <section class="spread" id="bubble-map">
@@ -96127,7 +97256,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">73</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">75</span></div>
 </section>
 
 <section class="spread" id="map-variants">
@@ -98936,7 +100065,7 @@ L 198 16.8
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">74</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">76</span></div>
 </section>
 
 <section class="spread" id="maps-best-practice">
@@ -103092,7 +104221,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">75</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">77</span></div>
 </section>
 
 <section class="spread" id="maps-best-practice-2">
@@ -107493,7 +108622,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">76</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">78</span></div>
 </section>
 
 <section class="spread" id="geo-build">
@@ -107523,7 +108652,7 @@ marker={"size": n, "sizemode": "area", "color": mv.pl_highlight(sites, focus=hot
       <div class="platform"><h5>R</h5><p><code>geom_polygon()</code> on <code>map_data("state")</code> with <code>coord_map("albers", lat0 = 29.5, lat1 = 45.5)</code> and <code>scale_fill_manual()</code> on the classes; bubbles with <code>scale_size_area()</code>.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">77</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Geo-spatial</span><span class="n">79</span></div>
 </section>
 
 <style>
@@ -107598,7 +108727,7 @@ marker={"size": n, "sizemode": "area", "color": mv.pl_highlight(sites, focus=hot
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">78</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">80</span></div>
 </section>
 
 <section class="spread" id="progress-ring">
@@ -107811,7 +108940,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">79</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">81</span></div>
 </section>
 
 <section class="spread" id="single-number-variants">
@@ -108445,7 +109574,7 @@ L 200 34
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">80</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">82</span></div>
 </section>
 
 <section class="spread" id="single-number-best-practice">
@@ -108793,7 +109922,7 @@ L 62.36 70
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">81</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">83</span></div>
 </section>
 
 <section class="spread" id="single-number-best-practice-2">
@@ -109194,7 +110323,7 @@ L 130 30
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">82</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">84</span></div>
 </section>
 
 <section class="spread" id="single-number-build">
@@ -109225,7 +110354,7 @@ txt = f"{mv.signed(value - prior)} pts vs. Mar 2025"   # true minus, explicit +<
       <div class="platform"><h5>R</h5><p><code>annotate("text", ..., fontface = "bold")</code> for the number; a ring with <code>geom_col()</code> + <code>coord_polar(theta = "y", start = 0, direction = 1)</code>.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">83</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">85</span></div>
 </section>
 
 <section class="spread" id="presentations">
@@ -110134,7 +111263,7 @@ z
 </svg></div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">84</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">86</span></div>
 </section>
 
 <section class="spread" id="slides">
@@ -110774,7 +111903,7 @@ z
 </svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>The same slide on navy; focus in light blue.</span></div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">85</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">87</span></div>
 </section>
 
 <section class="spread" id="two-charts">
@@ -111332,7 +112461,7 @@ z
  </defs>
 </svg></div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">86</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">88</span></div>
 </section>
 
 <section class="spread" id="print">
@@ -112090,7 +113219,7 @@ z
 </svg></div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">87</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">89</span></div>
 </section>
 
 <section class="spread" id="mobile">
@@ -112923,7 +114052,7 @@ L 115.05 168.646667
       <div class="panel"><h4>Test at 390 px</h4><p class="note">In HTML, the starter card (<code>templates/html/chart-card.html</code>) already swaps line-end labels for a top key below 600 px. Check every web chart at 390 px wide, the width of a typical phone, before it ships.</p><p class="note">In Power BI, build a separate <strong>mobile layout</strong> for each page people will open on a phone.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">88</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">90</span></div>
 </section>
 
 <section class="spread" id="dashboards">
@@ -113952,7 +115081,7 @@ L 455.9 261
 </svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>An insight title, three KPI cards with comparisons, a highlighted bar and the trend.</span></div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">89</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">91</span></div>
 </section>
 
 <section class="spread" id="interactivity">
@@ -114172,7 +115301,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">90</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">92</span></div>
 </section>
 
 <section class="spread" id="animation">
@@ -114493,7 +115622,7 @@ L 195.218966 123.304
       <p class="note"><strong>Exits mirror entrances.</strong> Leave the way you arrived, so the viewer can predict it.</p>
     </div></div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">91</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">93</span></div>
 </section>
 
 <section class="spread" id="social">
@@ -115465,7 +116594,280 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">92</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Formats</span><span class="n">94</span></div>
+</section>
+
+<section class="spread" id="cheat-sheet">
+  <div class="rail">
+    <p class="eyebrow">Cheat sheet</p>
+    <h2 class="title"><b>Cheat</b> sheet</h2>
+    <h3>Check before you send</h3>
+    <ul class="checklist cs-check">
+      <li>The headline is an insight, and every number in it is true</li>
+      <li>Subtitle: metric, unit, scope and period</li>
+      <li>Grey context; at most 2 highlights, matching the headline</li>
+      <li>Values labelled; value axis, gridlines and legend deleted</li>
+      <li>Bars start at zero; no dual axes</li>
+      <li>Sorted by value, or in a natural order</li>
+      <li>True minus (−), explicit + on changes, "pts" for point changes</li>
+      <li>Metric defined; source names system, date and population</li>
+      <li>No group under <strong>10 people</strong>, even in hover text</li>
+      <li>Nothing overlaps or clips; nothing below 9 pt</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g3 cs">
+      <div class="tile">
+        <p class="step">1 · Every chart, one anatomy</p>
+        <div class="cs-card">
+          <p class="cs-head">Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate<span class="mk">1</span></p>
+          <p class="cs-sub">Voluntary attrition by job family, FY26 (%)<span class="mk">2</span></p>
+          <div class="ex-wrap"><svg class="ex" style="--w:300px" role="img" aria-label="Five job families' voluntary attrition; Pharmacy Technician and DC Associate in blue above the 19.9% enterprise rate." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 118" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="cs_bars-figure_1">
+  <g id="cs_bars-patch_1">
+   <path d="M 0 118 
+L 300 118 
+L 300 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="cs_bars-axes_1">
+   <g id="cs_bars-patch_2">
+    <path d="M 85.570469 116 
+L 295.901165 116 
+L 295.901165 3.165704 
+L 85.570469 3.165704 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="cs_bars-matplotlib.axis_1"/>
+   <g id="cs_bars-matplotlib.axis_2">
+    <g id="cs_bars-ytick_1">
+     <g id="cs_bars-line2d_1"/>
+     <g id="cs_bars-text_1">
+      <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="79.570469" y="108.711206" transform="rotate(-0 79.570469 108.711206)">Data &amp; Analytics</text>
+     </g>
+    </g>
+    <g id="cs_bars-ytick_2">
+     <g id="cs_bars-line2d_2"/>
+     <g id="cs_bars-text_2">
+      <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="79.570469" y="88.915715" transform="rotate(-0 79.570469 88.915715)">Specialty Nursing</text>
+     </g>
+    </g>
+    <g id="cs_bars-ytick_3">
+     <g id="cs_bars-line2d_3"/>
+     <g id="cs_bars-text_3">
+      <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="79.570469" y="69.120225" transform="rotate(-0 79.570469 69.120225)">Customer Care</text>
+     </g>
+    </g>
+    <g id="cs_bars-ytick_4">
+     <g id="cs_bars-line2d_4"/>
+     <g id="cs_bars-text_4">
+      <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #143359" x="79.570469" y="49.324734" transform="rotate(-0 79.570469 49.324734)">DC Associate</text>
+     </g>
+    </g>
+    <g id="cs_bars-ytick_5">
+     <g id="cs_bars-line2d_5"/>
+     <g id="cs_bars-text_5">
+      <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #143359" x="79.570469" y="29.529244" transform="rotate(-0 79.570469 29.529244)">Pharmacy Tech</text>
+     </g>
+    </g>
+   </g>
+   <g id="cs_bars-patch_3">
+    <path d="M 85.570469 110.754195 
+L 165.372409 110.754195 
+L 165.372409 97.491216 
+L 85.570469 97.491216 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="cs_bars-patch_4">
+    <path d="M 85.570469 90.958704 
+L 173.414465 90.958704 
+L 173.414465 77.695726 
+L 85.570469 77.695726 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="cs_bars-patch_5">
+    <path d="M 85.570469 71.163214 
+L 202.489591 71.163214 
+L 202.489591 57.900235 
+L 85.570469 57.900235 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="cs_bars-patch_6">
+    <path d="M 85.570469 51.367723 
+L 234.657815 51.367723 
+L 234.657815 38.104745 
+L 85.570469 38.104745 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #005a8c"/>
+   </g>
+   <g id="cs_bars-patch_7">
+    <path d="M 85.570469 31.572233 
+L 255.072265 31.572233 
+L 255.072265 18.309254 
+L 85.570469 18.309254 
+z
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: #005a8c"/>
+   </g>
+   <g id="cs_bars-patch_8">
+    <path d="M 85.570469 116 
+L 85.570469 3.165704 
+" style="fill: none; stroke: #8c8c8c; stroke-width: 0.75; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="cs_bars-line2d_6">
+    <path d="M 208.675788 116 
+L 208.675788 3.165704 
+" clip-path="url(#cs_bars-pcaecf74054)" style="fill: none; stroke-dasharray: 2.25,2.25; stroke-dashoffset: 0; stroke: #143359; stroke-width: 0.9"/>
+   </g>
+   <g id="cs_bars-text_6">
+    <g id="cs_bars-patch_9">
+     <path d="M 171.280788 14.593449 
+L 246.070788 14.593449 
+L 246.070788 0.625449 
+L 171.280788 0.625449 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="208.675788" y="10.849449" transform="rotate(-0 208.675788 10.849449)">Enterprise 19.9%</text>
+   </g>
+   <g id="cs_bars-text_7">
+    <g id="cs_bars-patch_10">
+     <path d="M 168.802409 110.449706 
+L 197.539909 110.449706 
+L 197.539909 97.795706 
+L 168.802409 97.795706 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="169.372409" y="107.542706" transform="rotate(-0 169.372409 107.542706)">12.9%</text>
+   </g>
+   <g id="cs_bars-text_8">
+    <g id="cs_bars-patch_11">
+     <path d="M 176.844465 90.654215 
+L 205.534465 90.654215 
+L 205.534465 78.000215 
+L 176.844465 78.000215 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="177.414465" y="87.747215" transform="rotate(-0 177.414465 87.747215)">14.2%</text>
+   </g>
+   <g id="cs_bars-text_9">
+    <g id="cs_bars-patch_12">
+     <path d="M 205.919591 70.858725 
+L 235.227091 70.858725 
+L 235.227091 58.204725 
+L 205.919591 58.204725 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="206.489591" y="67.951725" transform="rotate(-0 206.489591 67.951725)">18.9%</text>
+   </g>
+   <g id="cs_bars-text_10">
+    <g id="cs_bars-patch_13">
+     <path d="M 238.087815 51.063234 
+L 266.777815 51.063234 
+L 266.777815 38.409234 
+L 238.087815 38.409234 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="238.657815" y="48.156234" transform="rotate(-0 238.657815 48.156234)">24.1%</text>
+   </g>
+   <g id="cs_bars-text_11">
+    <g id="cs_bars-patch_14">
+     <path d="M 258.502265 31.267744 
+L 288.397577 31.267744 
+L 288.397577 18.613744 
+L 258.502265 18.613744 
+z
+" style="fill: #ffffff"/>
+    </g>
+    <text style="font-weight: 500; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="259.072265" y="28.360744" transform="rotate(-0 259.072265 28.360744)">27.4%</text>
+   </g>
+   <g id="cs_bars-text_12">
+    <g id="cs_bars-patch_15">
+     <path d="M 295.072265 35.200744 
+C 297.528045 35.200744 299.883574 34.225051 301.620074 32.488552 
+C 303.356573 30.752053 304.332265 28.396524 304.332265 25.940744 
+C 304.332265 23.484963 303.356573 21.129434 301.620074 19.392935 
+C 299.883574 17.656436 297.528045 16.680744 295.072265 16.680744 
+C 292.616484 16.680744 290.260955 17.656436 288.524456 19.392935 
+C 286.787957 21.129434 285.812265 23.484963 285.812265 25.940744 
+C 285.812265 28.396524 286.787957 30.752053 288.524456 32.488552 
+C 290.260955 34.225051 292.616484 35.200744 295.072265 35.200744 
+z
+" style="fill: #ffffff; stroke: #143359; stroke-width: 1.3; stroke-linejoin: miter"/>
+    </g>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="295.072265" y="29.540744" transform="rotate(-0 295.072265 29.540744)">3</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="cs_bars-pcaecf74054">
+   <rect x="85.570469" y="3.165704" width="210.330696" height="112.834296"/>
+  </clipPath>
+ </defs>
+</svg></div>
+          <p class="cs-foot">Source: Workday HCM (synthetic), FY26<span class="mk">4</span></p>
+        </div>
+        <p class="note cs-key"><span class="mk">1</span> Headline = the insight · <span class="mk">2</span> Subtitle = the measure · <span class="mk">3</span> Grey context, blue focus, values on the bars · <span class="mk">4</span> Source</p>
+      </div>
+      <div class="tile">
+        <p class="step">2 · Write the headline last</p>
+        <p class="note">Who or what + verb + number + so what. Compute every number from the data.</p>
+        <div class="ladder cs-ladder">
+          <div class="k bad">Label</div><div>Attrition by job family</div>
+          <div class="k bad">Vague</div><div>Attrition varies across job families</div>
+          <div class="k good">Insight</div><div>Two frontline job families lose about 1 in 4 people a year</div>
+        </div>
+      </div>
+      <div class="tile">
+        <p class="step">3 · Grey first, then color the point</p>
+        <div class="cs-role"><span class="sw" style="background:#B4B0A5"></span><span><b>Context</b> everything else</span><code>#B4B0A5</code></div><div class="cs-role"><span class="sw" style="background:#005A8C"></span><span><b>Focus</b> what the headline names</span><code>#005A8C</code></div><div class="cs-role"><span class="sw" style="background:#143359"></span><span><b>Accent (navy)</b> the one exception</span><code>#143359</code></div><div class="cs-role"><span class="sw" style="background:#66C4FF"></span><span><b>Light blue</b> a series, in the uniform pattern</span><code>#66C4FF</code></div><div class="cs-role"><span class="sw" style="background:#EF8200"></span><span><b>Orange</b> worse only: below target, shrinking</span><code>#EF8200</code></div><div class="cs-role"><span class="sw" style="background:#143359"></span><span><b>Total</b> totals, targets (dashed)</span><code>#143359</code></div>
+        <p class="note cs-small">At most 2 highlights. Orange never highlights; it means worse. Amber is never used.</p>
+      </div>
+      <div class="tile">
+        <p class="step">4 · Type (Libre Franklin, 16:9 slide)</p>
+        <table class="cs-table"><tbody><tr><td>Slide title</td><td>Bold</td><td class="num">24 pt</td></tr><tr><td>Chart headline</td><td>SemiBold</td><td class="num">18 pt</td></tr><tr><td>Subtitle</td><td>Regular</td><td class="num">14 pt</td></tr><tr><td>Data labels</td><td>Medium</td><td class="num">12 pt</td></tr><tr><td>Axis, categories</td><td>Regular</td><td class="num">11 pt</td></tr><tr><td>Footnote, source</td><td>Light</td><td class="num">9 pt</td></tr><tr><td>Big number</td><td>Bold</td><td class="num">54 pt</td></tr></tbody></table>
+        <p class="note cs-small">One chart: the slide title is its headline. Two charts: each gets its own SemiBold insight headline.</p>
+      </div>
+      <div class="tile">
+        <p class="step">5 · Pick the chart from the question</p>
+        <ul class="cs-pick">
+          <li>How big? <a href="#bar">Sorted bar</a></li>
+          <li>Made of what? <a href="#stacked-bar">100% bar</a>, <a href="#waterfall">waterfall</a></li>
+          <li>Over time? <a href="#line">Line</a></li>
+          <li>Who moved? <a href="#slope">Slope</a>, <a href="#dumbbell">dumbbell</a></li>
+          <li>How spread? <a href="#strip">Strip</a>, <a href="#histogram">histogram</a></li>
+          <li>Related? <a href="#scatter">Scatter</a></li>
+          <li>Flows? <a href="#sankey">Sankey</a> · Where? <a href="#choropleth">Map</a></li>
+          <li>One number? <a href="#big-number">Big number</a></li>
+        </ul>
+        <p class="note cs-small">Full version: the <a href="#chooser">chart chooser</a>.</p>
+      </div>
+      <div class="tile">
+        <p class="step">6 · Never</p>
+        <ul class="cs-never">
+          <li>Red vs. green, rainbows, or color as the only cue</li>
+          <li>3D, shadows, gradients, borders</li>
+          <li>Truncated bars or dual axes</li>
+          <li>A legend where labels fit</li>
+          <li>More than 2 charts on a slide</li>
+          <li>Pictures of charts: use native, editable charts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Cheat sheet</span><span class="n">95</span></div>
 </section>
 
 <section class="spread" id="kit">
@@ -115474,12 +116876,12 @@ z
     <h2 class="title"><b>The starter</b> kit</h2>
     <p class="lede">Everything in this guide is built into files you can start from, so the right answer is the default answer.</p>
     <p>Every color, font size and chart constant comes from one file, <code>tokens/tokens.json</code>. Change it there, run the build, and every template, theme and this guide update together.</p>
-    <p><strong>Pin these two.</strong> The cheat sheet and chart chooser fit on one page each.</p>
+    <p><strong>Pin these two.</strong> The <a href="#cheat-sheet">cheat sheet</a> and the <a href="#chooser">chart chooser</a> are pages of this guide (top bar), and print as one-page PDFs.</p>
   </div>
   <div class="stage">
     <div class="grid g3" style="grid-template-columns: 1fr 1fr 1.7fr; align-items: start">
-      <div><a href="../print/cheat-sheet.pdf"><img class="thumb" src="img/cheat-sheet.png" alt="Chart cheat sheet: anatomy, highlight colors, checklist and type sizes on one page"></a><p class="small" style="margin-top:8px"><a href="../print/cheat-sheet.pdf">Cheat sheet (PDF)</a></p></div>
-      <div><a href="../print/chart-chooser.pdf"><img class="thumb" src="img/chart-chooser.png" alt="Chart chooser: nine question types with the first-choice chart for each"></a><p class="small" style="margin-top:8px"><a href="../print/chart-chooser.pdf">Chart chooser (PDF)</a></p></div>
+      <div><a href="#cheat-sheet"><img class="thumb" src="img/cheat-sheet.png" alt="Chart cheat sheet: anatomy, headline, colors, type, chart picks and a checklist on one page"></a><p class="small" style="margin-top:8px"><a href="#cheat-sheet">Cheat sheet</a> · <a href="../print/cheat-sheet.pdf">PDF</a></p></div>
+      <div><a href="#chooser"><img class="thumb" src="img/chart-chooser.png" alt="Chart chooser: nine question types with the chart to start with, alternatives and what to avoid"></a><p class="small" style="margin-top:8px"><a href="#chooser">Chart chooser</a> · <a href="../print/chart-chooser.pdf">PDF</a></p></div>
       <div class="panel">
         <table class="kit">
           <thead><tr><th>File</th><th>For</th><th>Where</th></tr></thead>
@@ -115498,7 +116900,7 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">93</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">96</span></div>
 </section>
 
 <section class="spread" id="setup">
@@ -115526,7 +116928,7 @@ C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></di
       <div class="platform"><h5>R</h5><p><code>source("dist/r/theme_mck.R")</code>, then <code>ff &lt;- mck_font()</code> and <code>theme_mck(base_family = ff)</code>. Render with <code>ragg</code>.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">94</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">97</span></div>
 </section>
 
 <section class="spread" id="qa">
@@ -115541,7 +116943,7 @@ C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></di
   <div class="stage top">
     <div class="panel"><div class="qa-grid"><div><h4>Message</h4><ul class="checklist"><li>Headline is a <strong>full-sentence insight</strong>, ≤ 2 lines, no final period, balanced line breaks.</li><li>Every claim in the headline is <strong>visibly supported</strong> (recompute counts, multipliers, "all/most/none").</li><li>Subtitle states <strong>metric, unit, scope and period</strong>: and nothing opinionated.</li><li>The chart type matches the question (choosing-a-chart.md).</li><li>One message per chart; ≤ 2 charts per slide.</li></ul></div><div><h4>Color and emphasis</h4><ul class="checklist"><li>Highlight follows the headline: grey context, blue focus, navy accent: <strong>≤ 2 highlighted</strong> items. Orange appears only where something is worse (negative, below target).</li><li>Categorical colors (if any) come from the fixed order, ≤ 6, consistent across the deck.</li><li>No red–green contrasts; nothing encoded by color alone.</li><li>Focus category labels are bolded/colored to echo the highlight.</li></ul></div><div><h4>Data integrity</h4><ul class="checklist"><li>Bars/columns start at <strong>zero</strong> (waterfall exception is marked and footnoted).</li><li>Bubble <strong>area</strong> ∝ value; pie/donut sums to 100% and has ≤ 5 segments.</li><li>No dual axes (or justified and clearly labelled).</li><li>Sorted by value, or in a natural order (time, bands, levels).</li><li>Small multiples share a scale.</li><li>Numbers rounded sensibly; units in subtitle; true minus (−); consistent K/M/B.</li></ul></div><div><h4>Clutter</h4><ul class="checklist"><li>Direct labels instead of a legend where possible; legend (if any) top-left, in data order.</li><li>No borders, 3D, shadows, gradients, heavy gridlines, tick marks, rotated axis titles.</li><li>Value axis removed when values are labelled.</li><li>Nothing overlaps: labels, callouts, legend, headline, reference lines.</li></ul></div><div><h4>Typography and layout</h4><ul class="checklist"><li>Libre Franklin (or approved fallback); role sizes per typography-and-layout.md; nothing below 9 pt / 11 px.</li><li>Headline, subtitle, key, footnote and source <strong>share one left edge</strong>.</li><li>Sentence case; consistent terminology (FTE vs. headcount; fiscal vs. calendar year).</li></ul></div><div><h4>Source and ethics</h4><ul class="checklist"><li>Footnotes define metrics and caveats.</li><li>Source line names the system(s), <strong>as-of date</strong> and <strong>population</strong>.</li><li>No group smaller than the <strong>minimum n</strong> (default 10): including in tooltips, filters and drill-downs.</li><li>Protected attributes used only for approved analyses, aggregated.</li><li>Forecasts/estimates are labelled and show a range or scenario.</li></ul></div><div><h4>Accessibility and delivery</h4><ul class="checklist"><li>Text contrast ≥ 4.5:1; fills &lt; 3:1 carry labels.</li><li>Alt text / text summary provided (headline + key numbers).</li><li>Exported at the right format: native Office chart, SVG/PDF for print, PNG @ 300 dpi, or responsive HTML.</li><li>Mobile/dark variants checked if the chart will be shown that way.</li></ul></div></div></div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">95</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">98</span></div>
 </section>
 
 <section class="spread" id="agents">
@@ -115576,7 +116978,7 @@ QA:          pass</pre>
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">96</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">99</span></div>
 </section>
 
 </main>

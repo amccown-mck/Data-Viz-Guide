@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="guide.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="formats.html">Formats</a><a href="toolkit.html" aria-current=page>Toolkit</a></nav><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></header>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="formats.html">Formats</a><a href="toolkit.html" aria-current=page>Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
 <main>
 <section class="spread" id="kit">
   <div class="rail">
@@ -16,12 +16,12 @@
     <h2 class="title"><b>The starter</b> kit</h2>
     <p class="lede">Everything in this guide is built into files you can start from, so the right answer is the default answer.</p>
     <p>Every color, font size and chart constant comes from one file, <code>tokens/tokens.json</code>. Change it there, run the build, and every template, theme and this guide update together.</p>
-    <p><strong>Pin these two.</strong> The cheat sheet and chart chooser fit on one page each.</p>
+    <p><strong>Pin these two.</strong> The <a href="cheat-sheet.html#cheat-sheet">cheat sheet</a> and the <a href="chooser.html#chooser">chart chooser</a> are pages of this guide (top bar), and print as one-page PDFs.</p>
   </div>
   <div class="stage">
     <div class="grid g3" style="grid-template-columns: 1fr 1fr 1.7fr; align-items: start">
-      <div><a href="../print/cheat-sheet.pdf"><img class="thumb" src="img/cheat-sheet.png" alt="Chart cheat sheet: anatomy, highlight colors, checklist and type sizes on one page"></a><p class="small" style="margin-top:8px"><a href="../print/cheat-sheet.pdf">Cheat sheet (PDF)</a></p></div>
-      <div><a href="../print/chart-chooser.pdf"><img class="thumb" src="img/chart-chooser.png" alt="Chart chooser: nine question types with the first-choice chart for each"></a><p class="small" style="margin-top:8px"><a href="../print/chart-chooser.pdf">Chart chooser (PDF)</a></p></div>
+      <div><a href="cheat-sheet.html#cheat-sheet"><img class="thumb" src="img/cheat-sheet.png" alt="Chart cheat sheet: anatomy, headline, colors, type, chart picks and a checklist on one page"></a><p class="small" style="margin-top:8px"><a href="cheat-sheet.html#cheat-sheet">Cheat sheet</a> · <a href="../print/cheat-sheet.pdf">PDF</a></p></div>
+      <div><a href="chooser.html#chooser"><img class="thumb" src="img/chart-chooser.png" alt="Chart chooser: nine question types with the chart to start with, alternatives and what to avoid"></a><p class="small" style="margin-top:8px"><a href="chooser.html#chooser">Chart chooser</a> · <a href="../print/chart-chooser.pdf">PDF</a></p></div>
       <div class="panel">
         <table class="kit">
           <thead><tr><th>File</th><th>For</th><th>Where</th></tr></thead>
@@ -40,7 +40,7 @@
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">93</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">96</span></div>
 </section>
 
 <section class="spread" id="setup">
@@ -68,7 +68,7 @@ C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></di
       <div class="platform"><h5>R</h5><p><code>source("dist/r/theme_mck.R")</code>, then <code>ff &lt;- mck_font()</code> and <code>theme_mck(base_family = ff)</code>. Render with <code>ragg</code>.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">94</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">97</span></div>
 </section>
 
 <section class="spread" id="qa">
@@ -83,7 +83,7 @@ C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></di
   <div class="stage top">
     <div class="panel"><div class="qa-grid"><div><h4>Message</h4><ul class="checklist"><li>Headline is a <strong>full-sentence insight</strong>, ≤ 2 lines, no final period, balanced line breaks.</li><li>Every claim in the headline is <strong>visibly supported</strong> (recompute counts, multipliers, "all/most/none").</li><li>Subtitle states <strong>metric, unit, scope and period</strong>: and nothing opinionated.</li><li>The chart type matches the question (choosing-a-chart.md).</li><li>One message per chart; ≤ 2 charts per slide.</li></ul></div><div><h4>Color and emphasis</h4><ul class="checklist"><li>Highlight follows the headline: grey context, blue focus, navy accent: <strong>≤ 2 highlighted</strong> items. Orange appears only where something is worse (negative, below target).</li><li>Categorical colors (if any) come from the fixed order, ≤ 6, consistent across the deck.</li><li>No red–green contrasts; nothing encoded by color alone.</li><li>Focus category labels are bolded/colored to echo the highlight.</li></ul></div><div><h4>Data integrity</h4><ul class="checklist"><li>Bars/columns start at <strong>zero</strong> (waterfall exception is marked and footnoted).</li><li>Bubble <strong>area</strong> ∝ value; pie/donut sums to 100% and has ≤ 5 segments.</li><li>No dual axes (or justified and clearly labelled).</li><li>Sorted by value, or in a natural order (time, bands, levels).</li><li>Small multiples share a scale.</li><li>Numbers rounded sensibly; units in subtitle; true minus (−); consistent K/M/B.</li></ul></div><div><h4>Clutter</h4><ul class="checklist"><li>Direct labels instead of a legend where possible; legend (if any) top-left, in data order.</li><li>No borders, 3D, shadows, gradients, heavy gridlines, tick marks, rotated axis titles.</li><li>Value axis removed when values are labelled.</li><li>Nothing overlaps: labels, callouts, legend, headline, reference lines.</li></ul></div><div><h4>Typography and layout</h4><ul class="checklist"><li>Libre Franklin (or approved fallback); role sizes per typography-and-layout.md; nothing below 9 pt / 11 px.</li><li>Headline, subtitle, key, footnote and source <strong>share one left edge</strong>.</li><li>Sentence case; consistent terminology (FTE vs. headcount; fiscal vs. calendar year).</li></ul></div><div><h4>Source and ethics</h4><ul class="checklist"><li>Footnotes define metrics and caveats.</li><li>Source line names the system(s), <strong>as-of date</strong> and <strong>population</strong>.</li><li>No group smaller than the <strong>minimum n</strong> (default 10): including in tooltips, filters and drill-downs.</li><li>Protected attributes used only for approved analyses, aggregated.</li><li>Forecasts/estimates are labelled and show a range or scenario.</li></ul></div><div><h4>Accessibility and delivery</h4><ul class="checklist"><li>Text contrast ≥ 4.5:1; fills &lt; 3:1 carry labels.</li><li>Alt text / text summary provided (headline + key numbers).</li><li>Exported at the right format: native Office chart, SVG/PDF for print, PNG @ 300 dpi, or responsive HTML.</li><li>Mobile/dark variants checked if the chart will be shown that way.</li></ul></div></div></div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">95</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">98</span></div>
 </section>
 
 <section class="spread" id="agents">
@@ -118,7 +118,7 @@ QA:          pass</pre>
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">96</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">99</span></div>
 </section>
 
 </main>

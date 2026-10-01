@@ -1,18 +1,27 @@
-"""Build the browsable guide and its 16:9 PDF from guide/pages/*.html.
+"""Build the browsable guide, its 16:9 PDF, a standalone single-file HTML and the one-page PDFs from guide/pages/*.html.
 
-    python tools/build_guide.py            -> dist/guide/*.html + dist/guide/McKesson-DataViz-Guide.pdf
+    python tools/build_guide.py            -> dist/guide/*.html                      one page per section (in the repo)
+                                              dist/guide/McKesson-DataViz-Guide.html  standalone: one file, works offline,
+                                                                                      fonts and images inside; send it
+                                              dist/guide/McKesson-DataViz-Guide.pdf   every spread, one 16:9 page each
+                                              dist/print/chart-chooser.pdf, cheat-sheet.pdf   the one-pagers
     python tools/build_guide.py --no-pdf   -> HTML only (no browser needed)
 
-Pages are HTML fragments made of <section class="spread"> blocks. Placeholders:
+Pages are HTML fragments made of <section class="spread" id="..."> blocks. Placeholders:
     {{exhibit:name}}       inline SVG from guide/exhibits.py (add |min to keep it readable on phones: scrolls sideways)
     {{text:key}}           a number or sentence computed from the example data (exhibits.TEXT)
     {{html:key}}           a token-driven snippet: swatches, role tables, type specimen (exhibits.HTML)
+    {{link:spread-id}}     a link to any spread, resolved for each output (page.html#id, or #id in a single file)
+    {{page:spread-id}}     that spread's page number in the PDF
     {{folio}}              the running footer with the page number
 Run tokens/build.py first after a token change; the guide reads colors from dist/web/mck-viz.css.
+Set CHROME=<path> if Chrome or Edge isn't found automatically.
 """
 from __future__ import annotations
 
+import base64
 import html
+import os
 import re
 import shutil
 import subprocess
@@ -23,26 +32,31 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "guide"
 OUT = ROOT / "dist" / "guide"
 PDF = OUT / "McKesson-DataViz-Guide.pdf"
-sys.path[:0] = [str(SRC), str(ROOT / "tools")]
+STANDALONE = OUT / "McKesson-DataViz-Guide.html"
+PRINT_OUT = ROOT / "dist" / "print"
+sys.path[:0] = [str(SRC)]
 
-# (file stem, nav label, folio section). Order = reading order = PDF order.
+# (file stem, nav label, folio section, kind). Order = reading order = PDF order.
+# kind "section" appears in the section nav; "tool" pages get their own buttons in the top bar.
 PAGES = [
-    ("index", "Overview", "Overview"),
-    ("fundamentals", "Fundamentals", "Fundamentals"),
-    ("magnitude", "Magnitude", "Magnitude"),
-    ("part-to-whole", "Part-to-whole", "Part-to-whole"),
-    ("change-over-time", "Change over time", "Change over time"),
-    ("ranking", "Ranking", "Ranking"),
-    ("distribution", "Distribution", "Distribution"),
-    ("correlation", "Correlation", "Correlation"),
-    ("flows", "Flows", "Relationships and flows"),
-    ("geo", "Geo-spatial", "Geo-spatial"),
-    ("single-number", "Single number", "Single number"),
-    ("formats", "Formats", "Formats"),
-    ("toolkit", "Toolkit", "Toolkit"),
+    ("index", "Overview", "Overview", "section"),
+    ("chooser", "Chart chooser", "Chart chooser", "tool"),
+    ("fundamentals", "Fundamentals", "Fundamentals", "section"),
+    ("magnitude", "Magnitude", "Magnitude", "section"),
+    ("part-to-whole", "Part-to-whole", "Part-to-whole", "section"),
+    ("change-over-time", "Change over time", "Change over time", "section"),
+    ("ranking", "Ranking", "Ranking", "section"),
+    ("distribution", "Distribution", "Distribution", "section"),
+    ("correlation", "Correlation", "Correlation", "section"),
+    ("flows", "Flows", "Relationships and flows", "section"),
+    ("geo", "Geo-spatial", "Geo-spatial", "section"),
+    ("single-number", "Single number", "Single number", "section"),
+    ("formats", "Formats", "Formats", "section"),
+    ("cheat-sheet", "Cheat sheet", "Cheat sheet", "tool"),
+    ("toolkit", "Toolkit", "Toolkit", "section"),
 ]
-# Sections planned but not written yet: shown in the nav, greyed out.
-COMING: list[str] = []
+# One-page PDFs printed from guide spreads: file name -> spread ids.
+ONE_PAGERS = {"chart-chooser": ["chooser", "chooser-traps"], "cheat-sheet": ["cheat-sheet"]}
 
 LAYOUT = """<!doctype html>
 <html lang="en">
@@ -50,27 +64,74 @@ LAYOUT = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
-<link rel="stylesheet" href="mck-viz.css">
-<link rel="stylesheet" href="guide.css">
+{head}
 </head>
 <body>
 {topbar}<main>
 {body}
 </main>
-</body>
+{script}</body>
 </html>
 """
+LINKED_CSS = '<link rel="stylesheet" href="mck-viz.css">\n<link rel="stylesheet" href="guide.css">'
+SPREAD_RE = re.compile(r'<section class="spread[^"]*" id="([\w-]+)"')
+
+CANDIDATES = [
+    os.environ.get("CHROME", ""),
+    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+    r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+    r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+    shutil.which("google-chrome") or "", shutil.which("chromium") or "", shutil.which("msedge") or "",
+]
 
 
-def topbar(active: str | None) -> str:
-    links = "".join(
-        f'<a href="{stem}.html"{" aria-current=page" if stem == active else ""}>{label}</a>' for stem, label, _ in PAGES)
-    soon = "".join(f'<span title="Coming next">{s}</span>' for s in COMING)
-    return (f'<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a>'
-            f'<nav aria-label="Sections">{links}{soon}</nav><a class="pdf" href="{PDF.name}">PDF</a></header>\n')
+def browser() -> str:
+    for c in CANDIDATES:
+        if c and Path(c).exists():
+            return c
+    sys.exit("No Chrome/Edge found; set CHROME to the browser executable.")
 
 
-def render(stem: str, section: str, svgs: dict, text: dict, snippets: dict, used: set, page_no: list[int]) -> str:
+def page_count(pdf: Path) -> int:
+    try:
+        import pymupdf
+        return len(pymupdf.open(pdf))
+    except ImportError:
+        return pdf.read_bytes().count(b"/Type /Page") - pdf.read_bytes().count(b"/Type /Pages")
+
+
+# ------------------------------------------------------------------ spread index: id -> page stem, PDF page number
+def index_spreads() -> tuple[dict[str, str], dict[str, int], dict[str, str]]:
+    stem_of, page_of, first_of = {}, {}, {}
+    n = 0
+    for stem, *_ in PAGES:
+        src = (SRC / "pages" / f"{stem}.html").read_text(encoding="utf-8")
+        if src.count('<section class="spread') != len(SPREAD_RE.findall(src)):
+            sys.exit(f"{stem}.html: every <section class=\"spread\"> needs an id")
+        for sid in SPREAD_RE.findall(src):
+            n += 1
+            if sid in stem_of:
+                sys.exit(f"duplicate spread id '{sid}' in {stem}.html and {stem_of[sid]}.html")
+            stem_of[sid], page_of[sid] = stem, n
+            first_of.setdefault(stem, sid)
+    return stem_of, page_of, first_of
+
+
+def topbar(active: str | None, href) -> str:
+    """href(stem) -> the link target for a page in this output."""
+    links = "".join(f'<a href="{href(stem)}"{" aria-current=page" if stem == active else ""}>{label}</a>'
+                    for stem, label, _, kind in PAGES if kind == "section")
+    tools = "".join(f'<a class="tool" href="{href(stem)}"{" aria-current=page" if stem == active else ""}>{label}</a>'
+                    for stem, label, _, kind in PAGES if kind == "tool")
+    pdf = f'<a class="pdf" href="{PDF.name}">PDF</a>' if active != "__standalone__" else ""
+    return (f'<header class="topbar"><a class="brand" href="{href("index")}"><b>McKesson</b> <span>Data Visualization '
+            f'Guide</span></a><nav aria-label="Sections">{links}</nav><div class="tools">{tools}{pdf}</div></header>\n')
+
+
+def render(stem: str, section: str, svgs: dict, text: dict, snippets: dict, used: set, idx, link) -> str:
+    stem_of, page_of, _ = idx
     src = (SRC / "pages" / f"{stem}.html").read_text(encoding="utf-8")
 
     def exhibit(m):
@@ -85,37 +146,82 @@ def render(stem: str, section: str, svgs: dict, text: dict, snippets: dict, used
             sys.exit(f"{stem}.html: unknown text key '{m.group(1)}'")
         return html.escape(text[m.group(1)], quote=False)
 
-    def folio(_):
-        page_no[0] += 1
-        return (f'<div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>{section}</span>'
-                f'<span class="n">{page_no[0]}</span></div>')
+    def lnk(m):
+        if m.group(1) not in stem_of:
+            sys.exit(f"{stem}.html: link to unknown spread '{m.group(1)}'")
+        return link(m.group(1), stem)
 
-    out = re.sub(r"\{\{exhibit:([\w-]+)(?:\|(\w+))?\}\}", exhibit, src)
+    def pg(m):
+        if m.group(1) not in page_of:
+            sys.exit(f"{stem}.html: page number of unknown spread '{m.group(1)}'")
+        return str(page_of[m.group(1)])
+
+    def folio(m):
+        sid = SPREAD_RE.findall(src[:m.start()])[-1]
+        return (f'<div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>{section}</span>'
+                f'<span class="n">{page_of[sid]}</span></div>')
+
+    out = re.sub(r"\{\{folio\}\}", folio, src)
+    out = re.sub(r"\{\{exhibit:([\w-]+)(?:\|(\w+))?\}\}", exhibit, out)
     out = re.sub(r"\{\{text:(\w+)\}\}", txt, out)
     out = re.sub(r"\{\{html:(\w+)\}\}", lambda m: snippets[m.group(1)], out)
-    out = re.sub(r"\{\{folio\}\}", folio, out)
+    out = re.sub(r"\{\{link:([\w-]+)\}\}", lnk, out)
+    out = re.sub(r"\{\{page:([\w-]+)\}\}", pg, out)
     left = re.findall(r"\{\{[^}]*\}\}", out)
     if left:
         sys.exit(f"{stem}.html: unknown placeholder(s) {left}")
     return out
 
 
+def single_doc_links(body: str, first_of: dict[str, str], present: set[str]) -> str:
+    """In a one-file document, page links (magnitude.html, magnitude.html#bar) become in-document anchors. Links to
+    spreads that aren't in this document lose their href (the text stays)."""
+    stems = "|".join(re.escape(s) for s in first_of)
+
+    def fix(m):
+        target = m.group(2)[1:] if m.group(2) else first_of[m.group(1)]
+        return f'href="#{target}"'
+    body = re.sub(rf'href="({stems})\.html(#[\w-]+)?"', fix, body)
+    return re.sub(r'<a ([^>]*?)href="#([\w-]+)"([^>]*)>', lambda m: m.group(0) if m.group(2) in present
+                  else f'<a {m.group(1)}{m.group(3)}>', body)
+
+
 def main() -> None:
     import exhibits
 
     OUT.mkdir(parents=True, exist_ok=True)
+    idx = index_spreads()
+    stem_of, page_of, first_of = idx
     svgs = exhibits.render_all()
     used: set[str] = set()
-    page_no = [0]
-    bodies = []
-    for stem, label, section in PAGES:
-        body = render(stem, section, svgs, exhibits.TEXT, exhibits.HTML, used, page_no)
-        bodies.append(body)
+
+    def multi_link(sid, here):
+        return f"#{sid}" if stem_of[sid] == here else f"{stem_of[sid]}.html#{sid}"
+
+    def single_link(sid, here):
+        return f"#{sid}"
+
+    pages = {}                                            # stem -> body for the multi-page site
+    singles = {}                                          # stem -> body with in-document links
+    for stem, label, section, _ in PAGES:
+        pages[stem] = render(stem, section, svgs, exhibits.TEXT, exhibits.HTML, used, idx, multi_link)
+        singles[stem] = render(stem, section, svgs, exhibits.TEXT, exhibits.HTML, set(), idx, single_link)
         title = "McKesson Data Visualization Guide" + ("" if stem == "index" else f": {label}")
-        (OUT / f"{stem}.html").write_text(LAYOUT.format(title=title, topbar=topbar(stem), body=body), encoding="utf-8")
+        (OUT / f"{stem}.html").write_text(
+            LAYOUT.format(title=title, head=LINKED_CSS, topbar=topbar(stem, lambda s: f"{s}.html"), body=pages[stem],
+                          script=""), encoding="utf-8")
         print(f"wrote {(OUT / f'{stem}.html').relative_to(ROOT)}")
-    (OUT / "print.html").write_text(
-        LAYOUT.format(title="McKesson Data Visualization Guide", topbar="", body="\n".join(bodies)), encoding="utf-8")
+
+    every = set(stem_of)
+    all_single = single_doc_links("\n".join(singles[s] for s, *_ in PAGES), first_of, every)
+    (OUT / "print.html").write_text(LAYOUT.format(title="McKesson Data Visualization Guide", head=LINKED_CSS, topbar="",
+                                                  body=all_single, script=""), encoding="utf-8")
+    for name, ids in ONE_PAGERS.items():                     # print sources for the one-page PDFs
+        body = "\n".join(re.search(rf'<section class="spread[^"]*" id="{i}".*?</section>', all_single, re.S).group(0)
+                         for i in ids)
+        (OUT / f"_print-{name}.html").write_text(
+            LAYOUT.format(title=name, head=LINKED_CSS, topbar="", body=single_doc_links(body, first_of, set(ids)),
+                          script=""), encoding="utf-8")
 
     shutil.copy2(SRC / "guide.css", OUT / "guide.css")
     shutil.copy2(ROOT / "dist" / "web" / "mck-viz.css", OUT / "mck-viz.css")
@@ -124,20 +230,94 @@ def main() -> None:
         shutil.copy2(ROOT / "fonts" / "LibreFranklin" / f"LibreFranklin-{w}.ttf", OUT / "fonts")
     shutil.copy2(ROOT / "fonts" / "LibreFranklin" / "OFL.txt", OUT / "fonts")
 
-    (OUT / "img").mkdir(exist_ok=True)                     # thumbnails of the one-page PDFs for the Toolkit page
-    try:
-        import pymupdf
-        for pdf in sorted((ROOT / "dist" / "print").glob("*.pdf")):
-            pymupdf.open(pdf)[0].get_pixmap(dpi=72).save(OUT / "img" / f"{pdf.stem}.png")
-    except ImportError:
-        print("  note: pymupdf not installed; Toolkit thumbnails not refreshed")
-
     unused = sorted(set(svgs) - used)
     if unused:
         print(f"  note: exhibits not used on any page: {', '.join(unused)}")
-    print(f"{page_no[0]} spreads, {len(used)} exhibits")
+    print(f"{len(page_of)} spreads, {len(used)} exhibits")
     if "--no-pdf" not in sys.argv:
-        print_pdf(page_no[0])
+        exe = browser()
+        check_overflow(exe)
+        print_pdf(exe, OUT / "print.html", PDF, expected=len(page_of))
+        PRINT_OUT.mkdir(parents=True, exist_ok=True)
+        for name, ids in ONE_PAGERS.items():
+            src = OUT / f"_print-{name}.html"
+            print_pdf(exe, src, PRINT_OUT / f"{name}.pdf", expected=len(ids))
+            src.unlink()
+        thumbnails()
+    else:
+        for name in ONE_PAGERS:
+            (OUT / f"_print-{name}.html").unlink()
+    write_standalone(all_single)       # last: it inlines the thumbnails
+
+
+# ------------------------------------------------------------------ standalone single file
+STANDALONE_JS = """<script>
+// Highlight the section in the top bar as the reader scrolls (the file works without it).
+(() => {
+  const links = new Map([...document.querySelectorAll('.topbar a[data-page]')].map(a => [a.dataset.page, a]));
+  const seen = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => a.removeAttribute('aria-current'));
+    const a = links.get(e.target.dataset.page);
+    if (a) { a.setAttribute('aria-current', 'page'); a.scrollIntoView({block: 'nearest', inline: 'nearest'}); }
+  }), {rootMargin: '-45% 0px -50% 0px'});
+  document.querySelectorAll('[data-page]').forEach(p => { if (p.tagName === 'DIV') seen.observe(p); });
+})();
+</script>
+"""
+
+
+def _data_uri(path: Path, mime: str) -> str:
+    return f"data:{mime};base64,{base64.b64encode(path.read_bytes()).decode()}"
+
+
+def write_standalone(all_single: str) -> None:
+    """One HTML file with everything inside (styles, fonts, images, every page), for sending to someone who has
+    neither the repo nor, necessarily, a network connection."""
+    _, _, first_of = index_spreads()
+    css = (OUT / "mck-viz.css").read_text(encoding="utf-8") + "\n" + (OUT / "guide.css").read_text(encoding="utf-8")
+    css = re.sub(r'url\("fonts/([\w-]+\.ttf)"\)',
+                 lambda m: f'url("{_data_uri(OUT / "fonts" / m.group(1), "font/ttf")}")', css)
+    css += "\n.ext { color: var(--g-ink); font-weight: inherit; }\n"
+    body = all_single
+    # Wrap each page so the top bar can follow the reader; a page starts at the first spread of its stem.
+    parts = []
+    starts = sorted((body.index(f'id="{first_of[s]}"'), s) for s, *_ in PAGES)
+    starts = [(body.rfind("<section", 0, i), s) for i, s in starts]
+    for k, (i, stem) in enumerate(starts):
+        end = starts[k + 1][0] if k + 1 < len(starts) else len(body)
+        parts.append(f'<div class="page" data-page="{stem}">\n{body[i:end]}</div>\n')
+    body = "".join(parts)
+    # Files that live in the starter kit (../office/..., ../../docs/...) can't travel with one file: keep the name,
+    # drop the link, and say where it lives.
+    body = re.sub(r'<a href="(?:\.\./)+([^"#]+)"[^>]*>(.*?)</a>',
+                  lambda m: f'<span class="ext" title="In the starter kit: {m.group(1)}">{m.group(2)}</span>', body,
+                  flags=re.S)
+    body = re.sub(r'src="img/([\w-]+\.png)"', lambda m: f'src="{_data_uri(OUT / "img" / m.group(1), "image/png")}"', body)
+    bar = topbar("__standalone__", lambda s: f"#{first_of[s]}")
+    bar = re.sub(r'<a (class="tool" )?href="#([\w-]+)"',
+                 lambda m: f'<a {m.group(1) or ""}data-page="{next(s for s in first_of if first_of[s] == m.group(2))}" '
+                           f'href="#{m.group(2)}"', bar)
+    note = ('<p class="standalone-note">This is the standalone copy of the guide: one file that works offline. Templates, '
+            'themes and code live in the starter kit repo.</p>')
+    body = body.replace('<p class="small">Inspired by the structure', note + '\n    <p class="small">Inspired by the structure', 1)
+    STANDALONE.write_text(LAYOUT.format(title="McKesson Data Visualization Guide", head=f"<style>\n{css}\n</style>",
+                                        topbar=bar, body=body, script=STANDALONE_JS), encoding="utf-8")
+    left = re.findall(r'(?:src|href)="(?!#|data:|https?:)[^"]+"', STANDALONE.read_text(encoding="utf-8"))
+    mb = STANDALONE.stat().st_size / 1e6
+    print(f"wrote {STANDALONE.relative_to(ROOT)} ({mb:.1f} MB, self-contained"
+          + (f"; WARNING {len(left)} external reference(s): {left[:3]}" if left else "") + ")")
+
+
+def thumbnails() -> None:
+    """Thumbnails of the one-page PDFs for the Toolkit page."""
+    (OUT / "img").mkdir(exist_ok=True)
+    try:
+        import pymupdf
+        for pdf in sorted(PRINT_OUT.glob("*.pdf")):
+            pymupdf.open(pdf)[0].get_pixmap(dpi=40).save(OUT / "img" / f"{pdf.stem}.png")
+    except ImportError:
+        print("  note: pymupdf not installed; Toolkit thumbnails not refreshed")
 
 
 OVERFLOW_JS = """<script>
@@ -176,15 +356,12 @@ def check_overflow(exe: str) -> None:
         print("  every spread fits its 16:9 page")
 
 
-def print_pdf(expected: int) -> None:
-    from build_print import _page_count, browser
-
-    check_overflow(browser())
-    subprocess.run([browser(), "--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--allow-file-access-from-files",
-                    "--virtual-time-budget=8000", f"--print-to-pdf={PDF}", (OUT / "print.html").as_uri()],
+def print_pdf(exe: str, src: Path, pdf: Path, expected: int) -> None:
+    subprocess.run([exe, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--allow-file-access-from-files",
+                    "--virtual-time-budget=8000", f"--print-to-pdf={pdf}", src.as_uri()],
                    check=True, capture_output=True)
-    pages = _page_count(PDF)
-    print(f"wrote {PDF.relative_to(ROOT)} ({pages} pages)")
+    pages = page_count(pdf)
+    print(f"wrote {pdf.relative_to(ROOT)} ({pages} page{'s' if pages != 1 else ''})")
     if pages != expected:
         print(f"  warning: expected {expected} pages (one per spread); a spread is overflowing")
 

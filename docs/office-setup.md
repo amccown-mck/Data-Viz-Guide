@@ -62,6 +62,6 @@ All of these files are generated, so never edit them in `dist/` by hand. After c
 ```powershell
 .\.venv\Scripts\python.exe tokens\build.py           # theme XML, CSS, Plotly, ... (dist/)
 .\.venv\Scripts\python.exe office\build_office.py    # .pptx, .potx, .xlsx (dist/office/)
-.\.venv\Scripts\python.exe tools\build_print.py       # cheat sheet + chart chooser PDFs (dist/print/)
+.\.venv\Scripts\python.exe tools\build_guide.py       # the guide, plus the cheat sheet and chart chooser PDFs (dist/print/)
 ```
 `office/build_office.py` needs `python-pptx`, `xlsxwriter` and `pandas`. It swaps the McKesson theme into each package itself, and removes xlsxwriter's `defaultThemeVersion` attribute, without which Excel ignores the embedded theme.

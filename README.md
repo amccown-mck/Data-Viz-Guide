@@ -4,13 +4,13 @@ This is the McKesson data-visualization starter kit. It covers principles, desig
 
 > Status: v1.0 review draft. The guide and toolkit are complete; see [ROADMAP.md](ROADMAP.md) for open questions and what's next.
 
-**Start here: the guide.** Open [dist/guide/index.html](dist/guide/index.html) in a browser, or read the same 95 pages as a 16:9 PDF: [McKesson-DataViz-Guide.pdf](dist/guide/McKesson-DataViz-Guide.pdf). Fundamentals; then every chart family (magnitude, part-to-whole, change over time, ranking, distribution, correlation, relationships and flows, geo-spatial, single number) as anatomy, variants, best practice and how to build it in each tool; then formats and the toolkit.
+**Start here: the guide.** Open [dist/guide/index.html](dist/guide/index.html) in a browser, or read the same pages as a 16:9 PDF: [McKesson-DataViz-Guide.pdf](dist/guide/McKesson-DataViz-Guide.pdf). To send the clickable guide to someone without the repo, send the standalone [McKesson-DataViz-Guide.html](dist/guide/McKesson-DataViz-Guide.html): one file that works offline. The chart chooser and cheat sheet are in the guide's top bar. Fundamentals; then every chart family (magnitude, part-to-whole, change over time, ranking, distribution, correlation, relationships and flows, geo-spatial, single number) as anatomy, variants, best practice and how to build it in each tool; then formats and the toolkit.
 
 | You are... | Go to |
 |---|---|
 | Learning the house style | [The guide](dist/guide/index.html) ([PDF](dist/guide/McKesson-DataViz-Guide.pdf)) |
 | Making any chart | [docs/principles.md](docs/principles.md) → [docs/choosing-a-chart.md](docs/choosing-a-chart.md) → [docs/qa-checklist.md](docs/qa-checklist.md) |
-| Wanting it on one page | [Cheat sheet](dist/print/cheat-sheet.pdf) and [chart chooser](dist/print/chart-chooser.pdf) (PDF, print or pin) |
+| Wanting it on one page | [Chart chooser](dist/guide/chooser.html) and [cheat sheet](dist/guide/cheat-sheet.html) in the guide, or as PDFs to print or pin: [chooser](dist/print/chart-chooser.pdf), [cheat sheet](dist/print/cheat-sheet.pdf) |
 | Coding in Python | `pip install -e ./python`, then `import mckviz as mv; mv.use()`. Examples are in [examples/python/](examples/python/) |
 | Building HTML / JS | Start from [templates/html/chart-card.html](templates/html/chart-card.html); themes in [dist/web/](dist/web/): CSS variables, Plotly template, Vega-Lite config |
 | Using Excel / PowerPoint | [docs/office-setup.md](docs/office-setup.md): install the fonts and theme, then start from the template, starter deck and chart workbook in [dist/office/](dist/office/) |

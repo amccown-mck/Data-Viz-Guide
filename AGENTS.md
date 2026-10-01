@@ -87,10 +87,10 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 | `examples/python/` | Gallery scripts that render `examples/output/` | Yes |
 | `agents/` | Templates for portable agent rules (built into `dist/agents/`) | Yes |
 | `office/` | `build_office.py`: generates the `.pptx`, `.potx` and `.xlsx` in `dist/office/` | Yes, then rerun it |
-| `guide/` | The browsable guide: `pages/*.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{html:…}}`, `{{folio}}` placeholders), `exhibits.py` (every chart in the guide, drawn from tokens and data), `guide.css`. Built into `dist/guide/` by `tools/build_guide.py` | Yes, then rerun it |
-| `templates/` | Copy-and-edit starters (HTML chart card) and the print sources for the one-page PDFs (`templates/print/`, built by `tools/build_print.py`) | Yes |
+| `guide/` | The browsable guide: `pages/*.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{html:…}}`, `{{folio}}` placeholders), `exhibits.py` (every chart in the guide, drawn from tokens and data), `guide.css`. Built into `dist/guide/` (plus a standalone single-file `McKesson-DataViz-Guide.html` and the one-page PDFs in `dist/print/`) by `tools/build_guide.py`. Link to another spread with `{{link:spread-id}}` and cite its PDF page with `{{page:spread-id}}` | Yes, then rerun it |
+| `templates/` | Copy-and-edit starters (HTML chart card) | Yes |
 | `reference/` | Paraphrased inspiration notes. No source images are ever committed | Rarely |
-| `tools/` | Brand-extraction helpers, `check_snippets.py`, `build_print.py` | Yes |
+| `tools/` | Brand-extraction helpers, `check_snippets.py`, `build_guide.py` | Yes |
 
 ### Commands (Windows PowerShell, from the repo root)
 ```powershell
@@ -99,7 +99,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 .\.venv\Scripts\python.exe examples\python\gallery_matplotlib.py
 .\.venv\Scripts\python.exe examples\python\gallery_plotly.py
 .\.venv\Scripts\python.exe office\build_office.py              # after token or example-data changes (Office files)
-.\.venv\Scripts\python.exe tools\build_guide.py                # the guide (HTML + 16:9 PDF); must report "every spread fits"
+.\.venv\Scripts\python.exe tools\build_guide.py                # the guide (pages, standalone .html, 16:9 PDF, one-page PDFs); must report "every spread fits"
 .\.venv\Scripts\python.exe tools\check_snippets.py              # every "# verified" cookbook block must pass
 .\.venv\Scripts\python.exe tools\lint_charts.py                 # mv.lint over the whole gallery: 0 errors
 .\.venv\Scripts\python.exe -m pytest python\tests               # mckviz tests
