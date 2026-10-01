@@ -111,10 +111,32 @@ def build_css() -> None:
 .mck-kpi {{ font-size: var(--mck-kpi-size); font-weight: var(--mck-kpi-weight); color: var(--mck-kpi-color); line-height: 1; }}
 .mck-legend {{ display: flex; gap: 16px; flex-wrap: wrap; font-size: var(--mck-label-size); margin-bottom: 8px; }}
 .mck-legend span::before {{ content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; background: var(--swatch); }}
+
+/* Tables: horizontal rules only, numbers right-aligned in tabular figures, navy rule above the total row. */
+.mck-table {{ border-collapse: collapse; width: 100%; font-size: var(--mck-label-size); font-variant-numeric: tabular-nums lining-nums; }}
+.mck-table th {{
+  font-weight: 600; color: var(--mck-text-headline); text-align: left; vertical-align: bottom;
+  padding: 6px 10px; border-bottom: 1px solid var(--mck-chart-axis);
+}}
+.mck-table td, .mck-table tbody th {{ padding: 6px 10px; border-bottom: 1px solid var(--mck-chart-grid); }}
+.mck-table tbody th {{ font-weight: 400; color: var(--mck-text-primary); text-align: left; vertical-align: middle; }}
+.mck-table .num {{ text-align: right; white-space: nowrap; }}
+.mck-table thead .num {{ white-space: normal; }}
+.mck-table tbody th {{ min-width: 9em; }}
+.mck-table tr.is-focus td, .mck-table tr.is-focus th {{ font-weight: 700; color: var(--mck-text-headline); }}
+.mck-table tr.is-total td, .mck-table tr.is-total th {{
+  font-weight: 700; color: var(--mck-text-headline); border-top: 1.5px solid var(--mck-chart-total); border-bottom: none;
+}}
+.mck-table td.is-muted {{ color: var(--mck-text-muted); background: var(--mck-chart-context-light); }}
+.mck-table .bar {{ display: inline-block; height: 10px; background: var(--mck-chart-context); vertical-align: middle; margin-right: 6px; }}
+.mck-table tr.is-focus .bar {{ background: var(--mck-chart-focus); }}
 @media (max-width: 600px) {{
   .mck-chart {{ padding: 16px; }}
   .mck-headline {{ font-size: 18px; }}
   .mck-subtitle {{ font-size: 13px; }}
+  .mck-table {{ font-size: 12px; }}
+  .mck-table th, .mck-table td {{ padding: 4px 6px; }}
+  .mck-table th:first-child {{ position: sticky; left: 0; z-index: 1; background: var(--mck-surface-default); }}
 }}
 """
     write("web/mck-viz.css", "/* GENERATED from tokens/tokens.json - do not edit by hand. */\n" + "\n".join(lines) + components)
@@ -284,10 +306,12 @@ mck_colors <- list(
   context_light = "{v('chart.context_light')}", total = "{v('chart.total')}",
   positive = "{v('semantic.positive')}", negative = "{v('semantic.negative')}",
   text = "{v('text.primary')}", muted = "{v('text.muted')}", headline = "{v('text.headline')}",
-  grid = "{v('chart.grid')}", axis = "{v('chart.axis')}"
+  grid = "{v('chart.grid')}", axis = "{v('chart.axis')}", annotation = "{v('chart.annotation')}",
+  surface_subtle = "{v('surface.subtle')}", negative_text = "{v('semantic.negative_text')}"
 )
 mck_categorical <- c({cat})
 mck_sequential  <- c({seq})
+mck_sequential_orange <- c({", ".join(f'"{h}"' for h in C["sequential"]["orange"])})
 mck_diverging   <- c({div})
 
 theme_mck <- function(base_size = {lab['size_pt']}, base_family = "{FONT}") {{

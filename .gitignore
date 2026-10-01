@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Scratch output written by cookbook snippets (tools/check_snippets.py)
+out/

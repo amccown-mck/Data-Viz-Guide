@@ -272,9 +272,181 @@ def stacked_100():
     return fig
 
 
+def distribution_strip():
+    df = pd.read_csv(DATA / "compa_ratio_individuals.csv")
+    stats = df.groupby("job_family").compa_ratio.agg(n="size", median="median", low=lambda s: (s < 0.9).mean() * 100)
+    order = stats.sort_values("median", ascending=False).index          # lowest median at the bottom, nearest the band
+    focus = stats.low.idxmax()
+    rng = np.random.default_rng(1)
+    fig, ax = plt.subplots(figsize=(10, 5.6))
+    ax.axvspan(0.68, 0.90, color=C.surface_subtle, lw=0, zorder=0)
+    ax.text(0.685, len(order) - 0.45, "Below 0.90", fontsize=9, color=C.annotation, fontweight="bold", va="bottom")
+    ax.axvline(1.0, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=1)
+    ax.text(1.0, len(order) - 0.45, "Range midpoint", fontsize=9, color=C.annotation, ha="center", va="bottom",
+            bbox=dict(fc="white", ec="none", pad=1), zorder=4)
+    for y, fam in enumerate(order):
+        x = df.compa_ratio[df.job_family == fam]
+        col = C.focus if fam == focus else C.context
+        ax.scatter(x, y + rng.uniform(-0.28, 0.28, len(x)), s=7, color=col, alpha=0.45, lw=0, zorder=2)
+        q1, med, q3 = x.quantile([0.25, 0.5, 0.75])
+        ax.add_patch(Rectangle((q1, y - 0.34), q3 - q1, 0.68, fill=False, ec=C.headline, lw=1, zorder=3))
+        ax.plot([med, med], [y - 0.34, y + 0.34], color=C.headline, lw=2.25, zorder=3)
+        s = stats.loc[fam]
+        ax.text(1.235, y, f"{s.low:.0f}%", va="center", ha="right", fontsize=10,
+                color=C.headline if fam == focus else C.text, fontweight="bold" if fam == focus else "medium")
+        ax.text(1.25, y, f"n={int(s.n):,}", va="center", ha="left", fontsize=8, color=C.text_muted)
+    ax.text(1.235, len(order) - 0.45, "Below 0.90", fontsize=9, ha="right", va="bottom", color=C.text_muted)
+    ax.set_yticks(range(len(order)), order)
+    ax.set_ylim(-0.6, len(order) - 0.1)
+    ax.set_xlim(0.68, 1.30)
+    ax.set_xticks(np.arange(0.7, 1.21, 0.1))
+    ax.xaxis.set_major_formatter(StrMethodFormatter("{x:.2f}"))
+    mv.clean_axes(ax, keep=("bottom",), grid=None)
+    ax.tick_params(length=0)
+    for lbl in ax.get_yticklabels():
+        if lbl.get_text() == focus:
+            lbl.set_fontweight("bold"); lbl.set_color(C.headline)
+    others = stats.drop(focus).low.max()
+    mv.titles(fig, f"One in four pharmacy technicians is paid below 0.90 of range midpoint, about "
+                   f"{stats.low[focus] / others:.0f}x the share in any other job family",
+              "Compa-ratio (base pay ÷ salary-range midpoint) by job family, U.S. regular employees, Mar 2026")
+    mv.source(fig, SRC, footnote="Each dot is one employee. Box = middle 50% of employees; thick line = median.")
+    return fig
+
+
+def heat_table():
+    df = pd.read_csv(DATA / "job_family_scorecard.csv")
+    cols = [("headcount", "Headcount", "{:,.0f}"), ("vol_attrition_pct", "Voluntary\nattrition (%)", "{:.1f}"),
+            ("attrition_change_pts", "Change vs.\nFY25 (pts)", None), ("median_days_to_fill", "Median\ndays to fill", "{:.0f}"),
+            ("internal_fill_pct", "Internal fill\nrate (%)", "{:.0f}"), ("engagement_index", "Engagement\nindex", "{:.0f}")]
+    focus = set(df.job_family[df.vol_attrition_pct > 20])
+    ramp = mv.SEQUENTIAL["orange"]                                      # 6 even 5-pt classes: 0-5, 5-10, ... 25+
+    n = len(df)
+    fig, ax = plt.subplots(figsize=(11, 5.4))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(n + 0.6, -1.3)
+    ax.axis("off")
+    xs = [4.75, 5.85, 6.85, 7.85, 8.9, 9.95]                              # right edges of the numeric columns
+    for x, (_, head, _) in zip(xs, cols):
+        ax.text(x, -0.55, head, ha="right", va="bottom", fontsize=9, fontweight="bold", color=C.headline, linespacing=1.15)
+    ax.plot([0, 10], [-0.45, -0.45], color=C.axis, lw=0.75)
+    bar_max = df.headcount.max()
+    for i, r in df.iterrows():
+        hi = r.job_family in focus
+        weight, color = ("bold", C.headline) if hi else ("normal", C.text)
+        ax.text(0, i, r.job_family, va="center", fontsize=10, fontweight=weight, color=color)
+        ax.barh(i, 1.0 * r.headcount / bar_max, left=2.75, height=0.42, color=C.focus if hi else C.context)
+        for x, (key, _, fmt) in zip(xs, cols):
+            v = r[key]
+            txt = mv.signed(v, 1) if fmt is None else fmt.format(v)
+            tc = color
+            if key == "vol_attrition_pct":
+                k = min(int(v // 5), len(ramp) - 1)
+                ax.add_patch(Rectangle((x - 0.85, i - 0.42), 0.95, 0.84, color=ramp[k], lw=0))
+                tc = mv.text_on(ramp[k])
+            if key == "attrition_change_pts" and v > 0:
+                tc = C.negative_text
+            ax.text(x, i, txt, ha="right", va="center", fontsize=10, fontweight=weight, color=tc)
+        ax.plot([0, 10], [i + 0.5, i + 0.5], color=C.grid, lw=0.75)
+    tot = n + 0.15
+    ax.plot([0, 10], [n - 0.5, n - 0.5], color=C.total, lw=1.25)
+    hc = df.headcount.sum()
+    w = lambda c: np.average(df[c], weights=df.headcount)
+    total = [f"{hc:,.0f}", f"{w('vol_attrition_pct'):.1f}", mv.signed(w("attrition_change_pts"), 1),
+             f"{w('median_days_to_fill'):.0f}", f"{w('internal_fill_pct'):.0f}", f"{w('engagement_index'):.0f}"]
+    ax.text(0, tot, f"All {n} job families", va="center", fontsize=10, fontweight="bold", color=C.headline)
+    for x, t in zip(xs, total):
+        ax.text(x, tot, t, ha="right", va="center", fontsize=10, fontweight="bold", color=C.headline)
+    mv.titles(fig, f"The two largest frontline job families combine the highest attrition with the lowest engagement",
+              "Workforce scorecard by job family, FY26; totals weighted by headcount")
+    mv.source(fig, SRC, footnote="Attrition shaded in 5-point classes. Orange change = attrition rising vs. FY25. "
+                                 "Internal fill rate = share of filled requisitions filled by current employees.")
+    return fig
+
+
+def _circle(cx, cy, r, k=240):
+    t = np.linspace(0, 2 * np.pi, k, endpoint=False)
+    return np.c_[cx + r * np.cos(t), cy + r * np.sin(t)]
+
+
+def _clip(subject, clipper):
+    """Sutherland-Hodgman: intersection of a polygon with a convex polygon (counter-clockwise)."""
+    out = subject
+    for a, b in zip(clipper, np.roll(clipper, -1, axis=0)):
+        inp, out = out, []
+        side = lambda p: (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]) >= 0
+        for p, q in zip(inp, np.roll(inp, -1, axis=0)):
+            if side(q):
+                if not side(p):
+                    out.append(_cross(p, q, a, b))
+                out.append(q)
+            elif side(p):
+                out.append(_cross(p, q, a, b))
+        out = np.array(out)
+    return out
+
+
+def _cross(p, q, a, b):
+    d1, d2 = q - p, b - a
+    t = ((a[0] - p[0]) * d2[1] - (a[1] - p[1]) * d2[0]) / (d1[0] * d2[1] - d1[1] * d2[0])
+    return p + t * d1
+
+
+def venn():
+    from matplotlib.patches import Polygon
+    df = pd.read_csv(DATA / "skills_overlap.csv")
+    sets = [("clinical", "Clinical", (-0.55, 0.32)), ("data_analytics", "Data & analytics", (0.55, 0.32)),
+            ("supply_chain", "Supply chain", (0.0, -0.63))]
+    circ = {k: _circle(*xy, 1.0) for k, _, xy in sets}
+    shade = mv.SEQUENTIAL["blue"]
+    tone = {1: shade[1], 2: shade[3], 3: shade[5]}                       # darker as more sets overlap
+    fig, ax = plt.subplots(figsize=(10, 6.2))
+    keys = [k for k, _, _ in sets]
+    for k in keys:
+        ax.add_patch(Polygon(circ[k], color=tone[1], lw=0))
+    for i, a in enumerate(keys):
+        for b in keys[i + 1:]:
+            ax.add_patch(Polygon(_clip(circ[a], circ[b]), color=tone[2], lw=0))
+    ax.add_patch(Polygon(_clip(_clip(circ[keys[0]], circ[keys[1]]), circ[keys[2]]), color=tone[3], lw=0))
+
+    def count(**flags):
+        m = np.logical_and.reduce([df[k] == flags.get(k, 0) for k in keys])
+        return int(df.employees[m].sum())
+
+    def put(x, y, text, n, fill, bold=False):
+        num = f"{n:,}" if n >= 10 else "n<10"
+        ax.text(x, y, f"{text}\n{num}" if text else num, ha="center", va="center", fontsize=10,
+                color=mv.text_on(fill), fontweight="bold" if bold else "medium", linespacing=1.3)
+
+    put(-1.0, 0.62, "Clinical", count(clinical=1), tone[1], bold=True)
+    put(1.0, 0.62, "Data &\nanalytics", count(data_analytics=1), tone[1], bold=True)
+    put(0.0, -1.15, "Supply chain", count(supply_chain=1), tone[1], bold=True)
+    put(0.0, 0.78, None, count(clinical=1, data_analytics=1), tone[2])
+    put(-0.62, -0.38, None, count(clinical=1, supply_chain=1), tone[2])
+    put(0.62, -0.38, None, count(data_analytics=1, supply_chain=1), tone[2])
+    trio = count(clinical=1, data_analytics=1, supply_chain=1)
+    put(0.0, 0.0, None, trio, tone[3], bold=True)
+    note = dict(fontsize=9, color=C.annotation, va="top")
+    ax.plot([0.12, 1.75], [0.0, 0.0], color=C.annotation, lw=0.75)
+    ax.text(1.8, 0.08, "Clinical + data + supply chain", fontweight="bold", **note)
+    ax.text(1.8, -0.08, "The hybrid profile behind\nautomated specialty-pharmacy\nfulfillment", linespacing=1.3, **note)
+    ax.set_xlim(-2.3, 3.2)
+    ax.set_ylim(-1.75, 1.45)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    total = int(df.employees.sum())
+    mv.titles(fig, f"Only {trio} of {total:,} employees with a verified skill profile combine clinical, data "
+                   f"and supply-chain expertise",
+              "Employees by verified skill area, U.S. regular employees, skills inventory as of Mar 2026 (headcount)")
+    mv.source(fig, SRC, footnote="Circles are equal in size and not scaled to headcount. Region counts are exclusive; "
+                                 "regions with fewer than 10 employees are suppressed.")
+    return fig
+
+
 def main():
     charts = {"bar-highlight": bar_highlight, "line-gap": line_gap, "waterfall": waterfall, "bubble-scatter": bubble_scatter,
-              "dumbbell": dumbbell, "heatmap-diverging": heatmap_diverging, "slope": slope, "stacked-100": stacked_100}
+              "dumbbell": dumbbell, "heatmap-diverging": heatmap_diverging, "slope": slope, "stacked-100": stacked_100,
+              "distribution-strip": distribution_strip, "heat-table": heat_table, "venn": venn}
     for name, fn in charts.items():
         fig = fn()
         print("wrote", mv.save(fig, OUT / f"{name}.png").name)

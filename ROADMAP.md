@@ -12,14 +12,15 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 | Token build | `python tokens/build.py` generates CSS, Plotly, Vega-Lite, mplstyle, ggplot2, Power BI theme, Office theme XML, a palette report, and swatches | `dist/` |
 | Python package | `mckviz`: `use()`, `highlight()`, `titles()`, `source()`, `label_bars()`, `label_line_ends()`, `callout()`, `shade_period()`, `pl_finish()` | `python/mckviz/` |
 | Fonts | Static Libre Franklin TTFs (SIL OFL) | `fonts/LibreFranklin/` |
-| Example data | 9 synthetic workforce / SWP datasets | `examples/data/` (`make_data.py`) |
-| Galleries | 8 matplotlib PNGs that were visually QA'd, plus a Plotly HTML gallery | `examples/python/`, `examples/output/` |
+| Example data | 12 synthetic workforce / SWP datasets, including individual-level compa-ratios | `examples/data/` (`make_data.py`) |
+| Galleries | 11 matplotlib PNGs that were visually QA'd, plus a Plotly HTML gallery | `examples/python/`, `examples/output/` |
 | Core docs | principles, color, typography-and-layout, choosing-a-chart, formats, qa-checklist | `docs/` |
-| Cookbook | 20 chart pages plus `_template.md` | `docs/cookbook/` |
+| Cookbook | 23 chart pages (including distribution, tables, venn) plus `_template.md` | `docs/cookbook/` |
+| Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook | `tools/check_snippets.py` |
 
 ## Next steps (in priority order)
 
-1. **Finish the cookbook.** `docs/` links to three pages that don't exist yet: `distribution` (histogram, box, beeswarm), `tables` (formatted tables and heat-tables), and `venn`. Follow `docs/cookbook/_template.md`.
+1. ~~**Finish the cookbook.**~~ Done: `distribution`, `tables` and `venn` pages added, with gallery charts and verified snippets.
 2. **Agent assets.** These are needed so that coding agents follow the guide automatically:
    - Expand `AGENTS.md`, which is a stub today. Add `CLAUDE.md` and `.github/copilot-instructions.md`, both pointing to `AGENTS.md`.
    - Add `.github/instructions/viz-python.instructions.md` (applyTo `**/*.py`), `viz-web.instructions.md` (`**/*.{html,js,ts,css}`), and `viz-r.instructions.md` (`**/*.{R,Rmd,qmd}`).
@@ -45,6 +46,7 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 .\.venv\Scripts\python.exe examples\data\make_data.py           # regenerate data
 .\.venv\Scripts\python.exe examples\python\gallery_matplotlib.py
 .\.venv\Scripts\python.exe examples\python\gallery_plotly.py
+.\.venv\Scripts\python.exe tools\check_snippets.py                # run every verified cookbook snippet (~40 s)
 ```
 
 ## Working notes

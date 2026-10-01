@@ -2,7 +2,7 @@
 
 The house rules. Every chart we ship — in a deck, a report, an HTML page or a Power BI page — should pass all of them. They are written to be **testable**: a reviewer (human or agent) can check each one.
 
-> Inspiration: patterns documented from a leading consulting firm's public-facing visualization guide (see [reference/inspiration-mckinsey](../reference/inspiration-mckinsey/README.md)), adapted to McKesson brand and to people-analytics / workforce work.
+> Inspiration: patterns documented from a leading consulting firm's public-facing visualization guide (see [reference/inspiration-mckinsey](../reference/inspiration-mckinsey/pages/)), adapted to McKesson brand and to people-analytics / workforce work.
 
 ---
 

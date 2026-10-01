@@ -108,6 +108,40 @@ def workforce_mix() -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["function", "employee_ft_pct", "employee_pt_pct", "contingent_pct"])
 
 
+def compa_ratio_individuals() -> pd.DataFrame:
+    """Individual level, internal. Compa-ratio (base pay / range midpoint) per employee, six job families."""
+    rng = np.random.default_rng(26)
+    spec = [("Pharmacy Technician", 620, 0.935, 0.065), ("Distribution Center Associate", 480, 0.985, 0.05),
+            ("Customer Care Rep", 210, 0.99, 0.055), ("Pharmacist", 140, 1.005, 0.045),
+            ("Software Engineer", 160, 1.02, 0.06), ("Supply Chain Planner", 90, 1.01, 0.05)]
+    frames = [pd.DataFrame({"job_family": fam, "compa_ratio": rng.normal(mu, sd, n).round(3)})
+              for fam, n, mu, sd in spec]
+    return pd.concat(frames, ignore_index=True)
+
+
+def job_family_scorecard() -> pd.DataFrame:
+    """Firm level, internal. One row per job family: size, attrition, hiring and engagement (FY26)."""
+    rows = [
+        ("Pharmacy Technician", 6200, 27.4, 3.1, 52, 31, 68),
+        ("Distribution Center Associate", 11800, 24.1, 1.8, 24, 18, 66),
+        ("Customer Care", 3100, 18.9, -0.6, 29, 22, 71),
+        ("Specialty Nursing", 1400, 14.2, -1.2, 71, 26, 74),
+        ("Data & Analytics", 850, 12.9, 0.4, 58, 41, 77),
+        ("Supply Chain Planning", 900, 11.8, -0.3, 47, 44, 75),
+        ("Sales", 2300, 10.6, -0.9, 45, 35, 76),
+        ("Software Engineering", 2600, 9.8, -2.1, 49, 29, 74),
+    ]
+    return pd.DataFrame(rows, columns=["job_family", "headcount", "vol_attrition_pct", "attrition_change_pts",
+                                       "median_days_to_fill", "internal_fill_pct", "engagement_index"])
+
+
+def skills_overlap() -> pd.DataFrame:
+    """Firm level, internal. Employees by combination of verified skill areas (skills inventory)."""
+    rows = [(1, 0, 0, 3900), (0, 1, 0, 1250), (0, 0, 1, 2400), (1, 1, 0, 210), (0, 1, 1, 380), (1, 0, 1, 520),
+            (1, 1, 1, 140)]
+    return pd.DataFrame(rows, columns=["clinical", "data_analytics", "supply_chain", "employees"])
+
+
 def main() -> None:
     sets = {
         "attrition_by_job_family": attrition_by_job_family(),
@@ -119,6 +153,9 @@ def main() -> None:
         "pay_vs_market": pay_vs_market(),
         "skills_demand_rank": skills_demand_rank(),
         "workforce_mix": workforce_mix(),
+        "compa_ratio_individuals": compa_ratio_individuals(),
+        "job_family_scorecard": job_family_scorecard(),
+        "skills_overlap": skills_overlap(),
     }
     for name, df in sets.items():
         df.to_csv(OUT / f"{name}.csv", index=False)

@@ -8,10 +8,12 @@ mck_colors <- list(
   context_light = "#DEDBD1", total = "#143359",
   positive = "#00AF9D", negative = "#EF8200",
   text = "#505050", muted = "#737373", headline = "#143359",
-  grid = "#E6E4DE", axis = "#8C8C8C"
+  grid = "#E6E4DE", axis = "#8C8C8C", annotation = "#143359",
+  surface_subtle = "#EFEDE7", negative_text = "#A75B00"
 )
 mck_categorical <- c("#005A8C", "#EF8200", "#00AF9D", "#143359", "#66C4FF", "#FFB502", "#00622C", "#D9F14E")
 mck_sequential  <- c("#E6F3FB", "#B6E2FA", "#66C4FF", "#009EFF", "#0A5FBC", "#143359")
+mck_sequential_orange <- c("#FFF3E0", "#FFD9A8", "#F7B25C", "#EF8200", "#A75B00", "#6B3A00")
 mck_diverging   <- c("#A75B00", "#EF8200", "#F7C180", "#EFEDE7", "#99BDD1", "#005A8C", "#143359")
 
 theme_mck <- function(base_size = 12, base_family = "Libre Franklin") {
