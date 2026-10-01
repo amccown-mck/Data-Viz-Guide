@@ -148,11 +148,20 @@ MINUS = "\u2212"
 
 
 def text_on(fill_hex: str) -> str:
-    """Readable label color (white or brand text) for text placed on a filled cell/bar."""
-    h = fill_hex.lstrip("#")
-    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
-    lum = sum(w * (c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4) for w, c in zip((0.2126, 0.7152, 0.0722), (r, g, b)))
-    return "#FFFFFF" if lum < 0.36 else colors.headline
+    """Readable label color for text on a filled cell/bar: white or headline navy, whichever has more contrast.
+
+    Mid-tones such as orange #EF8200 or azure #009EFF get navy (about 4.5-5:1) rather than white (under 3:1).
+    """
+    def lum(hex_color: str) -> float:
+        h = hex_color.lstrip("#")
+        r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+        return sum(w * (c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4)
+                   for w, c in zip((0.2126, 0.7152, 0.0722), (r, g, b)))
+
+    fill = lum(fill_hex)
+    on_white = (1.05) / (fill + 0.05)
+    on_navy = (fill + 0.05) / (lum(colors.headline) + 0.05)
+    return "#FFFFFF" if on_white >= on_navy else colors.headline
 
 
 def rgba(hex_color: str, alpha: float) -> str:

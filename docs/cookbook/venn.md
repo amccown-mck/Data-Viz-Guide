@@ -24,7 +24,7 @@
 | Element | Rule |
 |---|---|
 | Color | One hue that **darkens with each level of overlap**, from `color.sequential.blue`: 1 set `#B6E2FA` (step 2), 2 sets `#009EFF` (step 4), 3 sets `#143359` (step 6). Overlaps are **never lighter** than single sets. Fill exact regions, not transparent circles stacked on each other, so the tones are the brand values. No outlines, gradients or shadows. To call out one region that isn't the center, keep the ramp and add the callout leader line to it. Don't add a new hue. |
-| Labels | Set names go **inside** their single-set region, bold, with the count beneath. Overlap regions hold only their count. Text color comes from `mv.text_on(fill)`: navy on light blue, white on mid and dark blue. Descriptions go **outside** the diagram, connected by a thin `chart.annotation` `#143359` 0.75 pt leader line, with a bold 2–5 word title and 1–3 short lines. Never put sentences inside the circles. State in a footnote that the counts are exclusive. |
+| Labels | Set names go **inside** their single-set region, bold, with the count beneath. Overlap regions hold only their count. Text color comes from `mv.text_on(fill)`: navy on the light and mid blues, white on the navy center. Descriptions go **outside** the diagram, connected by a thin `chart.annotation` `#143359` 0.75 pt leader line, with a bold 2–5 word title and 1–3 short lines. Never put sentences inside the circles. State in a footnote that the counts are exclusive. |
 | Axes / gridlines | None. Equal aspect ratio, so the circles stay round. |
 | Sort / order | Put the set the headline leads with top-left, then read clockwise. Keep the same set positions across a deck. |
 | Proportions | Equal circles, with centers on an equilateral triangle, about 1.1 radii apart, so every region is big enough for a 4-digit count. Use regular shapes only, no blobs. The diagram takes ≤ 60% of the width, and the rest holds the annotations. |
@@ -244,7 +244,7 @@ Excel has no Venn chart. Build it in PowerPoint with shapes (SmartArt's **Basic 
 2. **Insert › Shapes › Oval.** Hold **Shift** while you drag to draw a circle about 5 cm wide, then set **Shape Format › Size** to exactly 5 × 5 cm. Duplicate it twice (**Ctrl + D**). Arrange the three circles on a triangle, overlapping by about half a radius, and use **Arrange › Align** to center the bottom circle under the other two.
 3. **Make the overlap shapes:** select two circles, **Ctrl + C**, **Ctrl + V** (now you have copies), then **Shape Format › Merge Shapes › Intersect**. Repeat for each pair. For the center, intersect copies of all three circles.
 4. Fills: single circles **Shape Fill › More Colors › Hex** `B6E2FA`, pair overlaps `009EFF`, center `143359`. Set **Shape Outline › No Outline** on all. Stack them in this order: circles at the back, pairs in front, center on top (**Arrange › Bring to Front**).
-5. Text: set names in Libre Franklin Bold 14 pt Navy `#143359` with the count beneath. Overlap counts are white (`FFFFFF`) on the mid and dark fills. Put any description outside in a text box (12 pt Navy, a bold first line), with a **Line** shape at 0.75 pt in `#143359` running to the region.
+5. Text: set names in Libre Franklin Bold 14 pt Navy `#143359` with the count beneath. Two-set overlap counts are Navy `#143359` on the mid-blue fill; the center count is white (`FFFFFF`) on navy. Put any description outside in a text box (12 pt Navy, a bold first line), with a **Line** shape at 0.75 pt in `#143359` running to the region.
 6. Group everything (**Ctrl + G**) so it moves as one piece. The headline goes in the title placeholder and the source at 9 pt `#737373` bottom-left. Build-up: show the single circles first, then the overlaps, then the callout.
 
 ### Power BI
@@ -266,7 +266,7 @@ n <- function(c, d, s) sum(df$employees[df$clinical == c & df$data_analytics == 
 labs_df <- tibble(x = c(-1, 1, 0, 0, -0.62, 0.62, 0), y = c(0.62, 0.62, -1.15, 0.78, -0.38, -0.38, 0),
                   label = c(paste0("Clinical\n", n(1, 0, 0)), paste0("Data &\nanalytics\n", n(0, 1, 0)),
                             paste0("Supply chain\n", n(0, 0, 1)), n(1, 1, 0), n(1, 0, 1), n(0, 1, 1), n(1, 1, 1)),
-                  colour = c(rep(mck_colors$headline, 3), rep("white", 4)))
+                  colour = c(rep(mck_colors$headline, 6), "white"))   # mirrors mv.text_on()
 
 ggplot() +
   geom_sf(data = regions, aes(fill = factor(level)), colour = NA) +          # drawn in order: light -> dark

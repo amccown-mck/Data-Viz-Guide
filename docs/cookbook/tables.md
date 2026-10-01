@@ -196,7 +196,7 @@ The `.mck-table` classes in [`dist/web/mck-viz.css`](../../dist/web/mck-viz.css)
 2. **Don't use Format as Table's banded styles.** Select the range, then **Home › Styles › Format as Table › Clear**, or start from plain cells. Turn off **View › Gridlines**.
 3. Borders: header row **Bottom Border**, thin, `#8C8C8C`. Data rows: **Bottom Border**, hairline, `#E6E4DE`. Total row: **Top Border**, medium, `#143359`. No vertical borders.
 4. Number formats (**Format Cells › Number › Custom**): counts `#,##0`, rates `0.0`, deltas `+0.0;"−"0.0;0.0` (true minus), indexes `0`. Right-align every number column, **and its header**. Wrap the header text (**Alignment › Wrap text**, vertical alignment Bottom).
-5. **Heat column:** select only that column's values, then **Conditional Formatting › New Rule › Format only cells that contain › Cell Value › between** with one rule per class: 0–5 `FFF3E0`, 5–10 `FFD9A8`, 10–15 `F7B25C`, 15–20 `EF8200`, 20–25 `A75B00`, ≥ 25 `6B3A00`. Add a font-color rule (**Cell Value ≥ 15 › Font › White**) and set the default text color to Navy `#143359` for that column.
+5. **Heat column:** select only that column's values, then **Conditional Formatting › New Rule › Format only cells that contain › Cell Value › between** with one rule per class: 0–5 `FFF3E0`, 5–10 `FFD9A8`, 10–15 `F7B25C`, 15–20 `EF8200`, 20–25 `A75B00`, ≥ 25 `6B3A00`. Add a font-color rule (**Cell Value ≥ 20 › Font › White**: only the two darkest classes take white text) and set the default text color to Navy `#143359` for that column.
 6. **Inline bars:** **Conditional Formatting › Data Bars › More Rules**: **Solid Fill** `B4B0A5`, **Minimum Number 0**, **Bar direction Left-to-right**. Tick **Show Bar Only** in a helper column next to the number, so the bar never sits under the digits.
 7. **Delta column:** add a rule **Cell Value > 0 › Font** `A75B00` (when a rise is unfavorable). Leave the other direction in the default color.
 8. Focus rows: bold the whole row and set the font to Navy `#143359`. The total row is bold Navy and uses `=SUMPRODUCT(rates, headcount)/SUM(headcount)` for rates, never `AVERAGE`.
@@ -205,7 +205,7 @@ The `.mck-table` classes in [`dist/web/mck-viz.css`](../../dist/web/mck-viz.css)
 ### Power BI
 - Apply [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json). Use a **Table** visual (or a **Matrix** when there is a hierarchy).
 - **Format › Style presets › None.** **Grid:** vertical gridlines off, horizontal gridlines `#E6E4DE`, 1 px. **Column headers:** bold, `#143359`, word wrap on, header alignment right for numbers. **Values › Alternate background color** = white (no zebra).
-- **Cell elements › Background color › fx › Rules** on the shaded measure only, using the 6 orange classes and hex codes from the Excel steps. **Font color › fx › Rules:** ≥ 15 → `#FFFFFF`. Use **Data bars** for headcount with a positive bar `#B4B0A5` and **Show bar only** off.
+- **Cell elements › Background color › fx › Rules** on the shaded measure only, using the 6 orange classes and hex codes from the Excel steps. **Font color › fx › Rules:** ≥ 20 → `#FFFFFF`. Use **Data bars** for headcount with a positive bar `#B4B0A5` and **Show bar only** off.
 - **Totals:** turn them on and make sure each rate measure is a weighted DAX measure (`DIVIDE(SUM(Exits), SUM(AvgHeadcount))`), not an implicit average.
 - Enforce the minimum n in the measure: `Engagement (safe) = IF([Respondents] < 10, BLANK(), [Engagement])`. Check that the totals don't let anyone recover a blanked cell by subtraction.
 

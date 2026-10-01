@@ -195,7 +195,7 @@ For a **diverging** Plotly heatmap, build the stepped scale from `mv.DIVERGING` 
    Use fixed **Number** bounds, not *Lowest/Highest Value*, so the scale stays symmetric and doesn't shift when the data refreshes.
 4. **Sequential color scale:** use the same dialog with **Minimum** Number `15`, Hex `E6F3FB`, **Midpoint** Number `60`, Hex `009EFF`, and **Maximum** Number `105`, Hex `143359`.
 5. **Binned classes** (preferred on slides and in print): instead of a color scale, add one rule per class with **Conditional Formatting › New Rule › Format only cells that contain › Cell Value › between**, then **Format › Fill › More Colors › Hex**. For the diverging ramp, use ≤ −8 `A75B00`, −7 to −5 `EF8200`, −4 to −2 `F7C180`, −1 to +1 `EFEDE7`, +2 to +4 `99BDD1`, +5 to +7 `005A8C`, ≥ +8 `143359`. Check the order in **Manage Rules** and tick **Stop If True**.
-6. **Cell text** (mirrors `mv.text_on`): add a rule **Cell Value not between −4 and 4 › Format › Font › White**, and set the default font color to Navy `#143359`. For the sequential ramp, use **Cell Value ≥ 60 › White**.
+6. **Cell text** (mirrors `mv.text_on`): add two rules, **Cell Value ≤ −8 › Format › Font › White** and **Cell Value ≥ 5 › Font › White**, and set the default font color to Navy `#143359`. Only the two ends of the ramp are dark enough for white text; orange `#EF8200` takes navy. For the sequential ramp, use **Cell Value ≥ 75 › White** (the two darkest classes).
 7. Set **Format Cells › Number › Custom** to `+0;"−"0;0`, for signed deltas with a true minus. Use Libre Franklin 10–11 pt, centered.
 8. Gutters: select the grid, then **Format Cells › Border › Color: White**, choose the thickest line style, and apply **Outline** and **Inside**. Turn off **View › Gridlines**. Make the columns equal width and the rows about 24 px tall.
 9. Suppressed cells: type `n<10` and add a rule **Format only cells that contain › Specific Text › containing "n<"** with **Fill** `DEDBD1` and **Font** `737373`. Add a footnote.
@@ -206,7 +206,7 @@ For a **diverging** Plotly heatmap, build the stepped scale from `mv.DIVERGING` 
 - Apply [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
 - Use a **Matrix** visual: **Rows** = business unit, **Columns** = driver, **Values** = the measure. Turn row and column subtotals off.
 - **Format › Cell elements › Background color › fx.** For a smooth scale, choose **Format style: Gradient**, tick **Add a middle color**, and set **Minimum** (Custom, `-10.5`) `#A75B00`, **Center** (Custom, `0`) `#EFEDE7` and **Maximum** (Custom, `10.5`) `#005A8C`. For binned classes, choose **Format style: Rules** and add one range per class with the same hex values as in Excel. Sequential: Gradient from `#E6F3FB` to `#143359`, with a center of `#009EFF`.
-- **Font color › fx › Rules:** value ≤ −5 → `#FFFFFF`, value ≥ 5 → `#FFFFFF`, otherwise `#143359`. **Grid:** horizontal and vertical gridlines white, 2 px. **Values:** centered.
+- **Font color › fx › Rules:** value ≤ −8 → `#FFFFFF`, value ≥ 5 → `#FFFFFF`, otherwise `#143359`. **Grid:** horizontal and vertical gridlines white, 2 px. **Values:** centered.
 - Enforce the minimum n in the measure, so cells and tooltips blank out: `Gap vs benchmark (safe) = IF([Respondents] < 10, BLANK(), [Gap vs benchmark])`. Rank the rows by sorting on a row-average measure.
 
 ### R — ggplot2 (optional)
@@ -220,7 +220,7 @@ df <- read_csv("examples/data/engagement_vs_benchmark.csv") |>
          business_unit = reorder(business_unit, delta_vs_benchmark_pts, mean),   # ranked: highest mean on top
          lab = ifelse(delta_vs_benchmark_pts == 0, "0",
                       sub("-", "\u2212", sprintf("%+d", as.integer(delta_vs_benchmark_pts)))),
-         txt = ifelse(delta_vs_benchmark_pts <= -7 | delta_vs_benchmark_pts >= 5,   # mirrors mv.text_on()
+         txt = ifelse(delta_vs_benchmark_pts <= -8 | delta_vs_benchmark_pts >= 5,   # mirrors mv.text_on()
                       "white", mck_colors$headline))
 w <- which(drivers == "Workload")
 
