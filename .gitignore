@@ -219,3 +219,6 @@ __marimo__/
 
 # Scratch output written by cookbook snippets (tools/check_snippets.py)
 out/
+
+# Office lock files (created while a document is open)
+~$*
