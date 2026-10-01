@@ -1,0 +1,243 @@
+<section class="spread" id="sankey">
+  <div class="rail">
+    <p class="eyebrow">Relationships and flows</p>
+    <h2 class="title"><b>Sankey</b> diagram</h2>
+    <div class="defbox">Relationship charts show how groups connect: how people move from one state to another, how they profile across many measures, or where groups overlap.</div>
+    <p>Each transfer is a band whose width is proportional to the people in it. Use it for internal mobility or a reskilling pipeline, when a few big flows matter most.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Focus flows in blue; the rest light grey</li>
+      <li>Thin navy node bars; name and total beside each</li>
+      <li>Two to four stages, eight nodes a column at most</li>
+      <li>No flow under {{text:min_n}} people: merge into "Other"</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Where the volume comes from, with the numbers.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>What flows, over what period, in what unit.</span></li>
+        <li><span class="mk">3</span><span><b>Width = people</b>Every band on one shared scale.</span></li>
+        <li><span class="mk">4</span><span><b>Focus flows in blue</b>The paths the headline names, drawn on top.</span></li>
+        <li><span class="mk">5</span><span><b>Light grey context</b>Visible, but quiet.</span></li>
+        <li><span class="mk">6</span><span><b>Nodes</b>Thin navy bars, name and total, no boxes.</span></li>
+        <li><span class="mk">7</span><span><b>Stage headers</b>Bold, above each column.</span></li>
+        <li><span class="mk">8</span><span><b>Ordered to untangle</b>Largest sources first; destinations follow their source.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define a move; state the minimum flow.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:flow_sk_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:flow_sk_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:flow_sk_anatomy|min}}
+        <p class="card-foot">Move = a change of job family, including promotions. Flows under {{text:min_n}} moves are merged into "Other"; the smallest shown is {{text:flow_sk_min}}.<br>Source: Workday HCM job-change events (synthetic data for illustration), as of 31 Mar 2026<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="sankey-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Relationships and flows</p>
+    <h2 class="title"><b>Sankey</b> best practice</h2>
+    <p class="lede">Color, shape and the n-size rule decide whether a Sankey can be read.</p>
+    <p><strong>Color the story.</strong> One dark color makes crossing paths impossible to follow. Blue for the focus, light grey for the rest.</p>
+    <p><strong>Color transfer type, not stage.</strong> The stages are already obvious. Give each type of transfer one color at every step; orange only for the loss.</p>
+    <p><strong>Keep it organic.</strong> Curved, semi-transparent bands and thin node bars. No boxed values, no angular arrows.</p>
+    <p><strong>No flow under {{text:min_n}} people.</strong> A three-person move identifies people. Merge small flows into "Other".</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Coloring flows</h4><div class="pair">
+        <div>{{exhibit:flow_sk_bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>One dark color.</span></div></div>
+        <div>{{exhibit:flow_sk_bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The story in blue.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Color by transfer type</h4><div class="pair">
+        <div>{{exhibit:flow_sk_bp_stage_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A color per stage.</span></div></div>
+        <div>{{exhibit:flow_sk_bp_stage_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Progressed, dropped, not placed.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Styling</h4><div class="pair">
+        <div>{{exhibit:flow_sk_bp_style_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Boxes and angles.</span></div></div>
+        <div>{{exhibit:flow_sk_bp_style_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Curves, plain numbers.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Small flows</h4><div class="pair">
+        <div>{{exhibit:flow_sk_bp_small_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Moves of 4, 6 and 7 people.</span></div></div>
+        <div>{{exhibit:flow_sk_bp_small_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Merged into "Other".</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="parallel-coordinates">
+  <div class="rail">
+    <p class="eyebrow">Relationships and flows</p>
+    <h2 class="title"><b>Parallel</b> coordinates</h2>
+    <p class="lede">One vertical axis per measure, one line per group. It shows a profile: the shape a group makes across four to eight measures at once.</p>
+    <p>The axes are different measures, not points in time, so their order is a design choice. Put the story first, and orient every axis so up means the same thing.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>One or two groups in blue; every other line grey</li>
+      <li>Each axis scaled min–max, real min and max printed</li>
+      <li>Reversed axes labelled; "up = worse" in the subtitle</li>
+      <li>Every line a group of at least {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>What the profile shows, measure by measure.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Groups, measures, scaling and direction.</span></li>
+        <li><span class="mk">3</span><span><b>Story axes first</b>Bold names; related measures side by side.</span></li>
+        <li><span class="mk">4</span><span><b>Focus lines in blue</b>Heavier, on top, named at the right end.</span></li>
+        <li><span class="mk">5</span><span><b>Grey context</b>The other families, thin and unnamed.</span></li>
+        <li><span class="mk">6</span><span><b>Real range at the ends</b>Max on top, min below, with units.</span></li>
+        <li><span class="mk">7</span><span><b>Reversed, and said so</b>So up always means worse.</span></li>
+        <li><span class="mk">8</span><span><b>One callout</b>The exception worth a sentence.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Scaling, reversals, group sizes.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:flow_pc_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:flow_pc_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:flow_pc_anatomy|min}}
+        <p class="card-foot">Engagement and internal-fill axes are reversed so that up always means worse. Every line is a job family of {{text:flow_pc_min_hc}}+ people.<br>Source: Workday HCM, ATS and engagement survey (synthetic data for illustration), FY26<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="parallel-coordinates-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Relationships and flows</p>
+    <h2 class="title"><b>Parallel coordinates</b> best practice</h2>
+    <p class="lede">The chart works only when one group stands out from a quiet background.</p>
+    <p><strong>Use it instead of a dense table.</strong> A grid of 40 numbers hides the profile; lines show it at a glance.</p>
+    <p><strong>One group in color.</strong> A shade of blue per line is a tangle with no message.</p>
+    <p><strong>Scale each axis.</strong> On one raw scale, the measure with the biggest numbers flattens the rest.</p>
+    <p><strong>Point every axis the same way.</strong> Mixed directions make a consistently bad group zigzag.</p>
+    <p class="small">Interactive versions can brush, reorder and hide axes; that beats cropping a static chart to two or three axes.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Instead of a table</h4><div class="pair">
+        <div>{{exhibit:flow_pc_bp_table_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A grid of numbers.</span></div></div>
+        <div>{{exhibit:flow_pc_bp_table_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The profile, highlighted.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Highlighting lines</h4><div class="pair">
+        <div>{{exhibit:flow_pc_bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A blue per line.</span></div></div>
+        <div>{{exhibit:flow_pc_bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey, one group blue.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Scaling the axes</h4><div class="pair">
+        <div>{{exhibit:flow_pc_bp_scale_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>One raw scale.</span></div></div>
+        <div>{{exhibit:flow_pc_bp_scale_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Min–max per axis.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Axis direction</h4><div class="pair">
+        <div>{{exhibit:flow_pc_bp_dir_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Up means better on some axes.</span></div></div>
+        <div>{{exhibit:flow_pc_bp_dir_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Reversed axes marked *.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="venn">
+  <div class="rail">
+    <p class="eyebrow">Relationships and flows</p>
+    <h2 class="title"><b>Venn</b> diagram</h2>
+    <p class="lede">Overlapping circles show who sits in more than one group at once: people with several verified skills, mentors who also lead networks.</p>
+    <p>Use it for two or three sets when the overlap itself is the point. The circles don't encode size; the counts do. For four or more sets, or precise comparison, use combination bars.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>One blue that darkens with each level of overlap</li>
+      <li>Equal, regular circles; exact fills, no transparency</li>
+      <li>Exclusive counts in each region; descriptions outside</li>
+      <li>No region under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>The overlap that matters, against the total.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>What the sets are, who is counted, when.</span></li>
+        <li><span class="mk">3</span><span><b>Single sets, lightest</b>Bold name, count beneath.</span></li>
+        <li><span class="mk">4</span><span><b>Two-way overlaps</b>A darker blue; the count only.</span></li>
+        <li><span class="mk">5</span><span><b>The center, darkest</b>Navy with white text.</span></li>
+        <li><span class="mk">6</span><span><b>Descriptions outside</b>A bold title and a thin leader line.</span></li>
+        <li><span class="mk">7</span><span><b>Equal circles</b>Not scaled to headcount; say so.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>Define the sets; counts are exclusive.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:flow_venn_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:flow_venn_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:flow_venn_anatomy|min}}
+        <p class="card-foot">Verified skill = manager-validated in the skills inventory. Circles are equal and not scaled to headcount; region counts are exclusive.<br>Source: Skills inventory (synthetic data for illustration), as of 31 Mar 2026; U.S. regular employees<span class="mk">8</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="venn-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Relationships and flows</p>
+    <h2 class="title"><b>Venn</b> best practice</h2>
+    <p class="lede">Keep the shapes simple and let the shading carry the logic.</p>
+    <p><strong>Darker as sets overlap.</strong> An overlap lighter than its sets reads backwards.</p>
+    <p><strong>Exact fills, one hue.</strong> Translucent circles in different colors blend into muddy, off-brand tones.</p>
+    <p><strong>Three sets at most.</strong> Four ellipses make fifteen regions. Switch to combination bars.</p>
+    <p><strong>Text outside.</strong> Sentences inside the circles hide the shading and can't be read.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Shading overlaps</h4><div class="pair">
+        <div>{{exhibit:flow_venn_bp_shade_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Overlaps lighter.</span></div></div>
+        <div>{{exhibit:flow_venn_bp_shade_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Darker with each level.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Fills</h4><div class="pair">
+        <div>{{exhibit:flow_venn_bp_blend_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Blended hues.</span></div></div>
+        <div>{{exhibit:flow_venn_bp_blend_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Exact blues.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Four or more sets</h4><div class="pair">
+        <div>{{exhibit:flow_venn_bp_sets_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Overlapping ellipses.</span></div></div>
+        <div>{{exhibit:flow_venn_bp_sets_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Combination bars.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Using text</h4><div class="pair">
+        <div>{{exhibit:flow_venn_bp_text_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Sentences inside.</span></div></div>
+        <div>{{exhibit:flow_venn_bp_text_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Outside, with a leader.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="flows-build">
+  <div class="rail">
+    <p class="eyebrow">Relationships and flows</p>
+    <h2 class="title"><b>Build</b> relationship charts</h2>
+    <p class="lede">These charts are not native everywhere. Where a tool can't draw one, the cookbook says what to do instead.</p>
+    <p><a href="../../docs/cookbook/sankey.md">sankey.md</a> · <a href="../../docs/cookbook/parallel-coordinates.md">parallel-coordinates.md</a> · <a href="../../docs/cookbook/venn.md">venn.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Sankey flows conserved; exits are named nodes</li>
+      <li>One color per transfer type; story in blue</li>
+      <li>Axes scaled and oriented the same way</li>
+      <li>Venn overlaps darker; counts exclusive</li>
+      <li>No flow, line or region under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Sankey:</strong> no native chart. Build it in Python or HTML, export an SVG, then Insert › Pictures and <em>Convert to Shape</em> to edit labels; a linear pipeline is a native Funnel. <strong>Parallel coordinates:</strong> normalize in a helper table, Insert › 2-D Line, <em>Switch Row/Column</em> so measures are the categories, vertical gridlines as axes, focus series moved last. <strong>Venn:</strong> three Ovals; <em>Merge Shapes › Intersect</em> for each overlap; fills B6E2FA, 009EFF, 143359.</p></div>
+      <div class="platform"><h5>Power BI</h5><p>No built-in Sankey: the AppSource Sankey visual only if your tenant has approved it; group small flows into "Other" in Power Query first. Parallel coordinates as a native Line chart with the measure on the X axis and a normalized DAX measure. No Venn visual: show the combinations as a sorted bar.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>Plotly <code>go.Sankey</code> for flows; matplotlib with <code>mckviz</code> for parallel coordinates and the Venn (polygon intersections, exact fills).</p>
+<pre class="snip">link_color = {"progressed": mv.rgba(C.focus, 0.55),       # one color per transfer type
+              "dropped": mv.rgba(C.context, 0.45), "not_placed": mv.rgba(C.negative, 0.65)}
+go.Sankey(node=dict(color=C.total, thickness=6),
+          link=dict(source=src, target=dst, value=people, color=[link_color[t] for t in kind]))</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plotly <code>Sankey</code> with semi-transparent links; <code>Parcoords</code> lets readers brush and reorder axes; the Venn as filled <code>path</code> shapes with hover off.</p></div>
+      <div class="platform"><h5>R</h5><p><code>ggalluvial::geom_alluvium()</code> for Sankey-style flows; <code>geom_line()</code> over min–max scaled long data for parallel coordinates; <code>sf::st_intersection()</code> for Venn regions.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
