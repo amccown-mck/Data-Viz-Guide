@@ -49,7 +49,7 @@
 ## Build it
 
 ### Python — matplotlib + `mckviz`
-True state shapes need `geopandas` and a boundary file, which this kit's environment **does not install**. The route below needs no new packages: an **equal-area tile-grid map**, which also avoids the large-state bias of a choropleth. For real boundaries, install `geopandas` in your own environment, read a Census cartographic boundary file, reproject to EPSG:5070 (Albers), and call `gdf.plot(color=gdf["cls"].map(dict(enumerate(ramp))), edgecolor="white", linewidth=0.5)` with the same classes as below.
+The snippet below is the no-boundary-file route: an **equal-area tile-grid map**, which also avoids the large-state bias of a choropleth. For **real state, county and world shapes without geopandas**, follow the guide's maps: `guide/geo_shapes.py` reads the public-domain TopoJSON in `guide/geodata/` (US states in Albers USA with Alaska and Hawaii insets, world countries for an Equal Earth projection, a county subset) and draws them with matplotlib; see `guide/ex_geo.py` for choropleths, bubble maps, world maps and zoom-ins with a locator. For real boundaries, install `geopandas` in your own environment, read a Census cartographic boundary file, reproject to EPSG:5070 (Albers), and call `gdf.plot(color=gdf["cls"].map(dict(enumerate(ramp))), edgecolor="white", linewidth=0.5)` with the same classes as below.
 
 ```python
 # verified runnable (from the repo root)

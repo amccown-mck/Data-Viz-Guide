@@ -23,7 +23,7 @@ Last updated: 2026-09-30 (guide pilot). Read this first when resuming work, whet
 | Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook; `--lang r` runs every R block | `tools/check_snippets.py` |
 | Chart lint | `mv.lint(fig)` for matplotlib/Plotly, gallery runner, pytest suite | `python/mckviz/lint.py`, `tools/lint_charts.py`, `python/tests/` |
 | R examples | ggplot2 gallery (bar highlight, line with end labels, diverging heatmap) using the generated theme | `examples/r/`, `examples/output/r-*.png` |
-| Guide | Browsable HTML guide + 16:9 PDF from one source (95 spreads, 323 exhibits), modelled on the McKinsey spreads: overview, Fundamentals, nine chart families (anatomy, variants, best practice, build it), Formats, Toolkit. Exhibits drawn from tokens and data; every quoted number computed | `guide/`, `tools/build_guide.py`, `dist/guide/` |
+| Guide | Browsable HTML guide + 16:9 PDF from one source (103 spreads, 348 exhibits), plus a standalone single-file HTML that works offline, modelled on the McKinsey spreads: overview, Fundamentals, nine chart families (anatomy, variants, best practice, build it), Formats, Toolkit. Exhibits drawn from tokens and data; every quoted number computed | `guide/`, `tools/build_guide.py`, `dist/guide/` |
 
 ## Current focus: the guide itself (decided 2026-09-30)
 
@@ -31,10 +31,12 @@ The original ask was a McKesson data-viz guideline as thorough as the McKinsey g
 
 Status: **done** (2026-09-30). The owner approved the pilot ("exactly the right direction"); all sections are written: Fundamentals, Magnitude, Part-to-whole, Change over time, Ranking, Distribution, Correlation, Relationships and flows, Geo-spatial, Single number, Formats, Toolkit. Brand-usage feedback from the same review is applied kit-wide (see Working notes).
 
+Second review (2026-10-01), applied: standalone single-file guide to send around; chart chooser and cheat sheet rebuilt as guide pages (top-bar buttons, every chart name links to its page; one-page PDFs printed from them, `templates/print/` and `tools/build_print.py` retired); type hierarchy (slide title Bold 24 pt, chart headline SemiBold 18 pt, KPI numbers Bold) in tokens and every generator, plus a two-charts-on-a-slide spread; real US, world and zoom-in maps (`guide/geo_shapes.py`, `guide/geodata/`); stacked bar anatomy, variants and best practice redone (story segment on the baseline, names over the top bar, base counts); semantic waterfall colors (favorable teal, unfavorable orange); clearer zero-baseline example; dumbbell key; left-aligned inline table bars; dual-axis pairs read left to right; bubble-timeline key no longer clips.
+
 Open, for the owner:
-- The guide's chart cards use a lighter headline (Semibold, 19 px, about 1.4× the subtitle) than the tokens (Bold, 22 px). If the owner prefers it, change `typography.roles.headline` so every tool output follows, then rebuild everything.
 - Phone view: wide exhibits scroll sideways ("Swipe to see the full chart") rather than shrink. Phone-specific exhibits would help if the guide is read on phones a lot.
-- Maps use an equal-area US tile grid because no geometry library is installed; real state shapes need geopandas or Plotly with geometry.
+- Power BI: the theme now names `Libre Franklin SemiBold` for visual titles and `Libre Franklin Bold` for card callouts (Segoe UI fallbacks). Check both render as intended in Desktop and the Service.
+- Excel's Filled Map offering Robinson for world maps is stated in the Geo build page but not verified in Excel.
 
 How to extend: add `guide/ex_<section>.py` (exhibits register on import) and `guide/pages/<section>.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{folio}}`), add the page to `PAGES` in `tools/build_guide.py`, build, then review contact sheets and the PDF pages by eye.
 

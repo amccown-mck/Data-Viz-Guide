@@ -92,10 +92,10 @@ def cs_bars():
     fig = fig_px(250, 112)
     ax = fig.add_subplot()
     hbars(ax, [SHORT[f] for f in d.job_family], d.vol_attrition_pct, mv.highlight(d.job_family, focus=FOCUS),
-          bold={SHORT[f] for f in FOCUS}, size=MINI - 1.5, tick=MINI - 1.5, xmax=40)
+          bold={SHORT[f] for f in FOCUS}, size=MINI - 1.5, tick=MINI - 1.5, xmax=46)
     bench(ax, ENT, f"Enterprise {ENT:.1f}%", size=MINI - 1.5)
     ax.set_ylim(-0.6, len(d) + 0.1)
-    marker(ax, (float(d.vol_attrition_pct.iloc[-1]), len(d) - 1), 3, offset=(36, 0))
+    marker(ax, (float(d.vol_attrition_pct.iloc[-1]), len(d) - 1), 3, offset=(46, 0))
     return fig, (f"Five job families' voluntary attrition; Pharmacy Technician and DC Associate in blue above the "
                  f"{ENT:.1f}% enterprise rate.")
 
