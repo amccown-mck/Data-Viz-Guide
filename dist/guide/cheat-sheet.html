@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="guide.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="formats.html">Formats</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html" aria-current=page>Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="formats.html">Formats</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html" aria-current=page>Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
 <main>
 <section class="spread" id="cheat-sheet">
   <div class="rail">
@@ -280,9 +280,20 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Cheat sheet</span><span class="n">101</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Cheat sheet</span><span class="n">104</span></div>
 </section>
 
 </main>
+<script>
+// Folded spreads open when a link (or the address bar) points at them.
+(() => {
+  const open = () => {
+    const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const d = t && t.closest('details.fold');
+    if (d && !d.open) { d.open = true; t.scrollIntoView(); }
+  };
+  addEventListener('hashchange', open); addEventListener('DOMContentLoaded', open); open();
+})();
+</script>
 </body>
 </html>

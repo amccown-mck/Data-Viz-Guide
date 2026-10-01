@@ -43,6 +43,7 @@ PAGES = [
     ("index", "Overview", "Overview", "section"),
     ("chooser", "Chart chooser", "Chart chooser", "tool"),
     ("fundamentals", "Fundamentals", "Fundamentals", "section"),
+    ("formats", "Formats", "Formats", "section"),
     ("magnitude", "Magnitude", "Magnitude", "section"),
     ("part-to-whole", "Part-to-whole", "Part-to-whole", "section"),
     ("change-over-time", "Change over time", "Change over time", "section"),
@@ -52,10 +53,16 @@ PAGES = [
     ("flows", "Flows", "Relationships and flows", "section"),
     ("geo", "Geo-spatial", "Geo-spatial", "section"),
     ("single-number", "Single number", "Single number", "section"),
-    ("formats", "Formats", "Formats", "section"),
     ("cheat-sheet", "Cheat sheet", "Cheat sheet", "tool"),
     ("toolkit", "Toolkit", "Toolkit", "section"),
 ]
+# Progressive disclosure on screen: these spreads fold behind a one-line "More" bar (the PDF shows everything).
+FOLD = re.compile(r"(variants|build|best-practice-2|geographies|projection-zoom)$")
+# The Quick guide PDF: the pages to read first, in this order.
+QUICK = ["cover", "quick-start", "chooser", "chooser-traps", "question-first", "anatomy", "headline", "color",
+         "honest-scales", "people-data", "mck-slide", "slides", "two-charts", "flat", "bar", "bar-best-practice",
+         "line", "cheat-sheet", "setup"]
+QUICK_PDF = OUT / "McKesson-DataViz-Quick-Guide.pdf"
 # One-page PDFs printed from guide spreads: file name -> spread ids.
 ONE_PAGERS = {"chart-chooser": ["chooser", "chooser-traps"], "cheat-sheet": ["cheat-sheet"]}
 
@@ -174,6 +181,32 @@ def render(stem: str, section: str, svgs: dict, text: dict, snippets: dict, used
     return out
 
 
+FOLD_JS = """<script>
+// Folded spreads open when a link (or the address bar) points at them.
+(() => {
+  const open = () => {
+    const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const d = t && t.closest('details.fold');
+    if (d && !d.open) { d.open = true; t.scrollIntoView(); }
+  };
+  addEventListener('hashchange', open); addEventListener('DOMContentLoaded', open); open();
+})();
+</script>
+"""
+
+
+def fold(body: str) -> str:
+    """Wrap the spreads named by FOLD in <details>: readers see one line ("More: Bar chart variants") until they ask."""
+    def wrap(m):
+        sec = m.group(0)
+        title = re.sub(r"<[^>]+>", "", re.search(r'<h2 class="title">(.*?)</h2>', sec, re.S).group(1))
+        title = " ".join(title.split())
+        return (f'<details class="fold"><summary><span class="more">More</span> {html.escape(title)}'
+                f'<span class="hint">Show</span></summary>\n{sec}\n</details>')
+    return re.sub(r'<section class="spread[^"]*" id="([\w-]+)".*?</section>',
+                  lambda m: wrap(m) if FOLD.search(m.group(1)) else m.group(0), body, flags=re.S)
+
+
 def single_doc_links(body: str, first_of: dict[str, str], present: set[str]) -> str:
     """In a one-file document, page links (magnitude.html, magnitude.html#bar) become in-document anchors. Links to
     spreads that aren't in this document lose their href (the text stays)."""
@@ -220,8 +253,8 @@ def main() -> None:
         singles[stem] = render(stem, section, svgs, exhibits.TEXT, exhibits.HTML, set(), idx, single_link)
         title = "McKesson Data Visualization Guide" + ("" if stem == "index" else f": {label}")
         (OUT / f"{stem}.html").write_text(
-            LAYOUT.format(title=title, head=LINKED_CSS, topbar=topbar(stem, lambda s: f"{s}.html"), body=pages[stem],
-                          script=""), encoding="utf-8")
+            LAYOUT.format(title=title, head=LINKED_CSS, topbar=topbar(stem, lambda s: f"{s}.html"),
+                          body=fold(pages[stem]), script=FOLD_JS), encoding="utf-8")
         print(f"wrote {(OUT / f'{stem}.html').relative_to(ROOT)}")
 
     every = set(stem_of)
@@ -234,6 +267,12 @@ def main() -> None:
         (OUT / f"_print-{name}.html").write_text(
             LAYOUT.format(title=name, head=LINKED_CSS, topbar="", body=single_doc_links(body, first_of, set(ids)),
                           script=""), encoding="utf-8")
+
+    quick = "\n".join(re.search(rf'<section class="spread[^"]*" id="{i}".*?</section>', all_single, re.S).group(0)
+                      for i in QUICK)                      # the Quick guide: same spreads, its own page order
+    (OUT / "_print-quick.html").write_text(
+        LAYOUT.format(title="Quick guide", head=LINKED_CSS + "\n<style>.folio .n { display: none; }</style>",
+                      topbar="", body=single_doc_links(quick, first_of, set(QUICK)), script=""), encoding="utf-8")
 
     shutil.copy2(SRC / "guide.css", OUT / "guide.css")
     shutil.copy2(ROOT / "dist" / "web" / "mck-viz.css", OUT / "mck-viz.css")
@@ -255,10 +294,13 @@ def main() -> None:
             src = OUT / f"_print-{name}.html"
             print_pdf(exe, src, PRINT_OUT / f"{name}.pdf", expected=len(ids))
             src.unlink()
+        print_pdf(exe, OUT / "_print-quick.html", QUICK_PDF, expected=len(QUICK))
+        (OUT / "_print-quick.html").unlink()
         thumbnails()
     else:
         for name in ONE_PAGERS:
             (OUT / f"_print-{name}.html").unlink()
+        (OUT / "_print-quick.html").unlink()
     write_standalone(all_single)       # last: it inlines the thumbnails
 
 
@@ -299,7 +341,7 @@ def write_standalone(all_single: str) -> None:
     for k, (i, stem) in enumerate(starts):
         end = starts[k + 1][0] if k + 1 < len(starts) else len(body)
         parts.append(f'<div class="page" data-page="{stem}">\n{body[i:end]}</div>\n')
-    body = "".join(parts)
+    body = fold("".join(parts))
     body = re.sub(r'src="img/([\w-]+\.png)"', lambda m: f'src="{_data_uri(OUT / "img" / m.group(1), "image/png")}"', body)
     bar = topbar("__standalone__", lambda s: f"#{first_of[s]}")
     bar = re.sub(r'<a (class="tool" )?href="#([\w-]+)"',
@@ -309,7 +351,7 @@ def write_standalone(all_single: str) -> None:
             'templates, themes and code open the starter kit on GitHub; the release bundle has them as files.</p>')
     body = body.replace('<p class="small">Inspired by the structure', note + '\n    <p class="small">Inspired by the structure', 1)
     STANDALONE.write_text(LAYOUT.format(title="McKesson Data Visualization Guide", head=f"<style>\n{css}\n</style>",
-                                        topbar=bar, body=body, script=STANDALONE_JS), encoding="utf-8")
+                                        topbar=bar, body=body, script=STANDALONE_JS + FOLD_JS), encoding="utf-8")
     left = re.findall(r'(?:src|href)="(?!#|data:|https?:)[^"]+"', STANDALONE.read_text(encoding="utf-8"))
     mb = STANDALONE.stat().st_size / 1e6
     print(f"wrote {STANDALONE.relative_to(ROOT)} ({mb:.1f} MB, self-contained"

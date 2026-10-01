@@ -7,7 +7,7 @@ from matplotlib.patches import Circle, FancyBboxPatch, Rectangle, Wedge
 
 import mckviz as mv
 from exhibits import (ANNOT, ANTI, ATTR, BAND, ENT, FOCUS, FOCUS_EXIT_SHARE, LABEL, MINI, SHORT, SUPPLY, TICK, C,
-                      EXHIBITS, TEXT, _csv, _plain, bench, exhibit, fig_px, hbars, marker)
+                      EXHIBITS, HTML, TEXT, _csv, _plain, bench, exhibit, fig_px, hbars, marker)
 
 AQ = _csv("attrition_quarterly")
 QS = list(dict.fromkeys(AQ.quarter))
@@ -622,3 +622,101 @@ for _k, _alt in {"label_avoid": "A rounded navy pill as a section label.",
                  "lanes_avoid": "Rounded green swim-lane pills over status dots with no words.",
                  "lanes_fix": "Plain workstream headers over a rule, each status dot with its word."}.items():
     EXHIBITS[f"fmt_flat_{_k}"] = (lambda k=_k, a=_alt: (_flat(k), a))
+
+
+# ================================================================== STORYLINE: titles that tell the story (ghost deck)
+STORY_EXEC = "Frontline attrition is concentrated in two job families where pay and engagement both lag"
+STORY_ASK = "Decision needed: fund a Pharmacy Technician pay reset and a DC scheduling pilot for FY27"
+
+
+def _ghost_titles():
+    # Read at render time: these headlines are computed in the ranking and geo modules, which load after this one.
+    return [("Executive summary", STORY_EXEC), ("Finding 1", TEXT["bar_headline"]),
+            ("Finding 2", TEXT["rk_heat_headline"]), ("Finding 3", TEXT["rk_db_headline"]),
+            ("Finding 4", TEXT["dc_headline"]), ("Recommendation", STORY_ASK)]
+
+
+@exhibit
+def fmt_ghost_deck():
+    W, H = 840, 330
+    fig = fig_px(W, H)
+    ax = canvas(fig)
+    sw, sh, gx, gy = 268, 151, 18, 22                          # thumbnail size (16:9) and gutters, in px
+    for i, (kind, title) in enumerate(_ghost_titles()):
+        col, row = i % 3, i // 3
+        x0, y0 = col * (sw + gx) / W, 1 - (row * (sh + gy) + sh + 4) / H
+        w, h = sw / W, sh / H
+        ax.add_patch(Rectangle((x0, y0), w, h, facecolor="white", edgecolor=C.grid, lw=1))
+        ax.text(x0 + 10 / W, y0 + h - 9 / H, f"{i + 1}  {kind.upper()}", fontsize=MINI - 3.5, color=C.blue,
+                fontweight=700, va="top")
+        ax.text(x0 + 10 / W, y0 + h - 24 / H, _wrap(title, 40), fontsize=MINI - 1.5, color=C.title, fontweight=700,
+                va="top", linespacing=1.15)
+        if i in (0, 5):                                        # summary and ask: text slides
+            for k in range(3):
+                ax.add_patch(Rectangle((x0 + 10 / W, y0 + (42 - k * 13) / H), (150 if k < 2 else 110) / W, 4 / H,
+                                       color=C.grid, lw=0))
+        else:                                                  # evidence slides: a small chart glyph
+            vals = [0.9, 0.78, 0.5, 0.42, 0.33] if i != 4 else [0.6, 0.85, 0.45, 0.3, 0.5]
+            for k, v in enumerate(vals):
+                ax.add_patch(Rectangle((x0 + 10 / W, y0 + (60 - k * 10) / H), v * 140 / W, 6 / H,
+                                       color=C.focus if k < 2 else C.context, lw=0))
+    return fig, ("A ghost deck of six slides whose titles alone tell the story: an executive summary, four findings "
+                 "and the decision needed.")
+
+
+# ================================================================== SCENARIOS for executives
+_SD = _csv("data_ai_supply_demand").set_index("year")
+_YRS = list(_SD.index)
+_SPREAD = 0.08                                                 # high / low demand: +/- 8% by the last year, widening
+_R = [(_SPREAD * (y - _YRS[0]) / (_YRS[-1] - _YRS[0])) for y in _YRS]
+_HIGH = [d * (1 + r) for d, r in zip(_SD.demand_fte, _R)]
+_LOW = [d * (1 - r) for d, r in zip(_SD.demand_fte, _R)]
+_SUP = list(_SD.internal_supply_fte)
+_GAPS = {"High": _HIGH[-1] - _SUP[-1], "Base": float(_SD.demand_fte.iloc[-1]) - _SUP[-1], "Low": _LOW[-1] - _SUP[-1]}
+TEXT["scn_headline"] = (f"Even in the low-demand scenario, Data & AI needs about {round(_GAPS['Low'], -1):,.0f} more FTE "
+                        f"than internal supply by {_YRS[-1]}")
+TEXT["scn_subtitle"] = f"Data & AI roles: demand scenarios vs. internal supply, {_YRS[0]}–{_YRS[-1]} (FTE)"
+TEXT["scn_spread"] = f"{_SPREAD * 100:.0f}%"
+HTML["scn_table"] = (
+    '<table class="spec scn"><thead><tr><th>Scenario</th><th>Assumption</th>'
+    f'<th class="num">{_YRS[-1]} demand</th><th class="num">Gap to supply</th></tr></thead><tbody>'
+    + "".join(f'<tr{" class=base" if k == "Base" else ""}><td>{k}</td><td>{a}</td><td class="num">{d:,.0f}</td>'
+              f'<td class="num">{g:,.0f}</td></tr>'
+              for k, a, d, g in [("High", f"Gen AI adoption a year ahead of plan (+{_SPREAD * 100:.0f}% by {_YRS[-1]})",
+                                  _HIGH[-1], _GAPS["High"]),
+                                 ("Base", "Current plan; the number the budget uses", float(_SD.demand_fte.iloc[-1]),
+                                  _GAPS["Base"]),
+                                 ("Low", f"Adoption a year behind plan (−{_SPREAD * 100:.0f}% by {_YRS[-1]})", _LOW[-1],
+                                  _GAPS["Low"])])
+    + "</tbody></table>")
+
+
+@exhibit
+def fmt_scenarios():
+    fig = fig_px(600, 250)
+    ax = fig.add_subplot()
+    x = _YRS
+    ax.fill_between(x, _LOW, _HIGH, color=C.focus_light, alpha=0.3, lw=0, zorder=1)
+    ax.plot(x, _SD.demand_fte, color=C.focus, lw=2.4, zorder=3)
+    for ys in (_HIGH, _LOW):
+        ax.plot(x, ys, color=C.focus, lw=0.9, ls=(0, (3, 2)), zorder=2)
+    ax.plot(x, _SUP, color=C.context, lw=2, zorder=3)
+    end = [(_HIGH[-1], f"High {_HIGH[-1]:,.0f}", C.text), (float(_SD.demand_fte.iloc[-1]),
+           f"Base demand {_SD.demand_fte.iloc[-1]:,.0f}", C.focus), (_LOW[-1], f"Low {_LOW[-1]:,.0f}", C.text),
+           (_SUP[-1], f"Internal supply {_SUP[-1]:,.0f}", C.text)]
+    for y, lab, col in end:
+        ax.annotate(lab, (x[-1], y), xytext=(6, 0), textcoords="offset points", va="center", fontsize=LABEL - 1,
+                    color=col, fontweight=600 if col == C.focus else 400)
+    ax.annotate("", (x[-1], _SUP[-1] + 12), xytext=(x[-1], _LOW[-1] - 12),
+                arrowprops=dict(arrowstyle="<->", color=C.negative_text, lw=1))
+    ax.text(x[-1] - 0.12, (_SUP[-1] + _LOW[-1]) / 2, f"Gap even if low:\n{round(_GAPS['Low'], -1):,.0f} FTE",
+            ha="right", va="center", fontsize=ANNOT - 1, color=C.negative_text, fontweight=600)
+    ax.set_xlim(x[0], x[-1] + 1.9)
+    ax.set_ylim(700, max(_HIGH) * 1.05)
+    ax.set_xticks(x)
+    ax.tick_params(labelsize=TICK - 1, length=0, colors=C.text_muted)
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:,.0f}"))
+    ax.grid(axis="y", color=C.grid, lw=0.6)
+    _plain(ax, bottom=True)
+    return fig, (TEXT["scn_headline"] + f". Base demand {_SD.demand_fte.iloc[-1]:,.0f}, high {_HIGH[-1]:,.0f}, "
+                 f"low {_LOW[-1]:,.0f}; internal supply {_SUP[-1]:,.0f}.")

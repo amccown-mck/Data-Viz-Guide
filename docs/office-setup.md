@@ -1,21 +1,32 @@
 # Set up Excel and PowerPoint
 
-Do this once per computer, and every chart you make in Office will start with McKesson colors and type. It takes about five minutes. Afterwards, **Page Layout › Colors** (Excel) and **Design › Variants › Colors** (PowerPoint) list **McKesson Data Viz**.
+## The short version (most people)
+You probably need to install nothing.
+
+1. **Check the font.** In PowerPoint, type *Libre Franklin* in the font box. If it's listed, skip to step 2. If not, install it (section 1 below), or ask IT.
+2. **New deck:** start from the **McKesson Standard Template** (File › New). Put charts on its *Title Only* layout.
+3. **Charts:** open the **starter deck** from the kit, copy a chart slide into your deck, right-click the chart › **Edit Data**, and paste your numbers. The colors, fonts, labels and layout come with it.
+4. **Excel:** start from the **chart workbook**. Its *Palette* sheet lists every color with the hex to type into **More Colors**.
+
+The rest of this page is for people who build many charts from scratch and want the McKesson colors in every new Office file (sections 1–2, about five minutes), and for maintainers.
+
+## The full set-up
+Afterwards, **Page Layout › Colors** (Excel) and **Design › Variants › Colors** (PowerPoint) list **McKesson Data Viz**.
 
 | File | What it is | Where it is |
 |---|---|---|
 | Libre Franklin fonts | The brand typeface, 9 weights (SIL Open Font License, free to install and embed) | [`fonts/LibreFranklin/`](../fonts/LibreFranklin) |
-| Theme colors | Accent 1–6 = the categorical palette, Text 2 = Navy, Background 2 = Light Sand | [`dist/office/Theme Colors/McKesson Data Viz.xml`](../dist/office/Theme%20Colors/McKesson%20Data%20Viz.xml) |
+| Theme colors | Accent 1–6 = the categorical palette, Text 2 = McKesson Blue (titles, as in the Standard Template), Background 2 = Light Sand | [`dist/office/Theme Colors/McKesson Data Viz.xml`](../dist/office/Theme%20Colors/McKesson%20Data%20Viz.xml) |
 | Theme fonts | Libre Franklin for headings and body | [`dist/office/Theme Fonts/McKesson Data Viz.xml`](../dist/office/Theme%20Fonts/McKesson%20Data%20Viz.xml) |
-| PowerPoint template | 16:9, theme applied, left-aligned navy titles, no slides | [`dist/office/McKesson-DataViz.potx`](../dist/office/McKesson-DataViz.potx) |
-| Starter deck | Native, editable sample charts: bar highlight, line, waterfall, 100% stacked bar | [`dist/office/McKesson-DataViz-Starter.pptx`](../dist/office/McKesson-DataViz-Starter.pptx) |
+| PowerPoint template | 16:9, theme applied, the Standard Template's grid, left-aligned Bold McKesson Blue titles, no slides | [`dist/office/McKesson-DataViz.potx`](../dist/office/McKesson-DataViz.potx) |
+| Starter deck | Native, editable sample charts: bar highlight, line, waterfall, 100% stacked bar. The internal release bundle also has a copy built on the McKesson Standard Template (`McKesson-DataViz-Starter-Official.pptx`) | [`dist/office/McKesson-DataViz-Starter.pptx`](../dist/office/McKesson-DataViz-Starter.pptx) |
 | Chart workbook | Palette sheet, the same four charts in Excel, and a heat-table scorecard | [`dist/office/McKesson-DataViz-Charts.xlsx`](../dist/office/McKesson-DataViz-Charts.xlsx) |
 | One-page PDFs | Cheat sheet (anatomy, colors, checklist) and chart chooser | [`dist/print/cheat-sheet.pdf`](../dist/print/cheat-sheet.pdf), [`dist/print/chart-chooser.pdf`](../dist/print/chart-chooser.pdf) |
 
 ## 1. Install the fonts
 - **Windows:** open `fonts/LibreFranklin`, select all the `.ttf` files, right-click and choose **Install** (or **Install for all users** if you have admin rights). Restart Excel and PowerPoint.
 - **Mac:** double-click each `.ttf` file and choose **Install Font** in Font Book.
-- In the font list, Regular, Italic, Bold and Bold Italic appear as **Libre Franklin**. The other weights are separate entries: **Libre Franklin Light** (footnotes, big numbers), **Libre Franklin Medium** (data labels) and **Libre Franklin SemiBold**.
+- In the font list, Regular, Italic, Bold and Bold Italic appear as **Libre Franklin**. The other weights are separate entries: **Libre Franklin Light** (footnotes), **Libre Franklin Medium** (data labels) and **Libre Franklin SemiBold** (chart headlines). Big numbers use Bold.
 
 ## 2. Install the theme colors and fonts
 **Windows:** copy the two XML files into your Office theme folders. Paste this into PowerShell from the repo root:

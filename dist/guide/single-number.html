@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="guide.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html" aria-current=page>Single number</a><a href="formats.html">Formats</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="formats.html">Formats</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html" aria-current=page>Single number</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
 <main>
 <style>
   /* Big-number KPI card (Single number section). Type and color come from the kpi and semantic tokens. */
@@ -82,7 +82,7 @@
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">84</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">98</span></div>
 </section>
 
 <section class="spread" id="progress-ring">
@@ -295,9 +295,10 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">85</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">99</span></div>
 </section>
 
+<details class="fold"><summary><span class="more">More</span> Single number variants<span class="hint">Show</span></summary>
 <section class="spread" id="single-number-variants">
   <div class="rail">
     <p class="eyebrow">Single number</p>
@@ -929,8 +930,9 @@ L 200 34
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">86</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">100</span></div>
 </section>
+</details>
 
 <section class="spread" id="single-number-best-practice">
   <div class="rail">
@@ -1277,9 +1279,10 @@ L 62.36 70
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">87</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">101</span></div>
 </section>
 
+<details class="fold"><summary><span class="more">More</span> Single number best practice, continued<span class="hint">Show</span></summary>
 <section class="spread" id="single-number-best-practice-2">
   <div class="rail">
     <p class="eyebrow">Single number</p>
@@ -1678,9 +1681,11 @@ L 130 30
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">88</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">102</span></div>
 </section>
+</details>
 
+<details class="fold"><summary><span class="more">More</span> Build a KPI card<span class="hint">Show</span></summary>
 <section class="spread" id="single-number-build">
   <div class="rail">
     <p class="eyebrow">Single number</p>
@@ -1709,9 +1714,21 @@ txt = f"{mv.signed(value - prior)} pts vs. Mar 2025"   # true minus, explicit +<
       <div class="platform"><h5>R</h5><p><code>annotate("text", ..., fontface = "bold")</code> for the number; a ring with <code>geom_col()</code> + <code>coord_polar(theta = "y", start = 0, direction = 1)</code>.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">89</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">103</span></div>
 </section>
+</details>
 
 </main>
+<script>
+// Folded spreads open when a link (or the address bar) points at them.
+(() => {
+  const open = () => {
+    const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const d = t && t.closest('details.fold');
+    if (d && !d.open) { d.open = true; t.scrollIntoView(); }
+  };
+  addEventListener('hashchange', open); addEventListener('DOMContentLoaded', open); open();
+})();
+</script>
 </body>
 </html>

@@ -278,6 +278,33 @@ pre.snip { margin: 6px 0 0; background: var(--g-stage); padding: 10px 12px; over
   .spread { scroll-margin-top: 92px; }
 }
 
+.quick .tile { padding: 16px 18px; }
+.qlist { list-style: none; margin: 4px 0 0; padding: 0; }
+.qlist li { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid var(--g-rule);
+            font-size: 13.5px; margin: 0; }
+.qlist li:first-child { border-top: 0; }
+.qlist a { color: var(--g-ink); font-weight: 600; text-decoration: none; }
+.qlist a:hover { text-decoration: underline; }
+.qlist span { color: var(--g-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+.scn { font-size: 12px; margin-top: 8px; }
+.scn td, .scn th { padding: 4px 10px 4px 0; }
+.scn tr.base td { font-weight: 600; color: var(--g-ink); }
+
+/* ---------- progressive disclosure: folded spreads (variants, build, "continued") on screen */
+details.fold { border-bottom: 1px solid var(--g-rule); }
+details.fold > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 14px;
+                         padding: 15px var(--g-pad); font-size: 15px; font-weight: 600; color: var(--g-ink); }
+details.fold > summary::-webkit-details-marker { display: none; }
+details.fold > summary:hover { background: var(--g-stage); }
+details.fold .more { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--g-blue);
+                     min-width: 44px; }
+details.fold .hint { margin-left: auto; font-size: 12.5px; font-weight: 500; color: var(--g-blue); }
+details.fold .hint::after { content: " +"; }
+details.fold[open] .hint { font-size: 0; }
+details.fold[open] .hint::after { content: "Hide \2212"; font-size: 12.5px; }
+details.fold[open] > summary { border-bottom: 1px solid var(--g-rule); }
+
 /* ---------- small screens: stack the rail over the stage */
 @media screen and (max-width: 980px) {
   :root { --g-pad: 20px; }

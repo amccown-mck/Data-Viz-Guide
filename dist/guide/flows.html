@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="guide.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html" aria-current=page>Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="formats.html">Formats</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="formats.html">Formats</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html" aria-current=page>Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
 <main>
 <section class="spread" id="sankey">
   <div class="rail">
@@ -372,7 +372,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">67</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">81</span></div>
 </section>
 
 <section class="spread" id="sankey-best-practice">
@@ -2566,7 +2566,7 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">68</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">82</span></div>
 </section>
 
 <section class="spread" id="parallel-coordinates">
@@ -6055,7 +6055,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">69</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">83</span></div>
 </section>
 
 <section class="spread" id="parallel-coordinates-best-practice">
@@ -7633,7 +7633,7 @@ L 146.8 97.954098
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">70</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">84</span></div>
 </section>
 
 <section class="spread" id="venn">
@@ -9133,7 +9133,7 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">71</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">85</span></div>
 </section>
 
 <section class="spread" id="venn-best-practice">
@@ -16284,9 +16284,10 @@ L 129.607477 64.616822
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">72</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">86</span></div>
 </section>
 
+<details class="fold"><summary><span class="more">More</span> Build relationship charts<span class="hint">Show</span></summary>
 <section class="spread" id="flows-build">
   <div class="rail">
     <p class="eyebrow">Relationships and flows</p>
@@ -16316,9 +16317,21 @@ go.Sankey(node=dict(color=C.total, thickness=6),
       <div class="platform"><h5>R</h5><p><code>ggalluvial::geom_alluvium()</code> for Sankey-style flows; <code>geom_line()</code> over min–max scaled long data for parallel coordinates; <code>sf::st_intersection()</code> for Venn regions.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">73</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Relationships and flows</span><span class="n">87</span></div>
 </section>
+</details>
 
 </main>
+<script>
+// Folded spreads open when a link (or the address bar) points at them.
+(() => {
+  const open = () => {
+    const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const d = t && t.closest('details.fold');
+    if (d && !d.open) { d.open = true; t.scrollIntoView(); }
+  };
+  addEventListener('hashchange', open); addEventListener('DOMContentLoaded', open); open();
+})();
+</script>
 </body>
 </html>

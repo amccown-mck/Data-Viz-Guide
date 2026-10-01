@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="guide.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html" aria-current=page>Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="formats.html">Formats</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html" aria-current=page>Overview</a><a href="fundamentals.html">Fundamentals</a><a href="formats.html">Formats</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
 <main>
 <section class="spread cover" id="cover">
   <div class="inner">
@@ -83,6 +83,53 @@
   <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">2</span></div>
 </section>
 
+<section class="spread" id="quick-start">
+  <div class="rail">
+    <p class="eyebrow">Overview</p>
+    <h2 class="title"><b>Start here:</b> the quick path</h2>
+    <p class="lede">You don't need all of it. These pages cover most of what goes into a deck; the rest is reference for when you build a particular chart.</p>
+    <p>On screen, each chart family shows its anatomy and best practice first; variants and build steps open with <strong>More</strong>. The short <strong>Quick guide</strong> PDF has just the pages below.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g3 quick">
+      <div class="tile">
+        <p class="step">1 · Read once (20 minutes)</p>
+        <ul class="qlist">
+          <li><a href="fundamentals.html#question-first">Start with the question</a><span>7</span></li>
+          <li><a href="fundamentals.html#anatomy">Anatomy of a chart</a><span>9</span></li>
+          <li><a href="fundamentals.html#headline">Write the headline last</a><span>10</span></li>
+          <li><a href="fundamentals.html#color">Grey first, then color the point</a><span>11</span></li>
+          <li><a href="fundamentals.html#honest-scales">Honest scales</a><span>15</span></li>
+          <li><a href="fundamentals.html#people-data">People data is personal</a><span>16</span></li>
+        </ul>
+      </div>
+      <div class="tile">
+        <p class="step">2 · Before every deck</p>
+        <ul class="qlist">
+          <li><a href="formats.html#mck-slide">The McKesson slide</a><span>19</span></li>
+          <li><a href="formats.html#slides">Clarity first</a><span>20</span></li>
+          <li><a href="formats.html#two-charts">Two charts on a slide</a><span>21</span></li>
+          <li><a href="formats.html#flat">Flat, not rounded</a><span>22</span></li>
+          <li><a href="chooser.html#chooser">Chart chooser</a><span>5</span></li>
+          <li><a href="chooser.html#chooser-traps">The common traps</a><span>6</span></li>
+        </ul>
+      </div>
+      <div class="tile">
+        <p class="step">3 · When you build</p>
+        <ul class="qlist">
+          <li><a href="magnitude.html#bar">Bar chart, the default</a><span>31</span></li>
+          <li><a href="change-over-time.html#line">Line chart, over time</a><span>47</span></li>
+          <li><a href="toolkit.html#setup">Set up your tools once</a><span>106</span></li>
+          <li><a href="cheat-sheet.html#cheat-sheet">Cheat sheet</a><span>104</span></li>
+          <li><a href="toolkit.html#qa">Check before you send</a><span>107</span></li>
+        </ul>
+        <p class="note" style="margin-top:10px">Any other chart: find it in the chooser, read its anatomy and best practice, and open <strong>More</strong> for the build steps.</p>
+      </div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">3</span></div>
+</section>
+
 <section class="spread" id="contents">
   <div class="rail">
     <p class="eyebrow">Overview</p>
@@ -92,25 +139,36 @@
   </div>
   <div class="stage plain top">
     <ol class="toc">
-      <li><span class="no">→</span><span><a href="chooser.html#chooser">Chart chooser</a><small>Start here: from the question to the chart, linked to every chart page; the common traps</small></span><span class="pg">4</span></li>
-      <li><span class="no">01</span><span><a href="fundamentals.html#question-first">Fundamentals</a><small>Question first, how readers read, anatomy, headlines, color, type, clutter, honest scales, people data, accessibility</small></span><span class="pg">6</span></li>
-      <li><span class="no">02</span><span><a href="magnitude.html#bar">Magnitude</a><small>Bar and column charts: anatomy, variants, best practice, build it</small></span><span class="pg">17</span></li>
-      <li><span class="no">03</span><span><a href="part-to-whole.html#stacked-bar">Part-to-whole</a><small>Stacked bars, waterfalls, treemaps, donuts</small></span><span class="pg">22</span></li>
-      <li><span class="no">04</span><span><a href="change-over-time.html#line">Change over time</a><small>Line, stacked area, bubble timeline, small multiples</small></span><span class="pg">33</span></li>
-      <li><span class="no">05</span><span><a href="ranking.html#slope">Ranking</a><small>Slope, bump, dot plot and dumbbell, heat table</small></span><span class="pg">44</span></li>
-      <li><span class="no">06</span><span><a href="distribution.html#strip">Distribution</a><small>Strip, box plot, histogram</small></span><span class="pg">53</span></li>
-      <li><span class="no">07</span><span><a href="correlation.html#scatter">Correlation</a><small>Scatter and bubble, why not dual axes, heatmaps</small></span><span class="pg">59</span></li>
-      <li><span class="no">08</span><span><a href="flows.html#sankey">Relationships and flows</a><small>Sankey, parallel coordinates, Venn</small></span><span class="pg">67</span></li>
-      <li><span class="no">09</span><span><a href="geo.html#choropleth">Geo-spatial</a><small>US choropleth and bubble maps, world maps, zoom-ins, choosing the geography</small></span><span class="pg">74</span></li>
-      <li><span class="no">10</span><span><a href="single-number.html#big-number">Single number</a><small>KPI and big number, progress to target</small></span><span class="pg">84</span></li>
-      <li><span class="no">11</span><span><a href="formats.html#presentations">Formats</a><small>Slides, two charts on a slide, reports and print, web and mobile, dashboards, interactivity, animation, social</small></span><span class="pg">90</span></li>
-      <li><span class="no">→</span><span><a href="cheat-sheet.html#cheat-sheet">Cheat sheet</a><small>The whole guide on one page: anatomy, headline, color, type, checklist</small></span><span class="pg">101</span></li>
-      <li><span class="no">12</span><span><a href="toolkit.html#kit">Toolkit</a><small>Downloads, set-up for each tool, the QA checklist, guidance for agents</small></span><span class="pg">102</span></li>
+      <li><span class="no">→</span><span><a href="chooser.html#chooser">Chart chooser</a><small>Start here: from the question to the chart, linked to every chart page; the common traps</small></span><span class="pg">5</span></li>
+      <li><span class="no">01</span><span><a href="fundamentals.html#question-first">Fundamentals</a><small>Question first, how readers read, anatomy, headlines, color, type, clutter, honest scales, people data, accessibility</small></span><span class="pg">7</span></li>
+      <li><span class="no">02</span><span><a href="formats.html#presentations">Formats</a><small>The McKesson slide, two charts on a slide, flat design, storyline, reports, web and mobile, dashboards, social</small></span><span class="pg">18</span></li>
+      <li><span class="no">03</span><span><a href="magnitude.html#bar">Magnitude</a><small>Bar and column charts: anatomy, variants, best practice, build it</small></span><span class="pg">31</span></li>
+      <li><span class="no">04</span><span><a href="part-to-whole.html#stacked-bar">Part-to-whole</a><small>Stacked bars, waterfalls, treemaps, donuts</small></span><span class="pg">36</span></li>
+      <li><span class="no">05</span><span><a href="change-over-time.html#line">Change over time</a><small>Line, stacked area, bubble timeline, small multiples</small></span><span class="pg">47</span></li>
+      <li><span class="no">06</span><span><a href="ranking.html#slope">Ranking</a><small>Slope, bump, dot plot and dumbbell, heat table</small></span><span class="pg">58</span></li>
+      <li><span class="no">07</span><span><a href="distribution.html#strip">Distribution</a><small>Strip, box plot, histogram</small></span><span class="pg">67</span></li>
+      <li><span class="no">08</span><span><a href="correlation.html#scatter">Correlation</a><small>Scatter and bubble, why not dual axes, heatmaps</small></span><span class="pg">73</span></li>
+      <li><span class="no">09</span><span><a href="flows.html#sankey">Relationships and flows</a><small>Sankey, parallel coordinates, Venn</small></span><span class="pg">81</span></li>
+      <li><span class="no">10</span><span><a href="geo.html#choropleth">Geo-spatial</a><small>US choropleth and bubble maps, world maps, zoom-ins, choosing the geography</small></span><span class="pg">88</span></li>
+      <li><span class="no">11</span><span><a href="single-number.html#big-number">Single number</a><small>KPI and big number, progress to target</small></span><span class="pg">98</span></li>
+      <li><span class="no">→</span><span><a href="cheat-sheet.html#cheat-sheet">Cheat sheet</a><small>The whole guide on one page: anatomy, headline, color, type, checklist</small></span><span class="pg">104</span></li>
+      <li><span class="no">12</span><span><a href="toolkit.html#kit">Toolkit</a><small>Downloads, set-up for each tool, the QA checklist, guidance for agents</small></span><span class="pg">105</span></li>
     </ol>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">3</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">4</span></div>
 </section>
 
 </main>
+<script>
+// Folded spreads open when a link (or the address bar) points at them.
+(() => {
+  const open = () => {
+    const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const d = t && t.closest('details.fold');
+    if (d && !d.open) { d.open = true; t.scrollIntoView(); }
+  };
+  addEventListener('hashchange', open); addEventListener('DOMContentLoaded', open); open();
+})();
+</script>
 </body>
 </html>

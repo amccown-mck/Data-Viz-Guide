@@ -35,8 +35,8 @@
   <div class="rail">
     <p class="eyebrow">Toolkit</p>
     <h2 class="title"><b>Set up</b> once</h2>
-    <p class="lede">Ten minutes per tool, and every chart you make afterwards starts on-brand.</p>
-    <p>Detailed steps, troubleshooting and screenshots:</p>
+    <p class="lede">For decks and workbooks, most people need to install nothing: start from the template and copy charts from the starter deck.</p>
+    <p>Everything named here is in the kit: the release bundle (a zip on SharePoint) or the GitHub repo. More detail and troubleshooting:</p>
     <ul class="small">
       <li><a href="../../docs/office-setup.md">docs/office-setup.md</a></li>
       <li><a href="../../docs/powerbi-setup.md">docs/powerbi-setup.md</a></li>
@@ -45,8 +45,9 @@
   </div>
   <div class="stage top">
     <div class="panel">
-      <div class="platform"><h5>Fonts (everyone)</h5><p>Install the Libre Franklin TTFs from <code>fonts/LibreFranklin/</code> (right-click › Install for all users). Without them, Office and Power BI fall back to Arial or Segoe UI.</p></div>
-      <div class="platform"><h5>PowerPoint and Excel</h5><p>Copy <code>dist/office/Theme Colors/McKesson Data Viz.xml</code> to <code>%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\</code> and the Theme Fonts file to <code>…\Theme Fonts\</code>. Then <strong>Design › Variants › Colors / Fonts</strong> (PowerPoint) or <strong>Page Layout › Colors / Fonts</strong> (Excel). New decks start from <code>McKesson-DataViz.potx</code>.</p></div>
+      <div class="platform"><h5>Check the font</h5><p>In PowerPoint, type <strong>Libre Franklin</strong> in the font box. If it's listed, you're set. If not, open the kit's <strong>fonts</strong> folder, select every file, right-click › <strong>Install</strong> (or ask IT).</p></div>
+      <div class="platform"><h5>PowerPoint</h5><p><strong>New deck:</strong> File › New › the <strong>McKesson Standard Template</strong>. <strong>Charts:</strong> open the kit's <strong>starter deck</strong>, copy a chart slide into your deck, then right-click the chart › <strong>Edit Data</strong> and paste your numbers. Colors, fonts and layout come with the slide.</p></div>
+      <div class="platform"><h5>Excel</h5><p>Open the kit's <strong>chart workbook</strong>: replace a sheet's data, or copy its chart into your file. The <strong>Palette</strong> sheet lists every color with the hex to type into More Colors. Want the colors in your own workbooks? The optional theme files are in <a href="../../docs/office-setup.md">office-setup</a>.</p></div>
       <div class="platform"><h5>Power BI</h5><p><strong>View › Themes › Browse for themes</strong> and pick <code>dist/powerbi/mckesson-dataviz-theme.json</code>. Viewers without Libre Franklin see Segoe UI, so leave room in labels.</p></div>
       <div class="platform"><h5>Python</h5><div><pre class="snip">git clone https://github.com/amccown-mck/Data-Viz-Guide  # then, in it:
 pip install -e "./python[examples]"   # editable, so the fonts are found

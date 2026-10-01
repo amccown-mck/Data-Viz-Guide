@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="guide.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html" aria-current=page>Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="formats.html">Formats</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="formats.html">Formats</a><a href="magnitude.html" aria-current=page>Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
 <main>
 <section class="spread" id="bar">
   <div class="rail">
@@ -445,9 +445,10 @@ z
       </figure>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">17</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">31</span></div>
 </section>
 
+<details class="fold"><summary><span class="more">More</span> Bar chart variants<span class="hint">Show</span></summary>
 <section class="spread" id="bar-variants">
   <div class="rail">
     <p class="eyebrow">Magnitude</p>
@@ -1175,8 +1176,9 @@ z
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">18</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">32</span></div>
 </section>
+</details>
 
 <section class="spread" id="bar-best-practice">
   <div class="rail">
@@ -2161,9 +2163,10 @@ L 198 122.698
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">19</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">33</span></div>
 </section>
 
+<details class="fold"><summary><span class="more">More</span> Bar chart best practice, continued<span class="hint">Show</span></summary>
 <section class="spread" id="bar-best-practice-2">
   <div class="rail">
     <p class="eyebrow">Magnitude</p>
@@ -3719,9 +3722,11 @@ z
       </div></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">20</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">34</span></div>
 </section>
+</details>
 
+<details class="fold"><summary><span class="more">More</span> Build a bar chart<span class="hint">Show</span></summary>
 <section class="spread" id="bar-build">
   <div class="rail">
     <p class="eyebrow">Magnitude</p>
@@ -3755,9 +3760,21 @@ mv.titles(fig, headline, subtitle); mv.source(fig, source); mv.lint(fig)</pre></
       <div class="platform"><h5>Coding agents</h5><p>"Make a McKesson bar chart of voluntary attrition by job family, FY26, highlighting the families above the enterprise rate." The <code>mck-chart</code> skill runs the workflow and returns the chart, a chart brief and alt text.</p></div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">21</span></div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Magnitude</span><span class="n">35</span></div>
 </section>
+</details>
 
 </main>
+<script>
+// Folded spreads open when a link (or the address bar) points at them.
+(() => {
+  const open = () => {
+    const t = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    const d = t && t.closest('details.fold');
+    if (d && !d.open) { d.open = true; t.scrollIntoView(); }
+  };
+  addEventListener('hashchange', open); addEventListener('DOMContentLoaded', open); open();
+})();
+</script>
 </body>
 </html>
