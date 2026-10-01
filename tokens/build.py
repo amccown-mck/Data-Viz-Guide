@@ -451,7 +451,7 @@ def build_powerbi() -> None:
 # ---------------------------------------------------------------- Office (PowerPoint / Excel / Word)
 def build_office() -> None:
     slots = {
-        "dk1": v("text.primary"), "lt1": "FFFFFF", "dk2": CORE["navy"]["value"], "lt2": v("surface.subtle"),
+        "dk1": v("text.primary"), "lt1": "FFFFFF", "dk2": v("text.title"), "lt2": v("surface.subtle"),   # dk2 = titles, as in the McKesson Standard Template
         "accent1": CAT[0], "accent2": CAT[1], "accent3": CAT[2], "accent4": CAT[3], "accent5": CAT[4], "accent6": CAT[5],
         "hlink": EXT["azure"]["dark"], "folHlink": v("chart.context_on_dark"),
     }

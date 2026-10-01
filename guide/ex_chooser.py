@@ -108,7 +108,7 @@ from exhibits import HTML  # noqa: E402
 
 _ROLES = [("context", "Context", "everything else"), ("focus", "Focus", "what the headline names"),
           ("accent", "Accent (navy)", "the one exception"), ("focus_light", "Light blue", "a series, in the uniform pattern"),
-          ("negative", "Orange", "worse only: below target, shrinking"), ("total", "Total", "totals, targets (dashed)")]
+          ("negative", "Orange", "worse only: below target, shrinking"), ("positive", "Green", "better only, with ▲ or words")]
 HTML["cs_roles"] = "".join(
     f'<div class="cs-role"><span class="sw" style="background:{getattr(C, k)}"></span><span><b>{n}</b> {u}</span>'
     f"<code>{getattr(C, k)}</code></div>" for k, n, u in _ROLES)

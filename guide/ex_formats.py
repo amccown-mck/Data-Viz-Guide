@@ -114,7 +114,7 @@ def _slide(kind):
             ax.add_patch(Rectangle((0.69, 0.78 - k * 0.075), 0.25 if k % 3 else 0.2, 0.025, color=C.context_light, lw=0))
         return fig
     ax.text(0.05, 0.92, "Two frontline job families lose about 1 in 4\npeople a year, well above the enterprise rate",
-            fontsize=MINI - 1, color="white" if dark else C.headline, fontweight=700, va="top", linespacing=1.2)
+            fontsize=MINI - 1, color="white" if dark else C.title, fontweight=700, va="top", linespacing=1.2)
     inner = fig.add_axes([0.2, 0.14, 0.62, 0.52])
     d = ATTR.tail(6)
     if dark:
@@ -449,7 +449,7 @@ def fmt_two_charts():
     px = lambda v, d: v / d                                   # px -> figure fraction
     L, R, GUT = px(40, W), 1 - px(40, W), px(44, W)
     colw = (R - L - GUT) / 2
-    ax.text(L, 1 - px(30, H), TEXT["two_slide_title"], fontsize=19, fontweight=700, color=C.headline, va="top")
+    ax.text(L, 1 - px(30, H), TEXT["two_slide_title"], fontsize=19, fontweight=700, color=C.title, va="top")
     marker(ax, (L - px(22, W), 1 - px(42, H)), 1, coords="axes fraction")
     labels = [SHORT[f] for f in _SC2.index]
     bold = {SHORT[f] for f in _TOP_ATT}
@@ -498,3 +498,127 @@ def fmt_two_charts():
 def _wrap(s, width):
     import textwrap
     return textwrap.fill(s, width)
+
+
+# ================================================================== THE McKESSON SLIDE (template grid)
+def _slide_frame(ax, W, H, page="3"):
+    """The McKesson Standard Template's furniture, drawn to scale: white slide, footer line, confidentiality, logo."""
+    px = lambda v, d: v / d
+    inch_x, inch_y = W / 13.333, H / 7.5
+    ax.add_patch(Rectangle((0.002, 0.004), 0.996, 0.992, facecolor="white", edgecolor=C.grid, lw=1))
+    fy = 1 - px(7.2 * inch_y, H)
+    ax.text(px(0.39 * inch_x, W), fy, page, fontsize=7.5, color=C.text_muted, va="center")
+    ax.plot([px(0.61 * inch_x, W)] * 2, [fy - px(6, H), fy + px(6, H)], color=C.blue, lw=0.8)
+    ax.text(px(0.72 * inch_x, W), fy, "McKesson Proprietary and Confidential", fontsize=7.5, color=C.text_muted,
+            va="center")
+    ax.text(px(2.95 * inch_x, W), fy, "10/1/2026", fontsize=7.5, color=C.text_muted, va="center")   # template date slot
+    ax.text(px(12.94 * inch_x, W), fy, "MCKESSON", fontsize=11, fontweight=800, color=C.blue, va="center", ha="right")
+    return inch_x, inch_y
+
+
+@exhibit
+def fmt_mck_slide():
+    W, H = 840, 472
+    fig = fig_px(W, H)
+    ax = canvas(fig)
+    inch_x, inch_y = _slide_frame(ax, W, H)
+    px = lambda v, d: v / d
+    X0 = px(0.39 * inch_x, W)
+    ax.text(X0, 1 - px(0.38 * inch_y, H), _wrap(TEXT["bar_headline"], 62), fontsize=21, fontweight=700, color=C.title,
+            va="top", linespacing=1.05)
+    ax.text(X0, 1 - px(1.32 * inch_y, H), "Voluntary attrition by job family, FY26 (%)", fontsize=12.2, color=C.text,
+            va="top")
+    d = ATTR.tail(8)
+    inner = fig.add_axes([X0 + px(150, W), px(1.15 * inch_y, H), 0.62, px(4.3 * inch_y, H)])
+    hbars(inner, [SHORT[f] for f in d.job_family], d.vol_attrition_pct, mv.highlight(d.job_family, focus=FOCUS),
+          bold={SHORT[f] for f in FOCUS}, size=LABEL - 1, tick=TICK - 1, xmax=31)
+    bench(inner, ENT, f"Enterprise {ENT:.1f}%", size=ANNOT - 1.5)
+    ax.text(X0, 1 - px(6.95 * inch_y, H), "Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months."
+            "\nSource: Workday HCM (synthetic data for illustration), as of 31 Mar 2026; U.S. regular employees",
+            fontsize=7.9, color=C.text_muted, fontweight=300, va="bottom", linespacing=1.35)
+    for x in (0.39, 12.94):                                    # the side margins, shown as faint guides
+        ax.plot([px(x * inch_x, W)] * 2, [px(0.55 * inch_y, H), 1 - px(0.3 * inch_y, H)], color=C.focus_light,
+                lw=0.6, ls=(0, (3, 3)))
+    marker(ax, (X0 - px(14, W), 1 - px(0.62 * inch_y, H)), 1, coords="axes fraction")
+    marker(ax, (px(560, W), 1 - px(1.45 * inch_y, H)), 2, coords="axes fraction")
+    marker(ax, (px(12.94 * inch_x, W) + px(12, W), 0.5), 3, coords="axes fraction")
+    marker(ax, (px(640, W), 1 - px(6.72 * inch_y, H)), 4, coords="axes fraction")
+    marker(ax, (px(330, W), 1 - px(7.2 * inch_y, H)), 5, coords="axes fraction")
+    marker(ax, (px(11.2 * inch_x, W), 1 - px(7.2 * inch_y, H)), 6, coords="axes fraction")
+    return fig, ("A McKesson Standard Template slide drawn to scale: the insight title in bold McKesson Blue, a "
+                 "subtitle, the bar chart inside 0.39-inch margins, the source above the footer, and the footer with "
+                 "page number, confidentiality line, date and logo.")
+
+
+# ------------------------------------------------------------------ flat, not rounded (200 x 140 minis)
+SHADOW = "#D9D6CE"                                             # the template's soft drop shadow (anti-example only)
+
+
+def _flat(kind):
+    fig = fig_px(200, 140)
+    ax = canvas(fig)
+    rounded = kind.endswith("avoid")
+    topic = kind.rsplit("_", 1)[0]
+    if topic == "label":                                       # kicker / header labels
+        if rounded:
+            ax.add_patch(FancyBboxPatch((0.08, 0.62), 0.84, 0.2, boxstyle="round,pad=0,rounding_size=0.1",
+                                        fc=C.surface_dark, ec="none"))
+            ax.text(0.5, 0.72, "Key takeaway", ha="center", va="center", fontsize=MINI - 1, color="white",
+                    fontweight=600)
+        else:
+            ax.text(0.08, 0.76, "Key takeaway", fontsize=MINI - 0.5, color=C.headline, fontweight=600, va="center")
+            ax.plot([0.08, 0.92], [0.64, 0.64], color=C.blue, lw=1.4)
+        text_lines(ax, 0.08, 0.42, 0.84, 3, gap=0.12, h=0.045)
+    elif topic == "card":                                      # content panels
+        for i, x in enumerate((0.06, 0.53)):
+            if rounded:
+                ax.add_patch(FancyBboxPatch((x + 0.015, 0.14), 0.41, 0.66, boxstyle="round,pad=0,rounding_size=0.08",
+                                            fc=SHADOW, ec="none"))
+                ax.add_patch(FancyBboxPatch((x, 0.17), 0.41, 0.66, boxstyle="round,pad=0,rounding_size=0.08",
+                                            fc=C.blue if i == 0 else mv.extended["sky"]["base"], ec="none"))
+                text_lines(ax, x + 0.06, 0.66, 0.29, 3, gap=0.1, h=0.04, color="white")
+            else:
+                ax.add_patch(Rectangle((x, 0.17), 0.41, 0.66, fc=C.surface_subtle, ec="none"))
+                ax.plot([x, x + 0.41], [0.83, 0.83], color=C.blue, lw=1.6)
+                text_lines(ax, x + 0.05, 0.66, 0.31, 3, gap=0.1, h=0.04)
+    elif topic == "bars":                                      # chart marks
+        for i, v in enumerate([0.62, 0.48, 0.36, 0.27]):
+            y = 0.72 - i * 0.18
+            col = C.focus if i == 0 else C.context
+            if rounded:
+                ax.add_patch(FancyBboxPatch((0.1, y), v, 0.11, boxstyle="round,pad=0,rounding_size=0.055",
+                                            fc=col, ec="none"))
+            else:
+                ax.add_patch(Rectangle((0.1, y), v, 0.11, fc=col, ec="none"))
+            ax.text(0.1 + v + 0.03, y + 0.055, f"{round(v * 44)}%", fontsize=MINI - 2, color=C.text, va="center")
+        ax.plot([0.1, 0.1], [0.12, 0.88], color=C.axis, lw=0.8)
+    elif topic == "lanes":                                     # tracker headers
+        for i, x in enumerate((0.05, 0.52)):
+            if rounded:
+                ax.add_patch(FancyBboxPatch((x, 0.74), 0.43, 0.12, boxstyle="round,pad=0,rounding_size=0.06",
+                                            fc=mv.STATUS["on_track"]["value"], ec="none"))
+                ax.text(x + 0.04, 0.8, f"Swim lane {i + 1}", fontsize=MINI - 2, color="white", fontweight=600,
+                        va="center")
+            else:
+                ax.text(x, 0.8, f"Workstream {i + 1}", fontsize=MINI - 1.5, color=C.headline, fontweight=600,
+                        va="center")
+                ax.plot([x, x + 0.43], [0.72, 0.72], color=C.headline, lw=1.2)
+            for k in range(3):
+                y = 0.58 - k * 0.15
+                ax.add_patch(Rectangle((x, y - 0.012), 0.2, 0.024, color=C.grid, lw=0))
+                st = ("on_track", "at_risk", "on_track")[k] if i == 0 else ("on_track", "off_track", "not_started")[k]
+                ax.scatter([x + 0.25], [y], s=34, color=mv.STATUS[st]["value"], lw=0, zorder=3)
+                if not rounded:
+                    ax.text(x + 0.285, y, mv.STATUS[st]["label"], fontsize=MINI - 4, color=C.text, va="center")
+    return fig
+
+
+for _k, _alt in {"label_avoid": "A rounded navy pill as a section label.",
+                 "label_fix": "A plain bold label over a thin blue rule.",
+                 "card_avoid": "Two rounded cards in bright fills with soft drop shadows.",
+                 "card_fix": "Two flat sand panels, each topped by a thin blue rule.",
+                 "bars_avoid": "Bars with rounded ends.",
+                 "bars_fix": "Square-ended bars from a baseline.",
+                 "lanes_avoid": "Rounded green swim-lane pills over status dots with no words.",
+                 "lanes_fix": "Plain workstream headers over a rule, each status dot with its word."}.items():
+    EXHIBITS[f"fmt_flat_{_k}"] = (lambda k=_k, a=_alt: (_flat(k), a))

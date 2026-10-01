@@ -6,6 +6,10 @@ Writes (all generated; never edit by hand):
     dist/office/McKesson-DataViz-Starter.pptx   16:9 deck, McKesson theme, native editable sample charts
     dist/office/McKesson-DataViz.potx           the same theme and layouts as a template, with no slides
     dist/office/McKesson-DataViz-Charts.xlsx    palette sheet + native sample charts + a heat table
+    dist/office/McKesson-DataViz-Starter-Official.pptx   the same slides on the McKesson Standard Template, only when
+                                                the template is present locally (reference/mckesson-branding/); it
+                                                contains internal brand assets, so it is gitignored and goes only into
+                                                the internal release bundle
 
 The theme colors and fonts come from dist/office/Theme Colors|Theme Fonts (built by tokens/build.py), and every chart
 color comes from mckviz, so a token change flows through after `python tokens/build.py` and this script.
@@ -46,8 +50,12 @@ BAND_GAP = 50                       # Office gap width 50% -> bar : gap ~ 2 : 1 
 
 # Slide geometry (16:9, inches)
 W, H = 13.333, 7.5
-LEFT, RIGHT = 0.6, 0.6
-CHART_TOP, CHART_H = 1.75, 4.85
+# The McKesson Standard Template's grid: 0.39 in side margins, title box 0.38-1.31 in, footer and logo at 7.13 in.
+LEFT, RIGHT = 0.39, 0.39
+TITLE_TOP, TITLE_H, TITLE_PT = 0.38, 0.93, 26              # typography.roles.slide_title: Bold, McKesson Blue, 24-28 pt
+SUB_TOP, CHART_TOP, CHART_H = 1.32, 1.8, 4.6
+FOOT_TOP = 6.45                                            # source / footnote block ends at 6.95 in, above the footer
+OFFICIAL = ROOT / "reference" / "mckesson-branding" / "McKesson Standard Template.pptx"
 
 
 def rgb(hex_color: str) -> RGBColor:
@@ -84,11 +92,11 @@ def widen_to_16x9(prs) -> None:
 
 
 def style_master(prs) -> None:
-    """Title style: left-aligned, bold, 24 pt, theme text 2 (McKesson Navy). Body text uses theme text 1."""
+    """Title style: left-aligned, bold, 26 pt, theme text 2 (McKesson Blue, as in the McKesson Standard Template)."""
     lvl1 = prs.slide_master._element.find(qn("p:txStyles")).find(qn("p:titleStyle")).find(qn("a:lvl1pPr"))
     lvl1.set("algn", "l")
     rpr = lvl1.find(qn("a:defRPr"))
-    rpr.set("sz", "2400")
+    rpr.set("sz", str(TITLE_PT * 100))
     rpr.set("b", "1")
     for fill in rpr.findall(qn("a:solidFill")):
         rpr.remove(fill)
@@ -117,20 +125,48 @@ def text_box(slide, left, top, width, height, text, size, color, bold=False, lig
     return box
 
 
+def layout(prs, name: str, fallback: int):
+    """A layout by name (the official template), else the default template's layout by index."""
+    return next((l for l in prs.slide_layouts if l.name == name), prs.slide_layouts[fallback])
+
+
+def add_footer(slide, lay) -> None:
+    """Copy the layout's slide-number and date placeholders onto the slide (python-pptx doesn't), with live fields,
+    so the official template's footer reads: page | McKesson Proprietary and Confidential | date."""
+    for ph in lay.placeholders:
+        kind = ph.placeholder_format.type
+        if kind not in (13, 16):                               # SLIDE_NUMBER, DATE
+            continue
+        slide.shapes.clone_placeholder(ph)
+        p = slide.placeholders[ph.placeholder_format.idx].text_frame.paragraphs[0]._p
+        fld = etree.SubElement(p, qn("a:fld"))
+        fld.set("id", "{B6F15528-21DE-4FAA-801E-634DDDAF4B2B}" if kind == 13 else "{3A1B2C4D-5E6F-4A7B-8C9D-0E1F2A3B4C5D}")
+        fld.set("type", "slidenum" if kind == 13 else "datetime1")
+        etree.SubElement(fld, qn("a:t")).text = "\u2039#\u203a" if kind == 13 else ""
+
+
 def chart_slide(prs, headline, subtitle, footnote, notes, source=SRC):
     """Title Only layout: headline in the title placeholder, subtitle, then source/footnote bottom-left."""
-    slide = prs.slides.add_slide(prs.slide_layouts[5])
+    lay = layout(prs, "Title Only", 5)
+    slide = prs.slides.add_slide(lay)
     title = slide.shapes.title
-    title.left, title.top, title.width, title.height = Inches(LEFT), Inches(0.35), Inches(W - LEFT - RIGHT), Inches(0.95)
+    title.left, title.top = Inches(LEFT), Inches(TITLE_TOP)
+    title.width, title.height = Inches(W - LEFT - RIGHT), Inches(TITLE_H)
     title.text = headline
     tf = title.text_frame
     tf.vertical_anchor = MSO_ANCHOR.TOP
     tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
     tf.word_wrap = True
-    text_box(slide, LEFT, 1.25, W - LEFT - RIGHT, 0.35, subtitle, 14, C.text)
+    for r in tf.paragraphs[0].runs:                            # the official master says 34 pt; insight titles use 26
+        r.font.size = Pt(TITLE_PT)
+        r.font.bold = True
+    text_box(slide, LEFT, SUB_TOP, W - LEFT - RIGHT, 0.35, subtitle, 14, C.text)
     foot = "\n".join(x for x in (footnote, source) if x)
     if foot:
-        text_box(slide, LEFT, 6.75, W - LEFT - RIGHT, 0.5, foot, 9, C.text_muted, light=True, anchor=MSO_ANCHOR.BOTTOM)
+        text_box(slide, LEFT, FOOT_TOP, W - LEFT - RIGHT, 0.5, foot, 9, C.text_muted, light=True,
+                 anchor=MSO_ANCHOR.BOTTOM)
+    if lay.name == "Title Only":
+        add_footer(slide, lay)
     slide.notes_slide.notes_text_frame.text = notes
     return slide
 
@@ -235,7 +271,7 @@ def slide_cover(prs):
     text_box(slide, LEFT, 3.75, 9.5, 1.2,
              "Native, editable charts in the McKesson data-viz style. Copy a slide, then right-click the chart › "
              "Edit Data to drop in your numbers.", 16, C.text)
-    text_box(slide, LEFT, 6.75, 9, 0.5, "McKesson data-viz starter kit · generated from tokens/tokens.json", 9,
+    text_box(slide, LEFT, FOOT_TOP, 9, 0.5, "McKesson data-viz starter kit · generated from tokens/tokens.json", 9,
              C.text_muted, light=True, anchor=MSO_ANCHOR.BOTTOM)
     slide.notes_slide.notes_text_frame.text = (
         "Install Libre Franklin (fonts/LibreFranklin) and the theme (docs/office-setup.md) before editing, "
@@ -435,14 +471,15 @@ def slide_stacked(prs):
     others = df.contingent_pct[df.function != "Technology"].mean()
     tech = float(df.contingent_pct[df.function == "Technology"].iloc[0])
     slide = chart_slide(
-        prs, f"Technology uses contingent labor at more than {int(tech / others)}x the average rate of other functions",
+        prs, f"Technology uses contingent labor at more than {int(tech / others)}× the average rate of other functions",
         "Workforce composition by function, 2026 (% of workers)", None,
-        "100% stacked bar. The segment the headline is about (contingent) sits at the end of each bar in blue; "
-        "the rest are greys. The legend is pinned top-left; delete it and label the first bar if you prefer.")
+        "100% stacked bar. The segment the headline is about (contingent) sits on the baseline in blue, so every "
+        "bar's value starts level; the rest are greys. The key is top-left in stack order; or delete it and type "
+        "the segment names above the top bar.")
     data = CategoryChartData()
     data.categories = list(df.function)
-    parts = [("employee_ft_pct", "Full-time", C.context), ("employee_pt_pct", "Part-time", C.context_light),
-             ("contingent_pct", "Contingent", C.focus)]
+    parts = [("contingent_pct", "Contingent", C.focus), ("employee_ft_pct", "Full-time", C.context),
+             ("employee_pt_pct", "Part-time", C.context_light)]       # story segment first: on the baseline
     for col, name, _ in parts:
         data.add_series(name, list(df[col]))
     frame, chart = add_chart(slide, XL_CHART_TYPE.BAR_STACKED_100, data)
@@ -456,8 +493,9 @@ def slide_stacked(prs):
         series.format.line.width = Pt(1.5)
         for i, (fn, v) in enumerate(zip(df.function, df[col])):
             hi = col == "contingent_pct" and fn == "Technology"
-            point_label(series.points[i], f"{v:.0f}%", mv.text_on(color), bold=hi, size=12 if hi else 11,
-                        position=XL_LABEL_POSITION.CENTER)
+            if v >= 5:                                         # labels only where they fit
+                point_label(series.points[i], f"{v:.0f}%", mv.text_on(color), bold=hi, size=12 if hi else 11,
+                            position=XL_LABEL_POSITION.CENTER)
     va = chart.value_axis
     va.visible = False
     va.has_major_gridlines = False
@@ -481,6 +519,41 @@ def build_pptx() -> Path:
     for build in (slide_bar, slide_line, slide_waterfall, slide_stacked):
         build(prs)
     path = OUT / "McKesson-DataViz-Starter.pptx"
+    prs.save(path)
+    return path
+
+
+def clear_slides(prs) -> None:
+    """Remove every slide (the official template ships 40 sample and icon slides); masters and layouts stay."""
+    ids = prs.slides._sldIdLst
+    for sld in list(ids):
+        prs.part.drop_rel(sld.rId)
+        ids.remove(sld)
+
+
+def official_cover(prs) -> None:
+    lay = layout(prs, "Title 1", 0)
+    slide = prs.slides.add_slide(lay)
+    slide.shapes.title.text = "Workforce chart starter"
+    for ph in slide.placeholders:
+        if ph.placeholder_format.type == 4:                    # SUBTITLE
+            ph.text = "Native, editable charts in the McKesson data-viz style. Copy a slide, then right-click the " \
+                      "chart › Edit Data to drop in your numbers."
+    slide.notes_slide.notes_text_frame.text = (
+        "Built from the McKesson Standard Template by office/build_office.py. Internal use only.")
+
+
+def build_pptx_official() -> Path | None:
+    """The same slides on the McKesson Standard Template, when it is available locally (never committed)."""
+    if not OFFICIAL.exists():
+        return None
+    prs = Presentation(str(OFFICIAL))
+    clear_slides(prs)
+    official_cover(prs)
+    slide_rules(prs)
+    for build in (slide_bar, slide_line, slide_waterfall, slide_stacked):
+        build(prs)
+    path = OUT / "McKesson-DataViz-Starter-Official.pptx"
     prs.save(path)
     return path
 
@@ -730,16 +803,16 @@ def build_xlsx() -> Path:
     # --- Stacked 100%
     df = pd.read_csv(DATA / "workforce_mix.csv").sort_values("contingent_pct", ascending=False)
     ws = wb.add_worksheet("Stacked 100%")
-    frame(ws, "Technology uses contingent labor at more than 4x the average rate of other functions",
+    frame(ws, "Technology uses contingent labor at more than 4× the average rate of other functions",
           "Workforce composition by function, 2026 (% of workers)", None, 30)
     ws.set_column(0, 3, 13)
-    ws.write_row(3, 0, ["Function", "Full-time", "Part-time", "Contingent"], f["th"])
+    ws.write_row(3, 0, ["Function", "Contingent", "Full-time", "Part-time"], f["th"])   # story segment first
     for i, r in enumerate(df.itertuples(), start=4):
         ws.write(i, 0, r.function, f["focus_row"] if r.function == "Technology" else f["cell"])
-        ws.write_row(i, 1, [r.employee_ft_pct, r.employee_pt_pct, r.contingent_pct], f["int"])
+        ws.write_row(i, 1, [r.contingent_pct, r.employee_ft_pct, r.employee_pt_pct], f["int"])
     n = len(df)
     chart = base_chart("bar", "percent_stacked")
-    for col, color in ((1, C.context), (2, C.context_light), (3, C.focus)):
+    for col, color in ((1, C.focus), (2, C.context), (3, C.context_light)):
         chart.add_series({
             "name": ["Stacked 100%", 3, col], "categories": ["Stacked 100%", 4, 0, 3 + n, 0],
             "values": ["Stacked 100%", 4, col, 3 + n, col], "fill": {"color": color},
@@ -824,8 +897,10 @@ def _theme_xlsx(path: Path) -> None:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    for build in (build_pptx, build_xlsx):
-        print("wrote", build().relative_to(ROOT))
+    for build in (build_pptx, build_xlsx, build_pptx_official):
+        path = build()
+        if path:
+            print("wrote", path.relative_to(ROOT))
     print("wrote", (OUT / "McKesson-DataViz.potx").relative_to(ROOT))
 
 

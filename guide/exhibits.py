@@ -926,8 +926,11 @@ _ROLES = [("context", "Context", "everything the reader should see but not focus
           ("accent", "Accent", "the one exception that must pop (navy, not orange)"),
           ("focus_light", "Light blue", "the series when navy marks the exception"),
           ("negative", "Orange", "only when it means worse: below target, shrinking, a shortfall"),
+          ("positive", "Green", "only when it means better, with ▲ or words"),
           ("total", "Total and benchmark", "totals, targets, reference lines"),
           ("context_light", "Context light", "de-emphasized fills in stacks and areas")]
+HTML["swatch_steps"] = _swatch_row(mv.STEPS)
+HTML["swatch_status"] = _swatch_row([v["value"] for k, v in mv.STATUS.items() if k != "done"])
 HTML["roles"] = "".join(
     f'<div class="role"><span class="sw" style="background:{getattr(C, k)}"></span><span><strong>{n}</strong> · {d}</span>'
     f"<code>{getattr(C, k)}</code></div>" for k, n, d in _ROLES)
