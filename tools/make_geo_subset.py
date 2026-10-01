@@ -1,6 +1,6 @@
 """Cut the North Texas county subset from the full us-atlas counties file (run once; output is committed).
 
-    python guide/geodata/make_subset.py path/to/counties-albers-10m.json
+    python tools/make_geo_subset.py path/to/counties-albers-10m.json      (writes python/mckviz/geodata/)
 
 Keeps every county whose bounding box meets the frame below (Albers USA px, the us-atlas frame), with only the arcs
 they use, re-indexed. Quantization and transform are unchanged, so the result reads like the original.
@@ -45,7 +45,7 @@ def main(src: str) -> None:
     out = {"type": "Topology", "bbox": t["bbox"], "transform": t["transform"],
            "objects": {"counties": {"type": "GeometryCollection", "geometries": geoms}},
            "arcs": [t["arcs"][i] for i in used]}
-    dst = Path(__file__).with_name("counties-north-texas.json")
+    dst = Path(__file__).resolve().parents[1] / "python" / "mckviz" / "geodata" / "counties-north-texas.json"
     dst.write_text(json.dumps(out, separators=(",", ":")), encoding="utf-8")
     print(f"{len(geoms)} counties, {len(used)} arcs -> {dst.name} ({dst.stat().st_size:,} bytes)")
 

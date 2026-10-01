@@ -8,16 +8,19 @@
     mv.source(fig, "Source: Workday HCM; McKesson Workforce Innovation")
     mv.save(fig, "out/attrition.png")
 
-All colors, sizes and fonts come from tokens/tokens.json (copied to _tokens.json by tokens/build.py).
+All colors, sizes and fonts come from tokens/tokens.json (copied to _tokens.json by tokens/build.py). The Libre
+Franklin fonts (SIL OFL) and the map data for mckviz.geo ship inside the package, so a plain `pip install` works.
 """
 from __future__ import annotations
 
 import json
+import warnings
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Iterable, Sequence
 
 _HERE = Path(__file__).resolve().parent
+__version__: str = (_HERE / "VERSION").read_text(encoding="utf-8").strip()
 TOKENS: dict = json.loads((_HERE / "_tokens.json").read_text(encoding="utf-8"))
 _C = TOKENS["color"]
 _T = TOKENS["typography"]
@@ -56,30 +59,47 @@ def _role(name: str) -> dict:
 
 
 def _find_fonts() -> Path | None:
-    for base in (_HERE, *_HERE.parents):
+    """The Libre Franklin folder: the copy inside the package first, then a repo-level fonts/LibreFranklin/."""
+    if any((_HERE / "fonts").glob("LibreFranklin-*.ttf")):
+        return _HERE / "fonts"
+    for base in _HERE.parents:
         cand = base / "fonts" / "LibreFranklin"
-        if cand.exists():
+        if any(cand.glob("LibreFranklin-*.ttf")):
             return cand
     return None
 
 
 def register_fonts() -> bool:
-    """Register bundled Libre Franklin TTFs with matplotlib. Returns True if found."""
+    """Register the bundled Libre Franklin TTFs with matplotlib. Returns True if matplotlib can now find the font."""
     from matplotlib import font_manager as fm
 
     folder = _find_fonts()
     if not folder:
         return False
     for ttf in folder.glob("*.ttf"):
-        fm.fontManager.addfont(str(ttf))
-    return True
+        try:
+            fm.fontManager.addfont(str(ttf))
+        except (OSError, RuntimeError, ValueError):
+            continue
+    return any(f.name == FONT for f in fm.fontManager.ttflist)
+
+
+_FONT_WARNED = False
 
 
 def use(plotly_default: bool = True) -> None:
-    """Apply the McKesson style to matplotlib (and register/activate the Plotly template if Plotly is installed)."""
+    """Apply the McKesson style to matplotlib (and register/activate the Plotly template if Plotly is installed).
+
+    Warns once if Libre Franklin can't be registered: charts then fall back to Franklin Gothic, Arial or DejaVu Sans,
+    whose wider letters can make labels collide.
+    """
+    global _FONT_WARNED
     import matplotlib.pyplot as plt
 
-    register_fonts()
+    if not register_fonts() and not _FONT_WARNED:
+        _FONT_WARNED = True
+        warnings.warn(f"mckviz: could not register the {FONT} fonts (looked in {_HERE / 'fonts'}); charts will use a "
+                      "fallback font. Reinstall mckviz, or install Libre Franklin on this machine.", stacklevel=2)
     plt.style.use(str(_HERE / "mckviz.mplstyle"))
     try:
         import plotly.io as pio
@@ -148,6 +168,119 @@ def signed(value: float, decimals: int = 0, suffix: str = "") -> str:
 
 
 MINUS = "\u2212"
+_SCALES = {"K": 1e3, "M": 1e6, "B": 1e9}
+
+
+def fmt_num(value, kind: str = "auto", decimals: int | None = None, sign: bool = False, prefix: str = "",
+            suffix: str = "") -> str:
+    """Format a number for a label, headline or table cell, house style.
+
+    kind: "auto" (plain below 10,000, then K / M / B), "K", "M" or "B" (always that unit), "pct" (the value is
+    already in percent: 19.94 -> "19.9%"; pass share * 100 for a fraction) or "plain" (thousands separators only).
+    decimals: default 0 for plain numbers, 1 for percentages, and for K / M / B 1 below 10 (4.3B) and 0 above (12K).
+    sign: an explicit + on positive values, for deltas. Negatives always get a true minus (U+2212), never a hyphen.
+    prefix / suffix: units around the number: prefix="$" gives "$4.3B" and "\u2212$71M". None and NaN give an en dash.
+
+        fmt_num(4_292_000_000, prefix="$")  -> "$4.3B"       fmt_num(12_480)        -> "12K"
+        fmt_num(-71.4e6, "M", prefix="$")   -> "\u2212$71M"       fmt_num(19.94, "pct")  -> "19.9%"
+        fmt_num(2.5, "pct", sign=True)      -> "+2.5%"       fmt_num(8_430)         -> "8,430"
+    """
+    if value is None or value != value:                           # None or NaN
+        return "\u2013"
+    v = float(value)
+    kind = kind if kind in ("auto", "plain", "pct") else str(kind).upper()
+    if kind not in ("auto", "plain", "pct", *_SCALES):
+        raise ValueError(f"kind must be 'auto', 'plain', 'pct', 'K', 'M' or 'B', not {kind!r}")
+    unit = ""
+    if kind == "pct":
+        d, unit = (1 if decimals is None else decimals), "%"
+    elif kind == "plain" or (kind == "auto" and abs(v) < 1e4):
+        d = 0 if decimals is None else decimals
+    else:
+        order = list(_SCALES)
+        k = order.index(kind) if kind != "auto" else (2 if abs(v) >= 1e9 else 1 if abs(v) >= 1e6 else 0)
+        while True:
+            scaled = v / _SCALES[order[k]]
+            d = (1 if abs(scaled) < 9.95 else 0) if decimals is None else decimals
+            if kind == "auto" and k < 2 and round(abs(scaled), d) >= 1000:   # 999,960 -> "1.0M", not "1,000K"
+                k += 1
+                continue
+            break
+        v, unit = scaled, order[k]
+    body = f"{abs(v):,.{d}f}"
+    if float(body.replace(",", "")) == 0:
+        return f"{prefix}{body}{unit}{suffix}"
+    return ("+" if v > 0 and sign else MINUS if v < 0 else "") + f"{prefix}{body}{unit}{suffix}"
+
+
+def suppress_small(df, n_col: str, min_n: int = 10, other_label: str | None = "Other", group_cols=None,
+                   by=None, sum_cols=(), unit: str = "people"):
+    """Keep every group under `min_n` out of a chart: merge the small groups into one `other_label` row, or drop them.
+
+    df: one row per group, with its head count in `n_col`. Returns (frame, footnote); the footnote is "" when nothing
+    was changed, else a sentence for mv.source(..., footnote=...). Run it before plotting and before computing the
+    headline numbers.
+
+    group_cols: the column(s) that name a group; they read `other_label` on the merged row. Default: every non-numeric
+        column not in `by`.
+    by: optional column(s) to merge within (e.g. "quarter": small job families are merged per quarter).
+    sum_cols: numeric columns that are counts (leavers, hires) and are summed. Every other numeric column is treated as
+        a rate or average and combined as an n-weighted mean, which is right for %, ratios and means.
+    other_label=None drops the small groups. A merged row that is itself still under `min_n` is dropped too. If the data
+    already has an `other_label` row, the small groups are merged into it.
+
+    Suppressing one small group still lets a reader subtract it from a shown total; when totals are shown, merge at least
+    two groups (or suppress a second one) so no single value can be backed out.
+    """
+    import pandas as pd
+
+    if n_col not in df.columns:
+        raise KeyError(f"suppress_small: no column {n_col!r}")
+    by = [by] if isinstance(by, str) else list(by or [])
+    numeric = [c for c in df.columns if pd.api.types.is_numeric_dtype(df[c]) and c not in by]
+    if group_cols is None:
+        group_cols = [c for c in df.columns if c not in numeric and c not in by]
+    group_cols = [group_cols] if isinstance(group_cols, str) else list(group_cols)
+    sums = {n_col, *([sum_cols] if isinstance(sum_cols, str) else sum_cols)}
+    small = df[n_col] < min_n
+    if not small.any():
+        return df.reset_index(drop=True), ""
+
+    is_other = (df[group_cols[0]] == other_label) if (group_cols and other_label is not None) else pd.Series(False, df.index)
+    keep = df[~small & ~is_other]
+    n_small = int((small & ~is_other).sum())
+    dropped = merged = 0
+    rows = []
+    if other_label is not None:
+        pool = df[small | is_other]
+        parts = pool.groupby(by, sort=False, dropna=False) if by else [((), pool)]
+        for _, part in parts:
+            n = part[n_col].sum()
+            k = int(((part[n_col] < min_n) & ~is_other[part.index]).sum())   # small groups, not the old Other row
+            if n < min_n:
+                dropped += k
+                continue
+            merged += k
+            row = {c: part[c].iloc[0] for c in df.columns}
+            for c in group_cols:
+                row[c] = other_label
+            for c in numeric:
+                row[c] = part[c].sum() if c in sums else (part[c] * part[n_col]).sum() / n
+            rows.append(row)
+    else:
+        dropped = n_small
+    out = pd.concat([keep, pd.DataFrame(rows, columns=df.columns)], ignore_index=True) if rows else keep
+    out = out.astype({c: df[c].dtype for c in sums if c in df.columns}, errors="ignore").reset_index(drop=True)
+
+    def groups(k):
+        return f"{k} group{'s' if k != 1 else ''}"
+    notes = []
+    if merged:
+        notes.append(f"{groups(merged)} with fewer than {min_n} {unit} merged into \"{other_label}\"")
+    if dropped:
+        notes.append(f"{groups(dropped)} with fewer than {min_n} {unit} not shown")
+    note = "; ".join(notes)
+    return out, note[0].upper() + note[1:] + "."
 
 
 def text_on(fill_hex: str) -> str:
@@ -375,9 +508,20 @@ def pl_highlight(labels: Iterable, focus=None, accent=None, base: str | None = N
 
 from .lint import Finding, LintError, lint  # noqa: E402  (needs the names above)
 
+
+def __getattr__(name: str):
+    """`mv.geo` imports the map module on first use (import mckviz.geo works too)."""
+    if name == "geo":
+        import importlib
+
+        return importlib.import_module(".geo", __name__)
+    raise AttributeError(f"module 'mckviz' has no attribute {name!r}")
+
+
 __all__ = [
-    "TOKENS", "FONT", "CATEGORICAL", "SEQUENTIAL", "DIVERGING", "colors", "extended",
+    "__version__", "TOKENS", "FONT", "CATEGORICAL", "SEQUENTIAL", "DIVERGING", "STEPS", "STATUS", "colors", "extended",
     "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
+    "fmt_num", "suppress_small",
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",
     "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
 ]

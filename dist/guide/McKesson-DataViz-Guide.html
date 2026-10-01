@@ -563,7 +563,7 @@ details.fold[open] > summary { border-bottom: 1px solid var(--g-rule); }
       <h1><b>Data visualization</b> guide</h1>
       <p class="sub">How McKesson Workforce Innovation turns workforce data into charts that lead to decisions.</p>
     </div>
-    <div class="meta"><span>Version 1.0 (review draft)</span><span>October 2026</span><span>All example data is synthetic</span></div>
+    <div class="meta"><span>Version 1.1.0</span><span>October 2026</span><span>All example data is synthetic</span></div>
   </div>
   <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">1</span></div>
 </section>
@@ -168817,9 +168817,10 @@ L 93.956098 -1
     <div class="panel">
       <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Filled Map:</strong> Insert › Charts › Maps › Filled Map (online: Excel geocodes through Bing). It takes countries, states, counties or postal codes. Format Data Series: Map projection <em>Albers</em> for the US or <em>Robinson</em> for the world (never Mercator), Map area <em>Only regions with data</em>, which also zooms to a state's counties. Map a class-number column (1–5) to get binned shades; draw the key as small squares. Bubble and dot maps aren't native: build them in Python and insert the SVG.</p></div>
       <div class="platform"><h5>Power BI</h5><p><strong>Azure Maps</strong> visual (your admin must enable it): Filled map layer for rates; Bubble layer with Range scaling <em>Magnitude</em> for counts. Bin colors with a <code>SWITCH</code> measure in <em>Fill color › fx › Field value</em>. The <strong>Shape map</strong> visual (preview) takes your own TopoJSON, such as counties or a tile grid. Suppress small groups with <code>IF([Headcount] &lt; 10, BLANK(), ...)</code>.</p></div>
-      <div class="platform"><h5>Python</h5><div><p>The guide's maps use <code>guide/geo_shapes.py</code>: a small TopoJSON reader for the us-atlas and world-atlas files in <code>guide/geodata/</code>, drawn with matplotlib. Or Plotly: <code>go.Choropleth</code> with <code>fig.update_geos(scope="usa")</code> (Albers USA) or <code>projection_type="equal earth"</code>.</p>
-<pre class="snip">ax = gs.canvas(fig)                                # axes in px
-m = gs.Map("states-albers-10m.json", "states", (0, 0, 480, 300), key=gs.FIPS.get)
+      <div class="platform"><h5>Python</h5><div><p>The guide's maps use <code>mckviz.geo</code>: a small TopoJSON reader with the us-atlas and world-atlas files built in (states, world, a county subset), drawn with matplotlib; no geopandas. Or Plotly: <code>go.Choropleth</code> with <code>fig.update_geos(scope="usa")</code> (Albers USA) or <code>projection_type="equal earth"</code>.</p>
+<pre class="snip">from mckviz import geo
+ax = geo.canvas(fig)                               # axes in px
+m = geo.Map("states-albers-10m.json", "states", (0, 0, 480, 300), key=geo.FIPS.get)
 m.draw(ax, {s: ramp[c] for s, c in cls.items()}, ec="white", lw=0.6)
 x, y = m.point(-96.80, 32.78)                      # a site, in Albers USA</pre></div></div>
       <div class="platform"><h5>HTML</h5><p>Plotly with <code>MCK_PLOTLY_TEMPLATE</code>; for a zoom, <code>go.Choropleth(geojson=…)</code> and <code>fitbounds="locations"</code>. Headline, subtitle and source go in the chart card's HTML. Tooltips may show n, but never for an area or site under 10.</p></div>
@@ -176015,8 +176016,8 @@ z
       <div class="platform"><h5>PowerPoint</h5><p><strong>New deck:</strong> File › New › the <strong>McKesson Standard Template</strong>. <strong>Charts:</strong> open the kit's <strong>starter deck</strong>, copy a chart slide into your deck, then right-click the chart › <strong>Edit Data</strong> and paste your numbers. Colors, fonts and layout come with the slide.</p></div>
       <div class="platform"><h5>Excel</h5><p>Open the kit's <strong>chart workbook</strong>: replace a sheet's data, or copy its chart into your file. The <strong>Palette</strong> sheet lists every color with the hex to type into More Colors. Want the colors in your own workbooks? The optional theme files are in <a href="https://github.com/amccown-mck/Data-Viz-Guide/blob/main/docs/office-setup.md">office-setup</a>.</p></div>
       <div class="platform"><h5>Power BI</h5><p><strong>View › Themes › Browse for themes</strong> and pick <code>dist/powerbi/mckesson-dataviz-theme.json</code>. Viewers without Libre Franklin see Segoe UI, so leave room in labels.</p></div>
-      <div class="platform"><h5>Python</h5><div><pre class="snip">git clone https://github.com/amccown-mck/Data-Viz-Guide  # then, in it:
-pip install -e "./python[examples]"   # editable, so the fonts are found
+      <div class="platform"><h5>Python</h5><div><pre class="snip">$kit = "git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"
+pip install "mckviz @ $kit"     # fonts and maps included
 import mckviz as mv
 mv.use()          # fonts, matplotlib style, Plotly template "mck"
 C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></div>

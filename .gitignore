@@ -230,5 +230,6 @@ out/
 reference/mckesson-branding/
 # Guide build intermediate (the PDF is printed from it)
 dist/guide/print.html
-# Starter deck built on the internal McKesson Standard Template (brand assets): release bundle only
-dist/office/McKesson-DataViz-Starter-Official.pptx
+# Release bundle (tools/make_bundle.py) and the locally built official-template deck (never committed)
+dist/release/
+dist/office/*-Official.pptx

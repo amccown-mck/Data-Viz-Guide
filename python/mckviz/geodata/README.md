@@ -1,6 +1,6 @@
-# Map geometry for the guide
+# Map data for mckviz.geo
 
-Read by `guide/geo_shapes.py` (a small TopoJSON reader; no geopandas needed) for the Geo-spatial exhibits.
+Read by `mckviz/geo.py` (a small TopoJSON reader; no geopandas needed), which draws the guide's Geo-spatial exhibits and any `mckviz` user's maps. These files ship inside the package (package data), so keep the licenses below with them.
 
 | File | What | Source |
 |---|---|---|
@@ -13,5 +13,5 @@ Downloaded from `https://cdn.jsdelivr.net/npm/us-atlas@3/` and `https://cdn.jsde
 **Licenses.** us-atlas and world-atlas are ISC-licensed (Copyright 2013-2019 Michael Bostock). The underlying boundaries
 are the U.S. Census Bureau's cartographic boundary files and Natural Earth, both in the public domain.
 
-To cut a different county subset, download the full counties file, change `FRAME` in `make_subset.py`, and run
-`python guide/geodata/make_subset.py path/to/counties-albers-10m.json`.
+To cut a different county subset, download the full counties file, change `FRAME` in `tools/make_geo_subset.py`, and run
+`python tools/make_geo_subset.py path/to/counties-albers-10m.json` (it writes here).

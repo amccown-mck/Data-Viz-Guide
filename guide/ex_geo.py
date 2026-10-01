@@ -1,7 +1,7 @@
 """Geo-spatial exhibits: US choropleth and bubble map, world map, county zoom-in, map variants, map best practice.
 Registered on import.
 
-Real geography from guide/geodata/ (us-atlas and world-atlas TopoJSON; see the README there), decoded and drawn by
+Real geography from mckviz.geo (us-atlas and world-atlas TopoJSON in python/mckviz/geodata/, README there), decoded and drawn by
 guide/geo_shapes.py with matplotlib only. US maps use the files' Albers USA layout (Alaska and Hawaii inset); the
 world map is Equal Earth. Every map is drawn in figure px on an invisible canvas axes, so coordinates stay short.
 The equal-area tile grid survives as one variant, for when small states matter as much as big ones.

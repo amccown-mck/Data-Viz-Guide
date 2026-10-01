@@ -4,19 +4,29 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mckviz"
-version = "0.1.0"
+# The version lives in mckviz/VERSION, a copy of the repo-level VERSION file synced by tokens/build.py.
+dynamic = ["version"]
 description = "McKesson data-visualization theme and helpers for matplotlib and Plotly"
 requires-python = ">=3.10"
-dependencies = ["matplotlib>=3.8"]
+dependencies = ["matplotlib>=3.8", "numpy>=1.26"]
 
 [project.optional-dependencies]
 plotly = ["plotly>=5.20"]
+pandas = ["pandas>=2.0"]
 examples = ["plotly>=5.20", "pandas>=2.0", "numpy>=1.26"]
-dev = ["pytest>=8", "jsonschema>=4"]
+dev = ["pytest>=8", "jsonschema>=4", "pandas>=2.0"]
+
+[project.urls]
+Homepage = "https://github.com/amccown-mck/Data-Viz-Guide"
+Changelog = "https://github.com/amccown-mck/Data-Viz-Guide/blob/main/CHANGELOG.md"
+
+[tool.setuptools.dynamic]
+version = { file = "mckviz/VERSION" }
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["mckviz*"]
 
 [tool.setuptools.package-data]
-mckviz = ["_tokens.json", "mckviz.mplstyle", "plotly_template.json"]
+mckviz = ["VERSION", "_tokens.json", "mckviz.mplstyle", "plotly_template.json",
+          "fonts/*.ttf", "fonts/OFL.txt", "geodata/*.json", "geodata/README.md"]

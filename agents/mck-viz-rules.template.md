@@ -2,7 +2,7 @@
 
 <!-- {{generated_note}} -->
 
-Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` or `.cursor/rules/mck-viz.md`) so that coding agents there make charts to the McKesson standard. It is self-contained. The full guide, themes and the `mckviz` Python package live in the **data-viz-guide** repo.
+Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` or `.cursor/rules/mck-viz.md`) so that coding agents there make charts to the McKesson standard. It is self-contained. The full guide, themes and the `mckviz` Python package live in the **data-viz-guide** repo (<https://github.com/amccown-mck/Data-Viz-Guide>, kit version {{version}}). For fuller instructions that an agent loads on demand (chart chooser, cookbook pages, QA checklist), use the portable `mck-chart` skill from the same repo (`dist/skills/mck-chart/`).
 
 ## Workflow
 1. **Question:** write the one question the chart answers. Default to explanatory charts (decks, reports).
@@ -64,7 +64,7 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 - Forecasts and model outputs are labelled as estimates and show a range or scenarios.
 
 ## Platform notes
-- **Python:** `import mckviz as mv; mv.use()`, then `mv.highlight()`, `mv.titles()`, `mv.source()`, `mv.label_bars()`, `mv.save()`. Without `mckviz`, set the colors above as constants in one place.
+- **Python:** `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v{{version}}#subdirectory=python"` (fonts included), then `import mckviz as mv; mv.use()`, `mv.highlight()`, `mv.titles()`, `mv.source()`, `mv.label_bars()`, `mv.fmt_num()` (K/M/B, %, true minus), `mv.suppress_small()` (minimum n, with a footnote), `mv.save()`, and `mv.lint(fig)` before handing back. Without `mckviz`, set the colors above as constants in one place.
 - **Web:** headline, subtitle and source as HTML text around the chart (the chart-card pattern). Use the guide's `mck-viz.css` and Plotly / Vega-Lite theme files where available.
 - **Excel / PowerPoint:** native, editable charts with the McKesson Data Viz theme colors and fonts. Gap width ≈ 50%.
 - **Power BI:** the McKesson data-viz theme JSON. Highlight via conditional formatting on a measure, and blank any measure with n < 10.

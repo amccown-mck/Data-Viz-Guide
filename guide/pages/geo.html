@@ -346,9 +346,10 @@
     <div class="panel">
       <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Filled Map:</strong> Insert › Charts › Maps › Filled Map (online: Excel geocodes through Bing). It takes countries, states, counties or postal codes. Format Data Series: Map projection <em>Albers</em> for the US or <em>Robinson</em> for the world (never Mercator), Map area <em>Only regions with data</em>, which also zooms to a state's counties. Map a class-number column (1–5) to get binned shades; draw the key as small squares. Bubble and dot maps aren't native: build them in Python and insert the SVG.</p></div>
       <div class="platform"><h5>Power BI</h5><p><strong>Azure Maps</strong> visual (your admin must enable it): Filled map layer for rates; Bubble layer with Range scaling <em>Magnitude</em> for counts. Bin colors with a <code>SWITCH</code> measure in <em>Fill color › fx › Field value</em>. The <strong>Shape map</strong> visual (preview) takes your own TopoJSON, such as counties or a tile grid. Suppress small groups with <code>IF([Headcount] &lt; 10, BLANK(), ...)</code>.</p></div>
-      <div class="platform"><h5>Python</h5><div><p>The guide's maps use <code>guide/geo_shapes.py</code>: a small TopoJSON reader for the us-atlas and world-atlas files in <code>guide/geodata/</code>, drawn with matplotlib. Or Plotly: <code>go.Choropleth</code> with <code>fig.update_geos(scope="usa")</code> (Albers USA) or <code>projection_type="equal earth"</code>.</p>
-<pre class="snip">ax = gs.canvas(fig)                                # axes in px
-m = gs.Map("states-albers-10m.json", "states", (0, 0, 480, 300), key=gs.FIPS.get)
+      <div class="platform"><h5>Python</h5><div><p>The guide's maps use <code>mckviz.geo</code>: a small TopoJSON reader with the us-atlas and world-atlas files built in (states, world, a county subset), drawn with matplotlib; no geopandas. Or Plotly: <code>go.Choropleth</code> with <code>fig.update_geos(scope="usa")</code> (Albers USA) or <code>projection_type="equal earth"</code>.</p>
+<pre class="snip">from mckviz import geo
+ax = geo.canvas(fig)                               # axes in px
+m = geo.Map("states-albers-10m.json", "states", (0, 0, 480, 300), key=geo.FIPS.get)
 m.draw(ax, {s: ramp[c] for s, c in cls.items()}, ec="white", lw=0.6)
 x, y = m.point(-96.80, 32.78)                      # a site, in Albers USA</pre></div></div>
       <div class="platform"><h5>HTML</h5><p>Plotly with <code>MCK_PLOTLY_TEMPLATE</code>; for a zoom, <code>go.Choropleth(geojson=…)</code> and <code>fitbounds="locations"</code>. Headline, subtitle and source go in the chart card's HTML. Tooltips may show n, but never for an area or site under {{text:min_n}}.</p></div>

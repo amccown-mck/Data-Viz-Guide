@@ -23,7 +23,8 @@ C = mv.colors
 - **Headline numbers come from variables** (`f"... {share:.0f}% ..."`), computed from the same data the chart plots.
 - **Direct labels:** `mv.label_bars`, `mv.label_line_ends`, and `ax.text` at the data. When bars are labelled, remove the value axis (`ax.set_xticks([])`) and the gridlines (`mv.clean_axes(ax, keep=(...), grid=None)`). Don't use `ax.legend()` unless labels would collide, and then put it top-left.
 - **Bars:** `height`/`width = mv.TOKENS["chart"]["bar"]["band_fill"]` (0.67), starting at zero, sorted by value unless there is a natural order. No rotated tick labels: switch to horizontal bars.
-- **Numbers:** `mv.signed(v, decimals, suffix)` for deltas (true minus, explicit +), and `mv.text_on(fill)` for text placed on a colored mark.
-- **People data:** drop or merge any group with n < 10 before plotting, and keep individual values out of hover text.
+- **Numbers:** `mv.fmt_num(v, kind=...)` for labels and headlines (K/M/B, `"pct"`, true minus, `sign=True` for deltas, `prefix="$"`), `mv.signed(v, decimals, suffix)` for deltas, and `mv.text_on(fill)` for text placed on a colored mark.
+- **People data:** drop or merge any group with n < 10 before plotting: `df, note = mv.suppress_small(df, "headcount")`, then `mv.source(..., footnote=note)`. Keep individual values out of hover text.
+- **Maps:** `from mckviz import geo` for real US, county and world shapes (see `docs/cookbook/maps.md`).
 - **Output:** PNG at `dpi=200` for slides, SVG/PDF for print, `write_html(..., include_plotlyjs="cdn")` for the web. Example scripts write to `examples/output/`; scratch output goes to `out/` (gitignored) or `tempfile.gettempdir()`.
 - **Check your work:** run `mv.lint(fig)` and fix every error, then open the rendered file and look at it. In `docs/cookbook/` code blocks, start with `# verified runnable (from the repo root)` and run `python tools/check_snippets.py <page>`.

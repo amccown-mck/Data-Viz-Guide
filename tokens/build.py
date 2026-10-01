@@ -2,8 +2,8 @@
 
 Usage:  python tokens/build.py
 Writes: dist/ (CSS, Plotly, Vega-Lite, matplotlib, ggplot2, Power BI, Office theme XML, palette report + swatch image,
-        portable agent rules from agents/*.template.md)
-        python/mckviz/_tokens.json (runtime copy for the Python package)
+        portable agent rules from agents/*.template.md, the portable skill in dist/skills/ via tools/build_skill.py)
+        python/mckviz/ synced copies: _tokens.json, mckviz.mplstyle, plotly_template.json, VERSION, fonts/
 """
 from __future__ import annotations
 
@@ -584,6 +584,8 @@ def build_agent_rules() -> None:
             return str(lookup(T["roles"], path))
         if kind == "font":
             return FONT
+        if kind == "version":
+            return (ROOT / "VERSION").read_text(encoding="utf-8").strip()
         if kind == "generated_note":
             return "GENERATED from tokens/tokens.json by tokens/build.py - edit agents/*.template.md, not this file."
         raise KeyError(f"unknown placeholder {{{{{m.group(1)}}}}}")
@@ -610,7 +612,19 @@ def main() -> None:
         shutil.copyfile(ROOT / "tokens" / "tokens.json", pkg / "_tokens.json")
         shutil.copyfile(DIST / "python" / "mckviz.mplstyle", pkg / "mckviz.mplstyle")
         shutil.copyfile(DIST / "python" / "plotly_template.json", pkg / "plotly_template.json")
-        print("  synced python/mckviz/ (_tokens.json, mckviz.mplstyle, plotly_template.json)")
+        shutil.copyfile(ROOT / "VERSION", pkg / "VERSION")
+        fonts = pkg / "fonts"                               # package data, so `pip install` brings the fonts along
+        fonts.mkdir(exist_ok=True)
+        for f in (ROOT / "fonts" / "LibreFranklin").iterdir():
+            if f.suffix == ".ttf" or f.name == "OFL.txt":
+                shutil.copyfile(f, fonts / f.name)
+        print("  synced python/mckviz/ (_tokens.json, mckviz.mplstyle, plotly_template.json, VERSION, fonts/)")
+    import importlib.util                                    # the portable agent skill embeds the rules file
+
+    spec = importlib.util.spec_from_file_location("build_skill", ROOT / "tools" / "build_skill.py")
+    skill = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(skill)
+    skill.build()
 
 
 if __name__ == "__main__":
