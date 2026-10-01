@@ -107,7 +107,7 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 
 ### Conventions
 - **Cookbook pages** follow `docs/cookbook/_template.md`. Python blocks start with `# verified runnable (from the repo root)` or `# verified: builds without error`, and must pass `tools/check_snippets.py`. Snippets write to `tempfile.gettempdir()` or `out/` (gitignored), never into the repo.
-- **Examples** use the people analytics, workforce intelligence and SWP lens, not plain HR reporting. Mix internal and external signals, and individual, team, firm and sector levels. All data is synthetic, and the source line says so.
+- **Examples** use the Workforce Innovation lens (workforce analytics, intelligence and planning), not plain HR reporting. Call the team "Workforce Innovation" in audience and team wording. Mix internal and external signals, and individual, team, firm and sector levels. All data is synthetic, and the source line says so.
 - **Guide spreads** are 1280 × 720 px (one 16:9 PDF page each): a left rail (eyebrow, title with a bold lead, short text) and a stage (chart card, tiles or avoid/recommended pairs). Numbers in page text come from `{{text:…}}` keys computed in `exhibits.py`, never typed. After a change, render the PDF pages and look at them, and check the web page at 1280 px and 390 px.
 - **Gallery charts** must be rendered and looked at after every change. Check for overlaps, clipping, and that the headline still matches the data.
 - **Never commit** the McKinsey source images or the brand PDFs. They stay in OneDrive (`Desktop\McK-Data-Viz\`).

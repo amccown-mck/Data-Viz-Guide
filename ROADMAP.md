@@ -73,5 +73,5 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 - The source McKinsey images and brand PDFs stay **outside** the repo, in OneDrive `Desktop\McK-Data-Viz\`: `gif-frames\unique\` (61 stills), `hi-res-slides\` (4 spreads), `_work\mck-pages\` (page notes), `McK-Brand-reference\` (brand PDFs), `rebrand-site-images\` (rebrand case-study images). Never commit them.
 - The transcripts of the sessions that built v0.1 were lost; this file and `git log` are the record.
 - Edit colors and type only in `tokens/tokens.json`, then rebuild. Never hand-edit `dist/`.
-- Examples use the People Analytics, Workforce Intelligence, and SWP lens, not plain HR reporting. They mix internal and external signals at the individual, team, firm, and sector levels.
+- Examples use the Workforce Innovation lens (workforce analytics, intelligence and planning), not plain HR reporting. The team is called "Workforce Innovation" in audience and team wording. They mix internal and external signals at the individual, team, firm, and sector levels.
 - Platform priority: HTML and Python first, then Excel and PowerPoint, then Power BI. R is a nice-to-have.

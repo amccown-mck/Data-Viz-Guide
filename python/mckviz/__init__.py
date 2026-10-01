@@ -5,7 +5,7 @@
     colors = mv.highlight(df.job_family, focus="Pharmacy Ops")
     fig, ax = plt.subplots(); ax.barh(df.job_family, df.attrition, color=colors)
     mv.titles(fig, "Pharmacy Ops attrition is 2x the enterprise rate", "Voluntary attrition, FY26 (%)")
-    mv.source(fig, "Source: Workday HCM; McKesson People Analytics")
+    mv.source(fig, "Source: Workday HCM; McKesson Workforce Innovation")
     mv.save(fig, "out/attrition.png")
 
 All colors, sizes and fonts come from tokens/tokens.json (copied to _tokens.json by tokens/build.py).

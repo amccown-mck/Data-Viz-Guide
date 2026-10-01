@@ -1,6 +1,6 @@
 ---
 name: mck-chart
-description: Make a McKesson-standard chart or table from data, going from question to chart type, build with mckviz (or the web, Office, Power BI or R theme), insight headline, and QA checklist. Use whenever the user asks for a chart, graph, plot, visualization, scorecard or exhibit for McKesson, or for people analytics, workforce or SWP data.
+description: Make a McKesson-standard chart or table from data, going from question to chart type, build with mckviz (or the web, Office, Power BI or R theme), insight headline, and QA checklist. Use whenever the user asks for a chart, graph, plot, visualization, scorecard or exhibit for McKesson, or for Workforce Innovation work (people analytics, workforce intelligence or planning / SWP data).
 ---
 # McKesson chart workflow
 
