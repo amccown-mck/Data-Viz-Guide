@@ -14,6 +14,8 @@ Applies to web pages, dashboards and components that show charts or tables. The 
 Vega-Lite: pass the contents of `dist/web/vega-lite-config.json` as the spec's `config`.
 
 ## Chart-card pattern
+Start from `templates/html/chart-card.html`, which is a working page.
+
 ```html
 <figure class="mck-chart">
   <h2 class="mck-headline">Insight sentence with the number</h2>
@@ -32,4 +34,5 @@ The headline, subtitle and source are HTML text, and the chart library draws onl
 - **Responsive:** max width ~960 px. Check the page at 390 px wide: columns become horizontal bars, the key moves on top, and wide tables scroll inside `overflow-x: auto`.
 - **Tooltips** carry detail (exact values, n-size), never the only copy of the key number. Never show a group of fewer than 10 people or an individual's value in a tooltip, filter or drill-down.
 - **Accessibility:** give each chart `role="img"` with an `aria-label` (or a visually hidden text summary), keep text ≥ 11 px, and never hijack scrolling.
+- **Draw after the font loads:** `document.fonts.ready.then(draw)`. Plotly caches label widths from its first render, so drawing with the fallback font leaves margins that clip long labels.
 - **Never edit `dist/web/*`**. It is generated from `tokens/tokens.json` by `python tokens/build.py`.

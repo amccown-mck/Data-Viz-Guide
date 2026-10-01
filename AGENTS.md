@@ -51,11 +51,12 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 | Annotations | `mv.callout(ax, xy, title, body)`, `mv.shade_period(ax, start, end, label)` |
 | Clean axes | `mv.clean_axes(ax, keep=("bottom",), grid="y")` |
 | Numbers | `mv.signed(v, decimals, suffix)` (true minus, explicit +), `mv.text_on(fill)` (white or navy text on a fill) |
+| Translucent fills (Plotly) | `mv.rgba(C.accent, 0.12)` for gap washes and Sankey links, instead of an `rgba(...)` literal |
 | Save | `mv.save(fig, path, dpi=200)`, which also lays out the titles and source |
 | Plotly titles | `mv.pl_finish(fig, headline, subtitle, source_text, footnote)` |
 | All tokens | `mv.TOKENS` (the full `tokens.json`) |
 
-**HTML / JavaScript:** use the chart-card pattern. Headline, subtitle and source are HTML text in `<figure class="mck-chart">`, and the chart library draws only the data. Load `dist/web/mck-viz.css` (CSS variables such as `var(--mck-chart-focus)`, plus the `.mck-chart`, `.mck-table` and `.mck-legend` components). For Plotly, add `dist/web/mck-plotly-template.js` and pass `template: MCK_PLOTLY_TEMPLATE`; for Vega-Lite, use `dist/web/vega-lite-config.json` as the `config`. See `examples/python/gallery_plotly.py` for a working page.
+**HTML / JavaScript:** use the chart-card pattern. Headline, subtitle and source are HTML text in `<figure class="mck-chart">`, and the chart library draws only the data. Load `dist/web/mck-viz.css` (CSS variables such as `var(--mck-chart-focus)`, plus the `.mck-chart`, `.mck-table` and `.mck-legend` components). For Plotly, add `dist/web/mck-plotly-template.js` and pass `template: MCK_PLOTLY_TEMPLATE`; for Vega-Lite, use `dist/web/vega-lite-config.json` as the `config`. Start from `templates/html/chart-card.html` (a bar and a line card, colors read from CSS variables, drawn after the font loads, mobile key swap). `examples/python/gallery_plotly.py` builds the same pattern from Python.
 
 **Excel / PowerPoint:** install the theme XML from `dist/office/` and Libre Franklin from `fonts/`. Build **native, editable** charts. Each cookbook page has click-by-click steps.
 

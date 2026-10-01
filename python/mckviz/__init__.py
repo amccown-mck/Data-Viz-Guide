@@ -137,7 +137,7 @@ def halo(color: str = "white", width: float = 3):
 
 
 def signed(value: float, decimals: int = 0, suffix: str = "") -> str:
-    """Format with a true minus sign and explicit plus: +4, âˆ’11.5%. Zero renders without sign."""
+    """Format with a true minus sign and explicit plus: +4, −11.5%. Zero renders without sign."""
     s = f"{abs(value):,.{decimals}f}"
     if float(s.replace(",", "")) == 0:
         return f"{s}{suffix}"
@@ -153,6 +153,13 @@ def text_on(fill_hex: str) -> str:
     r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
     lum = sum(w * (c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4) for w, c in zip((0.2126, 0.7152, 0.0722), (r, g, b)))
     return "#FFFFFF" if lum < 0.36 else colors.headline
+
+
+def rgba(hex_color: str, alpha: float) -> str:
+    """CSS/Plotly 'rgba(r, g, b, a)' string from a token hex, for translucent fills (gap washes, Sankey links)."""
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    return f"rgba({r}, {g}, {b}, {alpha})"
 
 
 def _balanced_wrap(text: str, max_chars: int) -> str:
@@ -332,7 +339,7 @@ def pl_highlight(labels: Iterable, focus=None, accent=None, base: str | None = N
 
 __all__ = [
     "TOKENS", "FONT", "CATEGORICAL", "SEQUENTIAL", "DIVERGING", "colors", "extended",
-    "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed",
+    "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",
     "plotly_template", "pl_finish", "pl_highlight",
 ]

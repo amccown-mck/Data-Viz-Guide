@@ -13,17 +13,18 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 | Python package | `mckviz`: `use()`, `highlight()`, `titles()`, `source()`, `label_bars()`, `label_line_ends()`, `callout()`, `shade_period()`, `pl_finish()` | `python/mckviz/` |
 | Fonts | Static Libre Franklin TTFs (SIL OFL) | `fonts/LibreFranklin/` |
 | Example data | 12 synthetic workforce / SWP datasets, including individual-level compa-ratios | `examples/data/` (`make_data.py`) |
-| Galleries | 11 matplotlib PNGs that were visually QA'd, plus a Plotly HTML gallery | `examples/python/`, `examples/output/` |
+| Galleries | 11 matplotlib PNGs that were visually QA'd, plus a Plotly HTML gallery (checked at desktop and phone widths) | `examples/python/`, `examples/output/` |
 | Core docs | principles, color, typography-and-layout, choosing-a-chart, formats, qa-checklist | `docs/` |
 | Cookbook | 23 chart pages (including distribution, tables, venn) plus `_template.md` | `docs/cookbook/` |
 | Agent assets | `AGENTS.md`, `CLAUDE.md`, Copilot instructions, path-scoped instructions, `mck-chart` skill, portable rules | `AGENTS.md`, `.github/`, `.claude/skills/`, `dist/agents/` |
+| HTML starter | Self-contained chart-card page using `dist/web/` | `templates/html/chart-card.html` |
 | Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook | `tools/check_snippets.py` |
 
 ## Next steps (in priority order)
 
 1. ~~**Finish the cookbook.**~~ Done: `distribution`, `tables` and `venn` pages added, with gallery charts and verified snippets.
 2. ~~**Agent assets.**~~ Done: expanded `AGENTS.md`; `CLAUDE.md` and `.github/copilot-instructions.md` point to it; path-scoped `.github/instructions/viz-{python,web,r}.instructions.md`; the `mck-chart` workflow skill (`.github/skills/`, with a Claude Code shim in `.claude/skills/`); the portable rules file is generated from `agents/mck-viz-rules.template.md` into `dist/agents/mck-viz-rules.md` by `tokens/build.py`.
-3. **HTML starter.** Add a self-contained `templates/html/chart-card.html` that uses `dist/web/mck-viz.css` and `mck-plotly-template.js`. Open `examples/output/gallery.html` and check it visually.
+3. ~~**HTML starter.**~~ Done: `templates/html/chart-card.html` (bar + line cards, token colors via CSS variables, drawn after the font loads, top key on phones). `gallery.html` checked at 1060 px and 390 px and fixed: clipped labels (Plotly cached fallback-font widths), bold focus labels, footnote, rgba literals → `mv.rgba()`, stable div ids. Known gaps on phones: the longest bold bar label still clips slightly at 390 px, the line-end labels touch the steep demand line, and the Sankey is cramped. Port the template's mobile key swap if the gallery is used on phones.
 4. **Excel / PowerPoint (priority 2 audience).**
    - Add a `.pptx` / `.potx` with the theme colors and fonts applied, plus native, editable sample charts built with python-pptx (bar highlight, line, waterfall, stacked 100%).
    - Add an Excel workbook with the palette and example charts (xlsxwriter).

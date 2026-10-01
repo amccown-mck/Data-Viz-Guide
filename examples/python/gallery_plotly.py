@@ -6,6 +6,8 @@ Pattern: headline / subtitle / source live in HTML (crisp, responsive typography
 only the data. Styling comes from dist/web/mck-viz.css (inlined) and the "mck" Plotly template.
 """
 import html
+import itertools
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -21,11 +23,20 @@ SRC = "Source: Synthetic data for illustration only"
 mv.use()
 C = mv.colors
 PLOT_CFG = {"displayModeBar": False, "responsive": True}
+_ids = itertools.count(1)                                  # stable div ids: the page rebuilds byte-identically
 
 
 def card(fig, headline, subtitle, source, footnote=None, dark=False) -> str:
-    fig.update_layout(margin={"t": 36, "l": 8, "r": 8, "b": 8}, autosize=True)
-    body = fig.to_html(full_html=False, include_plotlyjs=False, config=PLOT_CFG, default_height=440)
+    margin = {"t": 36, "l": 8, "r": 8, "b": 8}
+    margin.update({k: v for k in margin if (v := fig.layout.margin[k]) is not None})   # keep chart-specific margins
+    fig.update_layout(margin=margin, autosize=True)
+    # Draw only after Libre Franklin has loaded: Plotly caches label widths from the first render, so a plot drawn
+    # with the fallback font keeps margins that clip the real labels (e.g. long bold category names).
+    div_id = f"chart-{next(_ids)}"
+    spec = fig.to_json().replace("</", "<\\/")                 # keep "</" from closing the <script> early
+    body = (f'<div id="{div_id}" style="height:440px; width:100%;"></div>\n'
+            f'<script>document.fonts.ready.then(() => {{ const f = {spec}; '
+            f'Plotly.newPlot("{div_id}", f.data, f.layout, {json.dumps(PLOT_CFG)}); }});</script>')
     notes = "<br>".join(html.escape(x) for x in (footnote, source) if x)
     return f"""
 <figure class="mck-chart{' mck-chart--dark' if dark else ''}">
@@ -42,14 +53,17 @@ def bar_highlight():
     focus = df.job_family[df.vol_attrition_pct > 20]
     fig = go.Figure(go.Bar(
         x=df.vol_attrition_pct, y=df.job_family, orientation="h", marker_color=mv.highlight(df.job_family, focus=focus),
-        text=[f"{v:.1f}%" for v in df.vol_attrition_pct], textposition="outside",
+        text=[f" {v:.1f}%" for v in df.vol_attrition_pct], textposition="outside", cliponaxis=False,
         customdata=df.headcount, hovertemplate="%{y}<br>%{x:.1f}% attrition<br>%{customdata:,} employees<extra></extra>"))
-    fig.add_vline(x=ent, line={"color": C.annotation, "width": 1, "dash": "dot"})
+    fig.add_vline(x=ent, line={"color": C.annotation, "width": 1, "dash": "dot"}, layer="below")
     fig.add_annotation(x=ent, y=1, yref="paper", yanchor="bottom", text=f"Enterprise {ent:.1f}%", font={"size": 12})
     fig.update_xaxes(visible=False, range=[0, df.vol_attrition_pct.max() * 1.15])
-    fig.update_yaxes(showgrid=False, showline=False, ticksuffix="  ")
+    fig.update_layout(margin_r=48)                                   # room for the end labels on narrow screens
+    fig.update_yaxes(showgrid=False, showline=False, ticklabelstandoff=8, automargin=True, tickvals=df.job_family,
+                     ticktext=[f"<b>{j}</b>" if j in set(focus) else j for j in df.job_family])   # echo the highlight
     return card(fig, f"Two frontline job families lose about 1 in 4 people a year, well above the {ent:.1f}% enterprise rate",
-                "Voluntary attrition by job family, FY26 (%)", SRC)
+                "Voluntary attrition by job family, FY26 (%)", SRC,
+                "Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months.")
 
 
 def line_gap():
@@ -58,17 +72,17 @@ def line_gap():
     fig.add_scatter(x=df.year, y=df.internal_supply_fte, name="Internal supply", line_color=C.focus, mode="lines",
                     hovertemplate="%{y:,} FTE<extra>Internal supply</extra>")
     fig.add_scatter(x=df.year, y=df.demand_fte, name="Demand", line_color=C.navy, mode="lines", fill="tonexty",
-                    fillcolor="rgba(239,130,0,0.12)", hovertemplate="%{y:,} FTE<extra>Demand</extra>")
-    for r, col in ((df.iloc[-1].demand_fte, C.navy), (df.iloc[-1].internal_supply_fte, C.focus)):
-        name = "Demand" if col == C.navy else "Internal supply"
-        fig.add_annotation(x=df.year.iloc[-1], y=r, text=f"<b>{name}</b> {r:,.0f}", xanchor="left", xshift=8,
-                           font={"color": col, "size": 13})
+                    fillcolor=mv.rgba(C.accent, 0.12), hovertemplate="%{y:,} FTE<extra>Demand</extra>")
+    for r, col, name, ya in ((df.iloc[-1].demand_fte, C.navy, "Demand", "bottom"),
+                             (df.iloc[-1].internal_supply_fte, C.focus, "Internal supply", "top")):
+        fig.add_annotation(x=df.year.iloc[-1], y=r, text=f"<b>{name}</b> {r:,.0f}", xanchor="right", yanchor=ya,
+                           yshift=6 if ya == "bottom" else -6, font={"color": col, "size": 13})   # label at the line end
     gap = int(df.demand_fte.iloc[-1] - df.internal_supply_fte.iloc[-1])
     fig.add_annotation(x=df.year.iloc[-1], y=(df.demand_fte.iloc[-1] + df.internal_supply_fte.iloc[-1]) / 2,
                        text=f"<b>Gap: {gap:,} FTE</b>", xanchor="right", xshift=-8, font={"color": C.negative_text, "size": 14})
-    fig.update_layout(showlegend=False, hovermode="x unified", margin_r=150)
-    fig.update_yaxes(range=[800, df.demand_fte.max() * 1.05], tickformat=",")
-    fig.update_xaxes(dtick=1)
+    fig.update_layout(showlegend=False, hovermode="x unified", margin_r=24)
+    fig.update_yaxes(range=[750, df.demand_fte.max() * 1.08], dtick=200, tickformat=",")
+    fig.update_xaxes(tickvals=df.year, ticktext=[str(y) for y in df.year], tickangle=0)
     return card(fig, f"Without action, Data & AI demand outruns internal supply by ~{round(gap, -1):,} FTE by 2030",
                 "Forecast Data & AI roles, FTE, 2024\u20132030 (base scenario)", SRC,
                 "Supply = current headcount \u2212 projected attrition + planned internal moves; excludes external hiring.")
@@ -85,7 +99,7 @@ def bubble_scatter():
         customdata=df[["role", "headcount"]],
         hovertemplate="<b>%{customdata[0]}</b><br>%{y}% of task hours exposed<br>$%{x}K median pay<br>%{customdata[1]:,} people<extra></extra>"))
     fig.add_hrect(y0=50, y1=75, fillcolor=C.surface_subtle, line_width=0, layer="below")
-    fig.add_annotation(x=1, xref="paper", y=74, yanchor="top", xanchor="right", text="<b>High exposure: 50%+ of task hours</b>",
+    fig.add_annotation(x=0, xref="paper", y=74, yanchor="top", xanchor="left", text="<b>High exposure: 50%+ of task hours</b>",
                        font={"size": 11})
     fig.update_xaxes(title="Median base pay ($K)", range=[28, 155], tickprefix="$", ticksuffix="K")
     fig.update_yaxes(title="", range=[0, 75], ticksuffix="%")
@@ -99,7 +113,7 @@ def sankey():
     nodes = list(dict.fromkeys(list(df.from_family) + list(df.to_family)))
     idx = {n: i for i, n in enumerate(nodes)}
     focus_src = "DC Associate"
-    link_col = ["rgba(0,90,140,0.55)" if s == focus_src else "rgba(180,176,165,0.45)" for s in df.from_family]
+    link_col = [mv.rgba(C.focus, 0.55) if s == focus_src else mv.rgba(C.context, 0.45) for s in df.from_family]
     node_col = [C.focus if n in (focus_src, "DC Leadership", "Supply Chain Planning") else C.context for n in nodes]
     fig = go.Figure(go.Sankey(
         arrangement="snap", valueformat=",",
@@ -128,6 +142,7 @@ def main():
 {css}
 body {{ margin: 0; background: var(--mck-surface-subtle); font-family: var(--mck-font); }}
 main {{ display: grid; gap: 24px; padding: 32px; max-width: 1040px; margin: 0 auto; }}
+@media (max-width: 600px) {{ main {{ padding: 16px 0; gap: 16px; }} .page-title {{ padding: 0 16px; font-size: 28px; }} }}
 .page-title {{ font-weight: 300; font-size: 34px; color: var(--mck-blue); margin: 0; }}
 .page-title strong {{ font-weight: 700; }}
 </style>

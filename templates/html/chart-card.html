@@ -1,0 +1,155 @@
+<!doctype html>
+<!--
+  McKesson chart-card starter (HTML + Plotly).
+
+  Copy this file, replace the DATA and the text in each <figure>, and keep the pattern:
+    - the headline, subtitle, footnote and source are HTML text, so they stay crisp, wrap and are readable by screen readers;
+    - the chart library draws only the data (no in-chart title or legend);
+    - every color comes from a CSS variable in dist/web/mck-viz.css. Never type a hex value here.
+
+  Paths: the two dist/ files below are linked relative to this file (templates/html/). If you move the page,
+  copy dist/web/mck-viz.css and dist/web/mck-plotly-template.js next to it and update the two paths.
+  Rules: docs/principles.md · chart recipes: docs/cookbook/ · checklist: docs/qa-checklist.md
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chart card starter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../dist/web/mck-viz.css">
+<script src="../../dist/web/mck-plotly-template.js"></script>
+<script src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8"></script>
+<style>
+  body { margin: 0; background: var(--mck-surface-subtle); font-family: var(--mck-font); }
+  main { display: grid; gap: 24px; padding: 32px 16px; max-width: 1008px; margin: 0 auto; }
+  .mck-chart { box-sizing: border-box; width: 100%; margin: 0; }
+  .mck-plot { height: 420px; }
+  @media (max-width: 600px) { main { padding: 16px 0; } .mck-plot { height: 460px; } }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- Card 1: sorted bars, grey context + blue focus, direct labels, labelled benchmark (docs/cookbook/bar.md) -->
+  <figure class="mck-chart" aria-labelledby="bar-headline">
+    <h2 class="mck-headline" id="bar-headline">Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate</h2>
+    <p class="mck-subtitle">Voluntary attrition by job family, FY26 (%)</p>
+    <div class="mck-plot" id="bar-chart" role="img"
+         aria-label="Bar chart. Pharmacy Technician 27.4% and Distribution Center Associate 24.1% voluntary attrition, against an enterprise rate of 19.9%. The other eight job families range from 7.4% to 18.9%."></div>
+    <figcaption class="mck-footnote">Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months.<br>
+      Source: Synthetic data for illustration only</figcaption>
+  </figure>
+
+  <!-- Card 2: two lines, direct end labels instead of a legend, shaded gap (docs/cookbook/line.md) -->
+  <figure class="mck-chart" aria-labelledby="line-headline">
+    <h2 class="mck-headline" id="line-headline">Without action, Data &amp; AI demand outruns internal supply by about 620 FTE by 2030</h2>
+    <p class="mck-subtitle">Forecast Data &amp; AI roles, 2024–2030, base scenario (FTE)</p>
+    <div class="mck-plot" id="line-chart" role="img"
+         aria-label="Line chart. Demand grows from 850 FTE in 2024 to 1,590 in 2030; internal supply grows from 850 to 973, a gap of 617 FTE in 2030."></div>
+    <figcaption class="mck-footnote">Supply = current headcount − projected attrition + planned internal moves; excludes external hiring.
+      Forecast, not actuals.<br>Source: Synthetic data for illustration only</figcaption>
+  </figure>
+
+</main>
+
+<script>
+/* ---------- Tokens: read every color from the CSS variables in mck-viz.css ---------- */
+const css = getComputedStyle(document.documentElement);
+const tok = name => css.getPropertyValue(`--mck-${name}`).trim();
+const C = {
+  focus: tok("chart-focus"), context: tok("chart-context"), accent: tok("chart-accent"), total: tok("chart-total"),
+  annotation: tok("chart-annotation"), headline: tok("text-headline"), text: tok("text-primary"), muted: tok("text-muted"),
+};
+const alpha = (hex, a) => {                                      // token hex -> rgba() for washes
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+};
+const PLOT_CONFIG = { displayModeBar: false, responsive: true };
+// Card layout: the HTML carries the titles, so the figure needs only a small margin.
+const base = { template: window.MCK_PLOTLY_TEMPLATE, margin: { t: 32, r: 16, b: 32, l: 8 }, autosize: true };
+
+/* ---------- Card 1: bar chart with highlight ---------- */
+const attrition = [   // DATA: replace with your own (job family, rate %, headcount). Never show groups under 10 people.
+  ["Pharmacy Technician", 27.4, 6200], ["Distribution Center Associate", 24.1, 11800], ["Customer Care", 18.9, 3100],
+  ["Specialty Nursing", 14.2, 1400], ["Data & Analytics", 12.9, 850], ["Supply Chain Planning", 11.8, 900],
+  ["Sales", 10.6, 2300], ["Software Engineering", 9.8, 2600], ["HR", 8.1, 700], ["Finance", 7.4, 1200],
+].filter(([, , n]) => n >= 10).sort((a, b) => a[1] - b[1]);     // ascending: Plotly draws the first row at the bottom
+const enterprise = 19.9;
+const isFocus = ([, rate]) => rate > 20;                          // only what the headline names
+
+function drawBar() {
+  Plotly.newPlot("bar-chart", [{
+    type: "bar", orientation: "h",
+    y: attrition.map(r => r[0]), x: attrition.map(r => r[1]), customdata: attrition.map(r => r[2]),
+    marker: { color: attrition.map(r => (isFocus(r) ? C.focus : C.context)) },
+    text: attrition.map(r => ` ${r[1].toFixed(1)}%`), textposition: "outside", cliponaxis: false,   // en space = gap after bar end
+    textfont: { color: C.text },
+    hovertemplate: "%{y}<br>%{x:.1f}% attrition<br>%{customdata:,} employees<extra></extra>",
+  }], {
+    ...base,
+    bargap: 0.33,                                                   // bar : gap ≈ 2 : 1
+    xaxis: { visible: false, range: [0, Math.max(...attrition.map(r => r[1])) * 1.15] },   // headroom for labels
+    yaxis: {
+      showgrid: false, ticklabelstandoff: 8, automargin: true, tickvals: attrition.map(r => r[0]),
+      ticktext: attrition.map(r => (isFocus(r) ? `<b>${r[0]}</b>` : r[0])),   // echo the highlight in the label
+      tickfont: { color: C.text },
+    },
+    shapes: [{ type: "line", x0: enterprise, x1: enterprise, y0: 0, y1: 1, yref: "paper", layer: "below",
+               line: { color: C.total, width: 1, dash: "dot" } }],
+    annotations: [{ x: enterprise, y: 1, yref: "paper", yanchor: "bottom", showarrow: false,
+                    text: `Enterprise ${enterprise.toFixed(1)}%`, font: { color: C.annotation, size: 12 } }],
+  }, PLOT_CONFIG);
+}
+
+/* ---------- Card 2: line chart with direct end labels ---------- */
+const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];          // DATA
+const demand = [850, 944, 1047, 1162, 1290, 1432, 1590];
+const supply = [850, 868, 887, 906, 927, 950, 973];
+const fmt = v => v.toLocaleString("en-US");
+const gap = demand.at(-1) - supply.at(-1);
+
+const endLabels = [                                                 // direct labels at the line ends
+  { x: years.at(-1), y: demand.at(-1), xanchor: "left", xshift: 8, showarrow: false,
+    text: `<b>Demand</b> ${fmt(demand.at(-1))}`, font: { color: C.total } },
+  { x: years.at(-1), y: supply.at(-1), xanchor: "left", xshift: 8, showarrow: false,
+    text: `<b>Internal supply</b> ${fmt(supply.at(-1))}`, font: { color: C.focus } },
+  { x: years.at(-1), y: (demand.at(-1) + supply.at(-1)) / 2, xanchor: "left", xshift: 8, showarrow: false,
+    align: "left", text: `<b>Gap ${fmt(gap)} FTE</b><br>by 2030`, font: { color: tok("semantic-negative-text") } },
+];
+
+function drawLine() {
+  Plotly.newPlot("line-chart", [
+    { x: years, y: supply, mode: "lines", line: { color: C.focus, width: 2 }, name: "Internal supply",
+      hovertemplate: "%{y:,} FTE<extra>Internal supply</extra>" },
+    { x: years, y: demand, mode: "lines", line: { color: C.total, width: 2 }, name: "Demand",
+      fill: "tonexty", fillcolor: alpha(C.accent, 0.12),            // light accent wash marks the gap
+      hovertemplate: "%{y:,} FTE<extra>Demand</extra>" },
+  ], {
+    ...base,
+    showlegend: false,                                              // direct labels replace the legend
+    margin: { ...base.margin, r: 150 },
+    hovermode: "x unified",
+    xaxis: { tickvals: years, ticktext: years.map(String), showgrid: false },
+    yaxis: { tickformat: ",", gridcolor: tok("chart-grid") },
+    legend: { traceorder: "reversed" },                           // used only on phones (see fit below)
+    annotations: endLabels,
+  }, PLOT_CONFIG);
+}
+
+/* Phones (docs/formats.md, mobile): end labels would squeeze the plot, so swap them for a compact key on top,
+   and give the bar labels more headroom. */
+const narrow = window.matchMedia("(max-width: 600px)");
+function fit() {
+  const phone = narrow.matches;
+  Plotly.relayout("line-chart", { showlegend: phone, annotations: phone ? [] : endLabels, "margin.r": phone ? 16 : 150 });
+  Plotly.relayout("bar-chart", { "xaxis.range": [0, Math.max(...attrition.map(r => r[1])) * (phone ? 1.3 : 1.15)] });
+}
+narrow.addEventListener("change", fit);
+
+/* Draw after Libre Franklin has loaded, so Plotly measures label widths with the real font. */
+document.fonts.ready.then(() => { drawBar(); drawLine(); fit(); });
+</script>
+</body>
+</html>
