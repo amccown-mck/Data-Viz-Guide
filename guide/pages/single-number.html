@@ -41,7 +41,7 @@
         <li><span class="mk">2</span><span><b>Subtitle</b>Metric, scope, date and the base.</span></li>
         <li><span class="mk">3</span><span><b>The number</b>Large and Bold, rounded hard.</span></li>
         <li><span class="mk">4</span><span><b>One sentence</b>Counts make the % concrete.</span></li>
-        <li><span class="mk">5</span><span><b>Comparison</b>Signed, in pts, teal and ▲ because it's good news.</span></li>
+        <li><span class="mk">5</span><span><b>Comparison</b>Signed, in pts, green and ▲ because it's good news.</span></li>
         <li><span class="mk">6</span><span><b>Gap to target</b>Orange text because it's worse, said in words.</span></li>
         <li><span class="mk">7</span><span><b>Progress bar</b>0–100% track, target tick labelled.</span></li>
         <li><span class="mk">8</span><span><b>Footnote and source</b>Define the measure; date it.</span></li>
@@ -173,7 +173,7 @@
     <p class="eyebrow">Single number</p>
     <h2 class="title"><b>Single number</b> best practice, continued</h2>
     <p class="lede">Four more, from dashboards and scorecards.</p>
-    <p><strong>Color by judgment, not direction.</strong> Teal when the change is good, orange when it's worse. Days to fill going up is bad news; pair the color with ▲▼ or words.</p>
+    <p><strong>Color by judgment, not direction.</strong> Green when the change is good, orange when it's worse. Days to fill going up is bad news; pair the color with ▲▼ or words.</p>
     <p><strong>Round hard.</strong> 62%, 4.3K, $1.2M. Decimals suggest a precision the data doesn't have.</p>
     <p><strong>Rings are for 0–100%.</strong> Growth, indexes and variances get a big number and a delta.</p>
     <p><strong>One anatomy per row.</strong> Same order, weight and alignment in every card.</p>
@@ -182,7 +182,7 @@
     <div class="grid g2">
       <div class="tile"><h4>Color by judgment</h4><div class="pair">
         <div>{{exhibit:sn_bp_favor_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Up = green, whatever it means.</span></div></div>
-        <div>{{exhibit:sn_bp_favor_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Teal good, orange worse.</span></div></div>
+        <div>{{exhibit:sn_bp_favor_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Green good, orange worse.</span></div></div>
       </div></div>
       <div class="tile"><h4>Round hard</h4><div class="pair">
         <div>{{exhibit:sn_bp_round_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>False precision.</span></div></div>
@@ -219,7 +219,7 @@
   <div class="stage top">
     <div class="panel">
       <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Big number:</strong> a text box in Libre Franklin <em>Bold</em>, 54 pt, Navy <code>#143359</code>, left inset 0; the sentence below at 14 pt; the comparison in Medium, teal <code>#00737A</code> or orange <code>#A75B00</code>. Align left and group. <strong>Ring:</strong> a Doughnut of value and remainder, Angle of first slice 0°, Hole Size 80%, fills <code>#005A8C</code> / <code>#DEDBD1</code>, no borders, title, legend or labels; lay the number over the center.</p></div>
-      <div class="platform"><h5>Power BI</h5><p><strong>Card (new)</strong>: the measure as the callout value (raise it to 40–54; the theme makes it Bold, Segoe UI Bold in the service), <em>Reference labels</em> for the comparison. The <strong>KPI</strong> visual adds trend and target: set Good <code>#00AF9D</code>, Bad <code>#EF8200</code> and the direction per metric. Rings: a Donut with Inner radius ≈ 80 and a transparent Card on top.</p></div>
+      <div class="platform"><h5>Power BI</h5><p><strong>Card (new)</strong>: the measure as the callout value (raise it to 40–54; the theme makes it Bold, Segoe UI Bold in the service), <em>Reference labels</em> for the comparison. The <strong>KPI</strong> visual adds trend and target: set Good <code>#00AF68</code>, Bad <code>#EF8200</code> and the direction per metric. Rings: a Donut with Inner radius ≈ 80 and a transparent Card on top.</p></div>
       <div class="platform"><h5>Python</h5><div><p>matplotlib <code>Wedge</code> for the ring; Plotly <code>go.Indicator(mode="number+delta")</code> for a KPI row, with <code>increasing</code> / <code>decreasing</code> colors set by favorability.</p>
 <pre class="snip">KPI = mv.TOKENS["typography"]["roles"]["kpi"]        # Bold 700
 ax.text(0, 0, f"{value}%", fontsize=KPI["size_pt"] * 0.75,

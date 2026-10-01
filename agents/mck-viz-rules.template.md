@@ -35,10 +35,12 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 | Headline text | `{{color:text.headline}}` | Headline, emphasized labels |
 | Body / label text | `{{color:text.primary}}` | Subtitle, data labels |
 | Muted text | `{{color:text.muted}}` | Ticks, footnotes, source (the lightest allowed text) |
-| Favorable | `{{color:semantic.positive}}` (text `{{color:semantic.positive_text}}`) | Only when good vs. bad is the message |
-| Unfavorable | `{{color:semantic.negative}}` (text `{{color:semantic.negative_text}}`) | Negatives, below target. The only job orange has. Never pair red with green |
+| Favorable | `{{color:semantic.positive}}` (text `{{color:semantic.positive_text}}`) | Only when good vs. bad is the message; always with ▲▼ or words |
+| Unfavorable | `{{color:semantic.negative}}` (text `{{color:semantic.negative_text}}`) | Negatives, below target. The only job orange has |
+| Status (RAG) | on track `{{color:status.on_track}}`, at risk `{{color:status.at_risk}}`, off track `{{color:status.off_track}}`, not started `{{color:status.not_started}}` | Status only (trackers, roadmaps), each with its symbol and word (✓ On track, ! At risk, ✕ Off track). Never for data series |
 
-- **Categorical, in order:** {{list:categorical.values}}. Prefer ≤ 5; orange (6th) is a last resort. Amber is not used.
+- **Categorical, in order:** {{list:categorical.values}}. Prefer ≤ 5; orange (6th) is a last resort. Green and amber are not category colors.
+- **Ordered steps (pipelines, timelines; not magnitude):** {{list:steps.values}}
 - **Sequential blue (light → dark, the default for one measure):** {{list:sequential.blue}}
 - **Sequential orange (only when darker means worse, e.g., risk; say so):** {{list:sequential.orange}}
 - **Diverging orange–blue (midpoint = benchmark, symmetric):** {{list:diverging.orange_blue.values}}

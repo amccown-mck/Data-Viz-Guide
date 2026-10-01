@@ -12,7 +12,7 @@ Dashboards are exploratory, but they follow the same visual rules as slides: gre
 |---|---|---|
 | Data colors 1–6 | `#005A8C` `#143359` `#66C4FF` `#00AF9D` `#00737A` `#EF8200` | The categorical palette in its fixed order: blue, navy, light blue, teal, deep teal, then orange as a last resort. Prefer ≤ 5 series. Use more than 6 only for exploration; for a published page, group the tail into "Other". |
 | Data colors 7–10 | Light blue and teal tints (`#B6E2FA` `#66CFC4` `#009EFF` `#B3E7E2`) | Only so 7+ series don't repeat a color. Every color is unique. |
-| Good / neutral / bad | Teal `#00AF9D` / grey `#B4B0A5` / orange `#EF8200` | KPI and conditional-formatting defaults. Orange means worse. Never red–green. |
+| Good / neutral / bad | Green `#00AF68` / grey `#B4B0A5` / orange `#EF8200` | KPI and conditional-formatting defaults. Orange means worse. Never red–green. |
 | Min / center / max | `#E6F3FB` / `#EFEDE7` / `#143359` | Default gradient for heat tables and maps. |
 | Titles | Libre Franklin, 14 pt, bold, navy, left-aligned; subtitle 11 pt grey | Question or insight titles, top-left like every other chart. |
 | Axes and gridlines | Labels `#737373` 9 pt, gridlines `#E6E4DE`, axis titles off | Units go in the subtitle. |

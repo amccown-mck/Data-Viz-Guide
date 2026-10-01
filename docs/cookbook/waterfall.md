@@ -25,7 +25,7 @@
 
 | Element | Rule |
 |---|---|
-| Color | Pick **one** pattern per chart. **Highlight (default):** start, end and subtotal bars in `chart.total` `#143359`; all drivers in `chart.context` `#B4B0A5`; only the 1–2 drivers the headline names in `chart.focus` `#005A8C` (or one navy `chart.accent` `#143359` exception). Orange is not a highlight here: it belongs to the semantic pattern. **Semantic:** use this when "good vs. bad" *is* the message (variance to plan, cost bridges). Favorable drivers get `semantic.positive` `#00AF9D` (text `#00737A`) and unfavorable ones `semantic.negative` `#EF8200` (text `#A75B00`). Judge "favorable" from the audience's point of view: a cost reduction is favorable, but a headcount reduction is not automatically favorable. Say what the colors mean in the subtitle or a top-left key. Never use red vs. green, and never color increases vs. decreases "just because". |
+| Color | Pick **one** pattern per chart. **Highlight (default):** start, end and subtotal bars in `chart.total` `#143359`; all drivers in `chart.context` `#B4B0A5`; only the 1–2 drivers the headline names in `chart.focus` `#005A8C` (or one navy `chart.accent` `#143359` exception). Orange is not a highlight here: it belongs to the semantic pattern. **Semantic:** use this when "good vs. bad" *is* the message (variance to plan, cost bridges). Favorable drivers get `semantic.positive` `#00AF68` (text `#007A48`) and unfavorable ones `semantic.negative` `#EF8200` (text `#A75B00`). Judge "favorable" from the audience's point of view: a cost reduction is favorable, but a headcount reduction is not automatically favorable. Say what the colors mean in the subtitle or a top-left key. Never use red vs. green, and never color increases vs. decreases "just because". |
 | Labels | Label every bar. Drivers get an explicit **+** or a true **−** (`mv.signed`), Medium 12 pt / 13 px `#505050`, with highlighted drivers bold in the matching text color (`#143359` for blue or navy, `#A75B00` for orange in the semantic pattern). Totals get **bold Navy, no sign**, and their category labels are bold too. Place labels above the bar top (or beside the bar end for horizontal waterfalls). The unit goes in the subtitle. Wrap category labels onto 2 lines; never rotate them. **Exception:** with many tiny steps beside one huge one, drop the direct labels and keep a light value axis with gridlines in `chart.grid` `#E6E4DE`. |
 | Axes / gridlines | No value axis and no gridlines when bars are labelled. Keep a thin baseline in `chart.axis` `#8C8C8C`, 0.75 pt. **Connectors:** thin horizontal lines at the running total from one bar to the next, `#8C8C8C`, 0.75 pt (or lighter). Never heavy or black. |
 | Sort / order | Start total → drivers → end total. Order the drivers by **logic** (the process sequence, e.g., hires → transfers in → exits → transfers out), or group the increases first and the decreases second, largest first within each group. Keep the same driver order across periods, scenarios and the deck. Horizontal waterfalls run top to bottom. |
@@ -37,7 +37,7 @@
 | Do | Don't |
 |---|---|
 | Color only the driver(s) the headline names and keep the rest grey, with totals in navy | Give every driver its own color, or color by sign when sign isn't the message |
-| Use blue/teal vs. orange from the audience's point of view when good vs. bad is the point | Use red vs. green for decreases vs. increases |
+| Use green vs. orange from the audience's point of view when good vs. bad is the point | Use red vs. green for decreases vs. increases |
 | Draw thin, light grey connectors at the running total | Draw thick or black connectors that compete with the bars |
 | Label drivers with +/− and totals in bold without a sign | Leave the reader to subtract bar heights off an axis |
 | Mark the break and footnote it when the axis can't start at zero | Silently truncate, or crop a driver bar |
@@ -159,7 +159,7 @@ fig.update_xaxes(showgrid=False, tickvals=df.step,
                  ticktext=[f"<b>{s}</b>" if k == "total" else s for s, k in zip(df.step, df.kind)])
 net = df.value_musd.iloc[-1] - df.value_musd.iloc[0]
 mv.pl_finish(fig, f"Labor cost rose only ${net:,.0f}M as savings offset about two-thirds ({saved / grew:.0%}) of gross growth",
-             "Labor cost bridge, FY25 to FY26 ($M); orange = cost increase, teal = cost reduction",
+             "Labor cost bridge, FY25 to FY26 ($M); orange = cost increase, green = cost reduction",
              "Source: Synthetic data for illustration only",
              footnote=f"Value axis starts at ${FLOOR:,}M (break marks on totals) to make the drivers readable.")
 Path("out").mkdir(exist_ok=True)
@@ -173,7 +173,7 @@ fig.write_html("out/waterfall.html", include_plotlyjs="cdn")
 3. Select the data, then **Insert › Charts › Insert Waterfall, Funnel, Stock, Surface or Radar Chart › Waterfall**.
 4. Click the start bar once (selects the series), then again (selects only that point), and choose **Right-click › Set as Total**. Repeat for the end bar and any subtotal. Without this, Excel draws totals as floating increases.
 5. Right-click a bar › **Format Data Series › Series Options**. Set **Gap Width 50%** and keep **Show connector lines** ticked. Excel draws the connectors as hairlines; leave them light.
-6. Colors. Click a legend entry (*Increase*, *Decrease*, *Total*) to select every bar of that type, then set **Format › Shape Fill**: Total = `#143359`. **Highlight pattern:** Increase and Decrease = `#B4B0A5`, then click the named driver(s) twice and set **Format Data Point › Fill › Solid fill › Hex `005A8C`** (or `143359` for a single navy exception). **Semantic pattern:** Increase/Decrease = `#EF8200` / `#00AF9D`, matched to what is favorable for the audience. Then delete the legend and state the color meaning in the subtitle.
+6. Colors. Click a legend entry (*Increase*, *Decrease*, *Total*) to select every bar of that type, then set **Format › Shape Fill**: Total = `#143359`. **Highlight pattern:** Increase and Decrease = `#B4B0A5`, then click the named driver(s) twice and set **Format Data Point › Fill › Solid fill › Hex `005A8C`** (or `143359` for a single navy exception). **Semantic pattern:** Increase/Decrease = `#EF8200` / `#00AF68`, matched to what is favorable for the audience. Then delete the legend and state the color meaning in the subtitle.
 7. Data labels are on by default. Select them › **Format Data Labels › Number › Custom** `+#,##0;"−"#,##0;0` (paste the true minus "−"). Then select each total's label alone and set its format to `#,##0`, **Bold**, Navy `#143359`. Use Libre Franklin Medium 12 pt `#505050`, with a highlighted driver's label bold in `#A75B00`.
 8. Click the gridlines and press **Delete**. Format the horizontal axis with **Line › Solid line, `#8C8C8C`, 0.75 pt** and **Tick Marks › None**.
 9. **Truncated start** (only when the totals dwarf the drivers): before hiding the vertical axis, set **Format Axis › Bounds › Minimum** (e.g., `3900`). Then hide it with **Labels › Label Position › None** and **Line › No line**; don't delete it, or the bound is lost. Draw two short white lines (**Insert › Shapes › Line**, 2.5 pt) across each total bar as break marks, and add the footnote.
@@ -184,7 +184,7 @@ fig.write_html("out/waterfall.html", include_plotlyjs="cdn")
 ### Power BI
 - Import [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
 - Use the native **Waterfall chart**: Category = driver, Y-axis = value. Add a `Step order` column and set it via **Column tools › Sort by column**, so the drivers keep their logical order. The visual adds the **Total** bar automatically. For a year-over-year bridge, put the fiscal year in **Category** and the driver in **Breakdown**.
-- Under **Format visual › Columns › Sentiment colors**, set Increase / Decrease / Total. For a cost bridge, use `#EF8200` / `#00AF9D` / `#143359` (semantic). For the highlight look, set Increase and Decrease both to `#B4B0A5`. Turn **Data labels** on, and the **Y-axis** and **Gridlines** off.
+- Under **Format visual › Columns › Sentiment colors**, set Increase / Decrease / Total. For a cost bridge, use `#EF8200` / `#00AF68` / `#143359` (semantic). For the highlight look, set Increase and Decrease both to `#B4B0A5`. Turn **Data labels** on, and the **Y-axis** and **Gridlines** off.
 - The native visual can't color single bars, start above zero with break marks, or hold mid-chart subtotals. When you need those, use a **stacked column** with a transparent `Spacer` measure and a `Driver` measure. Color the driver bars with **Columns › Colors › fx** (Field value) on a measure such as `Bar Color = IF(SELECTEDVALUE(Bridge[Step]) IN {"Automation savings", "Contractor conversion"}, "#005A8C", "#B4B0A5")`.
 - Headcount bridges: blank any movement under 10 people in the measure (`IF([Movers] < 10, BLANK(), [Movers])`), and add a reconciliation card (start + drivers − end = 0) on the QA page.
 
@@ -230,7 +230,7 @@ ggplot(df) +
 ## QA specifics
 - [ ] The drivers reconcile: start + Σ drivers = end (and every subtotal) to the rounding shown. Label totals are recomputed, not typed.
 - [ ] Totals are navy and bold without a sign. Drivers carry an explicit + or a true −. Total category labels are bold.
-- [ ] One color pattern only: highlight (grey drivers, ≤ 2 named drivers in blue, or one in navy; never orange) **or** semantic (teal/orange from the audience's point of view, explained in the subtitle). No red/green.
+- [ ] One color pattern only: highlight (grey drivers, ≤ 2 named drivers in blue, or one in navy; never orange) **or** semantic (green/orange from the audience's point of view, explained in the subtitle). No red/green.
 - [ ] Connectors are thin and light grey, and sit exactly at the running total. Bars are ≈ 2 : 1 bar : gap, and totals are the same width as drivers.
 - [ ] If the axis starts above zero, the total bars carry break marks, a footnote says where it starts, and no driver is cropped.
 - [ ] ≤ ~8 drivers, logically ordered and consistent across the deck. Headcount movements under 10 people are merged into "Other".

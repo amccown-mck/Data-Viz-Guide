@@ -509,7 +509,7 @@ def wf_var_direction():
     waterfall(ax, steps, list(h.people), list(h.kind), colors=cols, lo=12000, size=MINI - 1.5, tick=MINI - 1.5,
               fmt=lambda v, k: f"{v / 1000:,.1f}K" if k == "total" else mv.signed(v / 1000, 1, "K"))
     ax.set_ylim(12000, 24300)
-    return fig, f"Headcount bridge with additions in teal and losses in orange; voluntary exits equal {TEXT['hc_exit_share']} of hires."
+    return fig, f"Headcount bridge with additions in green and losses in orange; voluntary exits equal {TEXT['hc_exit_share']} of hires."
 
 
 @exhibit
@@ -561,7 +561,7 @@ def _wf_mini(kind):
     elif kind == "color_avoid":
         cols = [None if k == "total" else (ANTI["green"] if v > 0 else ANTI["red"]) for v, k in zip(vals, kinds)]
         waterfall(ax, steps, vals, kinds, lo=3900, colors=cols, labels=False, **common)
-    elif kind == "color_fix":                         # semantic: cost growth is unfavorable (orange), savings teal
+    elif kind == "color_fix":                         # semantic: cost growth is unfavorable (orange), savings green
         cols = [None if k == "total" else (C.negative if v > 0 else C.positive) for v, k in zip(vals, kinds)]
         waterfall(ax, steps, vals, kinds, lo=3900, colors=cols, labels=False, **common)
     elif kind == "break_avoid":
@@ -591,7 +591,7 @@ def _wf_mini(kind):
 for _k, _alt in {"conn_avoid": "Heavy dark connectors compete with the bars.",
                  "conn_fix": "Thin light-grey connectors stay in the background.",
                  "color_avoid": "A labor cost bridge with increases in green and decreases in red, so cost growth looks good.",
-                 "color_fix": "The same bridge in the palette: cost increases orange (unfavorable), reductions teal (favorable), totals navy.",
+                 "color_fix": "The same bridge in the palette: cost increases orange (unfavorable), reductions green (favorable), totals navy.",
                  "break_avoid": "A truncated axis with no sign that the totals are cut.",
                  "break_fix": "Break marks on the totals and a note that the axis starts at $3.9B.",
                  "group_avoid": "Ten narrow steps, each labelled, too many to follow.",

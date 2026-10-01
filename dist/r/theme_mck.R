@@ -7,12 +7,15 @@ mck_colors <- list(
   blue = "#005A8C", navy = "#143359", orange = "#EF8200", sand = "#DEDBD1",
   focus = "#005A8C", focus_light = "#66C4FF", accent = "#143359", context = "#B4B0A5",
   context_light = "#DEDBD1", total = "#143359",
-  positive = "#00AF9D", negative = "#EF8200",
+  positive = "#00AF68", negative = "#EF8200",
   text = "#505050", muted = "#737373", headline = "#143359",
   grid = "#E6E4DE", axis = "#8C8C8C", annotation = "#143359",
-  surface_subtle = "#EFEDE7", negative_text = "#A75B00"
+  surface_subtle = "#EFEDE7", negative_text = "#A75B00",
+  positive_text = "#007A48", title = "#005A8C"
 )
-mck_categorical <- c("#005A8C", "#143359", "#66C4FF", "#00AF9D", "#00737A", "#EF8200", "#B6E2FA", "#66CFC4")
+mck_steps <- c("#005A8C", "#009DFF", "#00BEFF", "#00AF9D", "#05CE90", "#00AF68")   # ordered process stages, not data magnitude
+mck_status <- c(on_track = "#00AF68", at_risk = "#FFB500", off_track = "#DA2103", not_started = "#BFBFBF", done = "#005A8C")   # RAG: status only, with symbol + word
+mck_categorical <- c("#005A8C", "#00AF9D", "#143359", "#009DFF", "#05CE90", "#EF8200", "#B3ECFF", "#B3E7E2")
 mck_sequential  <- c("#E6F3FB", "#B6E2FA", "#66C4FF", "#009EFF", "#0A5FBC", "#143359")
 mck_sequential_orange <- c("#FFF3E0", "#FFD9A8", "#F7B25C", "#EF8200", "#A75B00", "#6B3A00")
 mck_diverging   <- c("#A75B00", "#EF8200", "#F7C180", "#EFEDE7", "#99BDD1", "#005A8C", "#143359")

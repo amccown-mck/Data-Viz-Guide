@@ -127,15 +127,23 @@ def _color_findings(used: list[str]) -> list[Finding]:
     categories = len([h for h in hues if h not in ramp_colors]) + len(in_ramp)
     if categories > 6:
         out.append(Finding("error", "max-6-colors", f"{categories} distinct colors; use at most 6 and grey the rest"))
+    from . import STATUS
+    status = {STATUS[k]["value"].upper() for k in ("on_track", "at_risk", "off_track")}
+    is_status = len({h for h in hues if _near(h, status, 6)}) >= 2      # a tracker / roadmap using two RAG colors
+    if is_status:
+        out.append(Finding("info", "status-colors", "status (RAG) colors: only for status, never data series; pair each "
+                                                    "color with a symbol and a word (mv.STATUS has both)"))
     has_red = has_green = False
     for h in hues:
+        if is_status and _near(h, status, 6):
+            continue
         hh, s, v = colorsys.rgb_to_hsv(*(c / 255 for c in _rgb(h)))
         deg = hh * 360
         has_red |= (deg < 15 or deg > 345) and s > 0.4 and v > 0.3
         has_green |= 85 < deg < 150 and s > 0.35 and v > 0.3
     if has_red and has_green:
         out.append(Finding("error", "no-red-green", "red and green are both used; use blue vs. navy (orange only for negatives)"))
-    banned = sorted({h for h in used if _near(h, _do_not_use(), 6)})
+    banned = sorted({h for h in used if _near(h, _do_not_use(), 6) and not (is_status and _near(h, status, 6))})
     if banned:
         out.append(Finding("error", "do-not-use", f"{', '.join(banned)} is not used internally (amber family); "
                                                   "pick from mv.CATEGORICAL"))

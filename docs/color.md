@@ -9,7 +9,7 @@ All values live in [`tokens/tokens.json`](../tokens/tokens.json) — the single 
 | Name | Hex | Notes |
 |---|---|---|
 | McKesson Blue | `#005A8C` | Primary brand color. Our **focus** color in charts. |
-| McKesson Navy | `#143359` | Headlines, totals, benchmarks. Our **accent** color in charts. |
+| McKesson Navy | `#143359` | Chart headlines, totals, benchmarks. Our **accent** color in charts. Slide titles are McKesson Blue. |
 | McKesson Orange | `#EF8200` | A brand color, but in charts it means **worse**. Never decoration, never the accent (see [Orange means worse](#orange-means-worse)). |
 | Sand (warm grey) | `#DEDBD1` | Backgrounds, de-emphasized fills. |
 | Deep Navy (FY26) | `#0B3266` | Dark slides / cards. |
@@ -27,9 +27,11 @@ All values live in [`tokens/tokens.json`](../tokens/tokens.json) — the single 
 | Sky | Providers | `#B3ECFF` | `#66D8FF` | `#00BEFF` | `#0074D0` |
 | Azure | Health Systems | `#B6E2FA` | `#66C4FF` | `#009EFF` | `#0A5FBC` |
 
-> Source: McKesson Social Media Guide (Extended Audience Palette) and FY26 Impact Report. Full swatches and ASE files: BrandHQ.
+> Source: McKesson Standard Template (Jan 2026), McKesson Social Media Guide and FY26 Impact Report. Full swatches and ASE files: BrandHQ.
 
-**Amber (the Payer family) is not used internally.** It is left out of this table on purpose. Don't use any amber step in charts, tables or dashboards.
+**The 80/20 rule, and our audience color.** The McKesson Standard Template says: core palette for about 80% of any piece, plus **one audience color**. Workforce Innovation uses the **teal family**, which is how the template's own infographic slides use color: McKesson Blue and its bright blues, with teal and mint as the supporting hue. Green (`#00AF68`) is reserved for meaning (better, on track), not decoration.
+
+**Amber (the Payer family) is not used in charts.** Its base `#FFB500` appears in one place only: the *at risk* status color (section 4). Never as a data series, bar, line or fill.
 
 ## 2. Chart color roles (how we use it)
 
@@ -63,40 +65,58 @@ Orange `#EF8200` has one job in our charts: it marks something **worse**. Negati
 - Don't use orange to highlight, to decorate, or to make one item "pop". Use navy for that.
 - If nothing in the chart is worse, the chart has no orange.
 
-## 3. Semantic colors
+## 3. Semantic colors: better and worse
 
 | Meaning | Fill | Text on white |
 |---|---|---|
-| Positive / increase / favorable | Teal `#00AF9D` | `#00737A` |
-| Negative / decrease / below target / unfavorable | Orange `#EF8200` | `#A75B00` |
+| Better / favorable | Green `#00AF68` | `#007A48` |
+| Worse / below target / unfavorable | Orange `#EF8200` | `#A75B00` |
 | Neutral / no change | `#B4B0A5` | `#505050` |
 
-- **No red vs. green.** Red/green is the most common color-vision conflict and red is not a brand color. Use blues and navy; orange only for "worse".
-- Only use semantic color when "good vs. bad" *is* the message (variance to plan, benchmark gaps). Otherwise use focus/context.
-- Headcount growth isn't automatically "good" — pick semantic colors from the audience's point of view (e.g., cost reduction = favorable).
+- **Always pair the color with a symbol or words** (▲ ▼, "+6 pts", "13 pts short"). Green vs. orange separates well in lightness but less well in hue for color-blind readers, so color never carries the meaning alone.
+- Only use semantic color when "good vs. bad" *is* the message (variance to plan, benchmark gaps, KPI deltas, waterfalls). Otherwise use focus and context.
+- Judge "better" from the audience's point of view: a cost reduction is favorable; days to fill going up is worse; headcount growth isn't automatically good.
+- **No red vs. green in data.** Red appears only as a status color (section 4).
 
-## 4. Categorical palette (fixed order)
+## 4. Status colors (red, amber, green)
 
-When categories must be distinguished (e.g., 4 business units in a line chart), use the colors **in this order**:
+For **status only**: initiative trackers, roadmaps, milestone plans, the status column of a scorecard. These are the McKesson Standard Template's Initiative Tracker colors.
+
+| Status | Color | Symbol and word |
+|---|---|---|
+| On track | `#00AF68` | ✓ On track |
+| At risk | `#FFB500` | ! At risk |
+| Off track | `#DA2103` | ✕ Off track |
+| Not started | `#BFBFBF` | – Not started |
+| Complete | `#005A8C` | ✓ Complete |
+
+- **Never for data series.** A bar, line or map is never colored red/amber/green; status describes a workstream, not a measure.
+- **Always the symbol and the word**, not color alone: red and green are the most common color-vision conflict.
+- Use them as small dots, chips or a thin status column, not large fills. `mv.STATUS` (Python), `mck_status` (R) and `--mck-status-*` (CSS) hold them.
+
+## 5. Categorical palette (fixed order)
+
+When categories must be distinguished (e.g., 4 business units in a line chart), use the colors **in this order**. They come from the template's infographic slides: blues with teal and mint.
 
 | # | Hex | Name | Lines/text? |
 |---|---|---|---|
 | 1 | `#005A8C` | McKesson Blue | yes |
-| 2 | `#143359` | Navy | yes |
-| 3 | `#66C4FF` | Azure mid (light blue) | fill only; label it |
-| 4 | `#00AF9D` | Teal | fill; label it |
-| 5 | `#00737A` | Deep teal | yes |
+| 2 | `#00AF9D` | Teal | fill; label it (text: `#00737A`) |
+| 3 | `#143359` | Navy | yes |
+| 4 | `#009DFF` | Bright blue | fill; label it |
+| 5 | `#05CE90` | Mint | fill only; label it |
 | 6 | `#EF8200` | Orange | last resort only; fill, label it |
-| 7 | `#B6E2FA` | Azure light | fills only |
-| 8 | `#66CFC4` | Teal mid | fills only |
+| 7 | `#B3ECFF` | Light sky | fills only |
+| 8 | `#B3E7E2` | Light teal | fills only |
+
+**Ordered steps** (stages of a pipeline, a journey, a timeline) use the template's blue-to-green sequence: `#005A8C` `#009DFF` `#00BEFF` `#00AF9D` `#05CE90` `#00AF68` (`color.steps`, `mv.STEPS`). Not for data magnitude (use a sequential scale) or unordered categories.
 
 - **Prefer ≤ 5 categories.** Orange is the last-resort 6th: reach for it only when you truly need six hues, because readers will still read it as "worse". Beyond 6, group the tail into **"Other"** in context grey. Check separability with `python tokens/build.py` → `dist/palette-report.md`.
 - Blue and navy sit next to each other in stacks: keep the white separators between segments.
-- Amber is not in the palette and is not used internally.
+- Green and amber are not category colors: green means better or on track, amber means at risk.
 - Keep a category's color **constant across the whole deck** (e.g., Technology is always teal).
-- Business-unit colors *may* follow the audience palette (Pharmacy = green, Oncology = teal, …) when the audience expects it — check separability if you do.
 
-## 5. Sequential and diverging scales
+## 6. Sequential and diverging scales
 
 | Scale | Stops (light → dark) | Use |
 |---|---|---|
@@ -109,13 +129,13 @@ When categories must be distinguished (e.g., 4 business units in a line chart), 
 - Prefer **5–7 binned classes** for maps and heatmaps shown on slides; continuous is fine for interactive.
 - Put text on cells with `mv.text_on(fill)` (white on dark cells, navy on light).
 
-## 6. Backgrounds and dark mode
+## 7. Backgrounds and dark mode
 - Default: **white**. Panels/callout boxes: Light Sand `#EFEDE7`.
 - **Dark slides** (Deep Navy `#0B3266`) for dim rooms, keynotes and social cards: white text, `focus_on_dark` highlight, `context_on_dark` for the rest.
 - Social / single-KPI cards use a 3-tone combination (background + 1–2 foregrounds); see `color.social` in tokens.
 
-## 7. Accessibility rules
+## 8. Accessibility rules
 - Text ≥ 4.5:1 contrast. The lightest text color is `text.muted #737373`.
-- Orange, teal and light blue are **below 3:1** on white as thin lines/text — use them as **fills** and add labels, or use their `dark` step for text.
+- Orange, green, teal, bright blue, mint and light blue are **below 3:1** on white as thin lines/text: use them as **fills** and add labels, or use their text step (`#A75B00`, `#007A48`, `#00737A`) for text.
 - Never encode meaning by color alone — add labels, patterns, position or shape.
 - Check new palettes with `python tokens/build.py` → `dist/palette-report.md`.

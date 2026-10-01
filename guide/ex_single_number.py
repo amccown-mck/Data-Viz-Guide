@@ -237,10 +237,10 @@ def kpi_row(ax, x0, y0, w, cards, *, num=28, name=MINI - 2, delta=MINI - 2.5, mi
 def sn_var_row():
     fig, ax = canvas(300, 190)
     kpi_row(ax, 4, 138, 102, ROW, num=30)
-    small(ax, 4, 40, "Teal = favorable, orange = unfavorable; the arrow\ngives the direction, the color the judgment.",
+    small(ax, 4, 40, "Green = favorable, orange = unfavorable; the arrow\ngives the direction, the color the judgment.",
           size=MINI - 3, color=C.text_muted)
     return fig, ("A row of three KPI cards with identical anatomy: internal fill rate, days to fill, succession "
-                 "coverage; favorable deltas teal, the unfavorable one orange.")
+                 "coverage; favorable deltas green, the unfavorable one orange.")
 
 
 # ================================================================== BEST PRACTICE (200 x 140)
@@ -329,11 +329,11 @@ for _k, _alt in {"weight_avoid": "A small, thin grey numeral in a bordered box w
                  "context_avoid": "A bare 62% with no explanation.",
                  "context_fix": "62% with a sentence saying 254 of 410 critical roles are covered.",
                  "compare_avoid": "A delta of '+14%' with no reference period.",
-                 "compare_fix": "+14 pts vs. Mar 2025 in teal, and the gap to target in orange.",
+                 "compare_fix": "+14 pts vs. Mar 2025 in green, and the gap to target in orange.",
                  "gauge_avoid": "A speedometer gauge with red, orange and green zones and a needle.",
                  "gauge_fix": "A thin progress ring with a labelled target tick.",
                  "favor_avoid": "Two deltas colored green because both went up.",
-                 "favor_fix": "Fill rate up in teal (good), days to fill up in orange (worse).",
+                 "favor_fix": "Fill rate up in green (good), days to fill up in orange (worse).",
                  "round_avoid": "A number shown to four decimal places.",
                  "round_fix": "The same number rounded to 62%.",
                  "ring_avoid": "An index of 122 forced into a ring that laps itself.",

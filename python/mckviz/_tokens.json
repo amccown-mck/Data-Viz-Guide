@@ -5,7 +5,7 @@
   "brand": {
     "core": {
       "blue":   { "value": "#005A8C", "description": "McKesson Blue. Primary brand color; default single-series fill; 'focus' color." },
-      "navy":   { "value": "#143359", "description": "McKesson Navy. Headlines, totals, benchmarks, and the highlight accent (used where other brands would reach for orange)." },
+      "navy":   { "value": "#143359", "description": "McKesson Navy. Chart headlines, totals, benchmarks, and the highlight accent (used where other brands would reach for orange)." },
       "orange": { "value": "#EF8200", "description": "McKesson Orange. A brand color, but internally used only when it carries meaning (negative, below target, the low end of a diverging scale). Never as decoration or a plain highlight: executives read it as a warning." },
       "sand":   { "value": "#DEDBD1", "description": "Warm grey. Backgrounds, de-emphasized fills." }
     },
@@ -22,14 +22,15 @@
       "teal":  { "business": "Oncology / Specialty",        "light": "#B3E7E2", "mid": "#66CFC4", "base": "#00AF9D", "dark": "#00737A" },
       "sky":   { "business": "Providers",                   "light": "#B3ECFF", "mid": "#66D8FF", "base": "#00BEFF", "dark": "#0074D0" },
       "azure": { "business": "Health Systems",              "light": "#B6E2FA", "mid": "#66C4FF", "base": "#009EFF", "dark": "#0A5FBC" },
-      "amber": { "business": "Payer",                       "light": "#FFE9B3", "mid": "#FFD366", "base": "#FFB502", "dark": null, "usage": "Not used internally. Do not use in charts." }
+      "amber": { "business": "Payer",                       "light": "#FFE9B3", "mid": "#FFD366", "base": "#FFB500", "dark": null, "usage": "Not used internally. Do not use in charts. Its base appears only as the at-risk status color (color.status)." }
     },
-    "proportion_rule": "Use the core palette for ~80% of a piece and accent colors for ~20%."
+    "proportion_rule": "Use the core palette for ~80% of a piece and one audience color for ~20% (McKesson Standard Template). Workforce Innovation uses the teal family, as in the template's infographic slides."
   },
 
   "color": {
     "text": {
-      "headline": { "value": "#143359", "description": "Slide titles (Bold) and chart headlines (SemiBold)." },
+      "title":    { "value": "#005A8C", "description": "Slide titles: Bold, McKesson Blue, as in the McKesson Standard Template." },
+      "headline": { "value": "#143359", "description": "Chart headlines (SemiBold, navy)." },
       "primary":  { "value": "#505050", "description": "Subtitles, data labels, body. 8.1:1 on white." },
       "muted":    { "value": "#737373", "description": "Axis ticks, footnotes, source. 4.7:1 on white (AA)." },
       "inverse":  { "value": "#FFFFFF" }
@@ -53,15 +54,27 @@
       "context_on_dark":{ "value": "#5A7194", "description": "De-emphasized marks on dark surfaces." }
     },
     "semantic": {
-      "positive":      { "value": "#00AF9D", "description": "Increase / gain / favorable (teal)." },
-      "positive_text": { "value": "#00737A" },
+      "positive":      { "value": "#00AF68", "description": "Better / favorable (McKesson green). Green vs. orange is not color-blind safe on its own: always pair with a symbol (▲ ▼) or words." },
+      "positive_text": { "value": "#007A48", "description": "Green for text and thin marks on white (5.4:1)." },
       "negative":      { "value": "#EF8200", "description": "Decrease / loss / below target (orange). The one job orange has in charts. Blue-orange is CVD-safe; avoid red-green." },
       "negative_text": { "value": "#A75B00" },
       "neutral":       { "value": "#B4B0A5" }
     },
     "categorical": {
-      "$description": "Ordered. Use the first N; prefer <= 5. Orange is the last-resort 6th. Beyond 6, group into 'Other' (context grey). Positions 7-8 are for fills only (low contrast lines). In stacks keep the white separators: blue and navy sit side by side.",
-      "values": ["#005A8C", "#143359", "#66C4FF", "#00AF9D", "#00737A", "#EF8200", "#B6E2FA", "#66CFC4"]
+      "$description": "Ordered, from the McKesson Standard Template's infographic slides: blues and teals. Use the first N; prefer <= 5. Orange is the last-resort 6th. Beyond 6, group into 'Other' (context grey). Positions 7-8 are light tints for fills only. Green is not a category color: it means 'better' and 'on track'.",
+      "values": ["#005A8C", "#00AF9D", "#143359", "#009DFF", "#05CE90", "#EF8200", "#B3ECFF", "#B3E7E2"]
+    },
+    "steps": {
+      "$description": "Ordered stages in process infographics (pipelines, journeys, timelines), blue to green as in the template. Not for data magnitude (use sequential) or for unordered categories.",
+      "values": ["#005A8C", "#009DFF", "#00BEFF", "#00AF9D", "#05CE90", "#00AF68"]
+    },
+    "status": {
+      "$description": "Status (RAG) only: trackers, roadmaps, scorecard status columns, as in the template's Initiative Tracker. Never for data series. Always pair the color with a symbol and a word.",
+      "on_track":    { "value": "#00AF68", "symbol": "✓", "label": "On track" },
+      "at_risk":     { "value": "#FFB500", "symbol": "!", "label": "At risk" },
+      "off_track":   { "value": "#DA2103", "symbol": "✕", "label": "Off track" },
+      "not_started": { "value": "#BFBFBF", "symbol": "–", "label": "Not started" },
+      "done":        { "value": "#005A8C", "symbol": "✓", "label": "Complete" }
     },
     "sequential": {
       "blue":  ["#E6F3FB", "#B6E2FA", "#66C4FF", "#009EFF", "#0A5FBC", "#143359"],
@@ -95,7 +108,7 @@
     "weight": { "light": 300, "regular": 400, "medium": 500, "semibold": 600, "bold": 700, "extrabold": 800 },
     "roles": {
       "$description": "size_px for screen/HTML at 1x; size_pt for 16:9 slides (13.33 x 7.5 in). Never go below the 'footnote' size.",
-      "slide_title": { "weight": 700, "size_px": 28, "size_pt": 24, "color": "text.headline", "note": "Slide (or page) title: the insight for the whole slide, Bold. With one chart on the slide, the chart's headline IS the slide title." },
+      "slide_title": { "weight": 700, "size_px": 30, "size_pt": 26, "color": "text.title", "note": "Slide (or page) title: the insight for the whole slide. Bold, McKesson Blue, 24-28 pt (the template's 34 pt is for short titles; insight titles run to two lines). With one chart on the slide, the chart's headline IS the slide title." },
       "headline":   { "weight": 600, "size_px": 20, "size_pt": 18, "color": "text.headline",  "note": "Chart headline: the insight of one chart, SemiBold, full sentence, <= 2 lines. Used when a chart has its own title (two charts on a slide, reports, dashboards, chart images)." },
       "subtitle":   { "weight": 400, "size_px": 15, "size_pt": 14, "color": "text.primary",   "note": "Neutral chart title: metric, unit, scope, period." },
       "label":      { "weight": 500, "size_px": 13, "size_pt": 12, "color": "text.primary",   "note": "Direct data labels, series labels." },

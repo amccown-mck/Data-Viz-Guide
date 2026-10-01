@@ -25,7 +25,7 @@
 |---|---|
 | Number | Typography role `kpi`: Libre Franklin **Bold 700**, **54 pt** on a 13.33 in slide / **56 px** on screen, Navy `#143359` on white, white on `surface.dark` `#0B3266`. Scale with the canvas (≈ 40 pt on an 8 in card). Bold, so the number pops. **One** big number per card. Round hard (62%, 4.3K, $1.2M); the `%` or unit stays with the number. |
 | Context sentence | **One sentence** (≤ ~15 words) saying exactly what is counted, set directly below or beside the number: 14 pt / 15 px Regular `#505050` (white on dark). Prefer counts that make the % concrete: "254 of 410 critical roles have a ready-now successor". The headline above it still states the insight. |
-| Comparison / delta | Always give the reader a reference: prior period, target, benchmark or peer ("+14 pts vs. Mar 2025", "13 pts short of the 75% target"). Medium/Semibold, 12–14 pt. Use an explicit + and a true minus (−), and say **"pts"** for percentage-point changes (never "%"). Color it only when good vs. bad is the point: `semantic.positive_text` `#00737A` / `semantic.negative_text` `#A75B00` on white, `semantic.positive` `#00AF9D` / `semantic.negative` `#EF8200` on dark. Judge favorability from the audience's view (time to fill down = good). Pair the color with ▲/▼ or words, never red vs. green. |
+| Comparison / delta | Always give the reader a reference: prior period, target, benchmark or peer ("+14 pts vs. Mar 2025", "13 pts short of the 75% target"). Medium/Semibold, 12–14 pt. Use an explicit + and a true minus (−), and say **"pts"** for percentage-point changes (never "%"). Color it only when good vs. bad is the point: `semantic.positive_text` `#007A48` / `semantic.negative_text` `#A75B00` on white, `semantic.positive` `#00AF68` / `semantic.negative` `#EF8200` on dark. Judge favorability from the audience's view (time to fill down = good). Pair the color with ▲/▼ or words, never red vs. green. |
 | Ring gauge | Starts at 12 o'clock and runs **clockwise**. Filled arc `chart.focus` `#005A8C` with the remainder in `chart.context_light` `#DEDBD1`; on dark, `chart.focus_on_dark` `#66C4FF` with `chart.context_on_dark` `#5A7194`. Stroke ≈ 15–20% of the radius (hole ≈ 80%, thinner than the 62% donut hole). No rounded caps, gaps, gradients or 3D. The number sits centered inside. A target is a thin tick across the ring, labelled ("Target 75%"). 0–100% of one whole only. |
 | Dark card | Background `surface.dark` `#0B3266`, text white, one highlight `#66C4FF`. Orange `#EF8200` only for an unfavorable comparison, never as decoration. Stick to the 3-tone `color.social` combinations. The card must stand alone: headline, number, comparison, source and as-of date all on the card. |
 | Layout / limits | Left-align text on one edge (only the numeral inside a ring is centered). ≤ 5 KPI cards in a dashboard row, ≤ 2 big numbers per live slide. Identical anatomy and order across cards: name → number → comparison → sentence. Every card has a source and as-of date, and every number is based on **n ≥ 10** people. |
@@ -44,7 +44,7 @@
 
 ## Workforce examples
 - **Firm, internal (SWP), dark ring card:** *Headline:* "Succession coverage rose 14 points in a year but is still short of the 75% target". *Subtitle:* "Critical roles with at least one ready-now successor, Mar 2026 (% of 410 roles)". *Data:* talent-review and succession records in the HCM system. Ring at 62% with a target tick at 75%, the sentence "254 of 410 critical roles now have at least one ready-now successor", and the delta "+14 pts vs. Mar 2025 (48%)".
-- **Team, internal, KPI row on white:** *Headline:* "Pharmacy Ops is filling more roles internally, and faster, but regrettable attrition is up". *Subtitle:* "Pharmacy Operations talent KPIs, FY26 year to date vs. FY25". *Data:* ATS requisitions plus HRIS movements and exits. Three cards: internal fill rate 41% (+6 pts, favorable teal), median time to fill 38 days (−5 days, favorable teal), regrettable attrition 6.8% (+0.9 pts, unfavorable orange).
+- **Team, internal, KPI row on white:** *Headline:* "Pharmacy Ops is filling more roles internally, and faster, but regrettable attrition is up". *Subtitle:* "Pharmacy Operations talent KPIs, FY26 year to date vs. FY25". *Data:* ATS requisitions plus HRIS movements and exits. Three cards: internal fill rate 41% (+6 pts, favorable green), median time to fill 38 days (−5 days, favorable green), regrettable attrition 6.8% (+0.9 pts, unfavorable orange).
 - **Sector, external, inline big number:** *Headline:* "Demand for healthcare-support talent will grow about three times faster than the US labor market". *Subtitle:* "Projected employment growth, healthcare support occupations vs. all occupations, US, 2024–2034 (%)". *Data:* a national occupational employment projection (government statistics agency). Big number "+12%" with the comparison "vs. +4% for all occupations" and one sentence on what it means for pharmacy-technician hiring; source and projection vintage in the footnote. (Illustrative figures.)
 
 ## Build it
@@ -122,7 +122,7 @@ KPI = mv.TOKENS["typography"]["roles"]["kpi"]                    # Bold 700, 56 
 kpis = [("Internal fill rate", 41, 35, ".0f", "%", True, "of open Pharmacy Ops roles were filled<br>by internal candidates"),
         ("Median time to fill", 38, 43, ".0f", " days", False, "from requisition approval to accepted<br>offer, all Pharmacy Ops roles"),
         ("Regrettable attrition", 6.8, 5.9, ".1f", "%", False, "of high performers left voluntarily,<br>trailing 12 months")]
-good, bad = C.positive_text, C.negative_text                      # teal good / orange bad, text-safe on white
+good, bad = C.positive_text, C.negative_text                      # green good / orange bad, text-safe on white
 
 fig = go.Figure()
 for i, (name, val, prior, fmt, suffix, up_good, context) in enumerate(kpis):
@@ -153,7 +153,7 @@ For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, directi
 1. Install Libre Franklin from `fonts/LibreFranklin`, and the McKesson Data Viz theme colors from `dist/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
 2. **Insert › Text Box**, type the number (e.g., `62%`). Set **Home › Font** to **Libre Franklin, Bold, 54 pt**, with **Font Color › More Colors › Hex 143359** (Navy, theme slot *Text 2*). In **Format Shape › Text Options › Text Box**, set the left inset to 0 cm so the numeral aligns with the headline edge, and **Do not Autofit**.
 3. Add a second text box directly below: **one sentence**, Libre Franklin 14 pt, `#505050` ("254 of 410 critical roles now have at least one ready-now successor").
-4. Add the comparison: Libre Franklin Medium 12–14 pt, `#00737A` (favorable) or `#A75B00` (unfavorable), e.g., "+14 pts vs. Mar 2025". For a true minus, use **Insert › Symbol**, character code **2212**.
+4. Add the comparison: Libre Franklin Medium 12–14 pt, `#007A48` (favorable) or `#A75B00` (unfavorable), e.g., "+14 pts vs. Mar 2025". For a true minus, use **Insert › Symbol**, character code **2212**.
 5. Select the boxes, then **Shape Format › Align › Align Left** and **Group** (Ctrl+G). Copy the group to build a row of identical cards, and use **Align › Distribute Horizontally**.
 6. Live numbers in Excel: select a text box border, type `=Summary!B2` in the formula bar, and the box displays the cell (format the cell, not the box). Paste into PowerPoint with **Paste Special › Paste link** if it must update.
 
@@ -164,13 +164,13 @@ For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, directi
 9. Click the value slice on its own: **Fill › Solid › Hex 005A8C**. Click the remainder: **Hex DEDBD1**. On a dark card, use `66C4FF` and `5A7194`. Set **Border › No line** on both.
 10. Delete the chart title, legend and data labels. Set **Format Chart Area › Fill: No fill** and **Border: No line**.
 11. Lay the big-number text box over the ring's center (**Align Center** + **Align Middle**) and group them. For a target, draw a thin **Line** shape across the ring at the target angle (75% = 9 o'clock) and label it "Target 75%".
-12. Dark card: on the slide, **Design › Format Background › Solid fill › Hex 0B3266**. Set the text to white, the ring to `66C4FF` / `5A7194` and the favorable delta to `00AF9D`. Keep a source line (9 pt, white) on the card.
+12. Dark card: on the slide, **Design › Format Background › Solid fill › Hex 0B3266**. Set the text to white, the ring to `66C4FF` / `5A7194` and the favorable delta to `00AF68`. Keep a source line (9 pt, white) on the card.
 13. In PowerPoint, paste the ring with **Home › Paste › Use Destination Theme & Embed Workbook** so the number stays editable, and keep **≤ 2 big numbers per live slide**.
 
 ### Power BI
 - Import [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**). Its **`callout` text class** (Libre Franklin 32, Navy `#143359`) styles Card values by default. Raise **Format › Callout value** to 40–54. The theme sets the callout face to Libre Franklin Bold, falling back to Segoe UI Bold where Libre Franklin isn't installed, so the numeral is bold everywhere.
 - **Card (new)** visual: callout value = the measure. Use the visual **title** for the metric name and **Reference labels** for the comparison (e.g., `Δ vs PY = [Fill rate] - [Fill rate PY]`, formatted `+0" pts";−0" pts"`). Add the context sentence as a dynamic subtitle measure, e.g., `FORMAT([Roles covered], "#,0") & " of " & FORMAT([Critical roles], "#,0") & " critical roles have a ready-now successor"`.
-- **KPI** visual (number + trend + target): **Indicator** = the measure, **Trend axis** = month, **Target** = the target or prior-year measure. Under **Format › Colors**, set Good `#00AF9D`, Neutral `#B4B0A5`, Bad `#EF8200`, and set the direction (**High is good** / **Low is good**) per metric.
+- **KPI** visual (number + trend + target): **Indicator** = the measure, **Trend axis** = month, **Target** = the target or prior-year measure. Under **Format › Colors**, set Good `#00AF68`, Neutral `#B4B0A5`, Bad `#EF8200`, and set the direction (**High is good** / **Low is good**) per metric.
 - Ring: use a **Donut chart** with two measures (`Value`, `1 - Value`), **Slices › Inner radius** ≈ 80, colors `#005A8C` / `#DEDBD1`, labels and legend off, and a Card with a transparent background on top. Avoid the built-in half-circle **Gauge** unless min = 0, max = 100% and the target is shown.
 - Suppress small groups at the source: `Fill rate (safe) = IF([Requisitions] < 10, BLANK(), [Fill rate])`.
 
@@ -192,7 +192,7 @@ ggplot(ring, aes(x = 2, y = pct, fill = part)) +
   annotate("text", x = 0.5, y = 0, label = paste0(value, "%"), colour = "white", size = 40 / .pt,
            fontface = "bold", family = "Libre Franklin") +         # kpi role: Bold; 54 pt on a full slide
   annotate("text", x = 0.5, y = 0, vjust = 4.2, label = sprintf("+%d pts vs. Mar 2025", value - prior),
-           colour = "#00AF9D", size = 4, fontface = "bold", family = "Libre Franklin") +
+           colour = "#00AF68", size = 4, fontface = "bold", family = "Libre Franklin") +
   coord_polar(theta = "y", start = 0, direction = 1) +            # 12 o'clock, clockwise
   scale_x_continuous(limits = c(0.5, 2.7)) +
   scale_fill_manual(values = c(done = focus_dark, rest = context_dark), guide = "none") +

@@ -63,6 +63,11 @@ def build_css() -> None:
             lines.append(f"  --mck-{group}-{k.replace('_', '-')}: {t['value']};")
     for i, hx in enumerate(CAT, 1):
         lines.append(f"  --mck-cat-{i}: {hx};")
+    for i, hx in enumerate(C["steps"]["values"], 1):
+        lines.append(f"  --mck-step-{i}: {hx};")
+    for k, t in C["status"].items():
+        if not k.startswith("$"):
+            lines.append(f"  --mck-status-{k.replace('_', '-')}: {t['value']};")
     for name, ramp in C["sequential"].items():
         for i, hx in enumerate(ramp, 1):
             lines.append(f"  --mck-seq-{name}-{i}: {hx};")
@@ -313,8 +318,11 @@ mck_colors <- list(
   positive = "{v('semantic.positive')}", negative = "{v('semantic.negative')}",
   text = "{v('text.primary')}", muted = "{v('text.muted')}", headline = "{v('text.headline')}",
   grid = "{v('chart.grid')}", axis = "{v('chart.axis')}", annotation = "{v('chart.annotation')}",
-  surface_subtle = "{v('surface.subtle')}", negative_text = "{v('semantic.negative_text')}"
+  surface_subtle = "{v('surface.subtle')}", negative_text = "{v('semantic.negative_text')}",
+  positive_text = "{v('semantic.positive_text')}", title = "{v('text.title')}"
 )
+mck_steps <- c({", ".join(f'"{h}"' for h in C["steps"]["values"])})   # ordered process stages, not data magnitude
+mck_status <- c({", ".join(f'{k} = "{t["value"]}"' for k, t in C["status"].items() if not k.startswith("$"))})   # RAG: status only, with symbol + word
 mck_categorical <- c({cat})
 mck_sequential  <- c({seq})
 mck_sequential_orange <- c({", ".join(f'"{h}"' for h in C["sequential"]["orange"])})

@@ -27,6 +27,8 @@ FONT = _T["family"]["primary"]
 CATEGORICAL: list[str] = _C["categorical"]["values"]
 SEQUENTIAL: dict[str, list[str]] = _C["sequential"]
 DIVERGING: list[str] = _C["diverging"]["orange_blue"]["values"]
+STEPS: list[str] = _C["steps"]["values"]            # ordered process stages (blue to green), not data magnitude
+STATUS: dict[str, dict] = {k: v for k, v in _C["status"].items() if not k.startswith("$")}   # RAG: status only
 
 colors = SimpleNamespace(
     **{k: t["value"] for k, t in TOKENS["brand"]["core"].items()},
@@ -36,6 +38,7 @@ colors = SimpleNamespace(
     text=_C["text"]["primary"]["value"],
     text_muted=_C["text"]["muted"]["value"],
     headline=_C["text"]["headline"]["value"],
+    title=_C["text"]["title"]["value"],
     surface_subtle=_C["surface"]["subtle"]["value"],
     surface_dark=_C["surface"]["dark"]["value"],
 )

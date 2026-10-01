@@ -167,3 +167,21 @@ def test_lint_prints_on_a_console_that_cannot_encode_symbols(monkeypatch):
     found = mv.lint(fig)                                                 # findings contain "≤"; must not raise
     assert any(f.rule == "pie-max-5" for f in found)
     plt.close(fig)
+
+
+def test_status_colors_are_allowed_on_a_tracker_but_amber_is_not_a_series_color():
+    fig, ax = plt.subplots()
+    s = mv.STATUS
+    ax.scatter([0, 1, 2, 3], [0, 0, 0, 0], s=200,
+               color=[s["on_track"]["value"], s["at_risk"]["value"], s["off_track"]["value"], s["not_started"]["value"]])
+    mv.titles(fig, "Two of four workstreams are at risk or off track", "Workstream status, Mar 2026")
+    mv.source(fig, "Source: PMO tracker (synthetic data for illustration)")
+    found = mv.lint(fig, quiet=True)
+    assert not [f for f in found if f.rule in ("no-red-green", "do-not-use")], found
+    assert any(f.rule == "status-colors" for f in found)
+    plt.close(fig)
+
+    fig, ax = plt.subplots()                                   # amber as a plain series color is still an error
+    ax.bar([0, 1], [3, 4], color=[s["at_risk"]["value"], C.focus])
+    assert any(f.rule == "do-not-use" for f in mv.lint(fig, quiet=True))
+    plt.close(fig)

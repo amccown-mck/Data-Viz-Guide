@@ -24,13 +24,13 @@ If you are resuming unfinished work on the kit, read [`ROADMAP.md`](ROADMAP.md) 
 |---|---|
 | Insight headline | A full sentence with a verb that states the "so what", ideally with a number. ≤ 2 lines, sentence case, no final period. Every claim is visibly supported by the chart. |
 | Neutral subtitle | Metric, unit, scope and period ("Voluntary attrition by job family, FY26 (%)"). No opinions. |
-| Highlight logic | Grey context (`chart.context`), blue focus (`chart.focus`) for what the headline names, and an optional navy accent (`chart.accent`) for the single exception (against a light-blue series, `chart.focus_light`, in the uniform pattern). At most 2 highlighted items. **Orange means "worse"**: use it (`semantic.negative`) only for below target, shrinking or a shortfall, never as a plain highlight. Amber is never used. |
-| Categorical colors | Only when categories must be told apart. At most 6, in the fixed token order; group the tail into "Other". |
+| Highlight logic | Grey context (`chart.context`), blue focus (`chart.focus`) for what the headline names, and an optional navy accent (`chart.accent`) for the single exception (against a light-blue series, `chart.focus_light`, in the uniform pattern). At most 2 highlighted items. **Orange means "worse"**: use it (`semantic.negative`) only for below target, shrinking or a shortfall, never as a plain highlight. **Green means "better"** (`semantic.positive`), always with ▲▼ or words. **Red/amber/green only for status** (`color.status`: trackers, roadmaps), each with its symbol and word, never for data series. |
+| Categorical colors | Only when categories must be told apart. At most 6, in the fixed token order (blue, teal, navy, bright blue, mint, orange last); group the tail into "Other". Ordered process stages use `color.steps` (blue to green). |
 | Direct labels | Label bar ends, line ends and segments in place. A legend only when labels would collide, placed top-left. When values are labelled, delete the value axis and gridlines. |
 | Honest scales | Bars start at zero. Bubble **area** ∝ value. No dual axes. Small multiples share a scale. |
 | Source line | "Source: system, as-of date, population", bottom-left. Footnotes define metrics. |
 | People data | No group under **10 people**: not in marks, labels, tooltips, filters or drill-downs. Protected attributes only for approved, aggregated analyses. Forecasts are labelled as estimates and show a range. |
-| Accessibility | Text ≥ 4.5:1 contrast, nothing below 9 pt / 11 px, never color alone, no red vs. green. Provide alt text (headline + key numbers). |
+| Accessibility | Text ≥ 4.5:1 contrast, nothing below 9 pt / 11 px, never color alone, no red vs. green in data. Provide alt text (headline + key numbers). |
 
 ### Platform recipes
 
