@@ -30,9 +30,10 @@ PAGES = [
     ("index", "Overview", "Overview"),
     ("fundamentals", "Fundamentals", "Fundamentals"),
     ("magnitude", "Magnitude", "Magnitude"),
+    ("part-to-whole", "Part-to-whole", "Part-to-whole"),
 ]
 # Sections planned but not written yet: shown in the nav, greyed out.
-COMING = ["Part-to-whole", "Change over time", "Ranking", "Distribution", "Correlation", "Flows", "Geo-spatial",
+COMING = ["Change over time", "Ranking", "Distribution", "Correlation", "Flows", "Geo-spatial",
           "Single number", "Formats", "Toolkit"]
 
 LAYOUT = """<!doctype html>

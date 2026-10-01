@@ -1,0 +1,386 @@
+<section class="spread" id="stacked-bar">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Stacked</b> bar chart</h2>
+    <div class="defbox">Part-to-whole charts show how a whole breaks into its parts, and how each part relates to the total.</div>
+    <p>A 100% stacked bar compares the mix of several wholes at once. Color only the segment the headline is about, and put it on the baseline or at the end of each bar.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Five segments at most; group the rest as "Other"</li>
+      <li>White separators between segments</li>
+      <li>Labels inside segments that fit; key top-left in stack order</li>
+      <li>Sort the bars by the segment that matters</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Names the part and how far it stands out.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Metric, unit, scope, period.</span></li>
+        <li><span class="mk">3</span><span><b>The part that matters</b>One segment in blue, at the end of every bar.</span></li>
+        <li><span class="mk">4</span><span><b>Grey context</b>Two greys for the other parts.</span></li>
+        <li><span class="mk">5</span><span><b>Labels in the segments</b>Where they fit; navy on grey, white on blue.</span></li>
+        <li><span class="mk">6</span><span><b>Key in stack order</b>Top-left, left to right as the segments run.</span></li>
+        <li><span class="mk">7</span><span><b>Echo the value</b>The story segment's value at the bar end, bold for the focus bar.</span></li>
+        <li><span class="mk">8</span><span><b>Sorted by the story</b>Bars ordered by the blue segment, not alphabetically.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define the parts.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:mix_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:mix_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:stack_anatomy|min}}
+        <p class="card-foot">Contingent = agency, contract and statement-of-work workers paid through the vendor-management system.<br>Source: Workday HCM and VMS (synthetic data for illustration), as of 31 Mar 2026; U.S. workers<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="stacked-variants">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Stacked bar</b> variants</h2>
+    <p class="lede">Same rules: one part in color, the rest grey, labels in place.</p>
+    <h3>When a stack is the wrong chart</h3>
+    <ul>
+      <li>One whole with up to five parts: a <strong>donut</strong> or a single bar</li>
+      <li>How a total changes step by step: a <strong>waterfall</strong></li>
+      <li>Many parts or a hierarchy: a <strong>treemap</strong></li>
+      <li>Comparing the parts themselves across groups: <strong>grouped bars</strong> or <strong>small multiples</strong>; only the baseline segment of a stack compares cleanly</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Stacked columns with totals</h4>
+        <p class="note">When the total matters too. The FY30 Data &amp; AI gap of {{text:plan_gap}} FTE: reskilling (on the baseline) closes {{text:plan_build_share}}.</p>
+        {{exhibit:stack_var_absolute}}
+      </div>
+      <div class="tile">
+        <h4>Diverging stacked bars</h4>
+        <p class="note">Survey scales. Unfavorable in orange left of zero (it means worse), favorable in blue, neutral split across the middle.</p>
+        {{exhibit:stack_var_diverging}}
+      </div>
+      <div class="tile">
+        <h4>Marimekko</h4>
+        <p class="note">Width and height both carry data: column width is each function's workforce, height its mix. Powerful, but it needs explaining.</p>
+        {{exhibit:stack_var_marimekko}}
+      </div>
+      <div class="tile">
+        <h4>Mix over time</h4>
+        <p class="note">A few periods as 100% columns, the tracked segment on the baseline so its change reads directly.</p>
+        {{exhibit:stack_var_time}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="stacked-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Stacked bar</b> best practice</h2>
+    <p class="lede">Stacks are easy to make and easy to misread. Four rules keep them honest.</p>
+    <p><strong>The part that matters on the baseline.</strong> Only segments that share a starting line can be compared by eye.</p>
+    <p><strong>Five segments at most.</strong> More slices turn a bar into a barcode. Keep the parts the story needs and group the rest.</p>
+    <p><strong>Label in place; key in stack order.</strong> If a key is needed, put it top-left, in the same order as the segments.</p>
+    <p><strong>One order in every bar.</strong> Never re-sort segments within each bar.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>The part that matters on the baseline</h4><div class="pair">
+        <div>{{exhibit:stack_bp_base_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A floating segment can't be compared across bars.</span></div></div>
+        <div>{{exhibit:stack_bp_base_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>On the baseline, every bar starts level.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Five segments at most</h4><div class="pair">
+        <div>{{exhibit:stack_bp_many_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Eight colored slices nobody can follow.</span></div></div>
+        <div>{{exhibit:stack_bp_many_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The part in blue, the rest in grey.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Label in place, key in order</h4><div class="pair">
+        <div>{{exhibit:stack_bp_key_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A bottom legend in a different order.</span></div></div>
+        <div>{{exhibit:stack_bp_key_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Values inside, key top-left in stack order.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>One order in every bar</h4><div class="pair">
+        <div>{{exhibit:stack_bp_order_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Segments re-sorted inside each bar.</span></div></div>
+        <div>{{exhibit:stack_bp_order_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The same order everywhere.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="waterfall">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Waterfall</b> chart</h2>
+    <p class="lede">A waterfall shows how a starting total becomes an ending total, one driver at a time.</p>
+    <p>It is a stacked column chart with an invisible spacer series that floats each driver at the running total. Use it for labor cost bridges, headcount bridges and budget-to-actual walks.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Totals in navy; drivers grey; the drivers the headline names in blue</li>
+      <li>Thin light connectors between bars</li>
+      <li>Signed labels on drivers (true minus, explicit +); bold totals</li>
+      <li>If the axis starts above zero, mark the break and say so</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Sizes what the named drivers did to the total.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>From and to, with the unit.</span></li>
+        <li><span class="mk">3</span><span><b>Totals in navy</b>Start, end and any subtotal.</span></li>
+        <li><span class="mk">4</span><span><b>Marked break</b>The axis starts at $3,900M; white slashes say so.</span></li>
+        <li><span class="mk">5</span><span><b>The drivers that matter</b>In blue; label bold.</span></li>
+        <li><span class="mk">6</span><span><b>Thin connectors</b>Light grey, so the bars stay dominant.</span></li>
+        <li><span class="mk">7</span><span><b>Signed labels</b>+139, −58: direction without color.</span></li>
+        <li><span class="mk">8</span><span><b>Grey context</b>Every other driver, in logical order.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote</b>States the axis break.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:wf_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:wf_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:wf_anatomy|min}}
+        <p class="card-foot">Value axis starts at $3,900M (break marks on the totals) so the drivers are readable.<br>Source: Finance labor cost model (synthetic data for illustration), FY26<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="waterfall-variants">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Waterfall</b> variants</h2>
+    <p class="lede">The same build, turned or recolored for the job.</p>
+    <p><strong>Color by direction only when direction is the point.</strong> In a headcount bridge, additions in blue and losses in orange read instantly, because orange means "worse". In a cost bridge the default stays grey with a blue highlight.</p>
+    <p class="small">Excel's built-in Waterfall chart is vertical only. For horizontal waterfalls or per-bar colors, build a stacked bar with a transparent spacer series (see the cookbook).</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Horizontal waterfall</h4>
+        <p class="note">Long driver names, narrow layouts and phones.</p>
+        {{exhibit:wf_var_horizontal}}
+      </div>
+      <div class="tile">
+        <h4>Colored by direction</h4>
+        <p class="note">Frontline headcount bridge: voluntary exits equal {{text:hc_exit_share}} of external hires.</p>
+        {{exhibit:wf_var_direction}}
+      </div>
+      <div class="tile">
+        <h4>With a subtotal</h4>
+        <p class="note">A light-blue subtotal separates cost growth from the savings that offset it.</p>
+        {{exhibit:wf_var_subtotal}}
+      </div>
+      <div class="tile">
+        <h4>Distribution waterfall</h4>
+        <p class="note">Contributions to one total instead of steps in time: data engineering is {{text:dist_wf_first}} of the FY30 gap.</p>
+        {{exhibit:wf_var_distribution}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="waterfall-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Waterfall</b> best practice</h2>
+    <p class="lede">The bars carry the story; everything else stays quiet.</p>
+    <p><strong>Thin connectors.</strong> Heavy dark connectors compete with the bars. Use hairlines in light grey.</p>
+    <p><strong>No red and green.</strong> They fail for color-blind readers and aren't McKesson colors. Grey drivers with a blue highlight, or blue and orange when direction is the story.</p>
+    <p><strong>Mark a broken axis.</strong> Totals often dwarf the drivers. Starting the axis above zero is allowed here, and only here, if the break is drawn and footnoted.</p>
+    <p><strong>Group the small steps.</strong> Keep the drivers the story needs; fold the rest together.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Connector lines</h4><div class="pair">
+        <div>{{exhibit:wf_bp_conn_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Heavy, dark connectors.</span></div></div>
+        <div>{{exhibit:wf_bp_conn_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Thin, light grey.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Coloring the bars</h4><div class="pair">
+        <div>{{exhibit:wf_bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Green up, red down.</span></div></div>
+        <div>{{exhibit:wf_bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey drivers; the named ones blue.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>A broken axis</h4><div class="pair">
+        <div>{{exhibit:wf_bp_break_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Cut totals with no warning.</span></div></div>
+        <div>{{exhibit:wf_bp_break_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Break marks and a note.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Group the small steps</h4><div class="pair">
+        <div>{{exhibit:wf_bp_group_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Ten narrow drivers to decode.</span></div></div>
+        <div>{{exhibit:wf_bp_group_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Five steps, savings combined.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="treemap">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Treemap</b></h2>
+    <p class="lede">Nested rectangles whose area is proportional to value. A treemap shows many parts, or a hierarchy, in one compact block.</p>
+    <p>Use it when there are too many parts for a donut or a stack (ten to thirty roles, sites or skills) and the point is which few dominate.</p>
+    <p>Don't use it when readers need to compare similar sizes precisely, or there are only a handful of parts: a sorted bar is clearer.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Squarified layout, largest top-left</li>
+      <li>Thin, even white gutters</li>
+      <li>Grey tiles; the ones the headline names in blue</li>
+      <li>Name and value inside each tile that fits</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Share of the whole held by the named few.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>What area measures, with the unit.</span></li>
+        <li><span class="mk">3</span><span><b>Focus in blue</b>The two roles the headline names.</span></li>
+        <li><span class="mk">4</span><span><b>Grey context</b>Every other role, the same grey.</span></li>
+        <li><span class="mk">5</span><span><b>Smallest last</b>Bottom-right. Tiles too small for a label get none; list them in a footnote if they matter.</span></li>
+        <li><span class="mk">6</span><span><b>Largest first</b>Top-left, flowing to the smallest; labels top-left inside each tile.</span></li>
+        <li><span class="mk">7</span><span><b>Footnote and source</b>Define the measure.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:tm_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:tm_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:tm_anatomy|min}}
+        <p class="card-foot">Exposed capacity = headcount × share of task hours exposed to gen AI, from an external task taxonomy.<br>Source: Workday HCM and task inventory (synthetic data for illustration), FY26<span class="mk">7</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="treemap-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Treemap</b> best practice</h2>
+    <p class="lede">A treemap works when it reads as one shape that flows from large to small.</p>
+    <p><strong>Largest to smallest.</strong> Don't arrange tiles alphabetically or by an org grouping that breaks the flow.</p>
+    <p><strong>Labels inside.</strong> No label bands or boxes over the tiles; they distort the areas. If a tile can't hold its label, leave it unlabelled or label it outside.</p>
+    <p><strong>Even padding.</strong> Uneven gaps make similar tiles look different.</p>
+    <p><strong>Few parts? Use a bar.</strong> Areas are harder to compare than lengths.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Arrange by size</h4><div class="pair">
+        <div>{{exhibit:tm_bp_order_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Alphabetical strips.</span></div></div>
+        <div>{{exhibit:tm_bp_order_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Largest top-left.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Labelling</h4><div class="pair">
+        <div>{{exhibit:tm_bp_label_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Label bands over the tiles.</span></div></div>
+        <div>{{exhibit:tm_bp_label_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Inside, top-left.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Padding</h4><div class="pair">
+        <div>{{exhibit:tm_bp_pad_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Uneven gaps.</span></div></div>
+        <div>{{exhibit:tm_bp_pad_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Thin, even gutters.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Few parts</h4><div class="pair">
+        <div>{{exhibit:tm_bp_bar_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Four similar tiles.</span></div></div>
+        <div>{{exhibit:tm_bp_bar_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A sorted bar ranks them.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="donut">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Donut</b> and pie</h2>
+    <p class="lede">A donut shows one whole split into a few parts. Prefer it to a pie: readers follow the arc length around the ring, and the center holds the total.</p>
+    <p>Use it for one whole and at most five parts. To compare several wholes, use 100% stacked bars; for more parts, a bar or treemap.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Five segments at most; "Other" last</li>
+      <li>Largest first, clockwise from 12 o'clock</li>
+      <li>Hole about 60% of the diameter; white separators</li>
+      <li>Labels and values outside; no legend</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>The share, and what it means for the plan.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>The whole, the unit, the year.</span></li>
+        <li><span class="mk">3</span><span><b>Start at 12</b>Largest first, then clockwise.</span></li>
+        <li><span class="mk">4</span><span><b>The part that matters</b>In blue; the rest grey.</span></li>
+        <li><span class="mk">5</span><span><b>Total in the center</b>Light weight, large.</span></li>
+        <li><span class="mk">6</span><span><b>Labels outside</b>Name and share, beside each segment.</span></li>
+        <li><span class="mk">7</span><span><b>White separators</b>Thin gaps keep segments distinct.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>Define the parts.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:donut_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">Planned sources to close the Data &amp; AI capability gap, {{text:plan_year}} (% of {{text:plan_gap}} FTE)<span class="mk">2</span></p>
+        {{exhibit:donut_anatomy|min}}
+        <p class="card-foot">Base scenario. Build = reskilling current employees; buy = external hires; borrow = contractors and partners; automate = roles removed by automation.<br>Source: Strategic workforce planning model (synthetic data for illustration), Mar 2026<span class="mk">8</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="donut-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Donut</b> best practice</h2>
+    <p class="lede">People judge length faster than angle or area, which is why the donut beats the pie.</p>
+    <p><strong>Donut over pie.</strong> The ring turns angles into arc lengths, and the hole holds the total.</p>
+    <p><strong>Labels outside.</strong> Squeezed labels on the ring are hard to read; put names and values outside.</p>
+    <p><strong>Few segments.</strong> Group the smallest into "Other".</p>
+    <p><strong>Largest first, clockwise from 12.</strong> Don't mix small and large at random.</p>
+    <p class="small">Progress rings and dials for a single percentage are in Single number.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Donut over pie</h4><div class="pair">
+        <div>{{exhibit:donut_bp_pie_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Angles and areas.</span></div></div>
+        <div>{{exhibit:donut_bp_pie_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Arc lengths on a ring.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Labelling</h4><div class="pair">
+        <div>{{exhibit:donut_bp_label_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Labels squeezed onto the ring.</span></div></div>
+        <div>{{exhibit:donut_bp_label_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Outside, with the share.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Many small segments</h4><div class="pair">
+        <div>{{exhibit:donut_bp_many_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Nine slices, nine colors.</span></div></div>
+        <div>{{exhibit:donut_bp_many_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The story, plus "Other".</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Order of segments</h4><div class="pair">
+        <div>{{exhibit:donut_bp_order_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>No order, odd start.</span></div></div>
+        <div>{{exhibit:donut_bp_order_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Largest first from 12.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="part-to-whole-build">
+  <div class="rail">
+    <p class="eyebrow">Part-to-whole</p>
+    <h2 class="title"><b>Build</b> part-to-whole charts</h2>
+    <p class="lede">Every tool can make these natively. The settings below are the ones that matter; tested code and click-by-click steps are on the cookbook pages.</p>
+    <p><a href="../../docs/cookbook/stacked-bar.md">stacked-bar.md</a> · <a href="../../docs/cookbook/waterfall.md">waterfall.md</a> · <a href="../../docs/cookbook/treemap.md">treemap.md</a> · <a href="../../docs/cookbook/donut-pie.md">donut-pie.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Parts sum to the whole (100%, or the end total)</li>
+      <li>Five parts at most; "Other" last</li>
+      <li>One part in color, matching the headline</li>
+      <li>Waterfall axis break marked and footnoted</li>
+      <li>No group under {{text:min_n}} people, in any part</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Stacked:</strong> Stacked or 100% Stacked Bar, Gap Width 50%, Overlap 100%, white 1.5 pt borders; move the story series first or last in Select Data. <strong>Waterfall:</strong> Insert › Waterfall, then right-click each total › <em>Set as Total</em>; drivers grey, totals navy. <strong>Treemap:</strong> Insert › Hierarchy › Treemap; labels <em>Overlapping</em>, not Banner. <strong>Donut:</strong> Doughnut, angle of first slice 0°, hole 62%, data sorted descending.</p></div>
+      <div class="platform"><h5>Power BI</h5><p>Native 100% stacked bar, Waterfall, Treemap and Donut visuals all take the theme. Set the story color per series or with a field-value color measure; legend top-left or off; data labels on. The native waterfall can't color single bars or break the axis: use a stacked column with a transparent spacer measure when you need that.</p></div>
+      <div class="platform"><h5>Python</h5><div><p><code>ax.barh(..., left=running_total, edgecolor="white")</code> for stacks; the waterfall, squarified treemap and donut recipes in the cookbook use only matplotlib and <code>mckviz</code>. Plotly has native <code>go.Waterfall</code>, <code>go.Treemap</code> and <code>go.Pie(hole=0.6)</code>.</p>
+<pre class="snip">colors = mv.highlight(parts, focus="Contingent")          # one part blue, rest grey
+mv.lint(fig)    # flags > 6 colors, legends, and bars that don't start at zero</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plotly with <code>MCK_PLOTLY_TEMPLATE</code>: <code>barmode: "stack"</code>, <code>waterfall</code> and <code>treemap</code> traces. Read colors from <code>var(--mck-chart-focus)</code> and <code>var(--mck-chart-context)</code>.</p></div>
+      <div class="platform"><h5>R</h5><p><code>geom_col(position = "fill")</code> for 100% stacks; <code>treemapify::geom_treemap()</code> for treemaps; waterfalls with <code>geom_rect()</code>. Colors from <code>mck_highlight()</code>.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>

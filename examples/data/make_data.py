@@ -102,10 +102,50 @@ def skills_demand_rank() -> pd.DataFrame:
 
 
 def workforce_mix() -> pd.DataFrame:
-    """Function level. Share of workforce by employment type (%)."""
-    rows = [("Distribution", 71, 22, 7), ("Pharmacy Ops", 83, 12, 5), ("Technology", 58, 12, 30),
-            ("Customer Care", 64, 30, 6), ("Corporate", 88, 4, 8)]
-    return pd.DataFrame(rows, columns=["function", "employee_ft_pct", "employee_pt_pct", "contingent_pct"])
+    """Function level. Share of workforce by employment type (%), and total workers (for Marimekko widths)."""
+    rows = [("Distribution", 71, 22, 7, 14200), ("Pharmacy Ops", 83, 12, 5, 9600), ("Technology", 58, 12, 30, 4100),
+            ("Customer Care", 64, 30, 6, 3400), ("Corporate", 88, 4, 8, 5300)]
+    return pd.DataFrame(rows, columns=["function", "employee_ft_pct", "employee_pt_pct", "contingent_pct", "workers"])
+
+
+def tech_mix_by_fy() -> pd.DataFrame:
+    """Function level over time. Technology workforce by employment type, FY22-FY26 (%)."""
+    contingent = [18, 21, 24, 27, 30]
+    pt = [10, 11, 11, 12, 12]
+    return pd.DataFrame({"fiscal_year": ["FY22", "FY23", "FY24", "FY25", "FY26"],
+                         "employee_ft_pct": [100 - c - p for c, p in zip(contingent, pt)],
+                         "employee_pt_pct": pt, "contingent_pct": contingent})
+
+
+def data_ai_gap_plan() -> pd.DataFrame:
+    """Firm level SWP plan. How the Data & AI capability gap (demand - internal supply) is closed: build/buy/borrow/automate."""
+    sd = data_ai_supply_demand().set_index("year")
+    shares = {2026: (0.19, 0.59, 0.18, 0.04), 2028: (0.33, 0.50, 0.13, 0.04), 2030: (0.40, 0.47, 0.10, 0.03)}
+    rows = []
+    for yr, (build, buy, borrow, auto) in shares.items():
+        gap = int(sd.demand_fte[yr] - sd.internal_supply_fte[yr])
+        b, bo, a = round(gap * build), round(gap * borrow), round(gap * auto)
+        rows.append((f"FY{yr % 100}", gap, b, gap - b - bo - a, bo, a))
+    return pd.DataFrame(rows, columns=["fiscal_year", "gap_fte", "build_fte", "buy_fte", "borrow_fte", "automate_fte"])
+
+
+def engagement_items() -> pd.DataFrame:
+    """Team level, internal survey. Share of respondents unfavorable / neutral / favorable by item, Distribution (%)."""
+    rows = [("I have the tools to do my job well", 31, 22, 47), ("My workload is manageable", 38, 24, 38),
+            ("I see a path to grow here", 27, 25, 48), ("My manager supports my development", 14, 18, 68),
+            ("I feel I belong on my team", 9, 17, 74), ("I would recommend McKesson as a place to work", 18, 23, 59)]
+    return pd.DataFrame(rows, columns=["item", "unfavorable_pct", "neutral_pct", "favorable_pct"])
+
+
+def headcount_bridge() -> pd.DataFrame:
+    """Firm level. Headcount bridge FY25 -> FY26 for frontline job families (people)."""
+    rows = [("FY25 headcount", 18000, "total"), ("External hires", 4660, "delta"), ("Internal moves in", 520, "delta"),
+            ("Voluntary exits", -4543, "delta"), ("Involuntary exits", -610, "delta"), ("Internal moves out", -330, "delta"),
+            ("FY26 headcount", None, "total")]
+    df = pd.DataFrame(rows, columns=["step", "people", "kind"])
+    df.loc[df.index[-1], "people"] = df.people.iloc[:-1].sum()
+    df["people"] = df.people.astype(int)
+    return df
 
 
 def compa_ratio_individuals() -> pd.DataFrame:
@@ -171,6 +211,10 @@ def internal_fill_by_fy() -> pd.DataFrame:
 def main() -> None:
     sets = {
         "hiring_flow_by_family": hiring_flow_by_family(),
+        "tech_mix_by_fy": tech_mix_by_fy(),
+        "data_ai_gap_plan": data_ai_gap_plan(),
+        "engagement_items": engagement_items(),
+        "headcount_bridge": headcount_bridge(),
         "internal_fill_by_fy": internal_fill_by_fy(),
         "attrition_by_job_family": attrition_by_job_family(),
         "data_ai_supply_demand": data_ai_supply_demand(),
