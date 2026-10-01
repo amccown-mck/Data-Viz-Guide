@@ -13,6 +13,7 @@ Pages are HTML fragments made of <section class="spread" id="..."> blocks. Place
     {{html:key}}           a token-driven snippet: swatches, role tables, type specimen (exhibits.HTML)
     {{link:spread-id}}     a link to any spread, resolved for each output (page.html#id, or #id in a single file)
     {{page:spread-id}}     that spread's page number in the PDF
+    {{version}}            the kit version, from the VERSION file at the repo root
     {{folio}}              the running footer with the page number
 Run tokens/build.py first after a token change; the guide reads colors from dist/web/mck-viz.css.
 Set CHROME=<path> if Chrome or Edge isn't found automatically.
@@ -35,6 +36,7 @@ PDF = OUT / "McKesson-DataViz-Guide.pdf"
 STANDALONE = OUT / "McKesson-DataViz-Guide.html"
 PRINT_OUT = ROOT / "dist" / "print"
 REPO_URL = "https://github.com/amccown-mck/Data-Viz-Guide"   # kit files are linked here from the PDF and standalone file
+VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()   # the kit version, for {{version}}
 sys.path[:0] = [str(SRC)]
 
 # (file stem, nav label, folio section, kind). Order = reading order = PDF order.
@@ -163,6 +165,7 @@ def render(stem: str, section: str, svgs: dict, text: dict, snippets: dict, used
                 f'<span class="n">{page_of[sid]}</span></div>')
 
     out = re.sub(r"\{\{folio\}\}", folio, src)
+    out = out.replace("{{version}}", VERSION)
     out = re.sub(r"\{\{exhibit:([\w-]+)(?:\|(\w+))?\}\}", exhibit, out)
     out = re.sub(r"\{\{text:(\w+)\}\}", txt, out)
     out = re.sub(r"\{\{html:(\w+)\}\}", lambda m: snippets[m.group(1)], out)

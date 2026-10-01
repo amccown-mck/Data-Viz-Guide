@@ -49,7 +49,7 @@
 ## Build it
 
 ### Python — matplotlib + `mckviz`
-The snippet below is the no-boundary-file route: an **equal-area tile-grid map**, which also avoids the large-state bias of a choropleth. For **real state, county and world shapes without geopandas**, follow the guide's maps: `guide/geo_shapes.py` reads the public-domain TopoJSON in `guide/geodata/` (US states in Albers USA with Alaska and Hawaii insets, world countries for an Equal Earth projection, a county subset) and draws them with matplotlib; see `guide/ex_geo.py` for choropleths, bubble maps, world maps and zoom-ins with a locator. For real boundaries, install `geopandas` in your own environment, read a Census cartographic boundary file, reproject to EPSG:5070 (Albers), and call `gdf.plot(color=gdf["cls"].map(dict(enumerate(ramp))), edgecolor="white", linewidth=0.5)` with the same classes as below.
+The first snippet is the no-boundary-file route: an **equal-area tile-grid map**, which also avoids the large-state bias of a choropleth. For **real state, county and world shapes without geopandas**, use `mckviz.geo` (second snippet): it reads the public-domain TopoJSON that ships with the package (US states in Albers USA with Alaska and Hawaii insets, world countries for an Equal Earth projection, a North Texas county subset; sources and licenses in `python/mckviz/geodata/README.md`) and draws them with matplotlib. `geo.Map` also takes a path to your own TopoJSON. The guide's maps (`guide/ex_geo.py`) show choropleths, bubble maps, world maps and zoom-ins with a locator built the same way. With `geopandas` in your own environment, read a Census cartographic boundary file, reproject to EPSG:5070 (Albers), and call `gdf.plot(color=gdf["cls"].map(dict(enumerate(ramp))), edgecolor="white", linewidth=0.5)` with the same classes.
 
 ```python
 # verified runnable (from the repo root)
@@ -114,6 +114,58 @@ mv.titles(fig, "Four Sun Belt states have 1.7+ open pharmacy technician postings
 mv.source(fig, "Source: External job-postings and candidate-profile data; synthetic data for illustration only",
           footnote="Each tile is one state at equal size. Classes are even-width; the top and bottom classes are open-ended.")
 mv.save(fig, Path(tempfile.gettempdir()) / "map-tile-grid.png", dpi=200)
+```
+
+**Real state shapes with `mckviz.geo`** (no geopandas): the same classes on an Albers USA choropleth, Alaska and Hawaii inset. `geo.canvas` gives an axes whose units are the figure's points, so the map box, labels and key are all placed in points.
+
+```python
+# verified runnable (from the repo root)
+import tempfile
+from pathlib import Path
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from matplotlib.patches import Rectangle
+
+import mckviz as mv
+from mckviz import geo
+
+mv.use()
+C = mv.colors
+
+# Synthetic: open pharmacy-technician postings per qualified candidate, by state (a normalized rate).
+ratio = pd.read_csv("examples/data/talent_market_by_state.csv").set_index("state")["postings_per_candidate_q2_2026"]
+edges = [-np.inf, 0.8, 1.1, 1.4, 1.7, np.inf]
+labels = ["Under 0.8", "0.8–1.1", "1.1–1.4", "1.4–1.7", "1.7+"]
+ramp = [mv.SEQUENTIAL["blue"][i] for i in (0, 1, 2, 4, 5)]  # skip #009EFF: no text color reaches 4.5:1 on it
+cls = pd.cut(ratio, edges, labels=False, right=False).astype(int)
+tight = list(ratio[cls == 4].sort_values(ascending=False).index)
+words = {2: "Two", 3: "Three", 4: "Four", 5: "Five", 6: "Six"}
+
+fig = plt.figure(figsize=(10, 5.6))
+ax = geo.canvas(fig)                                          # data units = points, y up
+m = geo.Map("states-albers-10m.json", "states", (0, 0, 560, 380), key=geo.FIPS.get)
+m.draw(ax, {s: ramp[c] for s, c in cls.items()}, default=C.context_light, ec="white", lw=0.6)
+nudge = {"FL": (19, -14)}                                     # the panhandle pulls Florida's centre off the peninsula
+for s in tight:                                               # label only the states the headline names
+    x, y = m.centre(s)
+    dx, dy = nudge.get(s, (0, 0))
+    ax.text(x + dx, y + dy, f"{s}\n{ratio[s]:.2f}", ha="center", va="center", fontsize=9, fontweight="bold",
+            color=mv.text_on(ramp[4]), linespacing=1.1)
+for i, (lab, col) in enumerate(zip(labels[::-1], ramp[::-1])):  # class key, stacked high -> low
+    top = 330 - i * 18
+    ax.add_patch(Rectangle((590, top - 12), 12, 12, fc=col, ec=C.grid, lw=0.6))
+    ax.text(608, top - 6, lab, fontsize=10, color=C.text, va="center")
+ax.text(590, 352, "Postings per candidate", fontsize=10, color=C.text, fontweight="semibold")
+
+mv.titles(fig, f"{words[len(tight)]} Sun Belt states have 1.7+ open pharmacy technician postings per candidate",
+          "Open pharmacy technician postings per qualified candidate, by state, Q2 2026 (ratio)")
+mv.source(fig, "Source: External job-postings and candidate-profile data; synthetic data for illustration only",
+          footnote="Albers USA projection; Alaska and Hawaii not to scale. Classes are even-width and open-ended.")
+mv.save(fig, Path(tempfile.gettempdir()) / "map-states.png", dpi=200)
 ```
 
 ### Python — Plotly / HTML

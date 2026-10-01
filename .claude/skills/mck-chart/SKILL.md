@@ -5,3 +5,5 @@ description: Make a McKesson-standard chart or table from data, going from quest
 # McKesson chart workflow
 
 The canonical version of this skill is shared with GitHub Copilot. Read `.github/skills/mck-chart/SKILL.md` (from the repo root) and follow it step by step: question → chart type → build → headline → QA. Then hand back the chart brief and alt text it describes.
+
+That file is generated from `agents/skill/SKILL.template.md` by `tools/build_skill.py`, which also builds the portable copy for other repos and Claude.ai in `dist/skills/mck-chart/`. Edit the template, not the generated files.

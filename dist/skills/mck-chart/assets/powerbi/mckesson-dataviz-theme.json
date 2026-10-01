@@ -1,0 +1,172 @@
+{
+  "name": "McKesson Data Viz",
+  "dataColors": [
+    "#005A8C",
+    "#00AF9D",
+    "#143359",
+    "#009DFF",
+    "#05CE90",
+    "#EF8200",
+    "#B3ECFF",
+    "#B3E7E2",
+    "#B6E2FA",
+    "#66C4FF",
+    "#009EFF",
+    "#66CFC4"
+  ],
+  "foreground": "#505050",
+  "foregroundNeutralSecondary": "#737373",
+  "foregroundNeutralTertiary": "#B4B0A5",
+  "background": "#FFFFFF",
+  "backgroundLight": "#EFEDE7",
+  "backgroundNeutral": "#DEDBD1",
+  "tableAccent": "#005A8C",
+  "good": "#00AF68",
+  "neutral": "#B4B0A5",
+  "bad": "#EF8200",
+  "maximum": "#143359",
+  "center": "#EFEDE7",
+  "minimum": "#E6F3FB",
+  "hyperlink": "#0A5FBC",
+  "visitedHyperlink": "#5A7194",
+  "textClasses": {
+    "title": {
+      "fontSize": 14,
+      "fontFace": "Libre Franklin SemiBold, Segoe UI Semibold, wf_segoe-ui_semibold, helvetica, arial, sans-serif",
+      "color": "#143359"
+    },
+    "header": {
+      "fontSize": 14,
+      "fontFace": "Libre Franklin, Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif",
+      "color": "#143359"
+    },
+    "callout": {
+      "fontSize": 32,
+      "fontFace": "Libre Franklin Bold, Segoe UI Bold, wf_segoe-ui_bold, helvetica, arial, sans-serif",
+      "color": "#143359"
+    },
+    "label": {
+      "fontSize": 10,
+      "fontFace": "Libre Franklin, Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif",
+      "color": "#505050"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [
+          {
+            "show": true,
+            "fontFamily": "Libre Franklin SemiBold, Segoe UI Semibold, wf_segoe-ui_semibold, helvetica, arial, sans-serif",
+            "fontColor": {
+              "solid": {
+                "color": "#143359"
+              }
+            },
+            "fontSize": 14,
+            "bold": false,
+            "alignment": "left"
+          }
+        ],
+        "subTitle": [
+          {
+            "show": true,
+            "fontFamily": "Libre Franklin, Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif",
+            "fontColor": {
+              "solid": {
+                "color": "#505050"
+              }
+            },
+            "fontSize": 11
+          }
+        ],
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": false
+          }
+        ],
+        "dropShadow": [
+          {
+            "show": false
+          }
+        ],
+        "valueAxis": [
+          {
+            "gridlineColor": {
+              "solid": {
+                "color": "#E6E4DE"
+              }
+            },
+            "gridlineThickness": 1,
+            "labelColor": {
+              "solid": {
+                "color": "#737373"
+              }
+            },
+            "fontSize": 9,
+            "showAxisTitle": false
+          }
+        ],
+        "categoryAxis": [
+          {
+            "labelColor": {
+              "solid": {
+                "color": "#737373"
+              }
+            },
+            "fontSize": 9,
+            "showAxisTitle": false,
+            "gridlineShow": false
+          }
+        ],
+        "legend": [
+          {
+            "position": "TopLeft",
+            "labelColor": {
+              "solid": {
+                "color": "#505050"
+              }
+            },
+            "fontSize": 9,
+            "showTitle": false
+          }
+        ],
+        "labels": [
+          {
+            "color": {
+              "solid": {
+                "color": "#505050"
+              }
+            },
+            "fontSize": 9
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#EFEDE7"
+              }
+            },
+            "transparency": 0
+          }
+        ]
+      }
+    }
+  }
+}

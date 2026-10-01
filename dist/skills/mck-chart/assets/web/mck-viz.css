@@ -1,0 +1,191 @@
+/* GENERATED from tokens/tokens.json - do not edit by hand. */
+:root {
+  --mck-blue: #005A8C;
+  --mck-navy: #143359;
+  --mck-orange: #EF8200;
+  --mck-sand: #DEDBD1;
+  --mck-deep-navy: #0B3266;
+  --mck-sand-light: #EFEDE7;
+  --mck-text: #505050;
+  --mck-lime-light: #F7FCDC;
+  --mck-lime-mid: #E8F795;
+  --mck-lime-base: #D9F14E;
+  --mck-green-light: #B3E7D2;
+  --mck-green-mid: #66CFA4;
+  --mck-green-base: #00AF68;
+  --mck-green-dark: #00622C;
+  --mck-mint-light: #B4F0DE;
+  --mck-mint-mid: #69E2BC;
+  --mck-mint-base: #05CE90;
+  --mck-mint-dark: #008264;
+  --mck-teal-light: #B3E7E2;
+  --mck-teal-mid: #66CFC4;
+  --mck-teal-base: #00AF9D;
+  --mck-teal-dark: #00737A;
+  --mck-sky-light: #B3ECFF;
+  --mck-sky-mid: #66D8FF;
+  --mck-sky-base: #00BEFF;
+  --mck-sky-dark: #0074D0;
+  --mck-azure-light: #B6E2FA;
+  --mck-azure-mid: #66C4FF;
+  --mck-azure-base: #009EFF;
+  --mck-azure-dark: #0A5FBC;
+  --mck-amber-light: #FFE9B3;
+  --mck-amber-mid: #FFD366;
+  --mck-amber-base: #FFB500;
+  --mck-text-title: #005A8C;
+  --mck-text-headline: #143359;
+  --mck-text-primary: #505050;
+  --mck-text-muted: #737373;
+  --mck-text-inverse: #FFFFFF;
+  --mck-surface-default: #FFFFFF;
+  --mck-surface-subtle: #EFEDE7;
+  --mck-surface-dark: #0B3266;
+  --mck-chart-axis: #8C8C8C;
+  --mck-chart-grid: #E6E4DE;
+  --mck-chart-context: #B4B0A5;
+  --mck-chart-context-light: #DEDBD1;
+  --mck-chart-focus: #005A8C;
+  --mck-chart-focus-light: #66C4FF;
+  --mck-chart-accent: #143359;
+  --mck-chart-total: #143359;
+  --mck-chart-annotation: #143359;
+  --mck-chart-focus-on-dark: #66C4FF;
+  --mck-chart-context-on-dark: #5A7194;
+  --mck-semantic-positive: #00AF68;
+  --mck-semantic-positive-text: #007A48;
+  --mck-semantic-negative: #EF8200;
+  --mck-semantic-negative-text: #A75B00;
+  --mck-semantic-neutral: #B4B0A5;
+  --mck-cat-1: #005A8C;
+  --mck-cat-2: #00AF9D;
+  --mck-cat-3: #143359;
+  --mck-cat-4: #009DFF;
+  --mck-cat-5: #05CE90;
+  --mck-cat-6: #EF8200;
+  --mck-cat-7: #B3ECFF;
+  --mck-cat-8: #B3E7E2;
+  --mck-step-1: #005A8C;
+  --mck-step-2: #009DFF;
+  --mck-step-3: #00BEFF;
+  --mck-step-4: #00AF9D;
+  --mck-step-5: #05CE90;
+  --mck-step-6: #00AF68;
+  --mck-status-on-track: #00AF68;
+  --mck-status-at-risk: #FFB500;
+  --mck-status-off-track: #DA2103;
+  --mck-status-not-started: #BFBFBF;
+  --mck-status-done: #005A8C;
+  --mck-seq-blue-1: #E6F3FB;
+  --mck-seq-blue-2: #B6E2FA;
+  --mck-seq-blue-3: #66C4FF;
+  --mck-seq-blue-4: #009EFF;
+  --mck-seq-blue-5: #0A5FBC;
+  --mck-seq-blue-6: #143359;
+  --mck-seq-teal-1: #E6F7F5;
+  --mck-seq-teal-2: #B3E7E2;
+  --mck-seq-teal-3: #66CFC4;
+  --mck-seq-teal-4: #00AF9D;
+  --mck-seq-teal-5: #00737A;
+  --mck-seq-teal-6: #004B4F;
+  --mck-seq-orange-1: #FFF3E0;
+  --mck-seq-orange-2: #FFD9A8;
+  --mck-seq-orange-3: #F7B25C;
+  --mck-seq-orange-4: #EF8200;
+  --mck-seq-orange-5: #A75B00;
+  --mck-seq-orange-6: #6B3A00;
+  --mck-div-1: #A75B00;
+  --mck-div-2: #EF8200;
+  --mck-div-3: #F7C180;
+  --mck-div-4: #EFEDE7;
+  --mck-div-5: #99BDD1;
+  --mck-div-6: #005A8C;
+  --mck-div-7: #143359;
+  --mck-font: 'Libre Franklin', 'Franklin Gothic Book', Arial, Helvetica, sans-serif;
+  --mck-slide_title-size: 30px;
+  --mck-slide_title-weight: 700;
+  --mck-slide_title-color: #005A8C;
+  --mck-headline-size: 20px;
+  --mck-headline-weight: 600;
+  --mck-headline-color: #143359;
+  --mck-subtitle-size: 15px;
+  --mck-subtitle-weight: 400;
+  --mck-subtitle-color: #505050;
+  --mck-label-size: 13px;
+  --mck-label-weight: 500;
+  --mck-label-color: #505050;
+  --mck-tick-size: 12px;
+  --mck-tick-weight: 400;
+  --mck-tick-color: #737373;
+  --mck-annotation-size: 13px;
+  --mck-annotation-weight: 400;
+  --mck-annotation-color: #143359;
+  --mck-footnote-size: 11px;
+  --mck-footnote-weight: 300;
+  --mck-footnote-color: #737373;
+  --mck-kpi-size: 56px;
+  --mck-kpi-weight: 700;
+  --mck-kpi-color: #143359;
+  --mck-pad: 24px;
+}
+/* Libre Franklin: load from Google Fonts in your <head>, or @font-face from /fonts in this repo.
+   <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"> */
+
+.mck-chart {
+  font-family: var(--mck-font);
+  color: var(--mck-text-primary);
+  background: var(--mck-surface-default);
+  padding: var(--mck-pad);
+  max-width: 960px;
+}
+.mck-chart--dark { background: var(--mck-surface-dark); color: var(--mck-text-inverse); }
+.mck-chart--dark .mck-headline, .mck-chart--dark .mck-subtitle, .mck-chart--dark .mck-footnote { color: var(--mck-text-inverse); }
+.mck-headline {
+  font-size: var(--mck-headline-size); font-weight: var(--mck-headline-weight);
+  color: var(--mck-headline-color); line-height: 1.2; margin: 0 0 6px; max-width: 60ch;
+}
+.mck-subtitle {
+  font-size: var(--mck-subtitle-size); font-weight: var(--mck-subtitle-weight);
+  color: var(--mck-subtitle-color); margin: 0 0 12px;
+}
+.mck-plot { width: 100%; }
+.mck-footnote {
+  font-size: var(--mck-footnote-size); font-weight: var(--mck-footnote-weight);
+  color: var(--mck-footnote-color); margin-top: 16px; line-height: 1.4;
+}
+.mck-callout { font-size: var(--mck-annotation-size); color: var(--mck-annotation-color); }
+.mck-callout strong { font-weight: 700; display: block; }
+.mck-kpi { font-size: var(--mck-kpi-size); font-weight: var(--mck-kpi-weight); color: var(--mck-kpi-color); line-height: 1; }
+.mck-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: var(--mck-label-size); margin-bottom: 8px; }
+.mck-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; background: var(--swatch); }
+
+/* Tables: horizontal rules only, numbers right-aligned in tabular figures, navy rule above the total row. */
+.mck-table { border-collapse: collapse; width: 100%; font-size: var(--mck-label-size); font-variant-numeric: tabular-nums lining-nums; }
+.mck-table th {
+  font-weight: 600; color: var(--mck-text-headline); text-align: left; vertical-align: bottom;
+  padding: 6px 10px; border-bottom: 1px solid var(--mck-chart-axis);
+}
+.mck-table td, .mck-table tbody th { padding: 6px 10px; border-bottom: 1px solid var(--mck-chart-grid); }
+.mck-table tbody th { font-weight: 400; color: var(--mck-text-primary); text-align: left; vertical-align: middle; }
+.mck-table .num { text-align: right; white-space: nowrap; }
+.mck-table thead .num { white-space: normal; }
+.mck-table tbody th { min-width: 9em; }
+.mck-table tr.is-focus td, .mck-table tr.is-focus th { font-weight: 700; color: var(--mck-text-headline); }
+.mck-table tr.is-total td, .mck-table tr.is-total th {
+  font-weight: 700; color: var(--mck-text-headline); border-top: 1.5px solid var(--mck-chart-total); border-bottom: none;
+}
+.mck-table td.is-muted { color: var(--mck-text-muted); background: var(--mck-chart-context-light); }
+.mck-table .bar { display: inline-block; height: 10px; background: var(--mck-chart-context); vertical-align: middle; margin-right: 6px; }
+/* Inline bars after the number, all growing from one left edge: <td class="num">6,200<span class="bars"><span class="bar" style="width:80%"></span></span></td>.
+   Give the total row an empty <span class="bars"></span> so its number lines up. */
+.mck-table .bars { display: inline-block; width: 44px; margin-left: 8px; text-align: left; vertical-align: middle; line-height: 0; }
+.mck-table .bars .bar { margin-right: 0; }
+.mck-table tr.is-focus .bar { background: var(--mck-chart-focus); }
+@media (max-width: 600px) {
+  .mck-chart { padding: 16px; }
+  .mck-headline { font-size: 18px; }
+  .mck-subtitle { font-size: 13px; }
+  .mck-table { font-size: 12px; }
+  .mck-table th, .mck-table td { padding: 4px 6px; }
+  .mck-table th:first-child { position: sticky; left: 0; z-index: 1; background: var(--mck-surface-default); }
+}

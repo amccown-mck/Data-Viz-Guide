@@ -1,6 +1,6 @@
 # Roadmap and status
 
-Last updated: 2026-09-30 (guide pilot). Read this first when resuming work, whether you're a person or an agent.
+Last updated: 2026-10-01 (v1.1.0: distribution and agents). Read this first when resuming work, whether you're a person or an agent.
 
 ## Done
 
@@ -10,8 +10,12 @@ Last updated: 2026-09-30 (guide pilot). Read this first when resuming work, whet
 | Brand extraction | Libre Franklin typeface, plus the core, 2026, and extended palettes taken from the Social Media guide and FY26 Impact Report | `tokens/tokens.json`, `tools/*.py` |
 | Design tokens | Single source of truth, including chart roles (focus, accent, context, total), categorical-6, sequential, and diverging (orange-blue, CVD-safe) | `tokens/tokens.json` |
 | Token build | `python tokens/build.py` generates CSS, Plotly, Vega-Lite, mplstyle, ggplot2, Power BI theme, Office theme XML, a palette report, and swatches | `dist/` |
-| Python package | `mckviz`: `use()`, `highlight()`, `titles()`, `source()`, `label_bars()`, `label_line_ends()`, `callout()`, `shade_period()`, `pl_finish()` | `python/mckviz/` |
-| Fonts | Static Libre Franklin TTFs (SIL OFL) | `fonts/LibreFranklin/` |
+| Python package | `mckviz` 1.1.0: `use()`, `highlight()`, `titles()`, `source()`, `label_bars()`, `label_line_ends()`, `callout()`, `shade_period()`, `pl_finish()`, `fmt_num()`, `suppress_small()`, `lint()`, and `mckviz.geo` (real maps). Installable from a tag: `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"`; fonts and map data are package data | `python/mckviz/` |
+| Fonts | Static Libre Franklin TTFs (SIL OFL); synced into `python/mckviz/fonts/` by `tokens/build.py` | `fonts/LibreFranklin/` |
+| Versioning | One `VERSION` file read by `pyproject.toml`, the guide cover, the agent rules, the skill and the bundle; `CHANGELOG.md` (Keep a Changelog). The owner tags `v<version>` | `VERSION`, `CHANGELOG.md` |
+| Release bundle | `tools/make_bundle.py` → `dist/release/McKesson-DataViz-Kit-v<version>.zip` (not committed) with `START-HERE.html` for non-technical readers: guide (standalone + PDF), one-pagers, Office, Power BI, fonts, web themes, `mckviz` wheel, agent rules and skill | `tools/make_bundle.py` |
+| Portable agent skill | `dist/skills/mck-chart/`: SKILL.md, rules, chooser, principles, QA, all cookbook pages, theme assets, `scripts/check_env.py`; works in `~/.claude/skills/`, `.claude/skills/`, `.github/skills/`, and zipped for Claude.ai. Generated with the in-repo `.github/skills/mck-chart/SKILL.md` from one template | `agents/skill/`, `tools/build_skill.py` |
+| CI recipe | Running `mv.lint(fig, strict=True)` in another repo's GitHub Actions | `docs/ci.md` |
 | Example data | 12 synthetic workforce / SWP datasets, including individual-level compa-ratios | `examples/data/` (`make_data.py`) |
 | Galleries | 11 matplotlib PNGs that were visually QA'd, plus a Plotly HTML gallery (checked at desktop and phone widths) | `examples/python/`, `examples/output/` |
 | Core docs | principles, color, typography-and-layout, choosing-a-chart, formats, qa-checklist | `docs/` |
@@ -31,12 +35,17 @@ The original ask was a McKesson data-viz guideline as thorough as the McKinsey g
 
 Status: **done** (2026-09-30). The owner approved the pilot ("exactly the right direction"); all sections are written: Fundamentals, Magnitude, Part-to-whole, Change over time, Ranking, Distribution, Correlation, Relationships and flows, Geo-spatial, Single number, Formats, Toolkit. Brand-usage feedback from the same review is applied kit-wide (see Working notes).
 
-Second review (2026-10-01), applied: standalone single-file guide to send around; chart chooser and cheat sheet rebuilt as guide pages (top-bar buttons, every chart name links to its page; one-page PDFs printed from them, `templates/print/` and `tools/build_print.py` retired); type hierarchy (slide title Bold 24 pt, chart headline SemiBold 18 pt, KPI numbers Bold) in tokens and every generator, plus a two-charts-on-a-slide spread; real US, world and zoom-in maps (`guide/geo_shapes.py`, `guide/geodata/`); stacked bar anatomy, variants and best practice redone (story segment on the baseline, names over the top bar, base counts); semantic waterfall colors (favorable teal, unfavorable orange); clearer zero-baseline example; dumbbell key; left-aligned inline table bars; dual-axis pairs read left to right; bubble-timeline key no longer clips.
+Second review (2026-10-01), applied: standalone single-file guide to send around; chart chooser and cheat sheet rebuilt as guide pages (top-bar buttons, every chart name links to its page; one-page PDFs printed from them, `templates/print/` and `tools/build_print.py` retired); type hierarchy (slide title Bold 24 pt, chart headline SemiBold 18 pt, KPI numbers Bold) in tokens and every generator, plus a two-charts-on-a-slide spread; real US, world and zoom-in maps (now `mckviz.geo` with data in `python/mckviz/geodata/`; `guide/geo_shapes.py` is a shim); stacked bar anatomy, variants and best practice redone (story segment on the baseline, names over the top bar, base counts); semantic waterfall colors (favorable teal, unfavorable orange); clearer zero-baseline example; dumbbell key; left-aligned inline table bars; dual-axis pairs read left to right; bubble-timeline key no longer clips.
 
 Open, for the owner:
 - Phone view: wide exhibits scroll sideways ("Swipe to see the full chart") rather than shrink. Phone-specific exhibits would help if the guide is read on phones a lot.
 - Power BI: the theme now names `Libre Franklin SemiBold` for visual titles and `Libre Franklin Bold` for card callouts (Segoe UI fallbacks). Check both render as intended in Desktop and the Service.
 - Excel's Filled Map offering Robinson for world maps is stated in the Geo build page but not verified in Excel.
+
+Distribution and agents (v1.1.0, 2026-10-01), done: `mckviz` installs from a tag with fonts and maps inside; `mv.fmt_num`, `mv.suppress_small`; one `VERSION` plus `CHANGELOG.md`; the release zip for SharePoint; the portable `mck-chart` skill; the CI recipe. Open, for the owner:
+- Tag the release (`git tag v1.1.0 && git push --tags`) so the `pip install ...@v1.1.0` lines in the docs resolve, and upload the zip from `python tools/make_bundle.py` to SharePoint. Run the full guide build first so the cover and the standalone file say 1.1.0.
+- If the repo is private, `pip install` from GitHub needs a token (see `docs/ci.md`); the wheel in the bundle is the offline fallback.
+- **Possible future: an MCP server** exposing the kit to any MCP-capable assistant (tools such as `lint_chart`, `get_color_roles`, `choose_chart(question_type)`, `get_cookbook(page)`), so agents get the current rules without copying files. Worth it only if many tools outside Claude Code and Copilot need the kit; the portable skill covers those two today.
 
 How to extend: add `guide/ex_<section>.py` (exhibits register on import) and `guide/pages/<section>.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{folio}}`), add the page to `PAGES` in `tools/build_guide.py`, build, then review contact sheets and the PDF pages by eye.
 
@@ -67,6 +76,7 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 .\.venv\Scripts\python.exe tools\check_powerbi_theme.py           # validate the Power BI theme against Microsoft's schema
 .\.venv\Scripts\python.exe tools\lint_charts.py                   # lint every gallery chart (mv.lint)
 .\.venv\Scripts\python.exe -m pytest python\tests                 # mckviz unit tests
+.\.venv\Scripts\python.exe tools\make_bundle.py                   # release zip for SharePoint -> dist\release\ (after the builds)
 & "C:\Program Files\R\R-4.5.1\bin\Rscript.exe" examples\r\gallery_ggplot2.R   # R gallery -> examples/output/r-*.png
 # R packages: ggplot2 dplyr readr tidyr stringr scales ragg systemfonts gt sf maps mapproj ggalluvial treemapify packcircles
 ```
