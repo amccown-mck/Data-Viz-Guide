@@ -32,6 +32,8 @@ PAGES = [
     ("magnitude", "Magnitude", "Magnitude"),
     ("part-to-whole", "Part-to-whole", "Part-to-whole"),
     ("change-over-time", "Change over time", "Change over time"),
+    ("ranking", "Ranking", "Ranking"),
+    ("distribution", "Distribution", "Distribution"),
     ("correlation", "Correlation", "Correlation"),
     ("flows", "Flows", "Relationships and flows"),
     ("geo", "Geo-spatial", "Geo-spatial"),
@@ -40,7 +42,7 @@ PAGES = [
     ("toolkit", "Toolkit", "Toolkit"),
 ]
 # Sections planned but not written yet: shown in the nav, greyed out.
-COMING = ["Ranking", "Distribution"]
+COMING: list[str] = []
 
 LAYOUT = """<!doctype html>
 <html lang="en">

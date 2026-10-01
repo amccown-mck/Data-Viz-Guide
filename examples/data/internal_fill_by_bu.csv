@@ -1,0 +1,31 @@
+business_unit,fiscal_year,internal_fill_pct
+Technology,FY22,14
+Technology,FY23,19
+Technology,FY24,27
+Technology,FY25,29
+Technology,FY26,41
+U.S. Pharmaceutical,FY22,28
+U.S. Pharmaceutical,FY23,29
+U.S. Pharmaceutical,FY24,29
+U.S. Pharmaceutical,FY25,30
+U.S. Pharmaceutical,FY26,32
+Medical-Surgical,FY22,26
+Medical-Surgical,FY23,25
+Medical-Surgical,FY24,30
+Medical-Surgical,FY25,26
+Medical-Surgical,FY26,30
+RxTS,FY22,21
+RxTS,FY23,26
+RxTS,FY24,25
+RxTS,FY25,24
+RxTS,FY26,27
+Corporate,FY22,19
+Corporate,FY23,17
+Corporate,FY24,18
+Corporate,FY25,19
+Corporate,FY26,25
+Oncology & Multispecialty,FY22,24
+Oncology & Multispecialty,FY23,22
+Oncology & Multispecialty,FY24,21
+Oncology & Multispecialty,FY25,18
+Oncology & Multispecialty,FY26,21

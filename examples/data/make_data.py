@@ -366,6 +366,22 @@ def reskilling_pipeline() -> pd.DataFrame:
             ("Completed", "Redeployed to data role", 410, "progressed"),
             ("Completed", "Returned to prior role", 350, "not_placed"), ("Completed", "Left McKesson", 80, "not_placed")]
     return pd.DataFrame(rows, columns=["from_stage", "to_stage", "people", "transfer"])
+def internal_fill_by_bu() -> pd.DataFrame:
+    """Business-unit level, internal. Share of open roles filled by internal candidates, by fiscal year (%).
+    Ranks match the bump chart in docs/cookbook/slope-bump.md; the yearly averages track internal_fill_by_fy."""
+    paths = {"Technology": [14, 19, 27, 29, 41], "U.S. Pharmaceutical": [28, 29, 29, 30, 32],
+             "Medical-Surgical": [26, 25, 30, 26, 30], "RxTS": [21, 26, 25, 24, 27],
+             "Corporate": [19, 17, 18, 19, 25], "Oncology & Multispecialty": [24, 22, 21, 18, 21]}
+    rows = [(bu, fy, v) for bu, vals in paths.items() for fy, v in zip(["FY22", "FY23", "FY24", "FY25", "FY26"], vals)]
+    return pd.DataFrame(rows, columns=["business_unit", "fiscal_year", "internal_fill_pct"])
+
+
+def span_of_control() -> pd.DataFrame:
+    """Manager level, internal. Direct reports per U.S. people manager, Mar 2026 (one row per manager, no IDs).
+    Same generator as the histogram snippet in docs/cookbook/distribution.md."""
+    rng = np.random.default_rng(11)
+    span = np.r_[rng.poisson(7, 900), rng.poisson(13, 380), rng.poisson(24, 100)].clip(1, 40)
+    return pd.DataFrame({"direct_reports": span.astype(int)})
 
 
 def main() -> None:
@@ -400,6 +416,8 @@ def main() -> None:
         "skills_profile_completion": skills_profile_completion(),
         "dc_vacancy_overtime": dc_vacancy_overtime(),
         "reskilling_pipeline": reskilling_pipeline(),
+        "internal_fill_by_bu": internal_fill_by_bu(),
+        "span_of_control": span_of_control(),
     }
     for name, df in sets.items():
         df.to_csv(OUT / f"{name}.csv", index=False)
