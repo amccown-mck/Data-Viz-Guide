@@ -7,7 +7,7 @@ from matplotlib.patches import FancyBboxPatch, Rectangle, Wedge
 import mckviz as mv
 from exhibits import ANNOT, ANTI, BAND, HTML, LABEL, MINI, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px, marker
 
-KPI = mv.TOKENS["typography"]["roles"]["kpi"]                 # Light 300, 56 px on screen
+KPI = mv.TOKENS["typography"]["roles"]["kpi"]                 # Bold 700, 56 px on screen
 UP, DOWN, M = "▲", "▼", mv.MINUS
 
 
@@ -250,7 +250,7 @@ def _sn_bp(kind):
         ax.add_patch(FancyBboxPatch((28, 26), 150, 88, boxstyle="round,pad=2,rounding_size=8", fc="#9A9A9A", ec="none"))
         ax.add_patch(FancyBboxPatch((22, 32), 150, 88, boxstyle="round,pad=2,rounding_size=8", fc=C.surface_subtle,
                                     ec=C.headline, lw=2.2))
-        big(ax, 97, 72, f"{SC_PCT}%", 38, weight=800, color=C.focus, ha="center", va="center")
+        big(ax, 97, 74, f"{SC_PCT}%", 24, weight=300, color=C.text, ha="center", va="center")
         small(ax, 97, 42, "SUCCESSION", size=MINI - 1, weight=700, ha="center", color=C.headline)
     elif kind == "weight_fix":
         big(ax, 14, 62, f"{SC_PCT}%", 42)
@@ -324,8 +324,8 @@ def _sn_bp(kind):
     return fig
 
 
-for _k, _alt in {"weight_avoid": "A bold blue numeral in a bordered box with a drop shadow.",
-                 "weight_fix": "A light-weight navy numeral with one line of context.",
+for _k, _alt in {"weight_avoid": "A small, thin grey numeral in a bordered box with a drop shadow.",
+                 "weight_fix": "A large bold navy numeral with one line of context and white space.",
                  "context_avoid": "A bare 62% with no explanation.",
                  "context_fix": "62% with a sentence saying 254 of 410 critical roles are covered.",
                  "compare_avoid": "A delta of '+14%' with no reference period.",

@@ -46,7 +46,7 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 
 ## Type and layout
 - Font: **{{font}}** (fallback: Franklin Gothic Book, Arial).
-- Headline: bold {{role:headline.size_pt}} pt / {{role:headline.size_px}} px, `{{color:text.headline}}`. Subtitle: regular {{role:subtitle.size_pt}} pt / {{role:subtitle.size_px}} px. Labels: medium {{role:label.size_pt}} pt / {{role:label.size_px}} px. Footnote and source: light {{role:footnote.size_pt}} pt / {{role:footnote.size_px}} px, `{{color:text.muted}}`. Nothing smaller.
+- Slide title: bold {{role:slide_title.size_pt}} pt, `{{color:text.headline}}` (with one chart on a slide, its headline is the slide title). Chart headline (a chart with its own title): semibold {{role:headline.size_pt}} pt / {{role:headline.size_px}} px, still an insight sentence. Two charts on a slide: a bold slide title for the shared message, a semibold insight headline per chart. Big KPI numbers: bold. Subtitle: regular {{role:subtitle.size_pt}} pt / {{role:subtitle.size_px}} px. Labels: medium {{role:label.size_pt}} pt / {{role:label.size_px}} px. Footnote and source: light {{role:footnote.size_pt}} pt / {{role:footnote.size_px}} px, `{{color:text.muted}}`. Nothing smaller.
 - Everything is left-aligned on one edge, with no centered titles, chart borders, 3D, shadows or gradients.
 - Bar width : gap ≈ 2 : 1 (band fill {{chart:bar.band_fill}}). Lines {{chart:line.width_px}} px; context lines {{chart:line.context_width_px}} px.
 

@@ -29,7 +29,7 @@
 
   "color": {
     "text": {
-      "headline": { "value": "#143359", "description": "Insight headline (bold)." },
+      "headline": { "value": "#143359", "description": "Slide titles (Bold) and chart headlines (SemiBold)." },
       "primary":  { "value": "#505050", "description": "Subtitles, data labels, body. 8.1:1 on white." },
       "muted":    { "value": "#737373", "description": "Axis ticks, footnotes, source. 4.7:1 on white (AA)." },
       "inverse":  { "value": "#FFFFFF" }
@@ -95,15 +95,16 @@
     "weight": { "light": 300, "regular": 400, "medium": 500, "semibold": 600, "bold": 700, "extrabold": 800 },
     "roles": {
       "$description": "size_px for screen/HTML at 1x; size_pt for 16:9 slides (13.33 x 7.5 in). Never go below the 'footnote' size.",
-      "headline":   { "weight": 700, "size_px": 22, "size_pt": 24, "color": "text.headline",  "note": "Insight headline: the 'so what', full sentence, <= 2 lines." },
+      "slide_title": { "weight": 700, "size_px": 28, "size_pt": 24, "color": "text.headline", "note": "Slide (or page) title: the insight for the whole slide, Bold. With one chart on the slide, the chart's headline IS the slide title." },
+      "headline":   { "weight": 600, "size_px": 20, "size_pt": 18, "color": "text.headline",  "note": "Chart headline: the insight of one chart, SemiBold, full sentence, <= 2 lines. Used when a chart has its own title (two charts on a slide, reports, dashboards, chart images)." },
       "subtitle":   { "weight": 400, "size_px": 15, "size_pt": 14, "color": "text.primary",   "note": "Neutral chart title: metric, unit, scope, period." },
       "label":      { "weight": 500, "size_px": 13, "size_pt": 12, "color": "text.primary",   "note": "Direct data labels, series labels." },
       "tick":       { "weight": 400, "size_px": 12, "size_pt": 11, "color": "text.muted",     "note": "Axis tick labels and category labels." },
       "annotation": { "weight": 400, "size_px": 13, "size_pt": 12, "color": "chart.annotation", "note": "Callout body; callout title uses bold." },
       "footnote":   { "weight": 300, "size_px": 11, "size_pt": 9,  "color": "text.muted",     "note": "Footnotes and 'Source:' line." },
-      "kpi":        { "weight": 300, "size_px": 56, "size_pt": 54, "color": "text.headline",  "note": "Big-number callouts (light weight, brand style)." }
+      "kpi":        { "weight": 700, "size_px": 56, "size_pt": 54, "color": "text.headline",  "note": "Big-number callouts, Bold so the number pops." }
     },
-    "slide_title_style": "Brand signature: bold lead word(s) + light remainder, e.g. '**Attrition** is concentrated in two job families'."
+    "slide_title_style": "Insight slides: the whole title Bold (slide_title role). Covers, section dividers and guide page titles only: the brand signature, bold lead word(s) + light remainder, e.g. '**Stacked** bar chart'."
   },
 
   "chart": {

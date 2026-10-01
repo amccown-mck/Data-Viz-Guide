@@ -161,7 +161,7 @@ def plotly_template() -> dict:
         "layout": {
             "font": {"family": T["family"]["fallback_web"].replace("'", ""), "size": lab["size_px"], "color": v("text.primary")},
             "title": {
-                "font": {"size": head["size_px"], "color": head["hex"], "weight": 700},
+                "font": {"size": head["size_px"], "color": head["hex"], "weight": head["weight"]},
                 "x": 0, "xanchor": "left", "xref": "container", "pad": {"l": K["spacing"]["padding_px"]},
                 "subtitle": {"font": {"size": sub["size_px"], "color": sub["hex"]}},
             },
@@ -211,7 +211,7 @@ def build_vega() -> None:
         "background": v("surface.default"),
         "padding": K["spacing"]["padding_px"],
         "view": {"stroke": None},
-        "title": {"anchor": "start", "fontSize": head["size_px"], "fontWeight": 700, "color": head["hex"],
+        "title": {"anchor": "start", "fontSize": head["size_px"], "fontWeight": head["weight"], "color": head["hex"],
                   "subtitleFontSize": sub["size_px"], "subtitleColor": sub["hex"], "subtitleFontWeight": 400, "offset": 16},
         "axis": {"labelColor": tick["hex"], "labelFontSize": tick["size_px"], "titleColor": tick["hex"],
                  "titleFontSize": tick["size_px"], "titleFontWeight": 400, "domainColor": v("chart.axis"),
@@ -316,11 +316,19 @@ mck_sequential  <- c({seq})
 mck_sequential_orange <- c({", ".join(f'"{h}"' for h in C["sequential"]["orange"])})
 mck_diverging   <- c({div})
 
+# Chart headlines are SemiBold. mck_font() registers a "<family> SemiBold" family for that; without it, fall back to bold.
+.mck_title_text <- function(base_family, ...) {{
+  semi <- paste(base_family, "SemiBold")
+  if (requireNamespace("systemfonts", quietly = TRUE) && semi %in% systemfonts::registry_fonts()$family)
+    ggplot2::element_text(family = semi, face = "plain", ...)
+  else ggplot2::element_text(face = "bold", ...)
+}}
+
 theme_mck <- function(base_size = {lab['size_pt']}, base_family = "{FONT}") {{
   ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
       text = ggplot2::element_text(color = mck_colors$text),
-      plot.title = ggplot2::element_text(face = "bold", size = {head['size_pt']}, color = mck_colors$headline, margin = ggplot2::margin(b = 4)),
+      plot.title = .mck_title_text(base_family, size = {head['size_pt']}, color = mck_colors$headline, margin = ggplot2::margin(b = 4)),
       plot.subtitle = ggplot2::element_text(size = {sub['size_pt']}, color = mck_colors$text, margin = ggplot2::margin(b = 12)),
       plot.caption = ggplot2::element_text(size = {foot['size_pt']}, color = mck_colors$muted, hjust = 0, margin = ggplot2::margin(t = 12)),
       plot.title.position = "plot", plot.caption.position = "plot",
@@ -359,6 +367,8 @@ mck_font <- function(dir = "fonts/LibreFranklin", family = "{FONT} MCK") {{
     f <- function(style) file.path(dir, paste0("LibreFranklin-", style, ".ttf"))
     systemfonts::register_font(family, plain = f("Regular"), bold = f("Bold"), italic = f("Italic"),
                                bolditalic = f("BoldItalic"))
+    systemfonts::register_font(paste(family, "SemiBold"), plain = f("SemiBold"), bold = f("Bold"), italic = f("Italic"),
+                               bolditalic = f("BoldItalic"))
   }}
   family
 }}
@@ -378,6 +388,7 @@ mck_wrap <- function(x, width = 75) {{
 def build_powerbi() -> None:
     head, sub, lab, tick = role("headline"), role("subtitle"), role("label"), role("tick")
     font = f"{FONT}, Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif"
+    semi = f"{FONT} SemiBold, Segoe UI Semibold, wf_segoe-ui_semibold, helvetica, arial, sans-serif"   # chart headlines
     theme = {
         "name": "McKesson Data Viz",
         # Categorical order first; tints only extend the cycle for 9+ series. No repeats, so no two series share a color.
@@ -398,15 +409,16 @@ def build_powerbi() -> None:
         "hyperlink": EXT["azure"]["dark"],
         "visitedHyperlink": v("chart.context_on_dark"),
         "textClasses": {
-            "title": {"fontSize": head["size_pt"] - 8, "fontFace": font, "color": head["hex"]},
+            "title": {"fontSize": head["size_pt"] - 4, "fontFace": semi, "color": head["hex"]},
             "header": {"fontSize": sub["size_pt"], "fontFace": font, "color": head["hex"]},
-            "callout": {"fontSize": 32, "fontFace": font, "color": head["hex"]},
+            "callout": {"fontSize": 32, "fontFace": f"{FONT} Bold, Segoe UI Bold, wf_segoe-ui_bold, helvetica, arial, sans-serif",
+                        "color": head["hex"]},                                        # KPI cards: Bold
             "label": {"fontSize": tick["size_pt"] - 1, "fontFace": font, "color": v("text.primary")},
         },
         "visualStyles": {
             "*": {"*": {
-                "title": [{"show": True, "fontFamily": font, "fontColor": {"solid": {"color": head["hex"]}},
-                           "fontSize": 14, "bold": True, "alignment": "left"}],
+                "title": [{"show": True, "fontFamily": semi, "fontColor": {"solid": {"color": head["hex"]}},
+                           "fontSize": 14, "bold": False, "alignment": "left"}],
                 "subTitle": [{"show": True, "fontFamily": font, "fontColor": {"solid": {"color": sub["hex"]}}, "fontSize": 11}],
                 "background": [{"show": True, "color": {"solid": {"color": v("surface.default")}}, "transparency": 0}],
                 "border": [{"show": False}],

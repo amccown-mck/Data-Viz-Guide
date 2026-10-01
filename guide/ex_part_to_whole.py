@@ -202,7 +202,7 @@ def donut(ax, labels, values, colors, *, start=90, width=0.32, size=MINI, center
         ang = a1 if clockwise else a2
     if center:
         big, small = center
-        ax.text(0, 0.08, big, ha="center", va="center", fontsize=size * 2.1, color=C.headline, fontweight=300)
+        ax.text(0, 0.08, big, ha="center", va="center", fontsize=size * 2.1, color=C.headline, fontweight=700)
         ax.text(0, -0.28, small, ha="center", va="center", fontsize=size - 0.5, color=C.text, linespacing=1.15)
     ax.set_xlim(-1.75, 1.75)
     ax.set_ylim(-1.3, 1.3)

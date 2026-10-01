@@ -44,7 +44,7 @@
     <p class="lede">Same rules, different shapes. Pick the variant from the comparison you need to make.</p>
     <h3>When a bar is the wrong chart</h3>
     <ul>
-      <li>Values bunched far from zero (engagement 71–78): use a <strong>dot plot</strong></li>
+      <li>Values bunched far from zero (engagement scores of {{text:zero_lo}}–{{text:zero_hi}}): use a <strong>dot plot</strong></li>
       <li>Largest more than 20× the smallest: use <strong>proportional bubbles</strong> or split the chart</li>
       <li>Parts of a whole: use a <strong>100% stacked bar</strong> or <strong>waterfall</strong></li>
       <li>Many periods: use a <strong>line</strong></li>
@@ -103,8 +103,8 @@
         <div>{{exhibit:bp_labels_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Values on the bars; no axis, no grid.</span></div></div>
       </div></div>
       <div class="tile"><h4>Zero baseline</h4><div class="pair">
-        <div>{{exhibit:bp_zero_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A truncated axis exaggerates differences.</span></div></div>
-        <div>{{exhibit:bp_zero_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A line or dot plot can use a narrow range.</span></div></div>
+        <div>{{exhibit:bp_zero_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Cut at {{text:zero_cut}}, {{text:zero_hi}} looks {{text:zero_fake_ratio}}× {{text:zero_lo}}.</span></div></div>
+        <div>{{exhibit:bp_zero_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>From zero: {{text:zero_true_pct}}% higher, as it is.</span></div></div>
       </div></div>
     </div>
   </div>

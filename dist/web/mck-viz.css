@@ -90,8 +90,11 @@
   --mck-div-6: #005A8C;
   --mck-div-7: #143359;
   --mck-font: 'Libre Franklin', 'Franklin Gothic Book', Arial, Helvetica, sans-serif;
-  --mck-headline-size: 22px;
-  --mck-headline-weight: 700;
+  --mck-slide_title-size: 28px;
+  --mck-slide_title-weight: 700;
+  --mck-slide_title-color: #143359;
+  --mck-headline-size: 20px;
+  --mck-headline-weight: 600;
   --mck-headline-color: #143359;
   --mck-subtitle-size: 15px;
   --mck-subtitle-weight: 400;
@@ -109,7 +112,7 @@
   --mck-footnote-weight: 300;
   --mck-footnote-color: #737373;
   --mck-kpi-size: 56px;
-  --mck-kpi-weight: 300;
+  --mck-kpi-weight: 700;
   --mck-kpi-color: #143359;
   --mck-pad: 24px;
 }

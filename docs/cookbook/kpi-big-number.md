@@ -23,7 +23,7 @@
 
 | Element | Rule |
 |---|---|
-| Number | Typography role `kpi`: Libre Franklin **Light 300**, **54 pt** on a 13.33 in slide / **56 px** on screen, Navy `#143359` on white, white on `surface.dark` `#0B3266`. Scale with the canvas (≈ 40 pt on an 8 in card). Never bold the numeral. **One** big number per card. Round hard (62%, 4.3K, $1.2M); the `%` or unit stays with the number. |
+| Number | Typography role `kpi`: Libre Franklin **Bold 700**, **54 pt** on a 13.33 in slide / **56 px** on screen, Navy `#143359` on white, white on `surface.dark` `#0B3266`. Scale with the canvas (≈ 40 pt on an 8 in card). Bold, so the number pops. **One** big number per card. Round hard (62%, 4.3K, $1.2M); the `%` or unit stays with the number. |
 | Context sentence | **One sentence** (≤ ~15 words) saying exactly what is counted, set directly below or beside the number: 14 pt / 15 px Regular `#505050` (white on dark). Prefer counts that make the % concrete: "254 of 410 critical roles have a ready-now successor". The headline above it still states the insight. |
 | Comparison / delta | Always give the reader a reference: prior period, target, benchmark or peer ("+14 pts vs. Mar 2025", "13 pts short of the 75% target"). Medium/Semibold, 12–14 pt. Use an explicit + and a true minus (−), and say **"pts"** for percentage-point changes (never "%"). Color it only when good vs. bad is the point: `semantic.positive_text` `#00737A` / `semantic.negative_text` `#A75B00` on white, `semantic.positive` `#00AF9D` / `semantic.negative` `#EF8200` on dark. Judge favorability from the audience's view (time to fill down = good). Pair the color with ▲/▼ or words, never red vs. green. |
 | Ring gauge | Starts at 12 o'clock and runs **clockwise**. Filled arc `chart.focus` `#005A8C` with the remainder in `chart.context_light` `#DEDBD1`; on dark, `chart.focus_on_dark` `#66C4FF` with `chart.context_on_dark` `#5A7194`. Stroke ≈ 15–20% of the radius (hole ≈ 80%, thinner than the 62% donut hole). No rounded caps, gaps, gradients or 3D. The number sits centered inside. A target is a thin tick across the ring, labelled ("Target 75%"). 0–100% of one whole only. |
@@ -34,7 +34,7 @@
 
 | Do | Don't |
 |---|---|
-| Set the numeral in Light weight, large, with plenty of space around it | Set it in heavy Bold, or squeeze it into a box with borders and drop shadows |
+| Set the numeral in Bold, large, with plenty of space around it | Set it small or in a thin weight, or squeeze it into a box with borders and drop shadows |
 | Add one sentence that says exactly what is counted, and from what population | Show a bare "62%" and leave the reader to guess the metric and the denominator |
 | Give a comparison (prior period, target, benchmark) with an explicit sign and "pts" | Show a delta with no reference ("+14") or write "+14%" for a percentage-point change |
 | Use a ring only for a share of one whole, 0–100%, starting at 12 o'clock | Use a ring or speedometer for values that can pass 100%, or several nested rings |
@@ -44,7 +44,7 @@
 
 ## Workforce examples
 - **Firm, internal (SWP), dark ring card:** *Headline:* "Succession coverage rose 14 points in a year but is still short of the 75% target". *Subtitle:* "Critical roles with at least one ready-now successor, Mar 2026 (% of 410 roles)". *Data:* talent-review and succession records in the HCM system. Ring at 62% with a target tick at 75%, the sentence "254 of 410 critical roles now have at least one ready-now successor", and the delta "+14 pts vs. Mar 2025 (48%)".
-- **Team, internal, light KPI row:** *Headline:* "Pharmacy Ops is filling more roles internally, and faster, but regrettable attrition is up". *Subtitle:* "Pharmacy Operations talent KPIs, FY26 year to date vs. FY25". *Data:* ATS requisitions plus HRIS movements and exits. Three cards: internal fill rate 41% (+6 pts, favorable teal), median time to fill 38 days (−5 days, favorable teal), regrettable attrition 6.8% (+0.9 pts, unfavorable orange).
+- **Team, internal, KPI row on white:** *Headline:* "Pharmacy Ops is filling more roles internally, and faster, but regrettable attrition is up". *Subtitle:* "Pharmacy Operations talent KPIs, FY26 year to date vs. FY25". *Data:* ATS requisitions plus HRIS movements and exits. Three cards: internal fill rate 41% (+6 pts, favorable teal), median time to fill 38 days (−5 days, favorable teal), regrettable attrition 6.8% (+0.9 pts, unfavorable orange).
 - **Sector, external, inline big number:** *Headline:* "Demand for healthcare-support talent will grow about three times faster than the US labor market". *Subtitle:* "Projected employment growth, healthcare support occupations vs. all occupations, US, 2024–2034 (%)". *Data:* a national occupational employment projection (government statistics agency). Big number "+12%" with the comparison "vs. +4% for all occupations" and one sentence on what it means for pharmacy-technician hiring; source and projection vintage in the footnote. (Illustrative figures.)
 
 ## Build it
@@ -63,7 +63,7 @@ import mckviz as mv
 
 mv.use()
 C = mv.colors
-KPI = mv.TOKENS["typography"]["roles"]["kpi"]                    # Light 300, 54 pt
+KPI = mv.TOKENS["typography"]["roles"]["kpi"]                    # Bold 700, 54 pt
 
 value, prior, target, n_roles = 62, 48, 75, 410                  # % of critical roles with a ready-now successor
 delta = value - prior
@@ -105,7 +105,7 @@ mv.save(fig, "out/kpi-ring-dark.png", dpi=200, facecolor=C.surface_dark)
 For a big number without a ring (e.g., in a report margin), drop the `Wedge` patches and put the numeral in the text axes at `(0, 1)` with `va="top"`, `fontsize=KPI["size_pt"] * 0.75`, `fontweight=KPI["weight"]` and `color=C.headline`, with the sentence and delta below it.
 
 ### Python — Plotly / HTML
-Light KPI row with `go.Indicator`. Deltas are colored by favorability, not by direction.
+KPI row on white with `go.Indicator`. Deltas are colored by favorability, not by direction.
 ```python
 # verified: builds without error
 from pathlib import Path
@@ -116,7 +116,7 @@ import mckviz as mv
 
 mv.use()  # registers + activates the "mck" Plotly template
 C = mv.colors
-KPI = mv.TOKENS["typography"]["roles"]["kpi"]                    # Light 300, 56 px
+KPI = mv.TOKENS["typography"]["roles"]["kpi"]                    # Bold 700, 56 px
 
 # value, prior, format, suffix, higher_is_better, one sentence of context
 kpis = [("Internal fill rate", 41, 35, ".0f", "%", True, "of open Pharmacy Ops roles were filled<br>by internal candidates"),
@@ -146,12 +146,12 @@ fig.update_layout(height=380, margin={"l": 24, "r": 24, "t": 110})
 Path("out").mkdir(exist_ok=True)
 fig.write_html("out/kpi-row.html", include_plotlyjs="cdn")
 ```
-For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, direction="clockwise", rotation=0, marker_colors=[C.focus, C.context_light], textinfo="none")` with the numeral as a centered annotation. In HTML pages, plain HTML text is often the better choice for a big number: a `<p class="mck-kpi">` styled from [`dist/web/mck-viz.css`](../../dist/web/mck-viz.css) (`--mck-kpi-size: 56px`, `--mck-kpi-weight: 300`) is crisper, accessible and responsive.
+For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, direction="clockwise", rotation=0, marker_colors=[C.focus, C.context_light], textinfo="none")` with the numeral as a centered annotation. In HTML pages, plain HTML text is often the better choice for a big number: a `<p class="mck-kpi">` styled from [`dist/web/mck-viz.css`](../../dist/web/mck-viz.css) (`--mck-kpi-size: 56px`, `--mck-kpi-weight: 700`) is crisper, accessible and responsive.
 
 ### Excel and PowerPoint
 **Big number (text box)**
-1. Install Libre Franklin from `fonts/LibreFranklin`, **including the Light face**, and the McKesson Data Viz theme colors from `dist/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
-2. **Insert › Text Box**, type the number (e.g., `62%`). Set **Home › Font** to **Libre Franklin Light, 54 pt**, with **Font Color › More Colors › Hex 143359** (Navy, theme slot *Text 2*). In **Format Shape › Text Options › Text Box**, set the left inset to 0 cm so the numeral aligns with the headline edge, and **Do not Autofit**.
+1. Install Libre Franklin from `fonts/LibreFranklin`, and the McKesson Data Viz theme colors from `dist/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
+2. **Insert › Text Box**, type the number (e.g., `62%`). Set **Home › Font** to **Libre Franklin, Bold, 54 pt**, with **Font Color › More Colors › Hex 143359** (Navy, theme slot *Text 2*). In **Format Shape › Text Options › Text Box**, set the left inset to 0 cm so the numeral aligns with the headline edge, and **Do not Autofit**.
 3. Add a second text box directly below: **one sentence**, Libre Franklin 14 pt, `#505050` ("254 of 410 critical roles now have at least one ready-now successor").
 4. Add the comparison: Libre Franklin Medium 12–14 pt, `#00737A` (favorable) or `#A75B00` (unfavorable), e.g., "+14 pts vs. Mar 2025". For a true minus, use **Insert › Symbol**, character code **2212**.
 5. Select the boxes, then **Shape Format › Align › Align Left** and **Group** (Ctrl+G). Copy the group to build a row of identical cards, and use **Align › Distribute Horizontally**.
@@ -168,7 +168,7 @@ For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, directi
 13. In PowerPoint, paste the ring with **Home › Paste › Use Destination Theme & Embed Workbook** so the number stays editable, and keep **≤ 2 big numbers per live slide**.
 
 ### Power BI
-- Import [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**). Its **`callout` text class** (Libre Franklin 32, Navy `#143359`) styles Card values by default. Raise **Format › Callout value** to 40–54 and pick a light face. Libre Franklin only renders where it is installed, so in the service choose **Segoe UI Light** for a consistent light numeral.
+- Import [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**). Its **`callout` text class** (Libre Franklin 32, Navy `#143359`) styles Card values by default. Raise **Format › Callout value** to 40–54. The theme sets the callout face to Libre Franklin Bold, falling back to Segoe UI Bold where Libre Franklin isn't installed, so the numeral is bold everywhere.
 - **Card (new)** visual: callout value = the measure. Use the visual **title** for the metric name and **Reference labels** for the comparison (e.g., `Δ vs PY = [Fill rate] - [Fill rate PY]`, formatted `+0" pts";−0" pts"`). Add the context sentence as a dynamic subtitle measure, e.g., `FORMAT([Roles covered], "#,0") & " of " & FORMAT([Critical roles], "#,0") & " critical roles have a ready-now successor"`.
 - **KPI** visual (number + trend + target): **Indicator** = the measure, **Trend axis** = month, **Target** = the target or prior-year measure. Under **Format › Colors**, set Good `#00AF9D`, Neutral `#B4B0A5`, Bad `#EF8200`, and set the direction (**High is good** / **Low is good**) per metric.
 - Ring: use a **Donut chart** with two measures (`Value`, `1 - Value`), **Slices › Inner radius** ≈ 80, colors `#005A8C` / `#DEDBD1`, labels and legend off, and a Card with a transparent background on top. Avoid the built-in half-circle **Gauge** unless min = 0, max = 100% and the target is shown.
@@ -190,7 +190,7 @@ ggplot(ring, aes(x = 2, y = pct, fill = part)) +
   annotate("text", x = 2.5, y = target, label = paste0("Target ", target, "%"), colour = "white", size = 3,
            family = "Libre Franklin") +
   annotate("text", x = 0.5, y = 0, label = paste0(value, "%"), colour = "white", size = 40 / .pt,
-           family = "Libre Franklin Light") +                     # kpi role: Light; 54 pt on a full slide
+           fontface = "bold", family = "Libre Franklin") +         # kpi role: Bold; 54 pt on a full slide
   annotate("text", x = 0.5, y = 0, vjust = 4.2, label = sprintf("+%d pts vs. Mar 2025", value - prior),
            colour = "#00AF9D", size = 4, fontface = "bold", family = "Libre Franklin") +
   coord_polar(theta = "y", start = 0, direction = 1) +            # 12 o'clock, clockwise
@@ -207,10 +207,10 @@ ggplot(ring, aes(x = 2, y = pct, fill = part)) +
         plot.title.position = "plot", plot.caption.position = "plot",
         plot.margin = margin(16, 16, 16, 16))
 ```
-For a plain big number on a light background, use `ggplot() + annotate("text", x = 0, y = 0, label = "41%", hjust = 0, size = 54 / .pt, family = "Libre Franklin Light", colour = mck_colors$headline) + theme_void()` and add the sentence and delta as further left-aligned `annotate()` calls below it.
+For a plain big number on a light background, use `ggplot() + annotate("text", x = 0, y = 0, label = "41%", hjust = 0, size = 54 / .pt, fontface = "bold", family = "Libre Franklin", colour = mck_colors$headline) + theme_void()` and add the sentence and delta as further left-aligned `annotate()` calls below it.
 
 ## QA specifics
-- [ ] The big number is set in the `kpi` role: Light weight, large, Navy on white or white on `#0B3266`. It is the only big number on the card, and it is rounded sensibly.
+- [ ] The big number is set in the `kpi` role: Bold, large, Navy on white or white on `#0B3266`. It is the only big number on the card, and it is rounded sensibly.
 - [ ] One sentence states exactly what is counted and from what population, and the headline states the insight. The number, sentence and headline all agree (recompute: 62% × 410 = 254).
 - [ ] A comparison is present (prior period, target or benchmark) with an explicit +/−, "pts" for percentage-point changes, and colors chosen by favorability with a non-color cue.
 - [ ] The ring shows 0–100% of one whole, starts at 12 o'clock, runs clockwise, has a hole ≈ 80% and no rounded caps, and any target tick is labelled.

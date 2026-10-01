@@ -29,8 +29,8 @@
   "visitedHyperlink": "#5A7194",
   "textClasses": {
     "title": {
-      "fontSize": 16,
-      "fontFace": "Libre Franklin, Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif",
+      "fontSize": 14,
+      "fontFace": "Libre Franklin SemiBold, Segoe UI Semibold, wf_segoe-ui_semibold, helvetica, arial, sans-serif",
       "color": "#143359"
     },
     "header": {
@@ -40,7 +40,7 @@
     },
     "callout": {
       "fontSize": 32,
-      "fontFace": "Libre Franklin, Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif",
+      "fontFace": "Libre Franklin Bold, Segoe UI Bold, wf_segoe-ui_bold, helvetica, arial, sans-serif",
       "color": "#143359"
     },
     "label": {
@@ -55,14 +55,14 @@
         "title": [
           {
             "show": true,
-            "fontFamily": "Libre Franklin, Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif",
+            "fontFamily": "Libre Franklin SemiBold, Segoe UI Semibold, wf_segoe-ui_semibold, helvetica, arial, sans-serif",
             "fontColor": {
               "solid": {
                 "color": "#143359"
               }
             },
             "fontSize": 14,
-            "bold": true,
+            "bold": false,
             "alignment": "left"
           }
         ],

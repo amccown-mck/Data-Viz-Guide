@@ -7,8 +7,8 @@
   },
   "title": {
     "anchor": "start",
-    "fontSize": 22,
-    "fontWeight": 700,
+    "fontSize": 20,
+    "fontWeight": 600,
     "color": "#143359",
     "subtitleFontSize": 15,
     "subtitleColor": "#505050",

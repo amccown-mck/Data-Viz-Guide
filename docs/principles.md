@@ -16,7 +16,7 @@ Every chart has a two-tier title:
 
 | Element | Job | Example |
 |---|---|---|
-| **Headline** (bold, navy) | The "so what". A full sentence with a verb. States the finding, ideally with the number. ≤ 2 lines. | *Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate* |
+| **Headline** (navy: Bold as the slide title, SemiBold as a chart's own title) | The "so what". A full sentence with a verb. States the finding, ideally with the number. ≤ 2 lines. | *Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate* |
 | **Subtitle** (regular, grey) | Neutral description: **metric, unit, scope, period**. No opinions. | *Voluntary attrition by job family, FY26 (%)* |
 
 - The headline must be **true to the chart** — every claim (counts, "all", "most", multipliers) is visibly supported. Recompute numbers; don't eyeball.

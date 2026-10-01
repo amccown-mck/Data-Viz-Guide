@@ -34,7 +34,7 @@ The theme asks for `Libre Franklin, Segoe UI, wf_segoe-ui_normal, helvetica, ari
 
 What this means in practice:
 - **Most viewers will see Segoe UI.** That is the intended fallback, and it is fine: both are neutral grotesque sans serifs. Libre Franklin runs a little wider, so leave about 10% slack on labels that nearly fit. Never size a visual so a label only just fits in Libre Franklin.
-- **Use only regular and bold.** Power BI has no Light or Medium weight controls, so the KPI "light big number" style from the slides doesn't carry over. Use regular weight at callout size.
+- **Weights come from the font name.** Power BI has a Bold toggle but no weight control, so the theme names the weight: visual titles use `Libre Franklin SemiBold` (falling back to `Segoe UI Semibold`), and card callouts use `Libre Franklin Bold` (falling back to `Segoe UI Bold`), so big KPI numbers are bold. Leave the titles' Bold toggle off.
 - Don't type a font name into individual visuals. Leave the theme's stack in place, so the fallback works the same way everywhere.
 
 ## 3. Highlight with measures, not by hand

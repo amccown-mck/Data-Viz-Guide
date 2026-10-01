@@ -17,11 +17,19 @@ mck_sequential  <- c("#E6F3FB", "#B6E2FA", "#66C4FF", "#009EFF", "#0A5FBC", "#14
 mck_sequential_orange <- c("#FFF3E0", "#FFD9A8", "#F7B25C", "#EF8200", "#A75B00", "#6B3A00")
 mck_diverging   <- c("#A75B00", "#EF8200", "#F7C180", "#EFEDE7", "#99BDD1", "#005A8C", "#143359")
 
+# Chart headlines are SemiBold. mck_font() registers a "<family> SemiBold" family for that; without it, fall back to bold.
+.mck_title_text <- function(base_family, ...) {
+  semi <- paste(base_family, "SemiBold")
+  if (requireNamespace("systemfonts", quietly = TRUE) && semi %in% systemfonts::registry_fonts()$family)
+    ggplot2::element_text(family = semi, face = "plain", ...)
+  else ggplot2::element_text(face = "bold", ...)
+}
+
 theme_mck <- function(base_size = 12, base_family = "Libre Franklin") {
   ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
       text = ggplot2::element_text(color = mck_colors$text),
-      plot.title = ggplot2::element_text(face = "bold", size = 24, color = mck_colors$headline, margin = ggplot2::margin(b = 4)),
+      plot.title = .mck_title_text(base_family, size = 18, color = mck_colors$headline, margin = ggplot2::margin(b = 4)),
       plot.subtitle = ggplot2::element_text(size = 14, color = mck_colors$text, margin = ggplot2::margin(b = 12)),
       plot.caption = ggplot2::element_text(size = 9, color = mck_colors$muted, hjust = 0, margin = ggplot2::margin(t = 12)),
       plot.title.position = "plot", plot.caption.position = "plot",
@@ -59,6 +67,8 @@ mck_font <- function(dir = "fonts/LibreFranklin", family = "Libre Franklin MCK")
   if (!family %in% systemfonts::registry_fonts()$family) {
     f <- function(style) file.path(dir, paste0("LibreFranklin-", style, ".ttf"))
     systemfonts::register_font(family, plain = f("Regular"), bold = f("Bold"), italic = f("Italic"),
+                               bolditalic = f("BoldItalic"))
+    systemfonts::register_font(paste(family, "SemiBold"), plain = f("SemiBold"), bold = f("Bold"), italic = f("Italic"),
                                bolditalic = f("BoldItalic"))
   }
   family

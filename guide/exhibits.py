@@ -806,27 +806,36 @@ def _bp(kind: str):
         ax.tick_params(axis="y", labelsize=tick)
     elif kind == "labels_fix":
         vbars(ax, short, vals, [C.focus] * 5, fmt="{:.0f}%", size=tick, tick=tick)
-    elif kind == "zero_avoid":
+    elif kind in ("zero_avoid", "zero_fix"):                 # engagement scores: values far from zero
+        short, vals = [TINY[f] for f in _ZERO.index], _ZERO.tolist()
         ax.bar(x, vals, width=BAND, color=C.focus)
-        ax.set_ylim(min(vals) - 2, max(vals) + 1)
-        ax.set_yticks([round(min(vals) - 2), round(max(vals))])
-        ax.tick_params(axis="y", labelsize=tick)
-    elif kind == "zero_fix":
-        ax.plot(x, vals, color=C.focus, marker="o", ms=4)
-        ax.set_ylim(min(vals) - 3, max(vals) + 3)
-        ax.grid(axis="y", color=C.grid)
-        ax.set_yticks([10, 20])
-        ax.tick_params(axis="y", labelsize=tick)
+        for xx, v in zip(x, vals):
+            ax.text(xx, v, f"{v:.0f}", ha="center", va="bottom", fontsize=tick, color=C.text, fontweight=500)
+        if kind == "zero_avoid":
+            ax.set_ylim(_ZERO_CUT, max(vals) * 1.03)
+            ax.set_yticks([_ZERO_CUT])
+            ax.tick_params(axis="y", labelsize=tick, colors=C.text_muted)
+        else:
+            ax.set_ylim(0, max(vals) * 1.16)
     if kind != "labels_fix":
         ax.set_xticks(x, short)
-        if not kind.startswith(("labels_avoid", "zero")):
+        if not kind.startswith(("labels_avoid", "zero_avoid")):
             ax.set_yticks([])
-        if kind == "zero_fix":
-            ax.spines["bottom"].set_visible(False)
     ax.tick_params(axis="x", labelsize=tick, length=0)
     ax.tick_params(axis="y", length=0)
-    _plain(ax, bottom=kind != "zero_fix")
+    _plain(ax, bottom=True)
     return fig
+
+
+# Zero-baseline pair: engagement index for five job families (scores sit far from zero, so a cut axis distorts most).
+_ZERO = (_csv("job_family_scorecard").set_index("job_family").engagement_index
+         .loc[["Data & Analytics", "Specialty Nursing", "Customer Care", "Pharmacy Technician",
+               "Distribution Center Associate"]])
+_ZERO_CUT = int(_ZERO.min()) - 2
+TEXT["zero_cut"] = str(_ZERO_CUT)
+TEXT["zero_hi"], TEXT["zero_lo"] = f"{_ZERO.max():.0f}", f"{_ZERO.min():.0f}"
+TEXT["zero_fake_ratio"] = f"{(_ZERO.max() - _ZERO_CUT) / (_ZERO.min() - _ZERO_CUT):.1f}"
+TEXT["zero_true_pct"] = f"{(_ZERO.max() / _ZERO.min() - 1) * 100:.0f}"
 
 
 for _k, _alt in {
@@ -836,8 +845,8 @@ for _k, _alt in {
     "color_fix": "All bars grey except one in blue.",
     "labels_avoid": "Bars with a gridded value axis and no labels.",
     "labels_fix": "Bars labelled directly, no axis or gridlines.",
-    "zero_avoid": "Bars on an axis that does not start at zero.",
-    "zero_fix": "The same values as a line on a narrow range.",
+    "zero_avoid": "Engagement scores as bars on an axis cut just below the lowest score: the top bar looks several times the bottom one.",
+    "zero_fix": "The same scores as bars from zero: the difference is visible at its true size.",
 }.items():
     EXHIBITS[f"bp_{_k}"] = (lambda k=_k, a=_alt: (_bp(k), a))
 
@@ -924,7 +933,7 @@ HTML["roles"] = "".join(
     f"<code>{getattr(C, k)}</code></div>" for k, n, d in _ROLES)
 
 _TYPE = mv.TOKENS["typography"]["roles"]
-_TYPE_NAMES = {"headline": "Headline", "subtitle": "Subtitle", "label": "Data labels", "tick": "Axis and category labels",
+_TYPE_NAMES = {"slide_title": "Slide title", "headline": "Chart headline", "subtitle": "Subtitle", "label": "Data labels", "tick": "Axis and category labels",
                "annotation": "Callouts", "footnote": "Footnote and source", "kpi": "Big number"}
 _W = {300: "Light", 400: "Regular", 500: "Medium", 600: "Semibold", 700: "Bold", 800: "Extra bold"}
 
@@ -935,12 +944,13 @@ def _type_row(key: str) -> str:
     for part in r["color"].split("."):
         node = node[part]
     size = min(r["size_px"], 30)
-    sample = {"headline": "Attrition is concentrated in two job families", "subtitle": "Voluntary attrition, FY26 (%)",
+    sample = {"slide_title": "Attrition is concentrated in two families",
+              "headline": "Pharmacy Technicians leave at the highest rate", "subtitle": "Voluntary attrition, FY26 (%)",
               "label": "27.4%", "tick": "Pharmacy Technician", "annotation": "Hiring freeze, Q2",
               "footnote": "Source: Workday HCM, as of 31 Mar 2026", "kpi": "75%"}[key]
     return (f'<tr><td>{_TYPE_NAMES[key]}</td><td><span style="font-size:{size}px;font-weight:{r["weight"]};'
             f'color:{node["value"]};line-height:1.2">{sample}</span></td><td>{_W[r["weight"]]}</td>'
-            f'<td class="num">{r["size_pt"]} pt</td><td class="num">{r["size_px"]} px</td></tr>')
+            f'<td class="num" style="white-space:nowrap">{r["size_pt"]} pt</td><td class="num" style="white-space:nowrap">{r["size_px"]} px</td></tr>')
 
 
 HTML["type_specimen"] = ('<table class="spec"><thead><tr><th>Role</th><th>Sample</th><th>Weight</th><th class="num">Slide</th>'

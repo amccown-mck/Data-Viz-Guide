@@ -7,7 +7,7 @@ from matplotlib.patches import Circle, FancyBboxPatch, Rectangle, Wedge
 
 import mckviz as mv
 from exhibits import (ANNOT, ANTI, ATTR, BAND, ENT, FOCUS, FOCUS_EXIT_SHARE, LABEL, MINI, SHORT, SUPPLY, TICK, C,
-                      EXHIBITS, TEXT, _csv, _plain, bench, exhibit, fig_px, hbars)
+                      EXHIBITS, TEXT, _csv, _plain, bench, exhibit, fig_px, hbars, marker)
 
 AQ = _csv("attrition_quarterly")
 QS = list(dict.fromkeys(AQ.quarter))
@@ -264,7 +264,7 @@ def _card(fig, rect, value, label, delta=None, bad=False, gauge=False):
         ax.text(0.5, 0.04, value, ha="center", fontsize=MINI - 3, color="black")
         return
     ax.text(0.08, 0.86, label, fontsize=MINI - 3.5, color=C.text, va="top")
-    ax.text(0.08, 0.42, value, fontsize=MINI + 3, color=C.headline, fontweight=300, va="center")
+    ax.text(0.08, 0.42, value, fontsize=MINI + 3, color=C.headline, fontweight=700, va="center")
     if delta:
         ax.text(0.08, 0.14, delta, fontsize=MINI - 3.5, color=C.negative_text if bad else C.text, va="center")
 
@@ -415,7 +415,7 @@ def fmt_social():
     fig = fig_px(240, 240)
     ax = canvas(fig)
     ax.add_patch(Rectangle((0, 0), 1, 1, color=bgc, lw=0))
-    ax.text(0.08, 0.9, f"{FOCUS_EXIT_SHARE:.0f}%", fontsize=44, color=fg[1], fontweight=300, va="top")
+    ax.text(0.08, 0.9, f"{FOCUS_EXIT_SHARE:.0f}%", fontsize=44, color=fg[1], fontweight=700, va="top")
     ax.text(0.08, 0.6, "of voluntary exits come from\njust two frontline job families", fontsize=MINI, color=fg[0],
             va="top", linespacing=1.25)
     ax.add_patch(Rectangle((0.08, 0.3), 0.84, 0.06, color=C.context_on_dark, lw=0))
@@ -423,3 +423,78 @@ def fmt_social():
     ax.text(0.08, 0.13, "Source: Workday HCM, FY26 (synthetic)", fontsize=MINI - 3, color=fg[0], alpha=0.75)
     ax.text(0.92, 0.13, "McKesson", fontsize=MINI - 1.5, color=fg[0], fontweight=700, ha="right")
     return fig, f"A square social card: {FOCUS_EXIT_SHARE:.0f}% of voluntary exits come from two frontline job families."
+
+
+# ================================================================== TWO CHARTS ON A SLIDE
+_SC2 = SC.sort_values("vol_attrition_pct")                     # ascending: largest at the top; both charts share it
+_LOW_ENG = list(SC.engagement_index.nsmallest(2).index)
+_TOP_ATT = list(SC.vol_attrition_pct.nlargest(2).index)
+assert set(_LOW_ENG) == set(_TOP_ATT), "the two-chart slide claims the same two families top attrition and trail engagement"
+_OTHERS = SC.drop(_TOP_ATT)
+_ENG_OTHERS = float((_OTHERS.engagement_index * _OTHERS.headcount).sum() / _OTHERS.headcount.sum())
+_A1, _A2 = (float(SC.vol_attrition_pct[f]) for f in _TOP_ATT)
+TEXT["two_slide_title"] = "The two job families that lose the most people also report the lowest engagement"
+TEXT["two_left_head"] = (f"Pharmacy Techs and DC Associates lose about 1 in {round(100 / ((_A1 + _A2) / 2))} "
+                         "people a year")
+_E = sorted(int(SC.engagement_index[f]) for f in _LOW_ENG)
+TEXT["two_right_head"] = f"They score {_E[0]} and {_E[1]} on engagement, against {_ENG_OTHERS:.0f} for everyone else"
+
+
+@exhibit
+def fmt_two_charts():
+    W, H = 840, 472
+    fig = fig_px(W, H)
+    ax = canvas(fig)
+    ax.add_patch(Rectangle((0.002, 0.004), 0.996, 0.992, facecolor="white", edgecolor=C.grid, lw=1))
+    px = lambda v, d: v / d                                   # px -> figure fraction
+    L, R, GUT = px(40, W), 1 - px(40, W), px(44, W)
+    colw = (R - L - GUT) / 2
+    ax.text(L, 1 - px(30, H), TEXT["two_slide_title"], fontsize=19, fontweight=700, color=C.headline, va="top")
+    marker(ax, (L - px(22, W), 1 - px(42, H)), 1, coords="axes fraction")
+    labels = [SHORT[f] for f in _SC2.index]
+    bold = {SHORT[f] for f in _TOP_ATT}
+    heads = [TEXT["two_left_head"], TEXT["two_right_head"]]
+    subs = ["Voluntary attrition by job family, FY26 (%)", "Engagement index by job family, FY26 (0–100)"]
+    for i in range(2):
+        x0 = L + i * (colw + GUT)
+        ax.text(x0, 1 - px(92, H), _wrap(heads[i], 44), fontsize=13.5, fontweight=600, color=C.headline, va="top",
+                linespacing=1.15)
+        ax.text(x0, 1 - px(140, H), subs[i], fontsize=TICK, color=C.text, va="top")
+        inner = fig.add_axes([x0 + px(112, W), px(70, H), colw - px(150, W), px(240, H)])
+        if i == 0:
+            hbars(inner, labels, _SC2.vol_attrition_pct, mv.highlight(_SC2.index, focus=_TOP_ATT), bold=bold,
+                  size=LABEL - 0.5, tick=TICK - 0.5, xmax=34)
+        else:
+            y = np.arange(len(labels))
+            cols = mv.highlight(_SC2.index, focus=_TOP_ATT)
+            inner.hlines(y, 60, _SC2.engagement_index, color=C.grid, lw=1, zorder=1)
+            inner.scatter(_SC2.engagement_index, y, s=72, color=cols, zorder=3, edgecolor="white", lw=0.8)
+            for yy, (f, v) in enumerate(_SC2.engagement_index.items()):
+                inner.text(v + 0.6, yy, f"{v:.0f}", va="center", fontsize=LABEL - 0.5,
+                           color=C.headline if f in _TOP_ATT else C.text, fontweight=600 if f in _TOP_ATT else 500)
+            inner.set_yticks(y, labels)
+            for t in inner.get_yticklabels():
+                t.set_fontsize(TICK - 0.5)
+                if t.get_text() in bold:
+                    t.set_fontweight(600)
+                    t.set_color(C.headline)
+            inner.set_xlim(60, 82)
+            inner.set_xticks([60, 70, 80])
+            inner.tick_params(axis="x", labelsize=TICK - 1.5, colors=C.text_muted, length=0)
+            inner.tick_params(axis="y", length=0)
+            inner.set_ylim(-0.6, len(labels) - 0.4)
+            inner.grid(axis="x", color=C.grid, lw=0.6)
+            _plain(inner)
+    marker(ax, (L + colw - px(4, W), 1 - px(100, H)), 2, coords="axes fraction")
+    marker(ax, (L + colw - px(4, W), 1 - px(146, H)), 3, coords="axes fraction")
+    marker(ax, (0.5, px(190, H)), 4, coords="axes fraction")
+    ax.text(L, px(26, H), "Engagement index = mean of the survey's engagement items, rescaled to 0–100.\nSource: Workday HCM and "
+            "engagement survey (synthetic data for illustration), FY26; U.S. regular employees",
+            fontsize=ANNOT - 1.5, color=C.text_muted, fontweight=300, va="bottom", linespacing=1.4)
+    marker(ax, (px(530, W), px(30, H)), 5, coords="axes fraction")
+    return fig, (f"{TEXT['two_slide_title']}. Left: {TEXT['two_left_head']}. Right: {TEXT['two_right_head']}.")
+
+
+def _wrap(s, width):
+    import textwrap
+    return textwrap.fill(s, width)

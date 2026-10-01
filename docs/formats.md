@@ -25,7 +25,7 @@ The same finding needs different treatment in a live meeting, a PDF, a phone or 
   - **Editorial** — spans 2 of 3 columns, sits with running text.
   - **Inline** — one column, next to the paragraph it supports.
 - Charts **can be denser** than on slides (the reader controls pace) but still carry an insight headline.
-- **Big-number callouts** (Light weight, large) work well in margins or text columns.
+- **Big-number callouts** (Bold, large) work well in margins or text columns.
 - Number every exhibit ("Exhibit 3") and refer to it in the text.
 - Export **vector** (SVG/PDF/EMF) for print; PNG at 300 dpi otherwise.
 

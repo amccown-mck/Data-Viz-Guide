@@ -193,7 +193,7 @@ def titles(fig, headline: str, subtitle: str | None = None, dark: bool = False) 
     hsize, ssize = h["size_pt"] * _SCALE, s["size_pt"] * _SCALE * 1.05
     max_chars = max(24, int(fig.get_figwidth() * 72 * 0.94 / (0.54 * hsize)))
     head = fig.text(0, 1, _balanced_wrap(headline, max_chars), ha="left", va="top", fontsize=hsize,
-                    fontweight="bold", color="white" if dark else h["hex"], linespacing=1.15)
+                    fontweight=h["weight"], color="white" if dark else h["hex"], linespacing=1.15)
     sub = None
     if subtitle:
         sub = fig.text(0, 1, textwrap.fill(subtitle, int(max_chars * hsize / ssize)), ha="left", va="top",

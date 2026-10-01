@@ -8,9 +8,9 @@ window.MCK_PLOTLY_TEMPLATE = {
     },
     "title": {
       "font": {
-        "size": 22,
+        "size": 20,
         "color": "#143359",
-        "weight": 700
+        "weight": 600
       },
       "x": 0,
       "xanchor": "left",
