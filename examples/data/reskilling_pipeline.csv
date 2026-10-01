@@ -1,0 +1,8 @@
+from_stage,to_stage,people,transfer
+Nominated,Enrolled,1010,progressed
+Nominated,Declined,190,dropped
+Enrolled,Completed,840,progressed
+Enrolled,Withdrew,170,dropped
+Completed,Redeployed to data role,410,progressed
+Completed,Returned to prior role,350,not_placed
+Completed,Left McKesson,80,not_placed

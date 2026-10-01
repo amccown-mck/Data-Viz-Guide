@@ -347,6 +347,25 @@ def skills_profile_completion() -> pd.DataFrame:
         emp = int(round(mix.workers[fn] * (mix.employee_ft_pct[fn] + mix.employee_pt_pct[fn]) / 100))
         rows.append((fn, emp, int(round(emp * r25)), int(round(emp * r26)), 80))
     return pd.DataFrame(rows, columns=["function", "employees", "profiles_mar25", "profiles_mar26", "target_pct"])
+def dc_vacancy_overtime() -> pd.DataFrame:
+    """Site level, internal. U.S. distribution centers, monthly Jan 2025-Dec 2026: vacancy rate (% of budgeted roles
+    open at month end) and paid overtime (hours per worked FTE per week). Same values as docs/cookbook/dual-axis.md."""
+    months = pd.date_range("2025-01-01", "2026-12-01", freq="MS").strftime("%b %Y")
+    vacancy = [7.2, 7.5, 7.9, 8.4, 9.1, 9.8, 10.6, 11.4, 12.1, 12.6, 12.3, 11.8,
+               11.0, 10.2, 9.5, 8.9, 8.4, 8.1, 7.9, 7.7, 7.6, 7.4, 7.3, 7.2]
+    overtime = [3.9, 4.0, 4.3, 4.6, 5.0, 5.5, 5.9, 6.3, 6.6, 6.8, 6.7, 6.4,
+                6.0, 5.6, 5.2, 4.9, 4.7, 4.5, 4.4, 4.3, 4.3, 4.2, 4.1, 4.1]
+    return pd.DataFrame({"month": months, "vacancy_pct": vacancy, "overtime_hrs_per_fte_wk": overtime})
+
+
+def reskilling_pipeline() -> pd.DataFrame:
+    """Program level, internal. Data & AI reskilling academy, FY25-FY26 cohorts: flows between stages (people).
+    transfer: progressed / dropped / not_placed. Same values as docs/cookbook/sankey.md; every flow is n >= 10."""
+    rows = [("Nominated", "Enrolled", 1010, "progressed"), ("Nominated", "Declined", 190, "dropped"),
+            ("Enrolled", "Completed", 840, "progressed"), ("Enrolled", "Withdrew", 170, "dropped"),
+            ("Completed", "Redeployed to data role", 410, "progressed"),
+            ("Completed", "Returned to prior role", 350, "not_placed"), ("Completed", "Left McKesson", 80, "not_placed")]
+    return pd.DataFrame(rows, columns=["from_stage", "to_stage", "people", "transfer"])
 
 
 def main() -> None:
@@ -379,6 +398,8 @@ def main() -> None:
         "remote_care_agents": remote_care_agents(),
         "succession_coverage_bu": succession_coverage_bu(),
         "skills_profile_completion": skills_profile_completion(),
+        "dc_vacancy_overtime": dc_vacancy_overtime(),
+        "reskilling_pipeline": reskilling_pipeline(),
     }
     for name, df in sets.items():
         df.to_csv(OUT / f"{name}.csv", index=False)

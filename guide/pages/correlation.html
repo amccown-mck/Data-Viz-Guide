@@ -1,0 +1,297 @@
+<section class="spread" id="scatter">
+  <div class="rail">
+    <p class="eyebrow">Correlation</p>
+    <h2 class="title"><b>Bubble</b> scatterplot</h2>
+    <div class="defbox">Correlation charts show how two or more measures relate to each other: does X go with Y, and who sits where it matters?</div>
+    <p>Each entity is one mark. Position carries two measures; bubble area can carry a third, such as headcount. Use it for exposure vs. pay by role, engagement vs. span of control by team, or time to fill vs. market tightness by metro.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Grey bubbles; the ones the headline names in blue</li>
+      <li>Bubble area, not diameter, ∝ value; a size key</li>
+      <li>Label five points at most; shade the zone that matters</li>
+      <li>Say "is associated with", never "causes"</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Who is in the zone, and by how much.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Both measures, the period, and what bubble area means.</span></li>
+        <li><span class="mk">3</span><span><b>The zone that matters</b>Shaded behind the marks and named in place.</span></li>
+        <li><span class="mk">4</span><span><b>Focus in blue, labelled</b>Only the bubbles the headline names.</span></li>
+        <li><span class="mk">5</span><span><b>Grey context</b>Unlabelled; big bubbles drawn first, white outlines.</span></li>
+        <li><span class="mk">6</span><span><b>Reference line</b>Navy, dashed, its value computed and labelled.</span></li>
+        <li><span class="mk">7</span><span><b>Size key</b>Three round values on the same scale.</span></li>
+        <li><span class="mk">8</span><span><b>Horizontal axis titles</b>Units on the axes; the Y title top-left.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define the measure and the average.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:corr_sc_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:corr_sc_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:corr_sc_anatomy|min}}
+        <p class="card-foot">Exposure = share of task hours matched to gen AI-capable activities in an external task taxonomy. Average weighted by headcount.<br>Source: Workday HCM and task inventory (synthetic data for illustration), FY26<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="scatter-variants">
+  <div class="rail">
+    <p class="eyebrow">Correlation</p>
+    <h2 class="title"><b>Scatterplot</b> variants</h2>
+    <p class="lede">The same rules hold: grey context, blue for the story, labels only where the headline points.</p>
+    <h3>When a scatter is the wrong chart</h3>
+    <ul>
+      <li>One measure, ranked: a <strong>bar</strong></li>
+      <li>One measure over time: a <strong>line</strong></li>
+      <li>The X measure is a category: a <strong>dot plot</strong></li>
+      <li>Thousands of overlapping people: a <strong>binned heatmap</strong></li>
+      <li>Four or more measures per entity: <strong>parallel coordinates</strong></li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Plain scatter</h4>
+        <p class="note">No size measure, equal dots. Lower engagement goes with higher attrition across job families (r = {{text:corr_sc_r}}).</p>
+        {{exhibit:corr_sc_var_plain}}
+      </div>
+      <div class="tile">
+        <h4>Quadrant</h4>
+        <p class="note">Reference lines at a meaningful value; shade only the quadrant the headline names. {{text:corr_sc_high_rising}} families are high and rising.</p>
+        {{exhibit:corr_sc_var_quadrant}}
+      </div>
+      <div class="tile">
+        <h4>Connected scatter</h4>
+        <p class="note">One entity over time, points joined in order. Market postings reached {{text:corr_idx_post}} while our headcount reached {{text:corr_idx_int}}.</p>
+        {{exhibit:corr_sc_var_connected}}
+      </div>
+      <div class="tile">
+        <h4>Color for a real group</h4>
+        <p class="note">Color only when it encodes a variable, with a key: four groups at most, in palette order.</p>
+        {{exhibit:corr_sc_var_groups}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="scatter-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Correlation</p>
+    <h2 class="title"><b>Scatterplot</b> best practice</h2>
+    <p class="lede">A scatter invites the eye to roam. These four rules give it somewhere to land.</p>
+    <p><strong>Color carries a variable, or the story.</strong> Coloring by x-range repeats the position and encodes nothing.</p>
+    <p><strong>Two trend lines at most.</strong> One line per highlighted group; the rest stay grey, with no line.</p>
+    <p><strong>Label what the headline names.</strong> Twelve labels bury the point. Put the rest in tooltips.</p>
+    <p><strong>Big bubbles behind.</strong> Draw the largest first, with white outlines, so small ones stay visible.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Using color</h4><div class="pair">
+        <div>{{exhibit:corr_sc_bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Colors by pay range.</span></div></div>
+        <div>{{exhibit:corr_sc_bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey, the story in blue.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Trend lines</h4><div class="pair">
+        <div>{{exhibit:corr_sc_bp_trend_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Four crossing lines.</span></div></div>
+        <div>{{exhibit:corr_sc_bp_trend_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>One group, one line.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Labelling points</h4><div class="pair">
+        <div>{{exhibit:corr_sc_bp_label_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Every bubble named.</span></div></div>
+        <div>{{exhibit:corr_sc_bp_label_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Only the focus.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Overlapping bubbles</h4><div class="pair">
+        <div>{{exhibit:corr_sc_bp_overlap_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>The focus hidden underneath.</span></div></div>
+        <div>{{exhibit:corr_sc_bp_overlap_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Big first, white outlines.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="dual-axis">
+  <div class="rail">
+    <p class="eyebrow">Correlation</p>
+    <h2 class="title"><b>Dual axis</b> charts</h2>
+    <p class="lede">Two measures in different units, one axis each. Both ranges are arbitrary, so where the lines cross or track is the designer's choice, not the data's.</p>
+    <h3>Pick the alternative from the question</h3>
+    <ul>
+      <li>Did B move when A moved? <strong>Two aligned panels</strong> on one time axis</li>
+      <li>Which grew faster? <strong>Index both</strong> to 100 at a stated base</li>
+      <li>How did B respond to A? A <strong>connected scatter</strong></li>
+    </ul>
+    <p class="small">If a template forces one: columns for the quantity, a line for the rate, both axes from zero, no horizontal gridlines, each axis title colored to its series.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>The same data, story one</h4>
+        <p class="note">Ranges picked so the lines lie on top of each other: "overtime tracks vacancies exactly".</p>
+        {{exhibit:corr_dual_avoid_a}}
+        <div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>The fit is an artifact of two chosen ranges.</span></div>
+      </div>
+      <div class="tile">
+        <h4>The same data, story two</h4>
+        <p class="note">Change the right-hand range and overtime now looks flat while vacancies soar.</p>
+        {{exhibit:corr_dual_avoid_b}}
+        <div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Two scales, two contradictory stories.</span></div>
+      </div>
+      <div class="tile">
+        <h4>Two aligned panels</h4>
+        <p class="note">Each measure on its own scale from zero; the shared time axis makes timing exact. Both peaked in {{text:corr_dual_peak_month}}.</p>
+        {{exhibit:corr_dual_panels}}
+        <div class="verdict rec"><i>✓</i><span><b>Recommended</b>When the question is timing.</span></div>
+      </div>
+      <div class="tile">
+        <h4>Indexed to 100</h4>
+        <p class="note">One honest axis: by {{text:corr_dual_peak_month}}, vacancies were up {{text:corr_dual_vac_idx}} and overtime {{text:corr_dual_ot_idx}}.</p>
+        {{exhibit:corr_dual_indexed}}
+        <div class="verdict rec"><i>✓</i><span><b>Recommended</b>When the question is relative change.</span></div>
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="heatmap">
+  <div class="rail">
+    <p class="eyebrow">Correlation</p>
+    <h2 class="title"><b>Diverging</b> heatmap</h2>
+    <p class="lede">A heatmap shows one measure across two sets of categories as color, so the eye finds patterns in 30 to 150 cells at once: a weak column, a strong row, one hot cell.</p>
+    <p>Use a diverging scale when the data has a meaningful middle: a benchmark, a target, change vs. last year. Use a sequential scale when the reference sits at one end, such as zero.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Seven even classes; the middle one Light Sand</li>
+      <li>Orange below the reference (worse), blue above</li>
+      <li>Rows ranked by value, never alphabetical</li>
+      <li>Outline one column or row; don't add a hue</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>The pattern, counted from the data.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Measure, reference, scope, unit.</span></li>
+        <li><span class="mk">3</span><span><b>Neutral middle</b>Symmetric classes around zero, stepped key with end labels.</span></li>
+        <li><span class="mk">4</span><span><b>Focus column</b>Outlined in navy, header bold.</span></li>
+        <li><span class="mk">5</span><span><b>Ranked rows</b>By average gap, so the pattern emerges.</span></li>
+        <li><span class="mk">6</span><span><b>Orange means worse</b>Below the benchmark, darker the further below.</span></li>
+        <li><span class="mk">7</span><span><b>Values in the cells</b>White on dark fills, navy on light.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>Define the gap; note any suppression.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:corr_hm_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:corr_hm_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:corr_hm_anatomy|min}}
+        <p class="card-foot">Gap = business-unit favorable score minus the external healthcare benchmark. Rows ranked by average gap; cells under {{text:min_n}} respondents would show grey, marked n&lt;10.<br>Source: Employee engagement survey and external benchmark (synthetic data for illustration), 2026<span class="mk">8</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="heatmap-variants">
+  <div class="rail">
+    <p class="eyebrow">Correlation</p>
+    <h2 class="title"><b>Heatmap</b> variants</h2>
+    <p class="lede">Same build: white gutters, even classes, ranked rows. Blue is the default ramp for any single measure.</p>
+    <h3>When a heatmap is the wrong chart</h3>
+    <ul>
+      <li>A few values to compare precisely: a <strong>bar</strong> or <strong>dot plot</strong></li>
+      <li>A trend for one to four series: a <strong>line</strong></li>
+      <li>Columns in different units: a <strong>table</strong>, or one scale per column</li>
+      <li>Places: a <strong>map</strong></li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Sequential, over time</h4>
+        <p class="note">Reference at one end: darkest = highest. {{text:corr_hm_seq_top}} is darkest in every quarter.</p>
+        {{exhibit:corr_hm_var_seq}}
+      </div>
+      <div class="tile">
+        <h4>Heat table</h4>
+        <p class="note">Values in every cell, color as a second cue. Oncology reached {{text:corr_hm_table_top}} in Q4 FY26.</p>
+        {{exhibit:corr_hm_var_table}}
+      </div>
+      <div class="tile">
+        <h4>Origin × destination</h4>
+        <p class="note">Many-to-many moves read better as a matrix than a tangled Sankey. Largest: {{text:corr_hm_od_top}}.</p>
+        {{exhibit:corr_hm_var_od}}
+      </div>
+      <div class="tile">
+        <h4>Binned density</h4>
+        <p class="note">Thousands of people on two measures: count them into a grid instead of overplotting dots.</p>
+        {{exhibit:corr_hm_var_binned}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="heatmap-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Correlation</p>
+    <h2 class="title"><b>Heatmap</b> best practice</h2>
+    <p class="lede">Color is read less precisely than length, so the scale has to be honest and the order has to help.</p>
+    <p><strong>Even steps.</strong> Hand-picked breaks (1, 2, 4, 10, 25) make small differences look large. Use five to seven equal classes.</p>
+    <p><strong>Rank the rows.</strong> Alphabetical order scatters the pattern; ranking by average reveals it.</p>
+    <p><strong>Keep the zero step.</strong> A diverging scale without a neutral class forces every cell above or below.</p>
+    <p><strong>No cell under {{text:min_n}} people.</strong> Grey it, mark it n&lt;10 and footnote it, in tooltips too.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Color steps</h4><div class="pair">
+        <div>{{exhibit:corr_hm_bp_steps_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Uneven breaks.</span></div></div>
+        <div>{{exhibit:corr_hm_bp_steps_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Six equal classes.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Sorting</h4><div class="pair">
+        <div>{{exhibit:corr_hm_bp_sort_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Alphabetical rows.</span></div></div>
+        <div>{{exhibit:corr_hm_bp_sort_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Ranked by average.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Zero on a diverging scale</h4><div class="pair">
+        <div>{{exhibit:corr_hm_bp_zero_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>No neutral class.</span></div></div>
+        <div>{{exhibit:corr_hm_bp_zero_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A Light Sand middle.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Small groups</h4><div class="pair">
+        <div>{{exhibit:corr_hm_bp_small_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A six-person team scored.</span></div></div>
+        <div>{{exhibit:corr_hm_bp_small_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Greyed and marked n&lt;10.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="correlation-build">
+  <div class="rail">
+    <p class="eyebrow">Correlation</p>
+    <h2 class="title"><b>Build</b> correlation charts</h2>
+    <p class="lede">Native, editable charts in every tool. Tested code and click-by-click steps are on the cookbook pages.</p>
+    <p><a href="../../docs/cookbook/scatter-bubble.md">scatter-bubble.md</a> · <a href="../../docs/cookbook/dual-axis.md">dual-axis.md</a> · <a href="../../docs/cookbook/heatmap.md">heatmap.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Bubble area ∝ value, with a size key</li>
+      <li>Only the headline's points labelled</li>
+      <li>Association, not cause, in the headline</li>
+      <li>No dual axis: panels or an index</li>
+      <li>Diverging midpoint = the real reference</li>
+      <li>No point or cell under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Bubble:</strong> Insert › Insert Scatter (X, Y) or Bubble Chart › Bubble; split focus and context into two series; <em>Size represents: Area of bubbles</em>; label the focus series with <em>Value From Cells</em>. <strong>Instead of a dual axis:</strong> an index helper column <code>=B2/B$2*100</code>, or two line charts with identical width, aligned left. <strong>Heatmap:</strong> Conditional Formatting › Color Scales › More Rules › 3-Color Scale with fixed Number bounds (−10.5, 0, 10.5), or one rule per class; white cell borders as gutters.</p></div>
+      <div class="platform"><h5>Power BI</h5><p><strong>Scatter chart</strong> with the entity in Values; color by measure through <em>Markers › Colors › fx</em>; averages and thresholds as Analytics-pane constant lines. <strong>Matrix</strong> with <em>Cell elements › Background color › fx</em> (Gradient with a middle color, or Rules per class). Index measures replace a dual axis. Blank small groups: <code>IF([Headcount] &lt; 10, BLANK(), …)</code>.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>matplotlib with <code>mckviz</code>; stepped classes from <code>BoundaryNorm</code>.</p>
+<pre class="snip">ax.scatter(df.pay, df.exposure, s=df.headcount * K,      # area ∝ value
+           c=mv.highlight(df.role, focus=focus), edgecolors="white")
+norm = BoundaryNorm(np.arange(-10.5, 10.6, 3), 7)         # 7 even classes, 0 in the middle
+ax.imshow(m, cmap=ListedColormap(mv.DIVERGING), norm=norm)</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plotly <code>scatter</code> with <code>sizemode: "area"</code> and tooltips for the unlabelled points; <code>heatmap</code> with a stepped colorscale and <code>xgap</code>/<code>ygap</code> 2; <code>make_subplots(shared_xaxes=True)</code> for aligned panels. Avoid <code>secondary_y</code>.</p></div>
+      <div class="platform"><h5>R</h5><p><code>geom_point(aes(size = headcount))</code> + <code>scale_size_area()</code>; <code>geom_tile()</code> + <code>scale_fill_mck_div(limits = c(-10.5, 10.5))</code>; <code>facet_wrap(~ measure, ncol = 1, scales = "free_y")</code> for aligned panels.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
