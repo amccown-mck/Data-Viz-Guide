@@ -12,7 +12,8 @@ This is the McKesson data-visualization starter kit. It covers principles, desig
 | Using Excel / PowerPoint | [dist/office/](dist/office/): theme colors and fonts XML. Install the fonts from [fonts/](fonts/) |
 | Using Power BI | [dist/powerbi/mckesson-dataviz-theme.json](dist/powerbi/mckesson-dataviz-theme.json) |
 | Using R | [dist/r/theme_mck.R](dist/r/theme_mck.R) |
-| A coding agent | [AGENTS.md](AGENTS.md) |
+| A coding agent | [AGENTS.md](AGENTS.md) (also loaded via `CLAUDE.md` and `.github/copilot-instructions.md`); chart workflow skill in [.github/skills/mck-chart](.github/skills/mck-chart/SKILL.md) |
+| Adding chart rules to another repo | Copy [dist/agents/mck-viz-rules.md](dist/agents/mck-viz-rules.md), a single self-contained rules file |
 
 To change the brand, edit `tokens/tokens.json`, run `python tokens/build.py`, and then check `dist/palette-report.md`. Do not hand-edit `dist/`.
 

@@ -1,7 +1,8 @@
 """Build platform-specific theme files from tokens/tokens.json.
 
 Usage:  python tokens/build.py
-Writes: dist/ (CSS, Plotly, Vega-Lite, matplotlib, ggplot2, Power BI, Office theme XML, palette report + swatch image)
+Writes: dist/ (CSS, Plotly, Vega-Lite, matplotlib, ggplot2, Power BI, Office theme XML, palette report + swatch image,
+        portable agent rules from agents/*.template.md)
         python/mckviz/_tokens.json (runtime copy for the Python package)
 """
 from __future__ import annotations
@@ -512,6 +513,39 @@ def build_swatches() -> None:
     print("  wrote dist/palette.png")
 
 
+# ---------------------------------------------------------------- portable agent rules
+def build_agent_rules() -> None:
+    """Fill agents/*.template.md placeholders from tokens, so the rules never drift from the palette.
+
+    {{color:chart.focus}} -> hex · {{list:sequential.blue}} -> `#..`, `#..` · {{chart:bar.band_fill}} -> value
+    {{role:headline.size_pt}} -> type role value · {{font}} · {{generated_note}}
+    """
+    def lookup(node, path):
+        for key in path.split("."):
+            node = node[key]
+        return node
+
+    def fill(m: re.Match) -> str:
+        kind, _, path = m.group(1).partition(":")
+        if kind == "color":
+            return v(path)
+        if kind == "list":
+            return ", ".join(f"`{h}`" for h in lookup(C, path))
+        if kind == "chart":
+            return str(lookup(K, path))
+        if kind == "role":
+            return str(lookup(T["roles"], path))
+        if kind == "font":
+            return FONT
+        if kind == "generated_note":
+            return "GENERATED from tokens/tokens.json by tokens/build.py - edit agents/*.template.md, not this file."
+        raise KeyError(f"unknown placeholder {{{{{m.group(1)}}}}}")
+
+    for tpl in sorted((ROOT / "agents").glob("*.template.md")):
+        text = re.sub(r"\{\{([a-z_]+(?::[\w.]+)?)\}\}", fill, tpl.read_text(encoding="utf-8"))
+        write(f"agents/{tpl.name.replace('.template', '')}", text)
+
+
 def main() -> None:
     print("Building tokens ->", DIST)
     build_css()
@@ -523,6 +557,7 @@ def main() -> None:
     build_office()
     build_report()
     build_swatches()
+    build_agent_rules()
     pkg = ROOT / "python" / "mckviz"
     if pkg.exists():
         shutil.copyfile(ROOT / "tokens" / "tokens.json", pkg / "_tokens.json")

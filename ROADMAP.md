@@ -16,16 +16,13 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 | Galleries | 11 matplotlib PNGs that were visually QA'd, plus a Plotly HTML gallery | `examples/python/`, `examples/output/` |
 | Core docs | principles, color, typography-and-layout, choosing-a-chart, formats, qa-checklist | `docs/` |
 | Cookbook | 23 chart pages (including distribution, tables, venn) plus `_template.md` | `docs/cookbook/` |
+| Agent assets | `AGENTS.md`, `CLAUDE.md`, Copilot instructions, path-scoped instructions, `mck-chart` skill, portable rules | `AGENTS.md`, `.github/`, `.claude/skills/`, `dist/agents/` |
 | Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook | `tools/check_snippets.py` |
 
 ## Next steps (in priority order)
 
 1. ~~**Finish the cookbook.**~~ Done: `distribution`, `tables` and `venn` pages added, with gallery charts and verified snippets.
-2. **Agent assets.** These are needed so that coding agents follow the guide automatically:
-   - Expand `AGENTS.md`, which is a stub today. Add `CLAUDE.md` and `.github/copilot-instructions.md`, both pointing to `AGENTS.md`.
-   - Add `.github/instructions/viz-python.instructions.md` (applyTo `**/*.py`), `viz-web.instructions.md` (`**/*.{html,js,ts,css}`), and `viz-r.instructions.md` (`**/*.{R,Rmd,qmd}`).
-   - Add `.github/skills/mck-chart/SKILL.md`, a workflow skill: question → chart type → build with `mckviz` → headline → QA checklist.
-   - Add a portable single-file rules prompt for use in other repos (`agents/mck-viz-rules.md`).
+2. ~~**Agent assets.**~~ Done: expanded `AGENTS.md`; `CLAUDE.md` and `.github/copilot-instructions.md` point to it; path-scoped `.github/instructions/viz-{python,web,r}.instructions.md`; the `mck-chart` workflow skill (`.github/skills/`, with a Claude Code shim in `.claude/skills/`); the portable rules file is generated from `agents/mck-viz-rules.template.md` into `dist/agents/mck-viz-rules.md` by `tokens/build.py`.
 3. **HTML starter.** Add a self-contained `templates/html/chart-card.html` that uses `dist/web/mck-viz.css` and `mck-plotly-template.js`. Open `examples/output/gallery.html` and check it visually.
 4. **Excel / PowerPoint (priority 2 audience).**
    - Add a `.pptx` / `.potx` with the theme colors and fonts applied, plus native, editable sample charts built with python-pptx (bar highlight, line, waterfall, stacked 100%).

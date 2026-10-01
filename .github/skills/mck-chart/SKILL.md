@@ -1,0 +1,53 @@
+---
+name: mck-chart
+description: Make a McKesson-standard chart or table from data, going from question to chart type, build with mckviz (or the web, Office, Power BI or R theme), insight headline, and QA checklist. Use whenever the user asks for a chart, graph, plot, visualization, scorecard or exhibit for McKesson, or for people analytics, workforce or SWP data.
+---
+# McKesson chart workflow
+
+Work through the five steps in order. Keep a short **chart brief** as you go and show it to the user with the result.
+
+```
+Question:     <one sentence the chart answers>
+Mode:         explanatory | exploratory          Medium: slide | report | web | mobile | dashboard
+Chart:        <type> (docs/cookbook/<page>.md)    Why: <question type → first choice / alternative>
+Focus:        <what is blue>   Accent: <optional single orange item>   Context: everything else, grey
+Headline:     <insight sentence, numbers computed from data>
+Subtitle:     <metric, unit, scope, period>
+Source:       Source: <system>, as of <date>; <population>
+Min n check:  <smallest group shown> (must be ≥ 10)
+QA:           pass | exceptions: <list>
+```
+
+## 1. Question
+- Restate the request as **one question** ("Which job families lose the most people, and how far above the enterprise rate?"). If the data can't answer it, say so before you build anything.
+- Decide the **mode** (explanatory is the default) and the **medium** (slide, report, web, mobile, dashboard). The medium changes the layout. See `docs/formats.md`.
+- Look at the data: grain (individual, team, firm, sector), the n per group, units, time span, and whether a benchmark or target exists.
+
+## 2. Chart type
+- Name the question type: magnitude, part-to-whole, change over time, ranking, distribution, correlation, relationships & flows, geo-spatial, or single number.
+- Pick from `docs/choosing-a-chart.md` (the first choice unless a sanity check rules it out), then **read** `docs/principles.md` and `docs/cookbook/<page>.md`. Note the page's spec table and "When not to use".
+- Common traps: clustered values far from zero → dot plot, not truncated bars. Two units over time → two aligned charts, not dual axes. More than 6 categories → highlight plus grey, or group into "Other". A spread across people → distribution, not an average.
+
+## 3. Build
+- Start from the cookbook snippet for the platform the user needs:
+  - **Python:** `import mckviz as mv; mv.use(); C = mv.colors`. Use `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, and `mv.label_bars` / `mv.label_line_ends` for labels.
+  - **HTML:** the chart-card pattern with `dist/web/mck-viz.css` plus `mck-plotly-template.js` or `vega-lite-config.json`.
+  - **Excel / PowerPoint, Power BI, R:** follow the cookbook page's section for that platform, using the themes in `dist/`.
+- **No hex literals.** Use color roles only: context grey, focus blue, orange accent, navy totals and benchmarks.
+- Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.
+- Drop or merge any group with n < 10 **before** plotting, and keep individual values out of tooltips.
+
+## 4. Headline
+- Compute the finding in code (shares, gaps, counts, multipliers, "n of m"), then write a full sentence with a verb and the number: "Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate".
+- Check every word against the chart: "all", "most", "doubled", "fastest" must be literally true. Recompute; don't eyeball.
+- The headline names what the focus color shows. If the two disagree, fix the highlight or the headline.
+- The subtitle is neutral: metric, unit, scope, period. The source line names the system, the as-of date and the population (or "Synthetic data for illustration only").
+
+## 5. QA
+- Render the chart and **look at it**: open the PNG, or screenshot the HTML at desktop width and at 390 px.
+- Go through `docs/qa-checklist.md` and the cookbook page's "QA specifics". Fix what fails. For anything you can't fix, name it in the brief under "QA exceptions".
+- Write alt text: the headline plus 2–3 key numbers.
+- If you edited cookbook code in this repo, run `python tools/check_snippets.py docs/cookbook/<page>.md`.
+
+## Hand-back
+Give the user the output (file path, or code plus the rendered image), the chart brief, and the alt text. Mention any assumptions about the data (definitions, exclusions, suppressed groups).
