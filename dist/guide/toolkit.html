@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>McKesson Data Visualization Guide: Toolkit</title>
+<link rel="stylesheet" href="mck-viz.css">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="formats.html">Formats</a><a href="toolkit.html" aria-current=page>Toolkit</a><span title="Coming next">Ranking</span><span title="Coming next">Distribution</span><span title="Coming next">Correlation</span><span title="Coming next">Flows</span><span title="Coming next">Geo-spatial</span><span title="Coming next">Single number</span></nav><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></header>
+<main>
+<section class="spread" id="kit">
+  <div class="rail">
+    <p class="eyebrow">Toolkit</p>
+    <h2 class="title"><b>The starter</b> kit</h2>
+    <p class="lede">Everything in this guide is built into files you can start from, so the right answer is the default answer.</p>
+    <p>Every color, font size and chart constant comes from one file, <code>tokens/tokens.json</code>. Change it there, run the build, and every template, theme and this guide update together.</p>
+    <p><strong>Pin these two.</strong> The cheat sheet and chart chooser fit on one page each.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g3" style="grid-template-columns: 1fr 1fr 1.7fr; align-items: start">
+      <div><a href="../print/cheat-sheet.pdf"><img class="thumb" src="img/cheat-sheet.png" alt="Chart cheat sheet: anatomy, highlight colors, checklist and type sizes on one page"></a><p class="small" style="margin-top:8px"><a href="../print/cheat-sheet.pdf">Cheat sheet (PDF)</a></p></div>
+      <div><a href="../print/chart-chooser.pdf"><img class="thumb" src="img/chart-chooser.png" alt="Chart chooser: nine question types with the first-choice chart for each"></a><p class="small" style="margin-top:8px"><a href="../print/chart-chooser.pdf">Chart chooser (PDF)</a></p></div>
+      <div class="panel">
+        <table class="kit">
+          <thead><tr><th>File</th><th>For</th><th>Where</th></tr></thead>
+          <tbody>
+            <tr><td><a href="../office/McKesson-DataViz.potx">PowerPoint template</a></td><td>New decks: theme, fonts, layouts</td><td>dist/office/</td></tr>
+            <tr><td><a href="../office/McKesson-DataViz-Starter.pptx">Starter deck</a></td><td>Four native charts to copy</td><td>dist/office/</td></tr>
+            <tr><td><a href="../office/McKesson-DataViz-Charts.xlsx">Chart workbook</a></td><td>Palette and Excel charts</td><td>dist/office/</td></tr>
+            <tr><td><a href="../powerbi/mckesson-dataviz-theme.json">Power BI theme</a></td><td>Report colors and fonts</td><td>dist/powerbi/</td></tr>
+            <tr><td><a href="../web/mck-viz.css">Web theme</a></td><td>CSS variables, Plotly, Vega-Lite</td><td>dist/web/</td></tr>
+            <tr><td>mckviz</td><td>Python: matplotlib and Plotly</td><td>python/</td></tr>
+            <tr><td><a href="../r/theme_mck.R">R theme</a></td><td>ggplot2</td><td>dist/r/</td></tr>
+            <tr><td><a href="../agents/mck-viz-rules.md">Agent rules</a></td><td>Coding agents in any repo</td><td>dist/agents/</td></tr>
+            <tr><td>Libre Franklin</td><td>The typeface (SIL OFL)</td><td>fonts/</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">50</span></div>
+</section>
+
+<section class="spread" id="setup">
+  <div class="rail">
+    <p class="eyebrow">Toolkit</p>
+    <h2 class="title"><b>Set up</b> once</h2>
+    <p class="lede">Ten minutes per tool, and every chart you make afterwards starts on-brand.</p>
+    <p>Detailed steps, troubleshooting and screenshots:</p>
+    <ul class="small">
+      <li><a href="../../docs/office-setup.md">docs/office-setup.md</a></li>
+      <li><a href="../../docs/powerbi-setup.md">docs/powerbi-setup.md</a></li>
+      <li><a href="../../AGENTS.md">AGENTS.md</a> (Python, HTML, R)</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>Fonts (everyone)</h5><p>Install the Libre Franklin TTFs from <code>fonts/LibreFranklin/</code> (right-click › Install for all users). Without them, Office and Power BI fall back to Arial or Segoe UI.</p></div>
+      <div class="platform"><h5>PowerPoint and Excel</h5><p>Copy <code>dist/office/Theme Colors/McKesson Data Viz.xml</code> to <code>%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\</code> and the Theme Fonts file to <code>…\Theme Fonts\</code>. Then <strong>Design › Variants › Colors / Fonts</strong> (PowerPoint) or <strong>Page Layout › Colors / Fonts</strong> (Excel). New decks start from <code>McKesson-DataViz.potx</code>.</p></div>
+      <div class="platform"><h5>Power BI</h5><p><strong>View › Themes › Browse for themes</strong> and pick <code>dist/powerbi/mckesson-dataviz-theme.json</code>. Viewers without Libre Franklin see Segoe UI, so leave room in labels.</p></div>
+      <div class="platform"><h5>Python</h5><div><pre class="snip">pip install -e ./python[examples]
+import mckviz as mv
+mv.use()          # fonts, matplotlib style, Plotly template "mck"
+C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Link <code>dist/web/mck-viz.css</code> for the CSS variables and chart-card styles; add <code>mck-plotly-template.js</code> for Plotly or use <code>vega-lite-config.json</code> as the Vega-Lite <code>config</code>. Start from <code>templates/html/chart-card.html</code>.</p></div>
+      <div class="platform"><h5>R</h5><p><code>source("dist/r/theme_mck.R")</code>, then <code>ff &lt;- mck_font()</code> and <code>theme_mck(base_family = ff)</code>. Render with <code>ragg</code>.</p></div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">51</span></div>
+</section>
+
+<section class="spread" id="qa">
+  <div class="rail">
+    <p class="eyebrow">Toolkit</p>
+    <h2 class="title"><b>Check</b> before you send</h2>
+    <p class="lede">Run this list on every chart that leaves the team, whoever or whatever made it.</p>
+    <p>In Python, <code>mv.lint(fig)</code> checks the mechanical items for you: titles and source present, at most six colors, palette only (amber is an error), no red–green, bars from zero, labels versus axis, legends, dual axes, pies, rotated or tiny text. It also reminds you to check any orange carries meaning.</p>
+    <p>No tool can tell whether the headline is true or the chart fits the question. That part needs a person, or an agent told to check.</p>
+    <p class="small">Rendered from <a href="../../docs/qa-checklist.md">docs/qa-checklist.md</a>, so it always matches.</p>
+  </div>
+  <div class="stage top">
+    <div class="panel"><div class="qa-grid"><div><h4>Message</h4><ul class="checklist"><li>Headline is a <strong>full-sentence insight</strong>, ≤ 2 lines, no final period, balanced line breaks.</li><li>Every claim in the headline is <strong>visibly supported</strong> (recompute counts, multipliers, "all/most/none").</li><li>Subtitle states <strong>metric, unit, scope and period</strong>: and nothing opinionated.</li><li>The chart type matches the question (choosing-a-chart.md).</li><li>One message per chart; ≤ 2 charts per slide.</li></ul></div><div><h4>Color and emphasis</h4><ul class="checklist"><li>Highlight follows the headline: grey context, blue focus, navy accent: <strong>≤ 2 highlighted</strong> items. Orange appears only where something is worse (negative, below target).</li><li>Categorical colors (if any) come from the fixed order, ≤ 6, consistent across the deck.</li><li>No red–green contrasts; nothing encoded by color alone.</li><li>Focus category labels are bolded/colored to echo the highlight.</li></ul></div><div><h4>Data integrity</h4><ul class="checklist"><li>Bars/columns start at <strong>zero</strong> (waterfall exception is marked and footnoted).</li><li>Bubble <strong>area</strong> ∝ value; pie/donut sums to 100% and has ≤ 5 segments.</li><li>No dual axes (or justified and clearly labelled).</li><li>Sorted by value, or in a natural order (time, bands, levels).</li><li>Small multiples share a scale.</li><li>Numbers rounded sensibly; units in subtitle; true minus (−); consistent K/M/B.</li></ul></div><div><h4>Clutter</h4><ul class="checklist"><li>Direct labels instead of a legend where possible; legend (if any) top-left, in data order.</li><li>No borders, 3D, shadows, gradients, heavy gridlines, tick marks, rotated axis titles.</li><li>Value axis removed when values are labelled.</li><li>Nothing overlaps: labels, callouts, legend, headline, reference lines.</li></ul></div><div><h4>Typography and layout</h4><ul class="checklist"><li>Libre Franklin (or approved fallback); role sizes per typography-and-layout.md; nothing below 9 pt / 11 px.</li><li>Headline, subtitle, key, footnote and source <strong>share one left edge</strong>.</li><li>Sentence case; consistent terminology (FTE vs. headcount; fiscal vs. calendar year).</li></ul></div><div><h4>Source and ethics</h4><ul class="checklist"><li>Footnotes define metrics and caveats.</li><li>Source line names the system(s), <strong>as-of date</strong> and <strong>population</strong>.</li><li>No group smaller than the <strong>minimum n</strong> (default 10): including in tooltips, filters and drill-downs.</li><li>Protected attributes used only for approved analyses, aggregated.</li><li>Forecasts/estimates are labelled and show a range or scenario.</li></ul></div><div><h4>Accessibility and delivery</h4><ul class="checklist"><li>Text contrast ≥ 4.5:1; fills &lt; 3:1 carry labels.</li><li>Alt text / text summary provided (headline + key numbers).</li><li>Exported at the right format: native Office chart, SVG/PDF for print, PNG @ 300 dpi, or responsive HTML.</li><li>Mobile/dark variants checked if the chart will be shown that way.</li></ul></div></div></div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">52</span></div>
+</section>
+
+<section class="spread" id="agents">
+  <div class="rail">
+    <p class="eyebrow">Toolkit</p>
+    <h2 class="title"><b>For coding</b> agents</h2>
+    <p class="lede">Claude, Copilot and other agents follow the same rules as people, automatically.</p>
+    <p>In this repo, agents read <code>AGENTS.md</code> on their own (Claude through <code>CLAUDE.md</code>, Copilot through <code>.github/copilot-instructions.md</code>, plus per-language rules for Python, web and R files).</p>
+    <p>In any other repo, copy one file: <a href="../agents/mck-viz-rules.md"><code>dist/agents/mck-viz-rules.md</code></a>. It is generated from the tokens, so its colors are always current.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2" style="align-items: start">
+      <div class="panel">
+        <h4>Ask for a chart like this</h4>
+        <p class="note" style="background:var(--g-stage);padding:10px 12px">"Make a McKesson chart of voluntary attrition by job family for FY26 from <code>attrition.csv</code>, for a leadership deck. Highlight the families above the enterprise rate."</p>
+        <h4 style="margin-top:14px">What comes back</h4>
+        <p class="note">The <code>mck-chart</code> skill walks the five steps (question, chart type, build, headline, QA), runs <code>mv.lint</code>, looks at the rendered chart, and returns the file, a chart brief and alt text.</p>
+      </div>
+      <div class="panel">
+        <h4>The chart brief</h4>
+<pre class="snip">Question:    Where is attrition concentrated?
+Mode:        explanatory     Medium: slide
+Chart:       sorted bar (cookbook/bar.md)
+Focus:       2 families > enterprise rate
+Headline:    Two frontline job families lose
+             about 1 in 4 people a year ...
+Subtitle:    Voluntary attrition by job
+             family, FY26 (%)
+Source:      Workday HCM, 31 Mar 2026
+Min n check: smallest group 700 (>= 10)
+QA:          pass</pre>
+      </div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Toolkit</span><span class="n">53</span></div>
+</section>
+
+</main>
+</body>
+</html>

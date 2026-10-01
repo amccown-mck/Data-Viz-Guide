@@ -32,10 +32,12 @@ PAGES = [
     ("magnitude", "Magnitude", "Magnitude"),
     ("part-to-whole", "Part-to-whole", "Part-to-whole"),
     ("change-over-time", "Change over time", "Change over time"),
+    ("formats", "Formats", "Formats"),
+    ("toolkit", "Toolkit", "Toolkit"),
 ]
 # Sections planned but not written yet: shown in the nav, greyed out.
 COMING = [ "Ranking", "Distribution", "Correlation", "Flows", "Geo-spatial",
-          "Single number", "Formats", "Toolkit"]
+          "Single number"]
 
 LAYOUT = """<!doctype html>
 <html lang="en">
@@ -116,6 +118,14 @@ def main() -> None:
     for w in ("Light", "Regular", "Medium", "SemiBold", "Bold", "Italic"):
         shutil.copy2(ROOT / "fonts" / "LibreFranklin" / f"LibreFranklin-{w}.ttf", OUT / "fonts")
     shutil.copy2(ROOT / "fonts" / "LibreFranklin" / "OFL.txt", OUT / "fonts")
+
+    (OUT / "img").mkdir(exist_ok=True)                     # thumbnails of the one-page PDFs for the Toolkit page
+    try:
+        import pymupdf
+        for pdf in sorted((ROOT / "dist" / "print").glob("*.pdf")):
+            pymupdf.open(pdf)[0].get_pixmap(dpi=72).save(OUT / "img" / f"{pdf.stem}.png")
+    except ImportError:
+        print("  note: pymupdf not installed; Toolkit thumbnails not refreshed")
 
     unused = sorted(set(svgs) - used)
     if unused:

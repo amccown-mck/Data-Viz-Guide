@@ -1,0 +1,193 @@
+<section class="spread" id="presentations">
+  <div class="rail">
+    <p class="eyebrow">Formats</p>
+    <h2 class="title"><b>Presentations:</b> build it up</h2>
+    <div class="defbox">The same data needs different treatment on a live slide, a page, a phone or a dashboard. Design for where it will be seen.</div>
+    <p>In a live meeting, don't reveal a finished chart in one click. Build it in two to five steps so the audience learns the chart before you give them the point.</p>
+    <p><strong>1 Set the scene.</strong> Axes, labels and the data, all grey.</p>
+    <p><strong>2 Highlight the insight.</strong> Color what the headline names.</p>
+    <p><strong>3 Show the full picture.</strong> Add the benchmark and the callout.</p>
+    <p class="small">Keep the headline, axis and order identical on every step; only the emphasis changes.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g3">
+      <div class="tile"><p class="step">Step 1 · Set the scene</p><p class="note">Everything the reader needs to read the chart, nothing to interpret yet.</p>{{exhibit:fmt_build_1}}</div>
+      <div class="tile"><p class="step">Step 2 · Highlight</p><p class="note">The two families the headline names turn blue.</p>{{exhibit:fmt_build_2}}</div>
+      <div class="tile"><p class="step">Step 3 · Full picture</p><p class="note">Benchmark and callout: {{text:focus_exit_share}} of all voluntary exits.</p>{{exhibit:fmt_build_3}}</div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="slides">
+  <div class="rail">
+    <p class="eyebrow">Formats</p>
+    <h2 class="title"><b>Presentations:</b> clarity first</h2>
+    <p class="lede">A slide is on screen for less than a minute. There is no time to explore it.</p>
+    <ul>
+      <li>The slide title <strong>is</strong> the headline</li>
+      <li>One message per chart; at most two charts per slide, never a chart wall</li>
+      <li>Short text beside the chart, or none</li>
+      <li>Native, editable charts from the starter deck, not pictures of charts</li>
+      <li>In a dimmed room, use the dark slide: navy background, light-blue focus</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g3">
+      <div class="tile"><h4>Chart wall</h4>{{exhibit:fmt_slide_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A label title, four charts and a column of bullets.</span></div></div>
+      <div class="tile"><h4>One message</h4>{{exhibit:fmt_slide_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Headline as title, one chart, a source line.</span></div></div>
+      <div class="tile"><h4>Dimmed room</h4>{{exhibit:fmt_slide_dark}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The same slide on navy; focus in light blue.</span></div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="print">
+  <div class="rail">
+    <p class="eyebrow">Formats</p>
+    <h2 class="title"><b>Reports</b> and print</h2>
+    <p class="lede">On paper the reader sets the pace, so charts can carry more context: full footnotes, more categories, a second chart.</p>
+    <ul>
+      <li>Fit the page grid: full page, two-column or one column</li>
+      <li>Export vector (PDF, SVG), or PNG at 300 dpi</li>
+      <li>Nothing below 9 pt; check the printed size, not the screen</li>
+      <li>Grey must survive a black-and-white printer: never rely on color alone</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g3">
+      <div class="tile"><h4>Featured</h4><p class="note">One chart takes a page, for the exhibit the report is built around.</p>{{exhibit:fmt_print_featured}}</div>
+      <div class="tile"><h4>Editorial</h4><p class="note">Charts sit in the two- or three-column grid next to the text that discusses them.</p>{{exhibit:fmt_print_editorial}}</div>
+      <div class="tile"><h4>Inline</h4><p class="note">A small chart inside one text column drives home a single point.</p>{{exhibit:fmt_print_inline}}</div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="mobile">
+  <div class="rail">
+    <p class="eyebrow">Formats</p>
+    <h2 class="title"><b>Web</b> and mobile</h2>
+    <p class="lede">A phone is narrow and read at arm's length. Adapt the chart, don't just shrink it.</p>
+    <p><strong>Resize and reorient.</strong> Design for portrait; columns become horizontal bars.</p>
+    <p><strong>Adjust the hierarchy.</strong> When end labels don't fit, use a compact key above the chart and move the insight to the top.</p>
+    <p><strong>Reduce complexity.</strong> One highlighted line, the rest faint; the insight next to it.</p>
+    <p><strong>Ensure legibility.</strong> Fewer text elements, shorter headline, nothing below 11 px.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Resize and reorient</h4><div class="pair dp"><div>{{exhibit:fmt_desk_bars}}<p class="cap">Desktop</p></div><div>{{exhibit:fmt_phone_bars}}<p class="cap">Phone</p></div></div></div>
+      <div class="tile"><h4>Adjust the hierarchy</h4><div class="pair dp"><div>{{exhibit:fmt_desk_key}}<p class="cap">Desktop</p></div><div>{{exhibit:fmt_phone_key}}<p class="cap">Phone</p></div></div></div>
+      <div class="tile"><h4>Reduce complexity</h4><div class="pair dp"><div>{{exhibit:fmt_desk_simple}}<p class="cap">Desktop</p></div><div>{{exhibit:fmt_phone_simple}}<p class="cap">Phone</p></div></div></div>
+      <div class="panel"><h4>Test at 390 px</h4><p class="note">In HTML, the starter card (<code>templates/html/chart-card.html</code>) already swaps line-end labels for a top key below 600 px. Check every web chart at 390 px wide, the width of a typical phone, before it ships.</p><p class="note">In Power BI, build a separate <strong>mobile layout</strong> for each page people will open on a phone.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="dashboards">
+  <div class="rail">
+    <p class="eyebrow">Formats</p>
+    <h2 class="title"><b>Dashboards</b> (Power BI and Fabric)</h2>
+    <p class="lede">Dashboards are exploratory, but the same rules apply: grey context, one blue focus, insight titles, minimum group sizes.</p>
+    <ul>
+      <li>One question per page; the title states the current answer (a DAX measure can write it)</li>
+      <li>KPI cards top-left: the number, its label, and the comparison</li>
+      <li>Highlights driven by measures, not by clicking bars</li>
+      <li>Minimum n enforced in the measures, so tooltips and drill-throughs inherit it</li>
+      <li>No gauges, pies of many slices, or rainbow defaults</li>
+    </ul>
+    <p class="small">Set-up: <a href="../../docs/powerbi-setup.md">docs/powerbi-setup.md</a> and the theme in <code>dist/powerbi/</code>.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Tool defaults</h4>{{exhibit:fmt_dash_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Gauges, a rainbow pie and columns, a label title. Nothing says what matters.</span></div></div>
+      <div class="tile"><h4>Built to answer a question</h4>{{exhibit:fmt_dash_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>An insight title, three KPI cards with comparisons, a highlighted bar and the trend.</span></div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="interactivity">
+  <div class="rail">
+    <p class="eyebrow">Formats</p>
+    <h2 class="title"><b>Interactivity</b> with a purpose</h2>
+    <p class="lede">Interaction lets readers explore at their own pace, but every control must earn its place.</p>
+    <ul>
+      <li>The default view tells the story without any clicks</li>
+      <li>Each interaction answers a question the reader will have</li>
+      <li>Tooltips add detail; they never carry the main point</li>
+      <li>Filters and tooltips respect the minimum group size</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2" style="grid-template-columns: 0.9fr 1.1fr; align-items: start">
+      <div class="tile"><h4>Cursor tracking</h4><p class="note">A rule and a tooltip follow the cursor on time series, where reading values off the axis is hard.</p>{{exhibit:fmt_tooltip}}</div>
+      <div class="panel">
+        <table class="itable">
+          <thead><tr><th>Interaction</th><th>Use it for</th></tr></thead>
+          <tbody>
+            <tr><td>Hover</td><td>Detail on one mark: the value, n, definition</td></tr>
+            <tr><td>Cursor tracking</td><td>Exact values on line charts</td></tr>
+            <tr><td>Toggles and filters</td><td>Switching series or groups on and off</td></tr>
+            <tr><td>Sliders</td><td>Scenario inputs in SWP models: attrition, hiring volume</td></tr>
+            <tr><td>Range selection</td><td>Narrowing time or values on an axis</td></tr>
+            <tr><td>Zoom</td><td>Dense time series</td></tr>
+            <tr><td>Play and scrub</td><td>Change over time, when motion is the point</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="animation">
+  <div class="rail">
+    <p class="eyebrow">Formats</p>
+    <h2 class="title"><b>Animation</b> and scrolly-telling</h2>
+    <p class="lede">Motion should help the viewer follow the data, never decorate it.</p>
+    <p><strong>Sequence on purpose.</strong> Axes first, then data, then the insight: the build order is the reading order.</p>
+    <p><strong>Move naturally.</strong> Ease in and out; lines draw left to right; bubbles grow from their center. No overshoot or bounce.</p>
+    <p><strong>Say what you see.</strong> Narration and text match what is moving on screen, one point at a time.</p>
+    <p><strong>Scrolly-telling:</strong> the chart stays pinned and updates as the text scrolls. On phones use inline snapshots, and never hijack the scroll.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g3">
+      <div class="tile"><p class="step">Frame 1</p><p class="note">The frame: axes and labels.</p>{{exhibit:fmt_anim_1}}</div>
+      <div class="tile"><p class="step">Frame 2</p><p class="note">Lines draw in from the left.</p>{{exhibit:fmt_anim_2}}</div>
+      <div class="tile"><p class="step">Frame 3</p><p class="note">The gap shades in once both lines land.</p>{{exhibit:fmt_anim_3}}</div>
+    </div>
+    <div class="panel"><div class="cols">
+      <p class="note"><strong>Avoid motion without purpose.</strong> If nothing changes in the data, nothing should move.</p>
+      <p class="note"><strong>Avoid distraction.</strong> One moving thing at a time; split complex charts into short sequences.</p>
+      <p class="note"><strong>Exits mirror entrances.</strong> Leave the way you arrived, so the viewer can predict it.</p>
+    </div></div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="social">
+  <div class="rail">
+    <p class="eyebrow">Formats</p>
+    <h2 class="title"><b>Social</b>, infographics and icons</h2>
+    <p class="lede">Single-asset graphics are seen out of context, on a phone, in a second.</p>
+    <ul>
+      <li>One insight, readable without zooming</li>
+      <li>Self-contained: headline, key number, source and brand mark</li>
+      <li>Three-tone palettes from the tokens: navy with white and light blue</li>
+      <li>Icons only when they help; if it's clear without one, leave it out</li>
+    </ul>
+    <p class="small">Use icons as tally units (one icon = a fixed number of people), never scaled up to show a bigger value.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2" style="grid-template-columns: 0.8fr 1.2fr; align-items: start">
+      <div class="tile"><h4>Social card</h4>{{exhibit:fmt_social}}</div>
+      <div class="tile"><h4>Icons for quantities</h4><div class="pair">
+        <div>{{exhibit:fmt_icon_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Doubling the value doubles height and width: the icon looks four times bigger.</span></div></div>
+        <div>{{exhibit:fmt_icon_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Repeat a unit icon: 10 versus 20.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
