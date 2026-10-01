@@ -1,0 +1,214 @@
+<section class="spread" id="roadmap">
+  <div class="rail">
+    <p class="eyebrow">Plans and status</p>
+    <h2 class="title"><b>Roadmap</b> (Gantt chart)</h2>
+    <div class="defbox">Plans and status visuals show what happens when, who owns it and whether it is on track: the workplan pages of a steering-committee deck.</div>
+    <p>A roadmap puts a program's workstreams across fiscal quarters, with milestones and a today line. Status colors appear only in the status column and on missed milestones.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Workstreams, not tasks; about ten rows at most</li>
+      <li>Flat, square bars: grey, blue for what the headline names</li>
+      <li>Status as a dot with its symbol, plus the word</li>
+      <li>Fiscal quarters and a dated today line</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Counts the exceptions and says why.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Program, period, as-of date.</span></li>
+        <li><span class="mk">3</span><span><b>Time header</b>Phases over fiscal years and quarters.</span></li>
+        <li><span class="mk">4</span><span><b>One row per workstream</b>Owner as a role; related work together.</span></li>
+        <li><span class="mk">5</span><span><b>Status</b>Dot, symbol and word: never color alone.</span></li>
+        <li><span class="mk">6</span><span><b>Flat bars</b>Grey; blue only for the rows in the headline.</span></li>
+        <li><span class="mk">7</span><span><b>Milestones</b>Diamonds: filled met, hollow due; a cross for missed.</span></li>
+        <li><span class="mk">8</span><span><b>Today line</b>Navy, dashed, dated.</span></li>
+        <li><span class="mk">9</span><span><b>The reason, drawn</b>A navy arrow from the cause.</span></li>
+        <li><span class="mk">10</span><span><b>Footnote and source</b>Define the statuses.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:pl_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:pl_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:plans_roadmap_anatomy|min}}
+        <p class="card-foot">Off track = a milestone missed with no recovery date; at risk = a milestone moved, with a recovery date. Fiscal years run April to March.<br>Source: Workforce Innovation program office (synthetic data for illustration), as of 31 Mar 2026<span class="mk">10</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="tracker">
+  <div class="rail">
+    <p class="eyebrow">Plans and status</p>
+    <h2 class="title"><b>Initiative</b> tracker</h2>
+    <p class="lede">The status table behind the roadmap: one row per workstream, read in a minute at the start of a steering committee.</p>
+    <p>Lead with the roll-up and the exceptions. Everything below them is reference.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Roll-up first: a count per status</li>
+      <li>Status column: dot, symbol and word</li>
+      <li>Off track, then at risk, then the rest</li>
+      <li>One accountable owner per row</li>
+      <li>"What changed" in one line, since the last report</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>What needs a decision, and why.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>What the columns hold; as-of date.</span></li>
+        <li><span class="mk">3</span><span><b>Roll-up</b>A count per status, exceptions first.</span></li>
+        <li><span class="mk">4</span><span><b>Status column</b>A small dot with its symbol, and the word.</span></li>
+        <li><span class="mk">5</span><span><b>Exceptions first</b>Off track, then at risk, in bold.</span></li>
+        <li><span class="mk">6</span><span><b>Owner</b>One accountable role per row.</span></li>
+        <li><span class="mk">7</span><span><b>Next milestone</b>With its date; a move says "was".</span></li>
+        <li><span class="mk">8</span><span><b>What changed</b>One line since the last report.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define each status.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:pl_tr_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:pl_tr_subtitle}}<span class="mk">2</span></p>
+        {{html:plans_tracker}}
+        <p class="card-foot">Off track = a milestone missed with no recovery date; at risk = a milestone moved, with a recovery date; complete = every milestone met.<br>Source: Workforce Innovation program office (synthetic data for illustration), as of 31 Mar 2026<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="plans-variants">
+  <div class="rail">
+    <p class="eyebrow">Plans and status</p>
+    <h2 class="title"><b>Plans and status</b> variants</h2>
+    <p class="lede">The same rules throughout: status as a dot with symbol and word; data in grey and blue.</p>
+    <h3>When a roadmap is the wrong chart</h3>
+    <ul>
+      <li>Progress to one target: a <strong>big number</strong> or a progress bar</li>
+      <li>Comparing units on a measure: <strong>bars</strong>, never status colors</li>
+      <li>Tasks, dates and hand-offs day to day: keep them in the project plan</li>
+      <li>How many people move through stages, and where they drop out: a <strong>Sankey</strong></li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Milestone timeline</h4>
+        <p class="note">One workstream on one line, labels staggered. The Workday integration moved {{text:pl_slip}} months, so its original date stays visible.</p>
+        {{exhibit:plans_var_milestones}}
+      </div>
+      <div class="tile">
+        <h4>Status over time</h4>
+        <p class="note">A symbol in every cell, today's word at the end. {{text:pl_h_dep}} turned at risk in {{text:pl_h_risk}}; the {{text:pl_off_w}} workstreams waiting on it went off track in {{text:pl_h_off_m}}.</p>
+        {{exhibit:plans_var_history}}
+      </div>
+      <div class="tile">
+        <h4>Status column in a scorecard</h4>
+        <p class="note">Data stays grey, orange only where it's worse: {{text:pl_over}} has used {{text:pl_over_used}} of its budget in {{text:pl_over_elapsed}} of its time. Status gets its own column.</p>
+        {{exhibit:plans_var_scorecard}}
+      </div>
+      <div class="tile">
+        <h4>Process stages</h4>
+        <p class="note">Ordered stages take the blue-to-green steps, in order: sequence, not judgment. {{text:pl_redeploy}} of {{text:pl_nominated}} academy nominees reached a data role.</p>
+        {{exhibit:plans_var_steps}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="plans-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Plans and status</p>
+    <h2 class="title"><b>Status</b> best practice</h2>
+    <p class="lede">Red, amber and green are loud. Give them one job, and never let them work alone.</p>
+    <p><strong>Never color alone.</strong> Every dot carries its symbol (✓ ! ✕ –) and its word: red and green are the most common color-vision conflict.</p>
+    <p><strong>Status, not data.</strong> Status colors mark workstreams and milestones. A measure gets grey and blue, and orange only when it's worse.</p>
+    <p><strong>Flat and square.</strong> Small dots and thin rules; no pills, rounded boxes, shadows or gradients.</p>
+    <p><strong>Exceptions first.</strong> Off track, then at risk; the rest in one grey line.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Never color alone</h4><div class="pair">
+        <div>{{exhibit:plans_bp_alone_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Colored dots, nothing else.</span></div></div>
+        <div>{{exhibit:plans_bp_alone_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Dot, symbol and word.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Status, not data</h4><div class="pair">
+        <div>{{exhibit:plans_bp_data_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Bars colored red to green by value.</span></div></div>
+        <div>{{exhibit:plans_bp_data_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey, one blue, a target line.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Flat and square</h4><div class="pair">
+        <div>{{exhibit:plans_bp_flat_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Pills, shadows, rounded headers.</span></div></div>
+        <div>{{exhibit:plans_bp_flat_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A small dot and hairlines.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Exceptions first</h4><div class="pair">
+        <div>{{exhibit:plans_bp_exception_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Every row lit, in plan order.</span></div></div>
+        <div>{{exhibit:plans_bp_exception_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The {{text:pl_exc}} exceptions, then a summary.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="roadmap-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Plans and status</p>
+    <h2 class="title"><b>Roadmap</b> best practice</h2>
+    <p class="lede">A roadmap is read in seconds: where are we, what's late, and why.</p>
+    <p><strong>One bar color.</strong> Grey bars, blue for the rows the headline names; names on the rows, not in a legend.</p>
+    <p><strong>Workstreams, not tasks.</strong> Tasks belong in the project plan. The deck shows workstreams and their milestones.</p>
+    <p><strong>Show today.</strong> A dated line makes "late" visible without reading a single date.</p>
+    <p><strong>Show the slip.</strong> Keep the original date as a grey diamond and say "was Mar".</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>One bar color</h4><div class="pair">
+        <div>{{exhibit:plans_bprm_colors_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A color per bar, decoded below.</span></div></div>
+        <div>{{exhibit:plans_bprm_colors_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey, blue for the story; names on rows.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Workstreams, not tasks</h4><div class="pair">
+        <div>{{exhibit:plans_bprm_tasks_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>The project plan, pasted.</span></div></div>
+        <div>{{exhibit:plans_bprm_tasks_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Workstreams and milestones.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Show today</h4><div class="pair">
+        <div>{{exhibit:plans_bprm_today_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>No sense of where we are.</span></div></div>
+        <div>{{exhibit:plans_bprm_today_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A labelled today line.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Show the slip</h4><div class="pair">
+        <div>{{exhibit:plans_bprm_slip_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>The milestone quietly moved.</span></div></div>
+        <div>{{exhibit:plans_bprm_slip_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Original date, arrow, "was {{text:pl_moved_from}}".</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="plans-build">
+  <div class="rail">
+    <p class="eyebrow">Plans and status</p>
+    <h2 class="title"><b>Build</b> plans and status</h2>
+    <p class="lede">No tool has one button for this. The parts are simple: bars, small shapes, a table, and the status colors with their symbols and words.</p>
+    <p><a href="../../docs/color.md#4-status-colors-red-amber-green">color.md: status colors</a> · <a href="../../docs/cookbook/tables.md">tables.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Status colors only on status: dots, missed milestones</li>
+      <li>Every dot has its symbol and its word</li>
+      <li>The roll-up matches the rows ({{text:pl_rollup}})</li>
+      <li>A dated today line; moved dates say "was"</li>
+      <li>One owner per row; the as-of date in the subtitle</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint</h5><p><strong>Tracker:</strong> Insert › Table; in the status column a small circle (Insert › Shapes › Oval, hold Shift) filled on track <code>#00AF68</code>, at risk <code>#FFB500</code>, off track <code>#DA2103</code>, not started <code>#BFBFBF</code> or complete <code>#005A8C</code>, with the symbol and word beside it. <strong>Gantt:</strong> a Stacked Bar of start and duration; start series Fill › No fill; <em>Categories in reverse order</em>; milestones and today line as shapes.</p></div>
+      <div class="platform"><h5>Excel</h5><p>The same stacked-bar Gantt. In a tracker sheet, keep the status word in its own column and color a ● beside it with Conditional Formatting › New Rule › <em>Use a formula to determine which cells to format</em> (<code>=$C2="Off track"</code>, font <code>#DA2103</code>). Skip icon sets: their red, yellow and green are Excel's, can't be changed, and carry no word.</p></div>
+      <div class="platform"><h5>Power BI</h5><p>Table visual: a measure returning the status hex (<code>SWITCH</code> on the status), applied to a ● column with Cell elements › Font color › fx › Format style: Field value; the word in the next column. No native Gantt: use Deneb (Vega-Lite, with the kit's <code>vega-lite-config.json</code>) or an AppSource Gantt with the status colors set by hand.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>matplotlib <code>ax.barh(y, end - start, left=start)</code> or <code>broken_barh</code> for bars, <code>"D"</code> markers for milestones, <code>ax.axvline</code> for today; Plotly <code>px.timeline</code>. Colors, symbols and words from <code>mv.STATUS</code>; process stages from <code>mv.STEPS</code>.</p>
+<pre class="snip">s = mv.STATUS["off_track"]       # value "#DA2103", symbol "✕", label "Off track"
+ax.text(x, y, f'{s["symbol"]} {s["label"]}', color=C.text, va="center")
+mv.lint(fig)    # notes status colors: status only, symbol and word</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>A <code>.mck-table</code> whose status cell holds a small circle in <code>var(--mck-status-off-track)</code> (and <code>-on-track</code>, <code>-at-risk</code>, <code>-not-started</code>, <code>-done</code>), the symbol inside and the word beside. Gantt bars: Plotly horizontal bars with <code>base</code> set to the start date.</p></div>
+      <div class="platform"><h5>R</h5><p><code>geom_linerange()</code> or <code>geom_segment()</code> for bars, <code>geom_point(shape = 23)</code> for milestone diamonds; status colors from <code>mck_status</code>, stage colors from <code>mck_steps</code>.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>

@@ -442,6 +442,78 @@ def pharm_tech_north_texas() -> pd.DataFrame:
                                        "postings_per_candidate"])
 
 
+def initiative_plan() -> pd.DataFrame:
+    """Program level, internal. The Workforce Innovation FY26-FY27 roadmap as reported at the March 2026 steering
+    committee (as of 31 Mar 2026; McKesson's fiscal year starts in April). One row per workstream; owners are roles.
+    start / end are months (YYYY-MM, inclusive). status is a color.status key: off_track = a milestone missed with
+    no recovery date, at_risk = a milestone moved with a recovery date set. depends_on names the workstream it waits
+    for. what_changed = since the February report. Milestones are in initiative_milestones."""
+    rows = [
+        ("Workforce data platform", "HR data platform lead", "2025-04", "2026-09", "on_track", "",
+         "Learning data now loads daily", 64),
+        ("Skills inventory rollout", "Talent systems director", "2025-04", "2027-03", "at_risk", "",
+         "Workday integration moved from Mar to Jun after failed testing", 71),
+        ("SWP model refresh", "SWP lead", "2025-10", "2026-09", "off_track", "Skills inventory rollout",
+         "Model build paused until skills data reaches Workday", 38),
+        ("Gen AI reskilling", "Learning director", "2026-01", "2027-03", "off_track", "Skills inventory rollout",
+         "Cohort 1 can't be picked without skills data", 12),
+        ("Pharmacy technician career path", "Pharmacy Ops talent lead", "2025-07", "2026-12", "on_track", "",
+         "Curriculum approved by pharmacy leaders", 45),
+        ("DC scheduling pilot", "DC operations director", "2025-07", "2026-03", "done", "",
+         "Pilot closed on plan; scale-up decision in April", 96),
+        ("Succession refresh", "Talent management director", "2026-07", "2027-03", "not_started", "",
+         "No change; starts with the FY27 talent review", 0),
+    ]
+    return pd.DataFrame(rows, columns=["workstream", "owner", "start", "end", "status", "depends_on", "what_changed",
+                                       "budget_used_pct"])
+
+
+def initiative_milestones() -> pd.DataFrame:
+    """Milestones for initiative_plan (as of 31 Mar 2026). due = baseline month; forecast = current expected month
+    (blank when missed with no recovery date). state: met, moved (forecast later than due), missed, upcoming."""
+    rows = [
+        ("Workforce data platform", "Architecture signed off", "2025-06", "2025-06", "met"),
+        ("Workforce data platform", "Workday data live", "2025-10", "2025-10", "met"),
+        ("Workforce data platform", "Learning data live", "2026-02", "2026-02", "met"),
+        ("Workforce data platform", "Self-serve dashboards live", "2026-06", "2026-06", "upcoming"),
+        ("Skills inventory rollout", "Skills taxonomy approved", "2025-06", "2025-06", "met"),
+        ("Skills inventory rollout", "Profiles open to all employees", "2025-09", "2025-09", "met"),
+        ("Skills inventory rollout", "Workday integration live", "2026-03", "2026-06", "moved"),
+        ("Skills inventory rollout", "80% of profiles verified", "2027-03", "2027-03", "upcoming"),
+        ("SWP model refresh", "Demand drivers updated", "2025-12", "2025-12", "met"),
+        ("SWP model refresh", "Skills supply feed", "2026-02", "", "missed"),
+        ("SWP model refresh", "FY28 plan scenarios", "2026-08", "2026-08", "upcoming"),
+        ("Gen AI reskilling", "Curriculum designed", "2026-02", "2026-02", "met"),
+        ("Gen AI reskilling", "Cohort 1 selected", "2026-03", "", "missed"),
+        ("Gen AI reskilling", "Cohort 1 complete", "2026-10", "2026-10", "upcoming"),
+        ("Gen AI reskilling", "Cohort 2 complete", "2027-03", "2027-03", "upcoming"),
+        ("Pharmacy technician career path", "Career levels defined", "2025-09", "2025-09", "met"),
+        ("Pharmacy technician career path", "Curriculum approved", "2026-02", "2026-02", "met"),
+        ("Pharmacy technician career path", "Level II pilot starts", "2026-05", "2026-05", "upcoming"),
+        ("Pharmacy technician career path", "Enterprise rollout", "2026-11", "2026-11", "upcoming"),
+        ("DC scheduling pilot", "Pilot sites live", "2025-10", "2025-10", "met"),
+        ("DC scheduling pilot", "Results to steering committee", "2026-03", "2026-03", "met"),
+        ("Succession refresh", "Talent review kickoff", "2026-07", "2026-07", "upcoming"),
+        ("Succession refresh", "Successor slates approved", "2027-01", "2027-01", "upcoming"),
+    ]
+    return pd.DataFrame(rows, columns=["workstream", "milestone", "due", "forecast", "state"])
+
+
+def initiative_status_history() -> pd.DataFrame:
+    """Monthly reported status per workstream in initiative_plan, Oct 2025-Mar 2026 (color.status keys)."""
+    months = ["2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03"]
+    on, risk, off, ns, done = "on_track", "at_risk", "off_track", "not_started", "done"
+    hist = {"Workforce data platform": [on, on, on, on, on, on],
+            "Skills inventory rollout": [on, on, on, risk, risk, risk],
+            "SWP model refresh": [on, on, on, risk, off, off],
+            "Gen AI reskilling": [ns, ns, ns, on, risk, off],
+            "Pharmacy technician career path": [on, risk, risk, on, on, on],
+            "DC scheduling pilot": [on, on, on, on, on, done],
+            "Succession refresh": [ns, ns, ns, ns, ns, ns]}
+    return pd.DataFrame([(w, m, s) for w, ss in hist.items() for m, s in zip(months, ss)],
+                        columns=["workstream", "month", "status"])
+
+
 def main() -> None:
     sets = {
         "attrition_quarterly": attrition_quarterly(),
@@ -478,6 +550,9 @@ def main() -> None:
         "span_of_control": span_of_control(),
         "data_ai_talent_by_country": data_ai_talent_by_country(),
         "pharm_tech_north_texas": pharm_tech_north_texas(),
+        "initiative_plan": initiative_plan(),
+        "initiative_milestones": initiative_milestones(),
+        "initiative_status_history": initiative_status_history(),
     }
     for name, df in sets.items():
         df.to_csv(OUT / f"{name}.csv", index=False)

@@ -52,6 +52,7 @@ PAGES = [
     ("flows", "Flows", "Relationships and flows", "section"),
     ("geo", "Geo-spatial", "Geo-spatial", "section"),
     ("single-number", "Single number", "Single number", "section"),
+    ("plans", "Plans and status", "Plans and status", "section"),
     ("formats", "Formats", "Formats", "section"),
     ("cheat-sheet", "Cheat sheet", "Cheat sheet", "tool"),
     ("toolkit", "Toolkit", "Toolkit", "section"),

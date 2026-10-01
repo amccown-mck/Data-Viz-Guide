@@ -1,0 +1,8 @@
+workstream,owner,start,end,status,depends_on,what_changed,budget_used_pct
+Workforce data platform,HR data platform lead,2025-04,2026-09,on_track,,Learning data now loads daily,64
+Skills inventory rollout,Talent systems director,2025-04,2027-03,at_risk,,Workday integration moved from Mar to Jun after failed testing,71
+SWP model refresh,SWP lead,2025-10,2026-09,off_track,Skills inventory rollout,Model build paused until skills data reaches Workday,38
+Gen AI reskilling,Learning director,2026-01,2027-03,off_track,Skills inventory rollout,Cohort 1 can't be picked without skills data,12
+Pharmacy technician career path,Pharmacy Ops talent lead,2025-07,2026-12,on_track,,Curriculum approved by pharmacy leaders,45
+DC scheduling pilot,DC operations director,2025-07,2026-03,done,,Pilot closed on plan; scale-up decision in April,96
+Succession refresh,Talent management director,2026-07,2027-03,not_started,,No change; starts with the FY27 talent review,0
