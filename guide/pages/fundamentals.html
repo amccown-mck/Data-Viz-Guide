@@ -1,0 +1,389 @@
+<section class="spread" id="question-first">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Start with the question,</b> not the chart</h2>
+    <div class="defbox">A chart is finished when a reader can say what it means and what to do about it, without you in the room.</div>
+    <p>Before you open a tool, write the question in one sentence: "Where is attrition concentrated?", not "show attrition".</p>
+    <p>Then pick the mode. <strong>Explanatory</strong> charts prove a finding, for decks and reports (the default). <strong>Exploratory</strong> views let readers find answers, for dashboards. Both follow the same rules.</p>
+    <p>Both charts here are accurate; only one is useful in a meeting.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <figure class="card sm">
+        <p class="card-head">Attrition by job family</p>
+        <p class="card-sub">FY26</p>
+        {{exhibit:shown_not_explained|min}}
+        <div class="verdict avoid"><i>✕</i><span><b>Shown</b>A label for a title, alphabetical order, every bar equal. The reader has to find the point alone.</span></div>
+      </figure>
+      <figure class="card sm">
+        <p class="card-head">{{text:bar_headline}}</p>
+        <p class="card-sub">{{text:bar_subtitle}}</p>
+        {{exhibit:explained|min}}
+        <div class="verdict rec"><i>✓</i><span><b>Explained</b>The headline states the finding, the order ranks the families, and color points to the two the headline names.</span></div>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="how-readers-read">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>How readers</b> read a chart</h2>
+    <p class="lede">Readers move through a chart in three steps. Design for each one, in order.</p>
+    <h3>1 Perceive</h3>
+    <p>In the first second the eye takes in shape, length and color before reading a word. Make the thing that matters the thing that stands out: one color against grey.</p>
+    <h3>2 Interpret</h3>
+    <p>Next the reader looks for meaning: headline, labels, units, benchmarks. The headline should confirm what they just saw, or sharpen it.</p>
+    <h3>3 Act</h3>
+    <p>Finally they ask "so what?". A callout that sizes the implication turns a finding into a decision.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g3">
+      <div class="tile">
+        <p class="step">Step 1 · Perceive</p>
+        <h4>Two bars stand out</h4>
+        <p class="note">No words yet. Grey context and blue focus already tell the reader where to look.</p>
+        {{exhibit:step_perceive}}
+      </div>
+      <div class="tile">
+        <p class="step">Step 2 · Interpret</p>
+        <h4>Labels give it meaning</h4>
+        <p class="note">Names, values and a labelled benchmark show the two families sit well above {{text:ent_rate}}.</p>
+        {{exhibit:step_interpret}}
+      </div>
+      <div class="tile">
+        <p class="step">Step 3 · Act</p>
+        <h4>The callout sizes the prize</h4>
+        <p class="note">Together they hold {{text:focus_headcount_share}} of headcount but {{text:focus_exit_share}} of voluntary exits: a retention plan for two families moves the enterprise number.</p>
+        {{exhibit:step_act}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="anatomy">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Anatomy</b> of a chart</h2>
+    <p class="lede">Every McKesson chart has the same four layers, top to bottom: headline, subtitle, chart, and footnote with source.</p>
+    <p>The headline and subtitle do different jobs. The headline is editorial: it states the finding. The subtitle is neutral: metric, unit, scope and period.</p>
+    <p>Inside the chart, everything is labelled in place, so the reader never has to match colors to a legend.</p>
+    <p class="small">All four layers share one left edge. In HTML they are page text; the chart library draws only the data.</p>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>A full sentence with the number. At most two lines, no final period.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Metric, unit, scope and period. No opinions.</span></li>
+        <li><span class="mk">3</span><span><b>Direct labels</b>Series named at the line end, in the series color. No legend.</span></li>
+        <li><span class="mk">4</span><span><b>Focus and context</b>The series the headline is about is blue; the comparison is grey.</span></li>
+        <li><span class="mk">5</span><span><b>Forecast marked</b>A shaded period and dashed lines separate estimates from actuals.</span></li>
+        <li><span class="mk">6</span><span><b>Range, not a point</b>Forecasts show their uncertainty.</span></li>
+        <li><span class="mk">7</span><span><b>The point, annotated</b>The gap the headline quotes, labelled where it is.</span></li>
+        <li><span class="mk">8</span><span><b>Light scaffolding</b>Few, light gridlines; units live in the subtitle.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Definitions, system, as-of date, population.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:line_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">Data &amp; AI roles: forecast demand vs. internal supply, 2024–2030 (FTE)<span class="mk">2</span></p>
+        {{exhibit:line_anatomy|min}}
+        <p class="card-foot">Forecast range on demand widens to ±8% by 2030. Internal supply = current staff plus planned reskilling, less expected attrition.<br>Source: Workday HCM and SWP model (synthetic data for illustration), as of 31 Mar 2026<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="headline">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Write the headline</b> last, from the numbers</h2>
+    <p class="lede">The headline is the most-read text on the page. It should be the finding, not the topic.</p>
+    <h3>The formula</h3>
+    <p><strong>Who or what + verb + number + so what.</strong></p>
+    <h3>Before you keep it</h3>
+    <ul class="checklist">
+      <li>Recompute every number, "all", "most" and "n of m" from the data</li>
+      <li>The blue in the chart is what the headline names</li>
+      <li>Two lines at most; no final period</li>
+    </ul>
+    <p class="small">If you can't write a headline, you don't have a finding yet: you have a chart.</p>
+  </div>
+  <div class="stage">
+    <div class="panel">
+      <div class="ladder">
+        <div class="k bad">Label</div><div>Attrition by job family <span class="small">· names the topic; says nothing</span></div>
+        <div class="k bad">Vague</div><div>Attrition varies across job families <span class="small">· true of every chart ever made</span></div>
+        <div class="k bad">Opinion</div><div>Attrition is out of control in the frontline <span class="small">· a claim the chart can't support</span></div>
+        <div class="k good">Insight</div><div><strong>{{text:bar_headline}}</strong></div>
+        <div class="k good">Insight + action</div><div><strong>Two frontline families account for {{text:focus_exit_share}} of voluntary exits; retention there moves the enterprise rate</strong></div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <figure class="card sm">
+        <p class="card-head">Attrition varies across job families</p>
+        <p class="card-sub">{{text:bar_subtitle}}</p>
+        {{exhibit:ladder_plain}}
+        <div class="verdict avoid"><i>✕</i><span><b>Headline and chart both neutral</b>Nothing tells the reader where to look.</span></div>
+      </figure>
+      <figure class="card sm">
+        <p class="card-head">Pharmacy and DC teams lose about 1 in 4 people a year</p>
+        <p class="card-sub">{{text:bar_subtitle}}</p>
+        {{exhibit:ladder_focus}}
+        <div class="verdict rec"><i>✓</i><span><b>Headline and highlight agree</b>The two blue bars are exactly what the sentence names.</span></div>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="color">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Grey first,</b> then color the point</h2>
+    <p class="lede">Color is for meaning, never decoration. Start with every mark in grey, then color only what the headline names.</p>
+    <p>Highlight at most two items. When everything is highlighted, nothing is.</p>
+    <p>Echo the highlight in the text: bold the matching category label, and set callouts in the color of the mark they describe.</p>
+    <p class="small">McKesson Blue and Orange stay distinct for the most common color-vision deficiencies, where red and green collapse into the same brown. Warm grey matches the brand's sand neutrals and recedes behind both.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g3">
+      <div class="tile">
+        <p class="step">Pattern 1 · Default</p>
+        <h4>Focus</h4>
+        <p class="note">All grey; the items the headline names in blue.</p>
+        {{exhibit:pattern_focus}}
+      </div>
+      <div class="tile">
+        <p class="step">Pattern 2</p>
+        <h4>Uniform + accent</h4>
+        <p class="note">One series all blue; the single exception in orange.</p>
+        {{exhibit:pattern_uniform_accent}}
+      </div>
+      <div class="tile">
+        <p class="step">Pattern 3</p>
+        <h4>Focus + accent</h4>
+        <p class="note">Grey context, a blue group, one orange exception. Use sparingly.</p>
+        {{exhibit:pattern_focus_accent}}
+      </div>
+    </div>
+    <div class="panel">
+      <h4>Color roles</h4>
+      {{html:roles}}
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="palettes">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Three palettes,</b> three jobs</h2>
+    <p class="lede">Pick the palette from what the color encodes.</p>
+    <h3>Categories</h3>
+    <p>Only when categories must be told apart. At most six, always in the same order, so "Full-time" is the same blue on every slide.</p>
+    <h3>One measure, light to dark</h3>
+    <p>For heat tables and choropleths of a single measure. Darker means more.</p>
+    <h3>Gap to a benchmark</h3>
+    <p>For values centered on zero or a target. Orange below, blue above, a neutral middle.</p>
+    <p class="small">Text on a fill switches between white and navy, whichever contrasts more (<code>mv.text_on</code>).</p>
+  </div>
+  <div class="stage">
+    <div class="grid g3">
+      <div class="tile">
+        <p class="step">Categorical</p>
+        <p class="note">Workforce mix by function (%)</p>
+        {{exhibit:palette_categorical}}
+      </div>
+      <div class="tile">
+        <p class="step">Sequential</p>
+        <p class="note">Voluntary attrition, FY26 (%)</p>
+        {{exhibit:palette_sequential}}
+      </div>
+      <div class="tile">
+        <p class="step">Diverging</p>
+        <p class="note">Engagement vs. healthcare benchmark (pts)</p>
+        {{exhibit:palette_diverging}}
+      </div>
+    </div>
+    <div class="panel">
+      <div class="palette-row"><h5>Categorical<small>Max 6, always this order</small></h5><div>{{html:swatch_categorical}}</div></div>
+      <div class="palette-row"><h5>Sequential<small>One measure, light to dark</small></h5><div>{{html:swatch_sequential}}</div></div>
+      <div class="palette-row"><h5>Diverging<small>Centered on 0 or a target</small></h5><div>{{html:swatch_diverging}}</div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="type">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Type</b> and proportion</h2>
+    <p class="lede">One typeface, Libre Franklin, in a few fixed roles. Type should frame the data, not compete with it.</p>
+    <p>The headline is the largest text on the chart but the data is the largest <em>thing</em>. If the headline is the first thing you notice from across the room, it is too heavy.</p>
+    <ul>
+      <li>Nothing below 9 pt on slides, 11 px on screens</li>
+      <li>Sentence case everywhere; no all-caps headlines</li>
+      <li>Headline, subtitle, key, footnote and source share one left edge</li>
+      <li>Big numbers use the light weight</li>
+    </ul>
+    <p class="small">Libre Franklin is open source (SIL OFL). Set-up for Office, the web and Power BI is in the Toolkit.</p>
+  </div>
+  <div class="stage">
+    <div class="panel">
+      {{html:type_specimen}}
+    </div>
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Proportion on a 16:9 slide</h4>
+        <p class="note">Margins of about 0.5 in. The chart takes at least 60% of the slide height. One message per chart, at most two charts per slide; the slide title is the headline.</p>
+      </div>
+      <div class="tile">
+        <h4>Proportion on a screen</h4>
+        <p class="note">The chart card sits on a quiet background with generous padding. Headline about 1.4× the subtitle. On phones, swap end labels for a top key and let wide exhibits scroll sideways rather than shrink.</p>
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="declutter">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Label directly,</b> delete the rest</h2>
+    <p class="lede">Every element must earn its place. If removing it loses nothing, remove it.</p>
+    <ol>
+      <li>Replace the label-style title with an insight headline</li>
+      <li>Sort by value, not alphabet</li>
+      <li>Turn long-named columns into horizontal bars</li>
+      <li>Grey everything, then color the point</li>
+      <li>Label values in place; delete the value axis, gridlines and tick marks</li>
+      <li>Delete the legend, borders and background fill</li>
+      <li>Add the benchmark, labelled where it sits</li>
+    </ol>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <figure class="card sm">
+        {{exhibit:clutter_before|min}}
+        <div class="verdict avoid"><i>✕</i><span><b>Tool defaults</b>Rainbow fills, borders, rotated labels, gridlines, a legend that decodes nothing.</span></div>
+      </figure>
+      <figure class="card sm">
+        <p class="card-head">{{text:bar_headline}}</p>
+        <p class="card-sub">{{text:bar_subtitle}}</p>
+        {{exhibit:clutter_after|min}}
+        <div class="verdict rec"><i>✓</i><span><b>Decluttered</b>The same data. Fewer elements, and every one of them carries information.</span></div>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="honest-scales">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Honest</b> scales</h2>
+    <p class="lede">A chart can be accurate in every number and still mislead. These four rules prevent the common ways.</p>
+    <p><strong>Bars start at zero.</strong> If the differences only show on a narrow range, change the chart, not the axis.</p>
+    <p><strong>No dual axes.</strong> Two scales let you make any two lines cross wherever you like.</p>
+    <p><strong>Bubble area, not diameter,</strong> is proportional to value.</p>
+    <p><strong>Pies take five slices at most,</strong> and sum to 100%.</p>
+    <p class="small">The one exception: a waterfall bridging two large totals may break its axis, if the break is drawn and footnoted.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Truncated bars</h4><div class="pair">
+        <div>{{exhibit:scale_truncated_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>An axis from 65 turns a {{text:trunc_real}} difference into a {{text:trunc_seen}} one.</span></div></div>
+        <div>{{exhibit:scale_truncated_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A dot plot compares position, so the range can be narrow.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Dual axes</h4><div class="pair">
+        <div>{{exhibit:scale_dual_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>The crossing point is an artifact of two chosen scales.</span></div></div>
+        <div>{{exhibit:scale_dual_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Two aligned charts share the time axis.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Bubble size</h4><div class="pair">
+        <div>{{exhibit:scale_bubble_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Sized by diameter, 900 looks 81× bigger than 100.</span></div></div>
+        <div>{{exhibit:scale_bubble_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Sized by area, 900 is 9× bigger, as it should be.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Too many slices</h4><div class="pair">
+        <div>{{exhibit:scale_pie_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Eight similar angles can't be ranked by eye.</span></div></div>
+        <div>{{exhibit:scale_pie_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A sorted bar ranks them instantly.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="people-data">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>People data</b> is personal</h2>
+    <p class="lede">Workforce charts describe colleagues, and carry extra obligations.</p>
+    <h3>Minimum group size</h3>
+    <p>No group under <strong>{{text:min_n}} people</strong>: not in bars, labels, tooltips, filters or drill-downs. Merge into "Other" and footnote it.</p>
+    <h3>No re-identification</h3>
+    <p>Small team × tenure × location can single out one person, even when each cut is large.</p>
+    <h3>Protected attributes and forecasts</h3>
+    <p>Protected attributes only for approved analyses such as pay equity, aggregated. Label estimates and show a range. Frame findings about roles, not individuals.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Engagement by team, one distribution center</h4>
+        <p class="note">Two teams have fewer than {{text:min_n}} respondents: anyone who knows the team can guess who answered what.</p>
+        {{html:people_before}}
+        <div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Reporting groups below the minimum, even in a table or tooltip.</span></div>
+      </div>
+      <div class="tile">
+        <h4>Engagement by team, one distribution center</h4>
+        <p class="note">Small teams combined into one group that clears the threshold.</p>
+        {{html:people_after}}
+        <div class="verdict rec"><i>✓</i><span><b>Recommended</b>Merge into "Other" and footnote it: "Teams with fewer than {{text:min_n}} respondents are combined."</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h4>In dashboards, enforce it in the data model</h4>
+      <p class="note">A rule in a slide is easy to forget; a rule in the measure can't be skipped. In Power BI: <code>IF([Headcount] &lt; {{text:min_n}}, BLANK(), [Engagement])</code>. In Python, drop or merge small groups before plotting, and keep individual values out of hover text.</p>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="accessibility">
+  <div class="rail">
+    <p class="eyebrow">Fundamentals</p>
+    <h2 class="title"><b>Accessible</b> by default</h2>
+    <p class="lede">About 1 in 12 men and 1 in 200 women have a color-vision deficiency. In a room of 25, assume someone does.</p>
+    <ul>
+      <li>Text contrast at least 4.5:1</li>
+      <li>Never red vs. green; use orange vs. blue</li>
+      <li>Never color alone: pair it with labels, position or shape</li>
+      <li>Nothing below 9 pt on slides or 11 px on screens</li>
+      <li>Alt text for every chart that leaves the team: the headline plus two or three key numbers</li>
+    </ul>
+    <p class="small">The red–green examples are simulated for deuteranopia, the most common form.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Red vs. green</h4><div class="pair">
+        <div>{{exhibit:a11y_redgreen_avoid}}<div class="verdict avoid"><i>✕</i><span><b>As seen with deuteranopia</b>Red and green hires vs. exits become one color.</span></div></div>
+        <div>{{exhibit:a11y_redgreen_fix}}<div class="verdict rec"><i>✓</i><span><b>As seen with deuteranopia</b>Blue and orange stay distinct.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Color as the only cue</h4><div class="pair">
+        <div>{{exhibit:a11y_legend_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>The reader matches colors to a legend.</span></div></div>
+        <div>{{exhibit:a11y_legend_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Names at the line ends; color only reinforces.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Text on fills</h4><div class="pair">
+        <div>{{exhibit:a11y_contrast_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>White on every fill fails on light and orange.</span></div></div>
+        <div>{{exhibit:a11y_contrast_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>White or navy, whichever contrasts more.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Alt text</h4>
+        <p class="note">Write it from the headline and the numbers that prove it.</p>
+        <p class="note" style="background:var(--g-stage);padding:10px 12px"><strong>Alt:</strong> {{text:bar_headline}}. {{text:focus_rates}}; all other job families are below the enterprise rate.</p>
+        <p class="note">In PowerPoint: right-click the chart, View Alt Text. In HTML: <code>aria-label</code> on the figure.</p>
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>

@@ -87,6 +87,7 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 | `examples/python/` | Gallery scripts that render `examples/output/` | Yes |
 | `agents/` | Templates for portable agent rules (built into `dist/agents/`) | Yes |
 | `office/` | `build_office.py`: generates the `.pptx`, `.potx` and `.xlsx` in `dist/office/` | Yes, then rerun it |
+| `guide/` | The browsable guide: `pages/*.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{html:…}}`, `{{folio}}` placeholders), `exhibits.py` (every chart in the guide, drawn from tokens and data), `guide.css`. Built into `dist/guide/` by `tools/build_guide.py` | Yes, then rerun it |
 | `templates/` | Copy-and-edit starters (HTML chart card) and the print sources for the one-page PDFs (`templates/print/`, built by `tools/build_print.py`) | Yes |
 | `reference/` | Paraphrased inspiration notes. No source images are ever committed | Rarely |
 | `tools/` | Brand-extraction helpers, `check_snippets.py`, `build_print.py` | Yes |
@@ -98,6 +99,7 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 .\.venv\Scripts\python.exe examples\python\gallery_matplotlib.py
 .\.venv\Scripts\python.exe examples\python\gallery_plotly.py
 .\.venv\Scripts\python.exe office\build_office.py              # after token or example-data changes (Office files)
+.\.venv\Scripts\python.exe tools\build_guide.py                # the guide (HTML + 16:9 PDF); must report "every spread fits"
 .\.venv\Scripts\python.exe tools\check_snippets.py              # every "# verified" cookbook block must pass
 .\.venv\Scripts\python.exe tools\lint_charts.py                 # mv.lint over the whole gallery: 0 errors
 .\.venv\Scripts\python.exe -m pytest python\tests               # mckviz tests
@@ -106,6 +108,7 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 ### Conventions
 - **Cookbook pages** follow `docs/cookbook/_template.md`. Python blocks start with `# verified runnable (from the repo root)` or `# verified: builds without error`, and must pass `tools/check_snippets.py`. Snippets write to `tempfile.gettempdir()` or `out/` (gitignored), never into the repo.
 - **Examples** use the people analytics, workforce intelligence and SWP lens, not plain HR reporting. Mix internal and external signals, and individual, team, firm and sector levels. All data is synthetic, and the source line says so.
+- **Guide spreads** are 1280 × 720 px (one 16:9 PDF page each): a left rail (eyebrow, title with a bold lead, short text) and a stage (chart card, tiles or avoid/recommended pairs). Numbers in page text come from `{{text:…}}` keys computed in `exhibits.py`, never typed. After a change, render the PDF pages and look at them, and check the web page at 1280 px and 390 px.
 - **Gallery charts** must be rendered and looked at after every change. Check for overlaps, clipping, and that the headline still matches the data.
 - **Never commit** the McKinsey source images or the brand PDFs. They stay in OneDrive (`Desktop\McK-Data-Viz\`).
 - **Platform priority:** HTML and Python first, then Excel and PowerPoint, then Power BI. R is a nice-to-have.

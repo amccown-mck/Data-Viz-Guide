@@ -1,0 +1,98 @@
+<section class="spread cover" id="cover">
+  <div class="inner">
+    <div>
+      <div class="bars" aria-hidden="true">
+        <div style="height:38%"></div><div style="height:52%"></div><div class="f" style="height:100%"></div>
+        <div style="height:61%"></div><div style="height:45%"></div><div style="height:30%"></div>
+      </div>
+      <h1><b>Data visualization</b> guide</h1>
+      <p class="sub">How McKesson consulting, people analytics and workforce teams turn data into charts that lead to decisions.</p>
+    </div>
+    <div class="meta"><span>Version 0.2 (pilot)</span><span>September 2026</span><span>All example data is synthetic</span></div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="how-to-use">
+  <div class="rail">
+    <p class="eyebrow">Overview</p>
+    <h2 class="title"><b>How to use</b> this guide</h2>
+    <p class="lede">One set of rules, three ways in. The guide teaches the thinking; the starter kit makes the right answer the easy one in every tool we use.</p>
+    <p>Every chart we make should do one job: answer a business question so clearly that the reader knows what to do next. The rules here are written to be checked, by a reviewer or by an agent, before a chart leaves the team.</p>
+    <p class="small">Inspired by the structure of a leading consulting firm's public data-visualization guide, rebuilt for McKesson's brand and for people analytics, workforce intelligence and strategic workforce planning.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g3">
+      <div class="tile">
+        <p class="step">Consultants and analysts</p>
+        <h4>Decks, reports, workbooks</h4>
+        <p class="note">Read <a href="fundamentals.html">Fundamentals</a> once, then use the chart pages as you build. Keep the cheat sheet next to you.</p>
+        <ul class="note">
+          <li>PowerPoint template and starter deck</li>
+          <li>Excel chart workbook with the palette</li>
+          <li>One-page cheat sheet and chart chooser</li>
+          <li>Power BI report theme</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <p class="step">Developers and data scientists</p>
+        <h4>Python, HTML, R, Power BI</h4>
+        <p class="note">Each chart page links to tested code. Themes are generated from one token file, so every tool matches.</p>
+        <ul class="note">
+          <li><code>mckviz</code> for matplotlib and Plotly</li>
+          <li>CSS variables, Plotly and Vega-Lite themes</li>
+          <li><code>theme_mck()</code> for ggplot2</li>
+          <li><code>mv.lint(fig)</code> to check a chart</li>
+        </ul>
+      </div>
+      <div class="tile">
+        <p class="step">Coding agents</p>
+        <h4>Claude, Copilot and others</h4>
+        <p class="note">Agents read <code>AGENTS.md</code> automatically in this repo. For other repos, copy one self-contained rules file.</p>
+        <ul class="note">
+          <li><code>AGENTS.md</code>: workflow and rules</li>
+          <li><code>mck-chart</code> skill: question to QA</li>
+          <li><code>dist/agents/mck-viz-rules.md</code></li>
+          <li>Cookbook pages with runnable snippets</li>
+        </ul>
+      </div>
+    </div>
+    <div class="panel">
+      <h4>The five steps behind every chart</h4>
+      <div class="cols">
+        <p class="note"><strong>1 Question.</strong> Write the question the chart answers in one sentence.</p>
+        <p class="note"><strong>2 Chart.</strong> Pick the chart from the question type, not from habit.</p>
+        <p class="note"><strong>3 Build.</strong> Grey first, then color only what the headline names.</p>
+        <p class="note"><strong>4 Headline.</strong> Compute the finding, then write it as a sentence.</p>
+        <p class="note"><strong>5 QA.</strong> Run the checklist and look at the rendered chart.</p>
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="contents">
+  <div class="rail">
+    <p class="eyebrow">Overview</p>
+    <h2 class="title"><b>Contents</b></h2>
+    <p class="lede">Fundamentals apply to every chart. Each chart family then gets the same treatment: anatomy, variants, best practice and how to build it.</p>
+    <p class="small">This is the pilot release. Sections marked <span class="tag">next</span> follow the same pattern once the look and depth of the pilot are agreed.</p>
+  </div>
+  <div class="stage plain top">
+    <ol class="toc">
+      <li><span class="no">01</span><span><a href="fundamentals.html">Fundamentals</a><small>Question first, how readers read, anatomy, headlines, color, type, clutter, honest scales, people data, accessibility</small></span></li>
+      <li><span class="no">02</span><span><a href="magnitude.html">Magnitude</a><small>Bar and column charts: anatomy, variants, best practice, build it</small></span></li>
+      <li><span class="no">03</span><span><span class="soon">Part-to-whole</span><span class="tag">next</span><small>100% stacked bar, waterfall, treemap, donut</small></span></li>
+      <li><span class="no">04</span><span><span class="soon">Change over time</span><span class="tag">next</span><small>Line, stacked area, bubble timeline, small multiples</small></span></li>
+      <li><span class="no">05</span><span><span class="soon">Ranking</span><span class="tag">next</span><small>Slope, bump, dot plot and dumbbell, heat table</small></span></li>
+      <li><span class="no">06</span><span><span class="soon">Distribution</span><span class="tag">next</span><small>Histogram, strip, box plot</small></span></li>
+      <li><span class="no">07</span><span><span class="soon">Correlation</span><span class="tag">next</span><small>Scatter and bubble, heatmaps, why not dual axes</small></span></li>
+      <li><span class="no">08</span><span><span class="soon">Relationships and flows</span><span class="tag">next</span><small>Sankey, parallel coordinates, Venn</small></span></li>
+      <li><span class="no">09</span><span><span class="soon">Geo-spatial</span><span class="tag">next</span><small>Choropleth, bubble map, dot density</small></span></li>
+      <li><span class="no">10</span><span><span class="soon">Single number</span><span class="tag">next</span><small>KPI and big number, progress to target</small></span></li>
+      <li><span class="no">11</span><span><span class="soon">Formats</span><span class="tag">next</span><small>Slides, reports and print, web and mobile, dashboards, interactivity, animation, social</small></span></li>
+      <li><span class="no">12</span><span><span class="soon">Toolkit</span><span class="tag">next</span><small>Downloads, set-up for each tool, the QA checklist, guidance for agents</small></span></li>
+    </ol>
+  </div>
+  {{folio}}
+</section>

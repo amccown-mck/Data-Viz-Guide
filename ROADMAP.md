@@ -1,6 +1,6 @@
 # Roadmap and status
 
-Last updated: 2026-09-30. Read this first when resuming work, whether you're a person or an agent.
+Last updated: 2026-09-30 (guide pilot). Read this first when resuming work, whether you're a person or an agent.
 
 ## Done
 
@@ -23,8 +23,20 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 | Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook; `--lang r` runs every R block | `tools/check_snippets.py` |
 | Chart lint | `mv.lint(fig)` for matplotlib/Plotly, gallery runner, pytest suite | `python/mckviz/lint.py`, `tools/lint_charts.py`, `python/tests/` |
 | R examples | ggplot2 gallery (bar highlight, line with end labels, diverging heatmap) using the generated theme | `examples/r/`, `examples/output/r-*.png` |
+| Guide (pilot) | Browsable HTML guide + 16:9 PDF from one source, modelled on the McKinsey spreads: cover, how to use, contents; 11 Fundamentals spreads; Magnitude (bar anatomy, variants, 2× best practice, build it). 51 exhibits generated from tokens and data | `guide/`, `tools/build_guide.py`, `dist/guide/` |
 
-## Next steps (in priority order)
+## Current focus: the guide itself (decided 2026-09-30)
+
+The original ask was a McKesson data-viz guideline as thorough as the McKinsey guide, usable by consultants, developers and coding agents. By v0.1 the toolkit was strong but the guide itself was thin, so the guide now comes first. Agreed with the owner: **pilot first** (done), **local files** (HTML + PDF in the repo; sharing decided later), and a look that **balances McKinsey-level polish with the McKesson brand**.
+
+A. **Pilot review (owner).** Review `dist/guide/` (web and PDF) for look, depth and voice. Open questions:
+   - The guide's chart cards use a lighter headline (Semibold, 19 px, about 1.4× the subtitle) than the tokens (Bold, 22 px). If the owner prefers it, move `typography.roles.headline` to match so every tool output follows, then rebuild everything.
+   - Phone view: wide exhibits scroll sideways ("Swipe to see the full chart") rather than shrink. Phone-specific exhibits would be better if the guide is read on phones a lot.
+B. **Roll out the chart families** in this order, each as anatomy, variants, best practice (1–2 spreads) and build it, with exhibits in `guide/exhibits.py`: Part-to-whole (100% stacked, waterfall, treemap, donut) → Change over time (line, stacked area, bubble timeline, small multiples) → Ranking (slope/bump, dot plot/dumbbell, heat table) → Distribution → Correlation (scatter/bubble, heatmaps, dual axis) → Relationships and flows (Sankey, parallel coordinates, Venn) → Geo-spatial → Single number. Source material: `reference/inspiration-mckinsey/pages/` and the matching `docs/cookbook/` page.
+C. **Formats section:** slides, reports and print, web and mobile (McKinsey screen-size spreads), dashboards (Power BI / Fabric), interactivity, scrolly-telling, animation, social.
+D. **Toolkit section:** downloads, set-up per tool (Office, Power BI, web, Python, R), the QA checklist, the agent page. Link the cheat sheet and chart chooser.
+
+## Toolkit steps (v0.1 plan, in priority order)
 
 1. ~~**Finish the cookbook.**~~ Done: `distribution`, `tables` and `venn` pages added, with gallery charts and verified snippets.
 2. ~~**Agent assets.**~~ Done: expanded `AGENTS.md`; `CLAUDE.md` and `.github/copilot-instructions.md` point to it; path-scoped `.github/instructions/viz-{python,web,r}.instructions.md`; the `mck-chart` workflow skill (`.github/skills/`, with a Claude Code shim in `.claude/skills/`); the portable rules file is generated from `agents/mck-viz-rules.template.md` into `dist/agents/mck-viz-rules.md` by `tokens/build.py`.
@@ -46,6 +58,7 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 .\.venv\Scripts\python.exe examples\python\gallery_plotly.py
 .\.venv\Scripts\python.exe office\build_office.py                # regenerate .pptx/.potx/.xlsx in dist/office
 .\.venv\Scripts\python.exe tools\build_print.py                    # cheat sheet + chart chooser PDFs (needs Chrome or Edge)
+.\.venv\Scripts\python.exe tools\build_guide.py                    # the guide: dist/guide/*.html + PDF; checks every spread fits 16:9
 .\.venv\Scripts\python.exe tools\check_snippets.py                # run every verified cookbook snippet (~40 s)
 .\.venv\Scripts\python.exe tools\check_snippets.py --lang r       # run every cookbook R block (needs R + packages below)
 .\.venv\Scripts\python.exe tools\check_powerbi_theme.py           # validate the Power BI theme against Microsoft's schema
@@ -57,7 +70,8 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 
 ## Working notes
 
-- The source McKinsey images and brand PDFs stay **outside** the repo, in OneDrive `Desktop\McK-Data-Viz\`. Never commit them.
+- The source McKinsey images and brand PDFs stay **outside** the repo, in OneDrive `Desktop\McK-Data-Viz\`: `gif-frames\unique\` (61 stills), `hi-res-slides\` (4 spreads), `_work\mck-pages\` (page notes), `McK-Brand-reference\` (brand PDFs), `rebrand-site-images\` (rebrand case-study images). Never commit them.
+- The transcripts of the sessions that built v0.1 were lost; this file and `git log` are the record.
 - Edit colors and type only in `tokens/tokens.json`, then rebuild. Never hand-edit `dist/`.
 - Examples use the People Analytics, Workforce Intelligence, and SWP lens, not plain HR reporting. They mix internal and external signals at the individual, team, firm, and sector levels.
 - Platform priority: HTML and Python first, then Excel and PowerPoint, then Power BI. R is a nice-to-have.

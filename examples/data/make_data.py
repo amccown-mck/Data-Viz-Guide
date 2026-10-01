@@ -142,8 +142,36 @@ def skills_overlap() -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["clinical", "data_analytics", "supply_chain", "employees"])
 
 
+def hiring_flow_by_family() -> pd.DataFrame:
+    """Firm level, internal. FY26 hires vs voluntary exits, and median days to fill FY25 vs FY26, by job family."""
+    rows = [
+        ("Pharmacy Technician", 6200, 27.4, 1540, 41, 52),
+        ("Distribution Center Associate", 11800, 24.1, 3120, 26, 24),
+        ("Customer Care", 3100, 18.9, 470, 31, 29),
+        ("Specialty Nursing", 1400, 14.2, 260, 63, 71),
+        ("Data & Analytics", 850, 12.9, 190, 49, 58),
+        ("Supply Chain Planning", 900, 11.8, 120, 45, 47),
+        ("Sales", 2300, 10.6, 210, 44, 45),
+        ("Software Engineering", 2600, 9.8, 330, 52, 49),
+    ]
+    df = pd.DataFrame(rows, columns=["job_family", "headcount", "vol_attrition_pct", "hires_fy26",
+                                     "days_to_fill_fy25", "days_to_fill_fy26"])
+    df["exits_fy26"] = (df.headcount * df.vol_attrition_pct / 100).round().astype(int)
+    df["net_change_fy26"] = df.hires_fy26 - df.exits_fy26
+    return df[["job_family", "headcount", "hires_fy26", "exits_fy26", "net_change_fy26",
+               "days_to_fill_fy25", "days_to_fill_fy26"]]
+
+
+def internal_fill_by_fy() -> pd.DataFrame:
+    """Firm level, internal. Share of open roles filled by internal candidates, by fiscal year (%)."""
+    return pd.DataFrame({"fiscal_year": ["FY22", "FY23", "FY24", "FY25", "FY26"],
+                         "internal_fill_pct": [22, 23, 25, 24, 29]})
+
+
 def main() -> None:
     sets = {
+        "hiring_flow_by_family": hiring_flow_by_family(),
+        "internal_fill_by_fy": internal_fill_by_fy(),
         "attrition_by_job_family": attrition_by_job_family(),
         "data_ai_supply_demand": data_ai_supply_demand(),
         "automation_exposure": automation_exposure(),

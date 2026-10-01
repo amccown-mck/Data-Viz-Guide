@@ -4,8 +4,11 @@ This is the McKesson data-visualization starter kit. It covers principles, desig
 
 > Status: v0.1, a work in progress. See [ROADMAP.md](ROADMAP.md) for what is done and what comes next.
 
+**Start here: the guide.** Open [dist/guide/index.html](dist/guide/index.html) in a browser, or read the same pages as a 16:9 PDF: [McKesson-DataViz-Guide.pdf](dist/guide/McKesson-DataViz-Guide.pdf). Fundamentals, then each chart family as anatomy, variants, best practice and how to build it. (Pilot: Fundamentals and Magnitude are written; the other families follow the same pattern.)
+
 | You are... | Go to |
 |---|---|
+| Learning the house style | [The guide](dist/guide/index.html) ([PDF](dist/guide/McKesson-DataViz-Guide.pdf)) |
 | Making any chart | [docs/principles.md](docs/principles.md) → [docs/choosing-a-chart.md](docs/choosing-a-chart.md) → [docs/qa-checklist.md](docs/qa-checklist.md) |
 | Wanting it on one page | [Cheat sheet](dist/print/cheat-sheet.pdf) and [chart chooser](dist/print/chart-chooser.pdf) (PDF, print or pin) |
 | Coding in Python | `pip install -e ./python`, then `import mckviz as mv; mv.use()`. Examples are in [examples/python/](examples/python/) |

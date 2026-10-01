@@ -1,0 +1,180 @@
+<section class="spread" id="bar">
+  <div class="rail">
+    <p class="eyebrow">Magnitude</p>
+    <h2 class="title"><b>Bar</b> chart</h2>
+    <div class="defbox">Magnitude charts compare size: which is bigger (relative), and by how much (absolute).</div>
+    <p>A bar's length is proportional to its value, so bars are the most precise way to compare categories. Sorted horizontal bars are the default for ranking job families, sites or skills: long names stay readable, and the layout works on a phone.</p>
+    <p>Use columns for a few time periods or short names.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Bar about 2× the gap (Excel gap width 50%)</li>
+      <li>Sorted by value unless there's a natural order</li>
+      <li>Up to about 12 bars; group the tail into "Other"</li>
+      <li>No group under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Names the two families and the benchmark they beat.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Metric, unit, scope, period.</span></li>
+        <li><span class="mk">3</span><span><b>Focus in blue</b>Only the bars the headline names; two at most.</span></li>
+        <li><span class="mk">4</span><span><b>Echo in the label</b>Focus categories in bold navy.</span></li>
+        <li><span class="mk">5</span><span><b>Values on the bars</b>So the value axis and gridlines go.</span></li>
+        <li><span class="mk">6</span><span><b>Labelled benchmark</b>A thin dashed line, named where it sits.</span></li>
+        <li><span class="mk">7</span><span><b>Zero baseline</b>A thin axis line; bars always start at zero.</span></li>
+        <li><span class="mk">8</span><span><b>Grey context</b>Everything else, sorted by value.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Defines the metric; names system, date, population.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:bar_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:bar_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:bar_anatomy|min}}
+        <p class="card-foot">{{text:attrition_def}}<br>{{text:src_synthetic}}<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="bar-variants">
+  <div class="rail">
+    <p class="eyebrow">Magnitude</p>
+    <h2 class="title"><b>Bar chart</b> variants</h2>
+    <p class="lede">Same rules, different shapes. Pick the variant from the comparison you need to make.</p>
+    <h3>When a bar is the wrong chart</h3>
+    <ul>
+      <li>Values bunched far from zero (engagement 71–78): use a <strong>dot plot</strong></li>
+      <li>Largest more than 20× the smallest: use <strong>proportional bubbles</strong> or split the chart</li>
+      <li>Parts of a whole: use a <strong>100% stacked bar</strong> or <strong>waterfall</strong></li>
+      <li>Many periods: use a <strong>line</strong></li>
+      <li>Spread across people: use a <strong>distribution</strong></li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Column chart</h4>
+        <p class="note">A few periods in time order, or short category names. Here internal fill rose from {{text:fill_first}} to {{text:fill_now}}.</p>
+        {{exhibit:var_column}}
+      </div>
+      <div class="tile">
+        <h4>Grouped bars</h4>
+        <p class="note">Two or three series per category. Prior period in light grey, current in blue; key top-left.</p>
+        {{exhibit:var_grouped}}
+      </div>
+      <div class="tile">
+        <h4>Diverging bars</h4>
+        <p class="note">Values on both sides of zero. {{text:shrank_n}} job families shrank in FY26 despite hiring; negatives in orange.</p>
+        {{exhibit:var_diverging}}
+      </div>
+      <div class="tile">
+        <h4>Butterfly chart</h4>
+        <p class="note">Two measures back to back on the same items: FY26 exits and hires by job family.</p>
+        {{exhibit:var_butterfly}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="bar-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Magnitude</p>
+    <h2 class="title"><b>Bar chart</b> best practice</h2>
+    <p class="lede">Four rules that fix most bar charts.</p>
+    <p><strong>Size of bars.</strong> Thin bars pull the eye to the empty space between them. Make each bar about twice as wide as the gap.</p>
+    <p><strong>Color of bars.</strong> A different color per bar distracts and implies categories that don't exist. One color; shade only the highlight.</p>
+    <p><strong>Direct labels.</strong> Gridlines and a value axis add noise. Label the bars and delete both.</p>
+    <p><strong>Zero baseline.</strong> Bar length encodes quantity, so never truncate. If the data needs a narrow range, switch to a line or dot plot.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Size of bars</h4><div class="pair">
+        <div>{{exhibit:bp_size_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Stick-thin bars; the gaps dominate.</span></div></div>
+        <div>{{exhibit:bp_size_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Bar about twice the gap.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Color of bars</h4><div class="pair">
+        <div>{{exhibit:bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A color per bar, encoding nothing.</span></div></div>
+        <div>{{exhibit:bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey bars; blue for the one that matters.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Direct labels</h4><div class="pair">
+        <div>{{exhibit:bp_labels_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Gridlines and an axis to read values from.</span></div></div>
+        <div>{{exhibit:bp_labels_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Values on the bars; no axis, no grid.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Zero baseline</h4><div class="pair">
+        <div>{{exhibit:bp_zero_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A truncated axis exaggerates differences.</span></div></div>
+        <div>{{exhibit:bp_zero_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A line or dot plot can use a narrow range.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="bar-best-practice-2">
+  <div class="rail">
+    <p class="eyebrow">Magnitude</p>
+    <h2 class="title"><b>Bar chart</b> best practice, continued</h2>
+    <p class="lede">Four more, from reviewing workforce decks.</p>
+    <p><strong>Sort with intent.</strong> Alphabetical order hides the ranking. Sort by value unless the categories have a natural order: tenure bands, job levels, survey scales.</p>
+    <p><strong>Horizontal for long names.</strong> Rotated labels are slow to read. Job-family names need horizontal bars.</p>
+    <p><strong>Label the benchmark in place.</strong> A reference line explained in a legend makes the reader search. Name it on the line.</p>
+    <p><strong>Two highlights at most.</strong> Five colored bars in two colors is decoration, not emphasis.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Sort with intent</h4><div class="pair">
+        <div>{{exhibit:bp_sort_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Alphabetical: the ranking is hidden.</span></div></div>
+        <div>{{exhibit:bp_sort_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>By value, largest on top.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Horizontal for long names</h4><div class="pair">
+        <div>{{exhibit:bp_rotate_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Tilted names the reader has to decode.</span></div></div>
+        <div>{{exhibit:bp_rotate_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Horizontal bars; names read naturally.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Label the benchmark</h4><div class="pair">
+        <div>{{exhibit:bp_bench_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A legend for one line, in a highlight color.</span></div></div>
+        <div>{{exhibit:bp_bench_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Navy dashed line, named on the line.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Two highlights at most</h4><div class="pair">
+        <div>{{exhibit:bp_many_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Everything highlighted means nothing is.</span></div></div>
+        <div>{{exhibit:bp_many_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The two the headline names.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="bar-build">
+  <div class="rail">
+    <p class="eyebrow">Magnitude</p>
+    <h2 class="title"><b>Build</b> a bar chart</h2>
+    <p class="lede">The same chart in every tool we use. Each recipe starts from the starter kit, so the colors and fonts are already right.</p>
+    <p>Full, tested code for each platform is on the cookbook page: <a href="../../docs/cookbook/bar.md">docs/cookbook/bar.md</a>.</p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Starts at zero; bar about 2× the gap</li>
+      <li>Sorted by value or a natural order</li>
+      <li>Values labelled; no value axis or gridlines</li>
+      <li>At most two highlights, matching the headline</li>
+      <li>Benchmark labelled in place</li>
+      <li>No group under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p>Start from the starter deck or chart workbook in <code>dist/office/</code>. Insert a clustered bar, sort the data ascending (so the largest is on top), set <strong>Gap Width 50%</strong>, fill all bars with Context grey and the focus bars with Focus blue. Add data labels at Outside End; delete the value axis, gridlines, legend and chart title. The slide title is the headline.</p></div>
+      <div class="platform"><h5>Power BI</h5><p>Import <code>mckesson-dataviz-theme.json</code> and sort the bars by the measure. Drive the highlight from a measure, not by clicking bars: a <code>Bar color</code> measure returns the focus blue when attrition is above 20% and context grey otherwise, applied through <strong>Colors › fx › Field value</strong>. Turn on data labels; turn off the X axis and gridlines. See <a href="../../docs/powerbi-setup.md">docs/powerbi-setup.md</a>.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>matplotlib with <code>mckviz</code>; Plotly uses the same helpers (<code>mv.pl_highlight</code>).</p>
+<pre class="snip">bars = ax.barh(df.job_family, df.rate, height=0.67,
+               color=mv.highlight(df.job_family, focus=focus))
+mv.label_bars(ax, bars, fmt="{:.1f}%")
+mv.clean_axes(ax, keep=("left",), grid=None); ax.set_xticks([])
+mv.titles(fig, headline, subtitle); mv.source(fig, source)
+mv.lint(fig)   # checks colors, zero baseline, labels vs. axis</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Copy <code>templates/html/chart-card.html</code>: headline, subtitle and source are HTML, colors come from CSS variables such as <code>var(--mck-chart-focus)</code>, and the chart is drawn after the font loads.</p></div>
+      <div class="platform"><h5>R</h5><p><code>source("dist/r/theme_mck.R")</code>, then <code>geom_col(aes(fill = job_family), width = 0.67)</code> + <code>scale_fill_manual(values = mck_highlight(levels(df$job_family), focus = focus), guide = "none")</code> + <code>theme_mck()</code>.</p></div>
+      <div class="platform"><h5>Coding agents</h5><p>"Make a McKesson bar chart of voluntary attrition by job family, FY26, highlighting the families above the enterprise rate." The <code>mck-chart</code> skill runs the workflow and returns the chart, a chart brief and alt text.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
