@@ -299,7 +299,8 @@ def build_r() -> None:
     div = ", ".join(f'"{h}"' for h in C["diverging"]["orange_blue"]["values"])
     r = f"""# GENERATED from tokens/tokens.json - McKesson data-viz theme for ggplot2.
 # source("dist/r/theme_mck.R"); ggplot(...) + theme_mck() + scale_fill_mck()
-# Fonts: install Libre Franklin (repo /fonts) and, if needed, use {{showtext}} or {{systemfonts}}.
+# Fonts: ff <- mck_font() registers the bundled TTFs (needs {{systemfonts}}; render with {{ragg}}), then use
+# theme_mck(base_family = ff) and family = ff in geom_text(). Long titles: labs(title = mck_wrap("...")).
 
 mck_colors <- list(
   blue = "{CORE['blue']['value']}", navy = "{CORE['navy']['value']}", orange = "{CORE['orange']['value']}", sand = "{CORE['sand']['value']}",
@@ -327,9 +328,10 @@ theme_mck <- function(base_size = {lab['size_pt']}, base_family = "{FONT}") {{
       axis.title = ggplot2::element_text(size = {tick['size_pt']}, color = mck_colors$muted),
       axis.line.x = ggplot2::element_line(color = mck_colors$axis, linewidth = 0.3),
       axis.ticks = ggplot2::element_blank(),
+      # Gridlines are set on the parent, so theme(panel.grid = element_blank()) removes them all.
+      panel.grid = ggplot2::element_line(color = mck_colors$grid, linewidth = 0.3),
       panel.grid.major.x = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_line(color = mck_colors$grid, linewidth = 0.3),
       legend.position = "top", legend.justification = "left", legend.title = ggplot2::element_blank(),
       legend.text = ggplot2::element_text(size = {lab['size_pt']}, color = mck_colors$text),
       plot.margin = ggplot2::margin(16, 16, 16, 16)
@@ -347,6 +349,25 @@ mck_highlight <- function(levels, focus = NULL, accent = NULL) {{
   cols[focus] <- mck_colors$focus
   cols[accent] <- mck_colors$accent
   cols
+}}
+
+# Register the bundled Libre Franklin TTFs under their own family name and return that name. Matching the installed
+# "{FONT}" by name is unreliable: the static Italic file isn't flagged as italic, so regular text can come out italic.
+mck_font <- function(dir = "fonts/LibreFranklin", family = "{FONT} MCK") {{
+  if (!family %in% systemfonts::registry_fonts()$family) {{
+    f <- function(style) file.path(dir, paste0("LibreFranklin-", style, ".ttf"))
+    systemfonts::register_font(family, plain = f("Regular"), bold = f("Bold"), italic = f("Italic"),
+                               bolditalic = f("BoldItalic"))
+  }}
+  family
+}}
+
+# Headlines are full sentences and ggplot2 doesn't wrap titles: wrap to the fewest lines, then narrow the width
+# while the line count holds, so lines come out balanced (no single word dangling on the last line).
+mck_wrap <- function(x, width = 75) {{
+  n <- length(strwrap(x, width = width))
+  while (n > 1 && width > 20 && length(strwrap(x, width = width - 1)) == n) width <- width - 1
+  paste(strwrap(x, width = width), collapse = "\\n")
 }}
 """
     write("r/theme_mck.R", r)

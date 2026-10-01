@@ -178,8 +178,17 @@ For pages, use the chart-card pattern in [`gallery_plotly.py`](../../examples/py
 library(ggplot2); library(dplyr)
 source("dist/r/theme_mck.R")
 
+# Synthetic data for illustration (replace with yours): annualized attrition by job family, Q1 2024 (1) to Q4 2026 (12)
+df <- expand.grid(quarter = 1:12, job_family = c("Pharmacy Technician", "Distribution Center Associate",
+                                                 "Customer Care", "Software Engineering"), stringsAsFactors = FALSE) |>
+  mutate(attrition = case_when(
+    job_family == "Pharmacy Technician" ~ 29 - 3 * pmax(0, pmin(quarter, 9) - 6),   # reset in Q3 2025: 29% -> 20%
+    job_family == "Distribution Center Associate" ~ 24 + sin(quarter / 2),
+    job_family == "Customer Care" ~ 19 - 0.1 * quarter,
+    TRUE ~ 10 + 0.5 * cos(quarter / 3)))
+
 focus <- "Pharmacy Technician"
-ends  <- df |> group_by(job_family) |> filter(quarter == max(quarter))   # df: job_family, quarter (numeric), attrition
+ends  <- df |> group_by(job_family) |> filter(quarter == max(quarter))
 ggplot(df, aes(quarter, attrition, group = job_family, colour = job_family)) +
   annotate("rect", xmin = 5.5, xmax = 7.5, ymin = -Inf, ymax = Inf, fill = "#EFEDE7") +
   geom_line(aes(linewidth = job_family == focus)) +

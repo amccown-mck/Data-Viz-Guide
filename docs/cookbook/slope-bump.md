@@ -156,7 +156,14 @@ Put the underlying rate in the hover text (`customdata`) so readers can see the 
 library(ggplot2); library(dplyr)
 source("dist/r/theme_mck.R")
 
-cols <- mck_highlight(unique(df$bu), focus = "Technology", accent = "Oncology & Multispecialty")   # df: bu, fy, rank
+# Synthetic data for illustration (replace with yours): rank of each business unit by internal fill rate
+bus <- c("Corporate", "Medical-Surgical", "Oncology & Multispecialty", "RxTS", "Technology", "U.S. Pharmaceutical")
+ranks <- rbind(FY22 = c(1, 2, 3, 4, 6, 5), FY23 = c(1, 3, 2, 4, 5, 6), FY24 = c(2, 1, 4, 5, 3, 6),
+               FY25 = c(3, 1, 5, 4, 2, 6), FY26 = c(3, 2, 6, 4, 1, 5))           # one row per year, columns = bus
+df <- data.frame(bu = rep(bus, times = nrow(ranks)), fy = rep(rownames(ranks), each = length(bus)),
+                 rank = as.vector(t(ranks)))
+
+cols <- mck_highlight(unique(df$bu), focus = "Technology", accent = "Oncology & Multispecialty")
 df <- df |>
   mutate(hi = bu %in% c("Technology", "Oncology & Multispecialty"),
          num_col = ifelse(hi, "white", mck_colors$headline),                     # text_on() logic

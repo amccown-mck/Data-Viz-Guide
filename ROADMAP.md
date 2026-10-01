@@ -20,7 +20,8 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 | Office starters | `.potx` template, starter deck (4 native charts), chart workbook (palette, 4 charts, heat table), set-up guide; checked by rendering in PowerPoint/Excel | `dist/office/`, `office/build_office.py`, `docs/office-setup.md` |
 | Print sheets | One-page consultant cheat sheet and chart chooser (PDF), colors read from tokens | `dist/print/`, `templates/print/`, `tools/build_print.py` |
 | HTML starter | Self-contained chart-card page using `dist/web/` | `templates/html/chart-card.html` |
-| Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook | `tools/check_snippets.py` |
+| Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook; `--lang r` runs every R block | `tools/check_snippets.py` |
+| R examples | ggplot2 gallery (bar highlight, line with end labels, diverging heatmap) using the generated theme | `examples/r/`, `examples/output/r-*.png` |
 
 ## Next steps (in priority order)
 
@@ -29,7 +30,7 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 3. ~~**HTML starter.**~~ Done: `templates/html/chart-card.html` (bar + line cards, token colors via CSS variables, drawn after the font loads, top key on phones). `gallery.html` checked at 1060 px and 390 px and fixed: clipped labels (Plotly cached fallback-font widths), bold focus labels, footnote, rgba literals → `mv.rgba()`, stable div ids. Known gaps on phones: the longest bold bar label still clips slightly at 390 px, the line-end labels touch the steep demand line, and the Sankey is cramped. Port the template's mobile key swap if the gallery is used on phones.
 4. ~~**Excel / PowerPoint (priority 2 audience).**~~ Done: `office/build_office.py` generates `dist/office/McKesson-DataViz.potx`, `McKesson-DataViz-Starter.pptx` (native bar highlight, line, waterfall, 100% stacked) and `McKesson-DataViz-Charts.xlsx`; set-up how-to in `docs/office-setup.md`; one-page `dist/print/cheat-sheet.pdf` and `chart-chooser.pdf` (sources in `templates/print/`, printed by `tools/build_print.py`).
 5. **Power BI (priority 3).** Partly done: the theme validates against Microsoft's report-theme schema 2.157 (`tools/check_powerbi_theme.py`, which also caught and now guards against duplicate data colors), and `docs/powerbi-setup.md` covers applying the theme, the font fallback, measure-driven highlights, insight titles and minimum-n DAX. **Still needs a person with Power BI** (Desktop has no scripting interface, and the Service can't be reached from here): load the theme in Desktop, build one sample page (bar highlight with a color measure, matrix heat table, KPI cards), publish it, and view it in the Service from a machine without Libre Franklin. Confirm or correct the font table in `docs/powerbi-setup.md`, and remove its "Status" note.
-6. **R (nice-to-have).** Smoke-test `dist/r/theme_mck.R` with ggplot2 and add 2–3 examples.
+6. ~~**R (nice-to-have).**~~ Done: smoke-tested with R 4.5.1 / ggplot2 4.0.3, and all 23 cookbook R blocks now run (`tools/check_snippets.py --lang r`; six used an undefined `df`/`events` and now build synthetic data). `theme_mck.R` fixes: gridlines moved to the parent element so `panel.grid = element_blank()` works; new `mck_font()` (by-name matching picked the italic TTF for regular text) and `mck_wrap()`. Three examples in `examples/r/gallery_ggplot2.R` render `examples/output/r-*.png`.
 7. **QA automation.** Add a lint script that checks a matplotlib or Plotly figure against the rules: more than 6 colors, a missing headline or source, legend vs. direct labels, and so on.
 8. **Brand confirmation.** Confirm with Brand that the full swatch values on BrandHQ match the values extracted from the PDFs, and check the derived ramps (sequential, diverging, context grey).
 
@@ -37,7 +38,7 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 
 ```powershell
 cd C:\Users\exs4yig\repos\data-viz-guide
-python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[examples] kaleido python-pptx openpyxl xlsxwriter pymupdf
+python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[examples] kaleido python-pptx openpyxl xlsxwriter pymupdf jsonschema
 .\.venv\Scripts\python.exe tokens\build.py                      # regenerate dist/
 .\.venv\Scripts\python.exe examples\data\make_data.py           # regenerate data
 .\.venv\Scripts\python.exe examples\python\gallery_matplotlib.py
@@ -45,6 +46,10 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 .\.venv\Scripts\python.exe office\build_office.py                # regenerate .pptx/.potx/.xlsx in dist/office
 .\.venv\Scripts\python.exe tools\build_print.py                    # cheat sheet + chart chooser PDFs (needs Chrome or Edge)
 .\.venv\Scripts\python.exe tools\check_snippets.py                # run every verified cookbook snippet (~40 s)
+.\.venv\Scripts\python.exe tools\check_snippets.py --lang r       # run every cookbook R block (needs R + packages below)
+.\.venv\Scripts\python.exe tools\check_powerbi_theme.py           # validate the Power BI theme against Microsoft's schema
+& "C:\Program Files\R\R-4.5.1\bin\Rscript.exe" examples\r\gallery_ggplot2.R   # R gallery -> examples/output/r-*.png
+# R packages: ggplot2 dplyr readr tidyr stringr scales ragg systemfonts gt sf maps mapproj ggalluvial treemapify packcircles
 ```
 
 ## Working notes

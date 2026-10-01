@@ -165,7 +165,14 @@ fig.show()
 library(ggplot2); library(dplyr)
 source("dist/r/theme_mck.R")
 
-# df: bu, quarter (numeric), rate. A copy without the facet column draws in every panel as context.
+# Synthetic data for illustration (replace with yours): regretted attrition by BU, Q1 2025 (1) to Q4 2026 (8)
+start <- c("Corporate" = 9, "Medical-Surgical" = 11, "Oncology & Multispecialty" = 8, "RxTS" = 10,
+           "Technology" = 12, "U.S. Pharmaceutical" = 10)
+df <- expand.grid(quarter = 1:8, bu = names(start), stringsAsFactors = FALSE) |>
+  mutate(rate = ifelse(bu == "Oncology & Multispecialty", start[bu] + (quarter - 1) * 4 / 7,   # up 4 points
+                       start[bu] - (quarter - 1) * 0.15))
+
+# A copy without the facet column draws in every panel as context.
 bg <- rename(df, other = bu)
 accent <- "Oncology & Multispecialty"
 df$bu <- factor(df$bu, levels = df |> filter(quarter == max(quarter)) |> arrange(desc(rate)) |> pull(bu))

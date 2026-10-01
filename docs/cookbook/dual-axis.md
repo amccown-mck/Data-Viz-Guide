@@ -174,7 +174,13 @@ For **aligned panels** in Plotly, use `make_subplots(rows=2, cols=1, shared_xaxe
 library(ggplot2); library(dplyr); library(tidyr)
 source("dist/r/theme_mck.R")
 
-# df: month (Date), vacancy_pct, overtime_hrs
+# Synthetic data for illustration (replace with yours): DC vacancy rate (%) and overtime (hours per FTE per week)
+df <- data.frame(
+  month = seq(as.Date("2025-01-01"), as.Date("2026-12-01"), by = "month"),
+  vacancy_pct  = c(7.2, 7.5, 8.1, 8.8, 9.6, 10.4, 11.2, 12.0, 12.5, 12.1, 10.9, 9.4,
+                   8.2, 7.6, 7.3, 7.1, 7.0, 7.2, 7.4, 7.3, 7.1, 6.9, 6.8, 6.9),
+  overtime_hrs = c(3.9, 4.0, 4.4, 4.8, 5.3, 5.8, 6.3, 6.6, 6.8, 6.5, 5.8, 5.0,
+                   4.4, 4.1, 3.9, 3.8, 3.8, 3.9, 4.0, 3.9, 3.8, 3.7, 3.7, 3.7))
 long <- df |>
   pivot_longer(c(vacancy_pct, overtime_hrs), names_to = "measure") |>
   mutate(measure = factor(measure, levels = c("vacancy_pct", "overtime_hrs"),

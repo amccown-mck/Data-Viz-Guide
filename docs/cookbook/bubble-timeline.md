@@ -170,7 +170,16 @@ source("dist/r/theme_mck.R")
 
 rows  <- c("Health systems", "Payers", "Pharma manufacturers", "Distributors & PBMs", "Digital health")
 focus <- "Pharma manufacturers"
-events |>                                                  # events: sector, date (decimal year), roles
+# Synthetic events for illustration (replace with yours): one row per announcement
+events <- data.frame(
+  sector = rep(rows, times = c(5, 4, 6, 4, 4)),
+  date   = c(2020.4, 2021.8, 2023.5, 2024.6, 2025.9,   2020.9, 2022.3, 2024.2, 2025.5,
+             2021.2, 2023.1, 2023.8, 2024.4, 2025.2, 2026.1,   2020.6, 2022.9, 2024.9, 2026.3,
+             2021.5, 2022.6, 2023.4, 2024.7),
+  roles  = c(1200, 800, 1500, 900, 700,   600, 2500, 1100, 1300,
+             1800, 4000, 6500, 3000, 9000, 2500,   900, 1400, 2000, 600,
+             500, 3200, 2200, 800))
+events |>
   arrange(desc(roles)) |>                                  # largest drawn first (underneath)
   mutate(sector = factor(sector, levels = rev(rows))) |>
   ggplot(aes(date, sector)) +

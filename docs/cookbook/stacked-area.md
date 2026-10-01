@@ -156,7 +156,16 @@ Plotly stacks traces in the order you add them, so add the focus trace first to 
 library(ggplot2)
 source("dist/r/theme_mck.R")
 
-# df: year, role, fte. ggplot stacks the FIRST factor level on top, so list the focus segment last.
+# Synthetic data for illustration (replace with yours): DC workforce by role family, thousand FTE
+total <- c(11.9, 12.1, 12.0, 12.2, 12.1, 11.9, 12.0, 12.1)                     # 2019-2026, held near 12K
+auto  <- total * seq(0.03, 0.14, length.out = 8)                                # automation share 3% -> 14%
+rest  <- total - auto
+df <- data.frame(year = rep(2019:2026, 4),
+                 role = rep(c("Material handlers", "Inventory & quality", "Leads & supervisors", "Automation technicians"),
+                            each = 8),
+                 fte = c(rest * 0.60, rest * 0.22, rest * 0.18, auto))
+
+# ggplot stacks the FIRST factor level on top, so list the focus segment last.
 df$role <- factor(df$role, levels = c("Material handlers", "Inventory & quality", "Leads & supervisors", "Automation technicians"))
 ggplot(df, aes(year, fte, fill = role)) +
   geom_area(colour = "white", linewidth = 0.3) +

@@ -62,7 +62,7 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 
 **Power BI:** follow `docs/powerbi-setup.md` and import `dist/powerbi/mckesson-dataviz-theme.json`. Apply highlight colors with conditional formatting on a measure, and enforce minimum n in DAX (`IF([Headcount] < 10, BLANK(), ...)`). Most Service viewers see Segoe UI instead of Libre Franklin, so leave label slack. After changing tokens, run `python tools/check_powerbi_theme.py`.
 
-**R:** `source("dist/r/theme_mck.R")` gives `theme_mck()`, `mck_colors`, `mck_highlight()` and the fill scales.
+**R:** `source("dist/r/theme_mck.R")` gives `theme_mck()`, `mck_colors`, `mck_highlight()`, the fill scales, `mck_font()` (registers the bundled Libre Franklin; pass the returned name as `base_family` and `family`) and `mck_wrap()` (balanced title wrapping). Render with `ragg`. See `examples/r/gallery_ggplot2.R`.
 
 ### Before you hand back a chart
 - Say which cookbook page you followed, and list any QA items you couldn't meet and why.
