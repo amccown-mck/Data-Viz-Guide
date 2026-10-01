@@ -208,8 +208,76 @@ def internal_fill_by_fy() -> pd.DataFrame:
                          "internal_fill_pct": [22, 23, 25, 24, 29]})
 
 
+QUARTERS = [f"Q{q} FY{y}" for y in (24, 25, 26) for q in (1, 2, 3, 4)]
+
+
+def attrition_quarterly() -> pd.DataFrame:
+    """Job-family level, internal. Annualized voluntary attrition by fiscal quarter, Q1 FY24-Q4 FY26 (%).
+    The four FY26 quarters average to the FY26 rates in attrition_by_job_family. Pay and scheduling reset for
+    Pharmacy Technicians took effect in Q3 FY25."""
+    paths = {
+        "Pharmacy Technician": [33.6, 34.1, 33.2, 34.4, 33.9, 34.2, 32.8, 31.0, 29.8, 28.0, 26.6, 25.2],
+        "Distribution Center Associate": [24.8, 25.3, 24.1, 25.0, 24.6, 23.9, 24.4, 24.8, 24.5, 23.8, 24.3, 23.8],
+        "Customer Care": [20.2, 19.6, 19.9, 19.1, 19.4, 18.8, 19.3, 18.9, 19.2, 18.7, 19.1, 18.6],
+        "Specialty Nursing": [15.6, 15.1, 15.3, 14.8, 15.0, 14.6, 14.9, 14.4, 14.5, 14.1, 14.3, 13.9],
+        "Software Engineering": [12.4, 12.0, 11.7, 11.6, 11.2, 11.0, 10.6, 10.4, 10.1, 9.8, 9.9, 9.4],
+        "Finance": [8.1, 7.9, 8.0, 7.8, 7.7, 7.9, 7.6, 7.5, 7.5, 7.3, 7.5, 7.3],
+    }
+    rows = [(q, fam, v) for fam, vals in paths.items() for q, v in zip(QUARTERS, vals)]
+    return pd.DataFrame(rows, columns=["quarter", "job_family", "attrition_pct"])
+
+
+def data_ai_index() -> pd.DataFrame:
+    """Sector vs firm. External Data & AI job postings (healthcare) vs internal Data & AI headcount, indexed 2021 = 100."""
+    years = np.arange(2021, 2027)
+    postings = [100, 131, 118, 142, 171, 196]
+    internal = [100, 104, 109, 113, 118, 122]
+    return pd.DataFrame({"year": years, "external_postings_idx": postings, "internal_headcount_idx": internal})
+
+
+def pharmacist_time_mix() -> pd.DataFrame:
+    """Individual -> role level. Share of a retail pharmacist's hours by activity, FY22-FY26 (%), from work sampling."""
+    clinical = [12, 15, 21, 27, 31]
+    dispensing = [58, 55, 49, 44, 41]
+    inventory = [14, 14, 13, 12, 11]
+    return pd.DataFrame({"fiscal_year": ["FY22", "FY23", "FY24", "FY25", "FY26"], "clinical_pct": clinical,
+                         "dispensing_pct": dispensing, "inventory_pct": inventory,
+                         "admin_pct": [100 - c - d - i for c, d, i in zip(clinical, dispensing, inventory)]})
+
+
+def workforce_reductions() -> pd.DataFrame:
+    """Sector level, external. Announced workforce reductions by healthcare sub-sector and quarter (roles affected)."""
+    rng = np.random.default_rng(47)
+    quarters = [f"{y} Q{q}" for y in range(2020, 2027) for q in (1, 2, 3, 4)][:26]
+    spec = {"Pharma manufacturers": (0.25, 900, 0.62, 2600), "Medical devices": (0.35, 700, 0.35, 800),
+            "Hospitals & health systems": (0.4, 500, 0.4, 700), "Payers": (0.3, 600, 0.3, 650),
+            "Retail pharmacy": (0.3, 800, 0.35, 1100), "Distributors": (0.15, 400, 0.15, 400)}
+    rows = []
+    for sector, (p_early, s_early, p_late, s_late) in spec.items():
+        for i, q in enumerate(quarters):
+            late = q >= "2023"
+            if rng.random() < (p_late if late else p_early):
+                roles = int(rng.gamma(2.0, (s_late if late else s_early) / 2))
+                rows.append((sector, q, max(roles, 50) // 10 * 10))
+    return pd.DataFrame(rows, columns=["sub_sector", "quarter", "roles_affected"])
+
+
+def regretted_attrition_bu() -> pd.DataFrame:
+    """Business-unit level, internal. Regretted (high-performer) attrition by fiscal quarter, Q1 FY25-Q4 FY26 (%)."""
+    paths = {"Corporate": [5.8, 5.6, 5.9, 5.5, 5.7, 5.4, 5.6, 5.3], "Medical-Surgical": [6.4, 6.6, 6.2, 6.5, 6.3, 6.1, 6.4, 6.2],
+             "Oncology & Multispecialty": [6.0, 6.6, 7.4, 8.1, 8.9, 9.6, 10.4, 11.2], "RxTS": [5.1, 5.3, 5.0, 5.2, 4.9, 5.1, 4.8, 4.9],
+             "Technology": [7.9, 7.6, 7.4, 7.1, 6.9, 6.8, 6.6, 6.4], "U.S. Pharmaceutical": [6.8, 6.9, 6.6, 6.7, 6.5, 6.6, 6.4, 6.5]}
+    rows = [(bu, q, v) for bu, vals in paths.items() for q, v in zip(QUARTERS[4:], vals)]
+    return pd.DataFrame(rows, columns=["business_unit", "quarter", "regretted_attrition_pct"])
+
+
 def main() -> None:
     sets = {
+        "attrition_quarterly": attrition_quarterly(),
+        "data_ai_index": data_ai_index(),
+        "pharmacist_time_mix": pharmacist_time_mix(),
+        "workforce_reductions": workforce_reductions(),
+        "regretted_attrition_bu": regretted_attrition_bu(),
         "hiring_flow_by_family": hiring_flow_by_family(),
         "tech_mix_by_fy": tech_mix_by_fy(),
         "data_ai_gap_plan": data_ai_gap_plan(),

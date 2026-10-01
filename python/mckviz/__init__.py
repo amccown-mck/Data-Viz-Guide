@@ -263,17 +263,41 @@ def label_bars(ax, bars, fmt: str = "{:,.0f}", inside: bool = False, color: str 
                         ha="center", va="top" if inside else "bottom", **kw)
 
 
-def label_line_ends(ax, lines=None, fmt: str | None = None, dx: float = 6) -> None:
-    """Direct labels at the right end of each line, colored like the line (replaces the legend)."""
+def label_line_ends(ax, lines=None, fmt: str | None = None, dx: float = 6, min_gap: float | None = None) -> None:
+    """Direct labels at the right end of each line, colored like the line (replaces the legend).
+
+    Labels that would collide are nudged apart vertically (at least `min_gap` points between centers; default
+    1.25 x the label size). Call it after setting the axis limits.
+    """
     lab = _role("label")
+    size = lab["size_pt"] - 1
+    items = []
     for ln in lines or ax.get_lines():
         if ln.get_label().startswith("_"):
             continue
         x, y = ln.get_xdata()[-1], ln.get_ydata()[-1]
         text = ln.get_label() if not fmt else f"{ln.get_label()} {fmt.format(y)}"
-        ax.annotate(text, (x, y), xytext=(dx, 0), textcoords="offset points", va="center",
-                    fontsize=lab["size_pt"] - 1, color=ln.get_color(), fontweight="semibold",
-                    annotation_clip=False, path_effects=halo())
+        items.append((x, y, text, ln.get_color()))
+    if not items:
+        return
+    ax.autoscale_view()                       # apply pending autoscaling so data -> display is final
+    to_pt = 72 / ax.figure.dpi
+    ys = [ax.transData.transform((x, y))[1] * to_pt for x, y, _, _ in items]
+    order = sorted(range(len(items)), key=lambda i: ys[i])
+    placed = [ys[i] for i in order]
+    gap = min_gap or size * 1.25
+    for k in range(1, len(placed)):
+        placed[k] = max(placed[k], placed[k - 1] + gap)
+    excess = placed[-1] - (ax.get_window_extent().y1 * to_pt + gap / 2)      # don't push past the top
+    if excess > 0:
+        placed = [p - excess for p in placed]
+        for k in range(len(placed) - 2, -1, -1):
+            placed[k] = min(placed[k], placed[k + 1] - gap)
+    limit = gap * len(items)                  # a label never moves more than the stack it belongs to
+    for k, i in enumerate(order):
+        x, y, text, color = items[i]
+        ax.annotate(text, (x, y), xytext=(dx, max(-limit, min(limit, placed[k] - ys[i]))), textcoords="offset points", va="center",
+                    fontsize=size, color=color, fontweight="semibold", annotation_clip=False, path_effects=halo())
 
 
 def callout(ax, xy, title: str, body: str | None = None, xytext=(20, 20), arrow: bool = True) -> None:

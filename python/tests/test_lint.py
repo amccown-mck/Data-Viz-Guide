@@ -142,3 +142,16 @@ def test_uniform_accent_pattern_is_clean():
     found = mv.lint(fig, quiet=True)
     assert not [f for f in found if f.level in ("error", "warn")], found
     plt.close(fig)
+
+
+def test_label_line_ends_nudges_close_labels_apart():
+    fig, ax = plt.subplots(figsize=(6, 3))
+    for i, v in enumerate([25.2, 23.8, 18.6]):
+        ax.plot(range(5), [v] * 5, label=f"Series {i}")
+    ax.set_ylim(0, 40)
+    mv.label_line_ends(ax)
+    to_pt = 72 / fig.dpi
+    pos = sorted(ax.transData.transform(t.xy)[1] * to_pt + t.xyann[1] for t in ax.texts)
+    gaps = [b - a for a, b in zip(pos, pos[1:])]
+    assert min(gaps) >= 0.99 * (mv._role("label")["size_pt"] - 1) * 1.25, gaps
+    plt.close(fig)

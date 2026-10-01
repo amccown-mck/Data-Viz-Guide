@@ -1,0 +1,49 @@
+business_unit,quarter,regretted_attrition_pct
+Corporate,Q1 FY25,5.8
+Corporate,Q2 FY25,5.6
+Corporate,Q3 FY25,5.9
+Corporate,Q4 FY25,5.5
+Corporate,Q1 FY26,5.7
+Corporate,Q2 FY26,5.4
+Corporate,Q3 FY26,5.6
+Corporate,Q4 FY26,5.3
+Medical-Surgical,Q1 FY25,6.4
+Medical-Surgical,Q2 FY25,6.6
+Medical-Surgical,Q3 FY25,6.2
+Medical-Surgical,Q4 FY25,6.5
+Medical-Surgical,Q1 FY26,6.3
+Medical-Surgical,Q2 FY26,6.1
+Medical-Surgical,Q3 FY26,6.4
+Medical-Surgical,Q4 FY26,6.2
+Oncology & Multispecialty,Q1 FY25,6.0
+Oncology & Multispecialty,Q2 FY25,6.6
+Oncology & Multispecialty,Q3 FY25,7.4
+Oncology & Multispecialty,Q4 FY25,8.1
+Oncology & Multispecialty,Q1 FY26,8.9
+Oncology & Multispecialty,Q2 FY26,9.6
+Oncology & Multispecialty,Q3 FY26,10.4
+Oncology & Multispecialty,Q4 FY26,11.2
+RxTS,Q1 FY25,5.1
+RxTS,Q2 FY25,5.3
+RxTS,Q3 FY25,5.0
+RxTS,Q4 FY25,5.2
+RxTS,Q1 FY26,4.9
+RxTS,Q2 FY26,5.1
+RxTS,Q3 FY26,4.8
+RxTS,Q4 FY26,4.9
+Technology,Q1 FY25,7.9
+Technology,Q2 FY25,7.6
+Technology,Q3 FY25,7.4
+Technology,Q4 FY25,7.1
+Technology,Q1 FY26,6.9
+Technology,Q2 FY26,6.8
+Technology,Q3 FY26,6.6
+Technology,Q4 FY26,6.4
+U.S. Pharmaceutical,Q1 FY25,6.8
+U.S. Pharmaceutical,Q2 FY25,6.9
+U.S. Pharmaceutical,Q3 FY25,6.6
+U.S. Pharmaceutical,Q4 FY25,6.7
+U.S. Pharmaceutical,Q1 FY26,6.5
+U.S. Pharmaceutical,Q2 FY26,6.6
+U.S. Pharmaceutical,Q3 FY26,6.4
+U.S. Pharmaceutical,Q4 FY26,6.5

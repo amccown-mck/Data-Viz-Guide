@@ -1,0 +1,387 @@
+<section class="spread" id="line">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Line</b> chart</h2>
+    <div class="defbox">Change-over-time charts show how something moves, and when it changed, at any time scale from weeks to decades.</div>
+    <p>A line connects values at equal time intervals, so the eye reads the trend rather than the individual amounts. Use it for monthly or quarterly attrition, hiring velocity, or a forecast.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>The series the headline names in blue; others grey</li>
+      <li>Data lines about twice the gridline weight</li>
+      <li>Names at the line ends, not in a legend</li>
+      <li>Shade the period that explains the change</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>What changed, by how much, and why.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Metric, unit, scope and period.</span></li>
+        <li><span class="mk">3</span><span><b>Focus line</b>Blue and heavier than the rest.</span></li>
+        <li><span class="mk">4</span><span><b>Context lines</b>Grey and thinner: there to compare against.</span></li>
+        <li><span class="mk">5</span><span><b>The period that matters</b>Lightly shaded and named.</span></li>
+        <li><span class="mk">6</span><span><b>Direct labels</b>Names and latest values at the line ends, nudged apart.</span></li>
+        <li><span class="mk">7</span><span><b>The change, sized</b>A short callout carries the headline number.</span></li>
+        <li><span class="mk">8</span><span><b>Light scaffolding</b>A few thin gridlines; the unit lives in the subtitle.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define the metric.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:ts_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:ts_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:ts_line_anatomy|min}}
+        <p class="card-foot">Annualized voluntary attrition = voluntary exits in the quarter × 4 ÷ average headcount. Fiscal years run April to March.<br>Source: Workday HCM (synthetic data for illustration), as of 31 Mar 2026; U.S. regular employees<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="line-variants">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Line chart</b> variants</h2>
+    <p class="lede">The same rules hold: one line in blue, names at the ends, light scaffolding.</p>
+    <h3>When a line is the wrong chart</h3>
+    <ul>
+      <li>Only two to five periods, and the amounts matter: <strong>columns</strong></li>
+      <li>How a total splits over time: <strong>stacked area</strong></li>
+      <li>Discrete events of different sizes: a <strong>bubble timeline</strong></li>
+      <li>Many series that tangle: <strong>small multiples</strong></li>
+      <li>Two measures in different units: two aligned charts, never a <strong>dual axis</strong></li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Forecast with a range</h4>
+        <p class="note">Dashed beyond the last actual, inside a band that widens with time. Label it as an estimate.</p>
+        {{exhibit:ts_var_forecast}}
+      </div>
+      <div class="tile">
+        <h4>Indexed to 100</h4>
+        <p class="note">Compares growth when the units or sizes differ: market Data &amp; AI postings reached {{text:idx_post}}, our headcount {{text:idx_int}}.</p>
+        {{exhibit:ts_var_indexed}}
+      </div>
+      <div class="tile">
+        <h4>Few points, every value labelled</h4>
+        <p class="note">With five annual values, label each one and drop the axis.</p>
+        {{exhibit:ts_var_points}}
+      </div>
+      <div class="tile">
+        <h4>Sparklines</h4>
+        <p class="note">One small line per row in a table or dashboard: shape, latest value, change. Worse in orange-brown.</p>
+        {{exhibit:ts_var_spark}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="line-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Line chart</b> best practice</h2>
+    <p class="lede">Four rules that make trends readable.</p>
+    <p><strong>Highlight one line.</strong> A color per series doesn't show the trend; it makes the reader decode. Grey the background, color the message.</p>
+    <p><strong>Lines for trends.</strong> Stacked columns hide how each part changes. When the trend is the point, draw lines.</p>
+    <p><strong>No fill without a zero.</strong> Shading under a line turns it into an area chart, which implies a zero baseline.</p>
+    <p><strong>Names at the line ends.</strong> A legend above the chart breaks the reading order.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Highlights</h4><div class="pair">
+        <div>{{exhibit:ts_bp_hl_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Every line its own color.</span></div></div>
+        <div>{{exhibit:ts_bp_hl_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey context, one blue line.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Showing trends</h4><div class="pair">
+        <div>{{exhibit:ts_bp_trend_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Stacks hide each part's change.</span></div></div>
+        <div>{{exhibit:ts_bp_trend_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Lines show the crossover.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Shading lines</h4><div class="pair">
+        <div>{{exhibit:ts_bp_shade_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A filled area on a 20–36 axis.</span></div></div>
+        <div>{{exhibit:ts_bp_shade_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A plain line.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Labelling lines</h4><div class="pair">
+        <div>{{exhibit:ts_bp_legend_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A legend to decode.</span></div></div>
+        <div>{{exhibit:ts_bp_legend_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Names where the lines end.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="line-best-practice-2">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Line chart</b> best practice, continued</h2>
+    <p class="lede">Four more, from HR and workforce data in particular.</p>
+    <p><strong>Honest time spacing.</strong> Missing years still take up space. Use a real date axis, not evenly spaced labels.</p>
+    <p><strong>Show gaps as gaps.</strong> A system change or survey break is not a straight line. Leave the gap and say why.</p>
+    <p><strong>Weight with intent.</strong> Data lines about twice the gridlines; gridlines light, or gone.</p>
+    <p><strong>Too many lines? Split them.</strong> More than four or five crossing lines become spaghetti. Use small multiples.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Even time intervals</h4><div class="pair">
+        <div>{{exhibit:ts_bp2_even_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Missing years squeezed out.</span></div></div>
+        <div>{{exhibit:ts_bp2_even_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>True spacing; the slope is honest.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Missing data</h4><div class="pair">
+        <div>{{exhibit:ts_bp2_gap_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Drawing across the gap.</span></div></div>
+        <div>{{exhibit:ts_bp2_gap_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A visible, labelled gap.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Line weight</h4><div class="pair">
+        <div>{{exhibit:ts_bp2_weight_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Gridlines outweigh the data.</span></div></div>
+        <div>{{exhibit:ts_bp2_weight_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Data lines twice the grid.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Too many lines</h4><div class="pair">
+        <div>{{exhibit:ts_bp2_many_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Six crossing colors.</span></div></div>
+        <div>{{exhibit:ts_bp2_many_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Small multiples.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="stacked-area">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Stacked</b> area chart</h2>
+    <p class="lede">Layers stacked on each other show how a total splits over time, and how each part's share shifts.</p>
+    <p>Use it for a few parts that change gradually: how a role's hours divide between activities, or how the workforce mix moves. The layer on the baseline is the only one that reads precisely, so put the story there.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Four or five layers at most</li>
+      <li>The story layer on the baseline, in blue; the rest ordered greys</li>
+      <li>Labels inside or at the right edge, not in a legend</li>
+      <li>Mark the event that explains the shift</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Start, end and the reason.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Whose time, what unit, which years.</span></li>
+        <li><span class="mk">3</span><span><b>Story on the baseline</b>Blue, so its growth reads directly.</span></li>
+        <li><span class="mk">4</span><span><b>Grey context</b>Ordered from dark to light.</span></li>
+        <li><span class="mk">5</span><span><b>Labels at the end</b>Name and latest share beside each layer.</span></li>
+        <li><span class="mk">6</span><span><b>The event, marked</b>A thin dashed line and a short name.</span></li>
+        <li><span class="mk">7</span><span><b>Where it started</b>The first value, so the change is explicit.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>How time was measured.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:area_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:area_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:area_anatomy|min}}
+        <p class="card-foot">Work sampling of retail pharmacists, aggregated to the role; at least 10 pharmacists per year.<br>Source: Pharmacy operations time studies (synthetic data for illustration), FY22–FY26<span class="mk">8</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="stacked-area-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Stacked area</b> best practice</h2>
+    <p class="lede">Areas are heavy marks. Keep them few, ordered and calm.</p>
+    <p><strong>Stack, don't overlap.</strong> Areas drawn over each other hide what's behind. Stack them, or use lines.</p>
+    <p><strong>Order the colors.</strong> Random colors make neighbors clash. Story layer blue on the baseline; the rest in ordered greys.</p>
+    <p><strong>Volatile on top.</strong> A jumpy layer at the bottom makes every layer above it jump. Keep steady layers low.</p>
+    <p><strong>Few layers.</strong> Four or five at most; fold the rest into "Other".</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Overlapping areas</h4><div class="pair">
+        <div>{{exhibit:area_bp_overlap_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Translucent layers over each other.</span></div></div>
+        <div>{{exhibit:area_bp_overlap_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Stacked layers.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Color order</h4><div class="pair">
+        <div>{{exhibit:area_bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Unrelated bright colors.</span></div></div>
+        <div>{{exhibit:area_bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Blue story, ordered greys.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>High variability</h4><div class="pair">
+        <div>{{exhibit:area_bp_vol_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>The volatile layer at the bottom.</span></div></div>
+        <div>{{exhibit:area_bp_vol_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Steady layers low, volatile on top.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Number of layers</h4><div class="pair">
+        <div>{{exhibit:area_bp_many_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Nine thin layers.</span></div></div>
+        <div>{{exhibit:area_bp_many_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Three: story, comparison, rest.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="bubble-timeline">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Bubble</b> timeline</h2>
+    <p class="lede">Events placed on a time axis, with bubble area showing size. It combines a timeline with a proportional-area chart.</p>
+    <p>Use it for discrete events of different sizes: announced layoffs in the talent market, reorganizations, hiring waves. Each category gets its own row.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Bubble area, not diameter, proportional to value</li>
+      <li>One grey for all rows; the headline's row in blue</li>
+      <li>Largest bubbles drawn first, with white outlines</li>
+      <li>A size key with two or three reference circles</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Who stands out, by how much.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Says what bubble area means.</span></li>
+        <li><span class="mk">3</span><span><b>One row per category</b>Sorted by total, largest on top.</span></li>
+        <li><span class="mk">4</span><span><b>Time along the bottom</b>Even intervals, years labelled.</span></li>
+        <li><span class="mk">5</span><span><b>Size key</b>Reference circles; area ∝ value.</span></li>
+        <li><span class="mk">6</span><span><b>Focus row</b>Blue; white outlines keep overlaps readable.</span></li>
+        <li><span class="mk">7</span><span><b>The period that matters</b>Shaded and named.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>What counts as an event.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:bt_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:bt_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:bt_anatomy|min}}
+        <p class="card-foot">Announcements in public WARN notices and company statements; one bubble per sub-sector per quarter.<br>Source: External labor-market feed (synthetic data for illustration), as of Jun 2026<span class="mk">8</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="bubble-timeline-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Bubble timeline</b> best practice</h2>
+    <p class="lede">The rows already separate the categories; let size do the rest.</p>
+    <p><strong>One color.</strong> Coloring each row repeats what the rows already say. Use grey, and blue for the headline's row.</p>
+    <p><strong>Don't hide small bubbles.</strong> Draw the largest first, with white outlines.</p>
+    <p><strong>Sort the rows.</strong> By total, or by a meaningful order, not alphabetically.</p>
+    <p><strong>Show the scale.</strong> Without a size key, readers can only say "bigger".</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Coloring bubbles</h4><div class="pair">
+        <div>{{exhibit:bt_bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A color per row.</span></div></div>
+        <div>{{exhibit:bt_bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey, one row blue.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Overlapping bubbles</h4><div class="pair">
+        <div>{{exhibit:bt_bp_hide_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Big bubbles on top.</span></div></div>
+        <div>{{exhibit:bt_bp_hide_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Big behind, white outlines.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Row order</h4><div class="pair">
+        <div>{{exhibit:bt_bp_sort_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Alphabetical rows.</span></div></div>
+        <div>{{exhibit:bt_bp_sort_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Sorted by total.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Size key</h4><div class="pair">
+        <div>{{exhibit:bt_bp_key_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>No way to read size.</span></div></div>
+        <div>{{exhibit:bt_bp_key_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Two reference circles.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="small-multiples">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Small</b> multiples</h2>
+    <p class="lede">The same small chart repeated for each group, on one shared scale. The eye compares shapes across panels instead of untangling crossing lines.</p>
+    <p>Use it when six or more groups each need their own trend: business units, regions, job families. In each panel, the panel's own line is blue and the others sit faintly behind it.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>One shared scale, stated once</li>
+      <li>Panels ordered by value or a natural order</li>
+      <li>Panel title = name + latest value</li>
+      <li>Axis labels only on the outer edge</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>The one panel that differs.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Metric, unit, period, once for all panels.</span></li>
+        <li><span class="mk">3</span><span><b>The exception</b>In orange, because it is getting worse.</span></li>
+        <li><span class="mk">4</span><span><b>Its own line in blue</b>The other units faint behind it, for context.</span></li>
+        <li><span class="mk">5</span><span><b>Ordered by value</b>Highest latest value first.</span></li>
+        <li><span class="mk">6</span><span><b>Shared scale</b>0–12% in every panel.</span></li>
+        <li><span class="mk">7</span><span><b>Title carries the number</b>Name and latest value.</span></li>
+        <li><span class="mk">8</span><span><b>Outer axes only</b>Labels on the left column and bottom row.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define the metric.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:sm_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:sm_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:sm_anatomy|min}}
+        <p class="card-foot">Regretted attrition = voluntary exits of employees rated "exceeds" in the last review, annualized.<br>Source: Workday HCM (synthetic data for illustration), as of 31 Mar 2026<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="small-multiples-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Small multiples</b> best practice</h2>
+    <p class="lede">Small multiples only work if every panel is read the same way.</p>
+    <p><strong>One scale.</strong> Independent scales make a 0.5-point wobble look like the 5-point rise.</p>
+    <p><strong>Context in every panel.</strong> The other units, faint behind each line, show whether a panel is unusual.</p>
+    <p><strong>Order with meaning.</strong> By value, size or geography, not the alphabet.</p>
+    <p><strong>Label the edges only.</strong> Repeated axes are clutter the eye reads six times.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Shared scale</h4><div class="pair">
+        <div>{{exhibit:sm_bp_scale_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Every panel zooms itself.</span></div></div>
+        <div>{{exhibit:sm_bp_scale_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>One scale; the rise stands out.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Context</h4><div class="pair">
+        <div>{{exhibit:sm_bp_ctx_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Lines alone.</span></div></div>
+        <div>{{exhibit:sm_bp_ctx_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The others faint behind.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Panel order</h4><div class="pair">
+        <div>{{exhibit:sm_bp_order_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Alphabetical.</span></div></div>
+        <div>{{exhibit:sm_bp_order_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>By latest value.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Axes</h4><div class="pair">
+        <div>{{exhibit:sm_bp_axes_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Axes on every panel.</span></div></div>
+        <div>{{exhibit:sm_bp_axes_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Outer edge only.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="change-over-time-build">
+  <div class="rail">
+    <p class="eyebrow">Change over time</p>
+    <h2 class="title"><b>Build</b> change-over-time charts</h2>
+    <p class="lede">Native, editable charts in every tool. Tested code and click-by-click steps are on the cookbook pages.</p>
+    <p><a href="../../docs/cookbook/line.md">line.md</a> · <a href="../../docs/cookbook/stacked-area.md">stacked-area.md</a> · <a href="../../docs/cookbook/bubble-timeline.md">bubble-timeline.md</a> · <a href="../../docs/cookbook/small-multiples.md">small-multiples.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Time left to right, at true intervals</li>
+      <li>One line or layer in blue, matching the headline</li>
+      <li>Names at line ends; no legend</li>
+      <li>Forecasts dashed, labelled and with a range</li>
+      <li>Small multiples share one scale</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Line:</strong> Insert › Line; format the focus series 2.25 pt Focus blue, the rest 1.25 pt grey; delete the legend and add data labels to the last point only (Series Name + Value). Use a <em>date</em> axis so missing periods keep their space. <strong>Stacked area:</strong> Insert › 100% Stacked Area; story series first in Select Data; white 1 pt borders. <strong>Small multiples:</strong> build one chart, fix the axis bounds (Minimum/Maximum, not Auto), then copy it per group.</p></div>
+      <div class="platform"><h5>Power BI</h5><p>Line chart with the focus series colored by measure; turn off the legend and use <em>Series labels</em>. Forecast bands as low/high measures shown with <em>Error bars › Shaded area</em>. Small multiples are built in: add the group to <em>Small multiples</em> and keep <em>Y-axis › Shared</em>.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>matplotlib with <code>mckviz</code>; <code>mv.label_line_ends(ax)</code> places and nudges end labels; <code>mv.shade_period(ax, start, end, label)</code> marks the period.</p>
+<pre class="snip">for fam, s in df.items():                 # one column per job family, one row per quarter
+    ax.plot(x, s, label=fam, color=C.focus if fam == focus else C.context,
+            lw=2.4 if fam == focus else 1.4)
+mv.shade_period(ax, 6, 11, "After the reset")
+mv.label_line_ends(ax, fmt="{:.1f}")      # names at the ends, nudged apart</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plotly <code>scatter</code> traces with <code>mode: "lines"</code>, an annotation per line end, and a <code>shape</code> for the shaded period; <code>facet_col</code> (Plotly Express) for small multiples with shared axes.</p></div>
+      <div class="platform"><h5>R</h5><p><code>geom_line()</code> with <code>mck_highlight()</code> colors and <code>geom_text()</code> end labels; <code>geom_area()</code> for stacks; <code>facet_wrap(~ unit)</code> keeps a shared scale by default.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
