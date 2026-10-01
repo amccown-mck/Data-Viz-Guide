@@ -32,9 +32,11 @@ PAGES = [
     ("magnitude", "Magnitude", "Magnitude"),
     ("part-to-whole", "Part-to-whole", "Part-to-whole"),
     ("change-over-time", "Change over time", "Change over time"),
+    ("ranking", "Ranking", "Ranking"),
+    ("distribution", "Distribution", "Distribution"),
 ]
 # Sections planned but not written yet: shown in the nav, greyed out.
-COMING = [ "Ranking", "Distribution", "Correlation", "Flows", "Geo-spatial",
+COMING = ["Correlation", "Flows", "Geo-spatial",
           "Single number", "Formats", "Toolkit"]
 
 LAYOUT = """<!doctype html>

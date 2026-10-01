@@ -1,0 +1,215 @@
+<section class="spread" id="strip">
+  <div class="rail">
+    <p class="eyebrow">Distribution</p>
+    <h2 class="title"><b>Strip</b> and box plot</h2>
+    <div class="defbox">Distribution charts show how a measure spreads across people, teams or sites: what is typical, how wide the range is, and where the tails sit.</div>
+    <p>Average compa-ratio is {{text:ds_all_mean}}, yet {{text:ds_focus_low}} of pharmacy technicians are below 0.90. A strip plot shows every person as a dot; the box marks the middle half.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Two to eight groups, each n ≥ {{text:ds_min_n}}, n shown</li>
+      <li>Grey translucent dots; the focus group blue</li>
+      <li>Zone shaded; reference line labelled</li>
+      <li>Anonymous dots: no names, IDs or values</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>The share in the tail, and how it compares.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Defines the measure, scope and date.</span></li>
+        <li><span class="mk">3</span><span><b>Focus group in blue</b>Each dot one employee; overlaps read as density.</span></li>
+        <li><span class="mk">4</span><span><b>Grey context</b>Every other group, the same grey.</span></li>
+        <li><span class="mk">5</span><span><b>Box on top</b>Middle 50% of people; the thick line is the median.</span></li>
+        <li><span class="mk">6</span><span><b>Zone and reference</b>Shaded below 0.90; the midpoint dashed and named.</span></li>
+        <li><span class="mk">7</span><span><b>Share and n</b>The number the headline uses, at the row end.</span></li>
+        <li><span class="mk">8</span><span><b>Keep the value axis</b>Its ticks are how positions are read; no gridlines.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Explain the dots and the box.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:ds_strip_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:ds_strip_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:ds_strip_anatomy|min}}
+        <p class="card-foot">Each dot is one employee. Box = middle 50% of employees; thick line = median.<br>Source: Workday HCM (synthetic data for illustration), as of 31 Mar 2026; U.S. regular employees<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="histogram">
+  <div class="rail">
+    <p class="eyebrow">Distribution</p>
+    <h2 class="title"><b>Histogram</b></h2>
+    <p class="lede">Bars that count how many people fall in each equal-width bin. A histogram shows the shape of one group: skew, a long tail, two peaks.</p>
+    <p>Use it for one population in detail: span of control across all people managers, days to fill across all requisitions. Here the median manager has {{text:ds_span_median}} direct reports, but the tail runs to {{text:ds_span_max}}.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Equal bins that touch, with a thin white seam</li>
+      <li>A bin edge exactly on the policy line</li>
+      <li>One bin per value for counts; 15–40 bins otherwise</li>
+      <li>Bins past the threshold in blue, the rest grey</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>How many people are past the line.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Population, date, and what the bars count.</span></li>
+        <li><span class="mk">3</span><span><b>Bins that matter</b>Past the limit, in blue.</span></li>
+        <li><span class="mk">4</span><span><b>Grey context</b>The rest of the distribution.</span></li>
+        <li><span class="mk">5</span><span><b>The limit on a bin edge</b>Dashed navy, named in place.</span></li>
+        <li><span class="mk">6</span><span><b>The share, written out</b>Computed with the same rule as the colors.</span></li>
+        <li><span class="mk">7</span><span><b>One bin per value</b>Whole numbers; bins touch.</span></li>
+        <li><span class="mk">8</span><span><b>Light count gridlines</b>No axis line; the baseline stays.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define who counts.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:ds_hist_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:ds_hist_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:ds_hist_anatomy|min}}
+        <p class="card-foot">Direct reports = active regular employees reporting directly to the manager; {{text:ds_n_managers}} people managers.<br>Source: Workday HCM position hierarchy (synthetic data for illustration), as of 31 Mar 2026; U.S.<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="distribution-variants">
+  <div class="rail">
+    <p class="eyebrow">Distribution</p>
+    <h2 class="title"><b>Distribution</b> variants</h2>
+    <p class="lede">Pick the form by how many groups you compare and how many people are in them.</p>
+    <h3>When a distribution is the wrong chart</h3>
+    <ul>
+      <li>One value per group (median pay by family): a <strong>bar</strong> or <strong>dot plot</strong></li>
+      <li>How the medians shifted between two dates: a <strong>dumbbell</strong></li>
+      <li>Two measures per person: a <strong>scatter</strong>, or a binned <strong>heatmap</strong> for thousands</li>
+      <li>Groups under {{text:ds_min_n}} people: merge them or leave them out</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Box plot</h4>
+        <p class="note">For many groups or tens of thousands of people. Whiskers at the 10th and 90th percentiles, footnoted.</p>
+        {{exhibit:ds_var_box}}
+      </div>
+      <div class="tile">
+        <h4>Range bars</h4>
+        <p class="note">A simpler box for executive decks: the middle 80% as a bar, the median as a tick. Pharmacy technicians start at {{text:ds_focus_p10}}.</p>
+        {{exhibit:ds_var_range}}
+      </div>
+      <div class="tile">
+        <h4>Beeswarm</h4>
+        <p class="note">Dots that never overlap, so every person is countable. Works up to about 300 per row; above that, jitter.</p>
+        {{exhibit:ds_var_swarm}}
+      </div>
+      <div class="tile">
+        <h4>Small-multiple histograms</h4>
+        <p class="note">Three to six groups whose shapes differ. Same bins, same scale, shown as a share of each group.</p>
+        {{exhibit:ds_var_ridge}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="distribution-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Distribution</p>
+    <h2 class="title"><b>Distribution</b> best practice</h2>
+    <p class="lede">The spread is the message; protect it, and protect the people in it.</p>
+    <p><strong>Show the spread, not just the average.</strong> Group averages look alike; the tails below 0.90 do not.</p>
+    <p><strong>A bin edge on the threshold.</strong> Wide bins that straddle 0.90 color the wrong people: {{text:ds_bins_avoid_share}} instead of {{text:ds_bins_fix_share}}.</p>
+    <p><strong>One scale for every panel.</strong> Rescaled panels make every group look the same shape.</p>
+    <p><strong>No group under {{text:ds_min_n}}.</strong> A dot in a team of four is a findable person. Merge small groups and show n.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Spread, not average</h4><div class="pair">
+        <div>{{exhibit:ds_bp_spread_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Averages that hide the tail.</span></div></div>
+        <div>{{exhibit:ds_bp_spread_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Every person, with the box.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Bin edges</h4><div class="pair">
+        <div>{{exhibit:ds_bp_bins_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A bin straddling 0.90.</span></div></div>
+        <div>{{exhibit:ds_bp_bins_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>An edge exactly on 0.90.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Shared scale</h4><div class="pair">
+        <div>{{exhibit:ds_bp_scale_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Each panel on its own range.</span></div></div>
+        <div>{{exhibit:ds_bp_scale_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Same bins, same scale.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Minimum group size</h4><div class="pair">
+        <div>{{exhibit:ds_bp_minn_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Teams of 7 and 4, values labelled.</span></div></div>
+        <div>{{exhibit:ds_bp_minn_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Small teams merged; n shown.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="distribution-best-practice-2">
+  <div class="rail">
+    <p class="eyebrow">Distribution</p>
+    <h2 class="title"><b>Distribution</b> best practice, continued</h2>
+    <p class="lede">Four more, for strip and box plots in particular.</p>
+    <p><strong>Jitter and fade.</strong> Opaque dots on one line turn into a bar. Spread them across the row and make them translucent.</p>
+    <p><strong>Explain the box.</strong> Few readers know 1.5 × IQR whiskers. Use the 10th–90th percentile and say so.</p>
+    <p><strong>Don't clip the tails.</strong> A tight axis silently drops people ({{text:ds_clipped}} here). Widen it, or cap it and footnote how many.</p>
+    <p><strong>Sort by median.</strong> Put the focus group next to the zone, not where the alphabet puts it.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Overlapping dots</h4><div class="pair">
+        <div>{{exhibit:ds_bp_jitter_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Opaque dots on one line.</span></div></div>
+        <div>{{exhibit:ds_bp_jitter_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Jittered and translucent.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Box and whiskers</h4><div class="pair">
+        <div>{{exhibit:ds_bp_box_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Software defaults, unexplained.</span></div></div>
+        <div>{{exhibit:ds_bp_box_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>10th–90th whiskers, explained.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Axis range</h4><div class="pair">
+        <div>{{exhibit:ds_bp_clip_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Tails cut off silently.</span></div></div>
+        <div>{{exhibit:ds_bp_clip_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Room for everyone.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Group order</h4><div class="pair">
+        <div>{{exhibit:ds_bp_sort_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Alphabetical.</span></div></div>
+        <div>{{exhibit:ds_bp_sort_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>By median, focus by the zone.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="distribution-build">
+  <div class="rail">
+    <p class="eyebrow">Distribution</p>
+    <h2 class="title"><b>Build</b> distribution charts</h2>
+    <p class="lede">Set the bins and the jitter yourself, not the software. Tested code and click-by-click steps are on the cookbook page.</p>
+    <p><a href="../../docs/cookbook/distribution.md">distribution.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Form matches the number of groups</li>
+      <li>Equal bins; an edge on the threshold</li>
+      <li>n for every group; none under {{text:ds_min_n}}</li>
+      <li>No individual's value in labels or tooltips</li>
+      <li>One x scale across rows and panels</li>
+      <li>Box footnoted; nothing clipped</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Histogram:</strong> make your own bin column and count with <code>COUNTIFS</code>, then a clustered column with Gap Width 0% and white 0.75 pt borders; bins past the threshold in Focus blue. <strong>Box plot:</strong> Insert › Statistic Chart › Box and Whisker, with outlier points and mean markers off. <strong>Strip:</strong> XY scatter with y = group index + <code>RAND()</code> jitter, then Paste Values so it stays fixed.</p></div>
+      <div class="platform"><h5>Power BI</h5><p>Histogram: <em>New group › Bin type: Size of bins</em>, a clustered column chart with inner padding 0, colors by <em>fx › Rules</em>, and the threshold as an X-axis constant line. No native box plot: use the certified Box and Whisker visual or a scatter with a jitter column. Turn tooltips off for individual points.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>matplotlib with <code>mckviz</code>: fixed-seed jitter, translucent dots, the box drawn on top.</p>
+<pre class="snip">rng = np.random.default_rng(1)                # fixed jitter: reproducible
+for y, fam in enumerate(order):               # groups with n >= 10 only
+    x = df.compa_ratio[df.job_family == fam]
+    ax.scatter(x, y + rng.uniform(-0.28, 0.28, len(x)), s=7, alpha=0.45,
+               color=C.focus if fam == focus else C.context, lw=0)
+ax.axvspan(0.68, 0.90, color=C.surface_subtle, zorder=0)</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plotly: pre-bin with <code>np.histogram</code> and draw <code>go.Bar</code> so you control the edges; <code>go.Box</code> with <code>boxpoints: "all"</code> for strips, and <code>hoveron: "boxes"</code> so no one can hover a single person's pay.</p></div>
+      <div class="platform"><h5>R</h5><p><code>geom_jitter()</code> under <code>geom_boxplot(fill = NA, outlier.shape = NA)</code>; <code>geom_histogram(breaks = ...)</code> with explicit edges; <code>facet_wrap()</code> keeps one scale.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>

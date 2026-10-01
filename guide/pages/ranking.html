@@ -1,0 +1,327 @@
+<section class="spread" id="slope">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Slope</b> chart</h2>
+    <div class="defbox">Ranking charts show order: who comes first, who moved, and how far apart the items really are.</div>
+    <p>A slope chart joins each item's rank (or value) at two points in time. The eye reads the angle: steep lines are the movers, and crossings show who overtook whom. Use it for skills in job postings, sites or job families before and after a change.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Five to ten items; one or two movers in blue</li>
+      <li>Names at both ends, in rank order; no legend</li>
+      <li>Rank 1 at the top; no axis or gridlines</li>
+      <li>Footnote what the rank is based on</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Names the movers and how far they moved.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>What is ranked, where, which two years, and what 1 means.</span></li>
+        <li><span class="mk">3</span><span><b>Movers in blue</b>The two the headline names, drawn last so they sit on top.</span></li>
+        <li><span class="mk">4</span><span><b>Grey context</b>Every other item, thinner.</span></li>
+        <li><span class="mk">5</span><span><b>Names at both ends</b>Left in the starting order, right in the ending order.</span></li>
+        <li><span class="mk">6</span><span><b>Period headers</b>Bold, above each column.</span></li>
+        <li><span class="mk">7</span><span><b>The move, sized</b>A signed change beside the focus names.</span></li>
+        <li><span class="mk">8</span><span><b>Rank 1 on top</b>Ranks evenly spaced; the numbers sit beside the names.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>What the rank measures.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:rk_slope_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:rk_slope_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:rk_slope_anatomy|min}}
+        <p class="card-foot">Rank by share of job postings that mention the skill; the {{text:rk_n_skills}} most-requested skills in 2023.<br>Source: External job-postings feed (synthetic data for illustration), U.S. healthcare distribution, 2023 and 2026<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="slope-variants">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Slope and bump</b> variants</h2>
+    <p class="lede">The same rules: grey context, one or two movers in color, names where the lines end.</p>
+    <h3>When a slope is the wrong chart</h3>
+    <ul>
+      <li>The gaps matter more than the order: a <strong>sorted bar</strong> or a <strong>dot plot</strong></li>
+      <li>More than about six periods, or the shape between them matters: a <strong>line chart</strong></li>
+      <li>More than about ten items: show the <strong>top N</strong>, or use <strong>small multiples</strong></li>
+      <li>One period only: a <strong>sorted bar</strong></li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Bump chart</h4>
+        <p class="note">{{text:rk_bump_note}} A fall to last is worse, so it is orange.</p>
+        {{exhibit:rk_var_bump}}
+      </div>
+      <div class="tile">
+        <h4>Value slope</h4>
+        <p class="note">{{text:rk_value_note}}</p>
+        {{exhibit:rk_var_value}}
+      </div>
+      <div class="tile">
+        <h4>Top N, with entries and exits</h4>
+        <p class="note">{{text:rk_topn_note}}</p>
+        {{exhibit:rk_var_topn}}
+      </div>
+      <div class="tile">
+        <h4>Ranked list with movement</h4>
+        <p class="note">For dashboards and long lists: the current order, with the change in rank in a column of its own.</p>
+        {{exhibit:rk_var_list}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="slope-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Slope and bump</b> best practice</h2>
+    <p class="lede">Crossing lines are the story, so make them easy to follow.</p>
+    <p><strong>Highlight the movers.</strong> A color per line makes every crossing compete. Grey everything, then color the one or two the headline names.</p>
+    <p><strong>Names at both ends.</strong> A legend sends the reader back and forth. Label each line where it starts and where it ends.</p>
+    <p><strong>Rank 1 on top.</strong> A normal value axis puts first place at the bottom. Reverse it and drop the axis.</p>
+    <p><strong>Ranks hide gaps.</strong> A swap of places looks like an even trade. When the size of the change matters, plot values.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Highlights</h4><div class="pair">
+        <div>{{exhibit:rk_bp_hl_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A color for every line.</span></div></div>
+        <div>{{exhibit:rk_bp_hl_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey context, the mover in blue.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Labelling</h4><div class="pair">
+        <div>{{exhibit:rk_bp_label_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A legend to decode.</span></div></div>
+        <div>{{exhibit:rk_bp_label_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Names at both ends.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Rank order</h4><div class="pair">
+        <div>{{exhibit:rk_bp_top_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Rank 1 at the bottom of an axis.</span></div></div>
+        <div>{{exhibit:rk_bp_top_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Rank 1 on top, numbers by the names.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Ranks hide gaps</h4><div class="pair">
+        <div>{{exhibit:rk_bp_gap_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A swap that looks like an even trade.</span></div></div>
+        <div>{{exhibit:rk_bp_gap_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Values show who really moved.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="dumbbell">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Dot plot</b> and dumbbell</h2>
+    <p class="lede">A dot encodes position, not length, so the axis can start where the data starts. A dumbbell joins two dots per row, and the eye reads the gap.</p>
+    <p>Use a dot plot for scores far from zero (engagement, compa-ratio, proficiency) and a dumbbell for us vs. market, before vs. after, or plan vs. actual.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Comparator grey, focus blue; orange only for worse</li>
+      <li>Light connector behind the dots</li>
+      <li>Signed gap at the row end; sorted by the gap</li>
+      <li>Round, non-zero range with light gridlines</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>How many rows fall short, and by how much.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Both measures, the year and the unit.</span></li>
+        <li><span class="mk">3</span><span><b>Grey comparator, blue focus</b>Market grey; McKesson blue.</span></li>
+        <li><span class="mk">4</span><span><b>Worse in orange</b>The roles 5% or more below market.</span></li>
+        <li><span class="mk">5</span><span><b>A light connector</b>The gap is what the eye reads.</span></li>
+        <li><span class="mk">6</span><span><b>Named once</b>Dot types labelled on the top row, not in a legend.</span></li>
+        <li><span class="mk">7</span><span><b>Signed gap</b>At the row end, with a true minus; bold for the exceptions.</span></li>
+        <li><span class="mk">8</span><span><b>Position, not length</b>A round, non-zero range and light gridlines.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define the comparator.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:rk_db_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:rk_db_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:rk_db_anatomy|min}}
+        <p class="card-foot">External market = posted-pay median for comparable roles and metros. Every role has at least {{text:min_n}} employees.<br>Source: Workday HCM and external pay survey (synthetic data for illustration), 2026; U.S. regular employees<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="dot-variants">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Dot plot</b> variants</h2>
+    <p class="lede">Dots carry one, two or three values per row, on any scale that suits the data.</p>
+    <h3>When a dot plot is the wrong chart</h3>
+    <ul>
+      <li>The size from zero matters (headcount, cost): a <strong>bar chart</strong></li>
+      <li>More than two or three points in time: a <strong>line chart</strong></li>
+      <li>A change in rank: a <strong>slope or bump chart</strong></li>
+      <li>The spread across people: a <strong>distribution</strong></li>
+      <li>Gaps smaller than a dot: plot the <strong>difference</strong> instead</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Dot plot with a benchmark</h4>
+        <p class="note">Engagement runs {{text:rk_eng_range}}, so bars would need a cut axis. The two lowest sit below the {{text:rk_eng_avg}} average for all {{text:rk_n_families}} families.</p>
+        {{exhibit:rk_dot_var_bench}}
+      </div>
+      <div class="tile">
+        <h4>Before and after</h4>
+        <p class="note">Arrows from FY25 to FY26 make direction explicit: pharmacy technician roles take {{text:rk_pt_days}} more days to fill.</p>
+        {{exhibit:rk_dot_var_arrow}}
+      </div>
+      <div class="tile">
+        <h4>Gaps to a benchmark</h4>
+        <p class="note">Centred on zero, below in orange: Oncology's workload score is {{text:rk_onc_workload}} points from the survey benchmark.</p>
+        {{exhibit:rk_dot_var_lollipop}}
+      </div>
+      <div class="tile">
+        <h4>Two measures, one row order</h4>
+        <p class="note">Side-by-side panels, each on its own scale, keep the rows aligned so the pattern reads across.</p>
+        {{exhibit:rk_dot_var_panels}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="dot-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Dot plot</b> best practice</h2>
+    <p class="lede">Dots are quiet marks. These four rules keep the comparison obvious.</p>
+    <p><strong>Dots, not cut bars.</strong> When values sit far from zero, switch to dots. Never truncate a bar.</p>
+    <p><strong>Connect the pair.</strong> A light connector shows the gap; name the two dot types once, on the top row.</p>
+    <p><strong>Grey comparator.</strong> Two strong colors leave the reader asking which one is us.</p>
+    <p><strong>Sort by the gap.</strong> Alphabetical order hides the story. Put the largest shortfall first and write the gap at the row end.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Values far from zero</h4><div class="pair">
+        <div>{{exhibit:rk_dbp_zero_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Bars on an axis cut at 70.</span></div></div>
+        <div>{{exhibit:rk_dbp_zero_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Dots on an honest range.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Connect the pair</h4><div class="pair">
+        <div>{{exhibit:rk_dbp_connect_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Loose dots and a legend.</span></div></div>
+        <div>{{exhibit:rk_dbp_connect_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A connector; types named once.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Colors</h4><div class="pair">
+        <div>{{exhibit:rk_dbp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Two equally strong colors.</span></div></div>
+        <div>{{exhibit:rk_dbp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey market, blue McKesson.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Row order</h4><div class="pair">
+        <div>{{exhibit:rk_dbp_sort_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Alphabetical rows.</span></div></div>
+        <div>{{exhibit:rk_dbp_sort_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Largest shortfall first, gap labelled.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="heat-table">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Heat</b> table</h2>
+    <p class="lede">A table for looking things up, with one column shaded so the pattern shows before anyone reads a number.</p>
+    <p>Use it for scorecards and quarterly workforce packs: several measures in different units, which readers will copy into their own work. If there is one message about one measure, make the chart instead.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Two shaded columns at most, blue by default</li>
+      <li>Horizontal hairlines only; no boxes or zebra stripes</li>
+      <li>Twelve rows and seven data columns at most</li>
+      <li>No cell under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Says what the table shows.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Scope, period, and how totals are built.</span></li>
+        <li><span class="mk">3</span><span><b>Focus rows</b>Bold navy across the whole row.</span></li>
+        <li><span class="mk">4</span><span><b>One shaded column</b>Blue classes, light to dark; text flips to white on dark fills.</span></li>
+        <li><span class="mk">5</span><span><b>Inline bars</b>Size at a glance, from a common edge.</span></li>
+        <li><span class="mk">6</span><span><b>Delta column</b>Signed; only the worse direction in orange.</span></li>
+        <li><span class="mk">7</span><span><b>Units in the headers</b>Bare, right-aligned numbers, same decimals per column.</span></li>
+        <li><span class="mk">8</span><span><b>Weighted total, last</b>Under a navy rule; says what it covers.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>The shading key and definitions.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:rk_heat_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:rk_heat_subtitle}}<span class="mk">2</span></p>
+        {{html:rk_heat_table}}
+        <p class="card-foot">Attrition shaded in 5-point classes {{html:rk_heat_key}} from under 5% to 25% and above. Orange change = slower to fill than FY25.<br>Source: Workday HCM, Workday Recruiting and engagement survey (synthetic data for illustration), FY26; U.S. regular employees<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="heat-table-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Heat table</b> best practice</h2>
+    <p class="lede">Formatting should point at the message, not decorate every cell.</p>
+    <p><strong>Shade one or two columns.</strong> A color scale on every column is a Christmas tree: nothing stands out.</p>
+    <p><strong>No traffic lights.</strong> Red, amber and green fail for color-blind readers and aren't McKesson colors. Use blue classes; orange only when darker means worse.</p>
+    <p><strong>Hairlines only.</strong> Boxes and zebra stripes add ink between the numbers. A header rule and light row lines are enough.</p>
+    <p><strong>Weight the total.</strong> An average of the rates ({{text:rk_avg_simple}}) is not the rate for the group ({{text:rk_avg_weighted}}, weighted by headcount).</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>How much to shade</h4><div class="pair">
+        <div>{{exhibit:rk_hbp_shade_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Every column on its own scale.</span></div></div>
+        <div>{{exhibit:rk_hbp_shade_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>One column; focus rows bold.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Color scale</h4><div class="pair">
+        <div>{{exhibit:rk_hbp_rag_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Red, amber, green.</span></div></div>
+        <div>{{exhibit:rk_hbp_rag_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Blue classes, light to dark.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Rules</h4><div class="pair">
+        <div>{{exhibit:rk_hbp_rules_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Boxes and zebra stripes.</span></div></div>
+        <div>{{exhibit:rk_hbp_rules_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Header rule, hairlines.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Total row</h4><div class="pair">
+        <div>{{exhibit:rk_hbp_total_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>An average of averages.</span></div></div>
+        <div>{{exhibit:rk_hbp_total_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Weighted by headcount.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="ranking-build">
+  <div class="rail">
+    <p class="eyebrow">Ranking</p>
+    <h2 class="title"><b>Build</b> ranking charts</h2>
+    <p class="lede">Native, editable charts and tables in every tool. Tested code and click-by-click steps are on the cookbook pages.</p>
+    <p><a href="../../docs/cookbook/slope-bump.md">slope-bump.md</a> · <a href="../../docs/cookbook/dot-plot-dumbbell.md">dot-plot-dumbbell.md</a> · <a href="../../docs/cookbook/tables.md">tables.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Rank 1 on top; names at both ends</li>
+      <li>One or two highlights, matching the headline</li>
+      <li>Dots, not cut bars, for values far from zero</li>
+      <li>Units in table headers; two shaded columns at most</li>
+      <li>Totals weighted by headcount</li>
+      <li>Nothing ranked or shown under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Slope and bump:</strong> Insert › Line with Markers; vertical axis <em>Values in reverse order</em>, bounds 0.5 to n + 0.5, labels none; context series grey 1 pt, focus 2.25 pt blue; Series Name labels on the first and last points. <strong>Dumbbell:</strong> XY scatter with custom horizontal error bars (no cap, 3 pt, light sand) as the connector. <strong>Heat table:</strong> clear the table style; bottom borders only; one conditional-formatting rule per blue class on the shaded column; data bars with <em>Show Bar Only</em> in a helper column.</p></div>
+      <div class="platform"><h5>Power BI</h5><p>Bump: a Line chart on a <code>RANKX</code> measure with <em>Y-axis › Invert range</em> and series labels on. Dumbbell: the Deneb visual, or a line chart with markers and error bars. Heat table: a Table visual with <em>Cell elements › Background color › fx › Rules</em> on one measure. Blank small groups: <code>IF([Headcount] &lt; 10, BLANK(), [Rank])</code>.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>matplotlib with <code>mckviz</code>; colors from <code>mv.highlight</code>, signed gaps from <code>mv.signed</code>, cell text from <code>mv.text_on(fill)</code>.</p>
+<pre class="snip">colors = dict(zip(ranks, mv.highlight(ranks, focus=risers)))
+for name, (r0, r1) in ranks.items():          # rank 1 at the top
+    ax.plot([0, 1], [r0, r1], color=colors[name])
+    ax.text(-0.05, r0, f"{name}  {r0}", ha="right", va="center")
+    ax.text(1.05, r1, f"{r1}  {name}", ha="left", va="center")
+ax.set_ylim(len(ranks) + 0.5, 0.5); ax.axis("off")</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plotly <code>lines+markers+text</code> with <code>autorange: "reversed"</code> for bumps; one connector trace with <code>None</code> breaks for dumbbells. Tables as real <code>&lt;table class="mck-table"&gt;</code> markup with <code>is-focus</code>, <code>is-total</code> and <code>.bar</code>.</p></div>
+      <div class="platform"><h5>R</h5><p><code>geom_line()</code> + <code>geom_point()</code> with <code>scale_y_reverse()</code>; <code>geom_segment()</code> under two <code>geom_point()</code> layers for dumbbells; <code>gt</code> with <code>data_color(method = "bin")</code> for heat tables.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
