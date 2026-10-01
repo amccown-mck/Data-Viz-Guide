@@ -33,7 +33,7 @@ QA:           pass | exceptions: <list>
   - **Python:** `import mckviz as mv; mv.use(); C = mv.colors`. Use `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, and `mv.label_bars` / `mv.label_line_ends` for labels.
   - **HTML:** the chart-card pattern with `dist/web/mck-viz.css` plus `mck-plotly-template.js` or `vega-lite-config.json`.
   - **Excel / PowerPoint, Power BI, R:** follow the cookbook page's section for that platform, using the themes in `dist/`.
-- **No hex literals.** Use color roles only: context grey, focus blue, orange accent, navy totals and benchmarks.
+- **No hex literals.** Use color roles only: context grey, focus blue, navy accent (the one exception), light blue for a uniform series, navy totals and benchmarks. Orange only when it means "worse" (below target, shrinking, a shortfall); never amber.
 - Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.
 - Drop or merge any group with n < 10 **before** plotting, and keep individual values out of tooltips.
 

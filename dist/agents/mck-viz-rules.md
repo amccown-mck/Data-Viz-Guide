@@ -15,7 +15,8 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 - An **insight headline**: a full sentence with a verb stating the "so what", ≤ 2 lines, sentence case, no final period. Every claim is visibly true in the chart.
 - A **neutral subtitle**: metric, unit, scope, period. Example: "Voluntary attrition by job family, FY26 (%)".
 - **Direct labels** instead of a legend. A legend only when labels would collide, top-left. When values are labelled, remove the value axis and gridlines.
-- **Grey context with one blue focus** (plus an optional single orange accent). At most 2 highlighted items.
+- **Grey context with one blue focus** (plus an optional single navy accent). At most 2 highlighted items. For one series with one exception: all light blue, the exception navy.
+- **Orange means worse.** Use orange only for negatives, decreases, below target or benchmark, and the low end of the diverging scale. Never as a highlight or decoration.
 - At most **6 categorical colors**, in the fixed order below. Group the tail into "Other".
 - A **"Source:"** line bottom-left (system, as-of date, population), with footnotes for definitions.
 
@@ -25,8 +26,9 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 |---|---|---|
 | Context | `#B4B0A5` | Everything the reader should see but not focus on |
 | Context light | `#DEDBD1` | De-emphasized fills, suppressed cells |
-| **Focus** | `#005A8C` | What the headline is about; default single-series color |
-| **Accent** | `#EF8200` | The one exception that must pop |
+| **Focus** | `#005A8C` | What the headline is about; default single-series color. The color used most |
+| Focus light | `#66C4FF` | The series fill when every bar is one series and one exception gets the accent |
+| **Accent** | `#143359` | The one exception that must pop (navy, never orange) |
 | Total / benchmark | `#143359` | Totals, target and benchmark lines (dashed, labelled) |
 | Axis / baseline | `#8C8C8C` | Thin zero baseline |
 | Grid | `#E6E4DE` | Gridlines, only when values aren't labelled |
@@ -34,11 +36,11 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 | Body / label text | `#505050` | Subtitle, data labels |
 | Muted text | `#737373` | Ticks, footnotes, source (the lightest allowed text) |
 | Favorable | `#00AF9D` (text `#00737A`) | Only when good vs. bad is the message |
-| Unfavorable | `#EF8200` (text `#A75B00`) | Never pair red with green |
+| Unfavorable | `#EF8200` (text `#A75B00`) | Negatives, below target. The only job orange has. Never pair red with green |
 
-- **Categorical, in order:** `#005A8C`, `#EF8200`, `#00AF9D`, `#143359`, `#66C4FF`, `#FFB502`, `#00622C`, `#D9F14E`
-- **Sequential blue (light → dark):** `#E6F3FB`, `#B6E2FA`, `#66C4FF`, `#009EFF`, `#0A5FBC`, `#143359`
-- **Sequential orange (risk, intensity):** `#FFF3E0`, `#FFD9A8`, `#F7B25C`, `#EF8200`, `#A75B00`, `#6B3A00`
+- **Categorical, in order:** `#005A8C`, `#143359`, `#66C4FF`, `#00AF9D`, `#00737A`, `#EF8200`, `#B6E2FA`, `#66CFC4`. Prefer ≤ 5; orange (6th) is a last resort. Amber is not used.
+- **Sequential blue (light → dark, the default for one measure):** `#E6F3FB`, `#B6E2FA`, `#66C4FF`, `#009EFF`, `#0A5FBC`, `#143359`
+- **Sequential orange (only when darker means worse, e.g., risk; say so):** `#FFF3E0`, `#FFD9A8`, `#F7B25C`, `#EF8200`, `#A75B00`, `#6B3A00`
 - **Diverging orange–blue (midpoint = benchmark, symmetric):** `#A75B00`, `#EF8200`, `#F7C180`, `#EFEDE7`, `#99BDD1`, `#005A8C`, `#143359`
 - Text on a filled mark: white on dark fills, `#143359` on light fills.
 
@@ -68,7 +70,7 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 ## QA checklist (run before returning a chart)
 - [ ] The headline is an insight sentence, and its numbers are computed from the data.
 - [ ] The subtitle states metric, unit, scope and period. The source line has system, date and population.
-- [ ] Grey context, ≤ 2 highlights matching the headline, ≤ 6 categorical colors, no red vs. green.
+- [ ] Grey context, ≤ 2 highlights matching the headline, ≤ 6 categorical colors, no red vs. green. Orange only where something is worse.
 - [ ] Direct labels. No redundant axis, gridlines or legend. Nothing overlaps.
 - [ ] Bars from zero, honest areas, no dual axes, sorted with intent.
 - [ ] No group under 10 people anywhere, including tooltips.

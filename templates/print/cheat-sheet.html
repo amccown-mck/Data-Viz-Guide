@@ -15,10 +15,10 @@
   .card .st { color: var(--mck-text-primary); font-size: 8pt; margin-bottom: 4pt; }
   .card .src { color: var(--mck-text-muted); font-size: 6.5pt; font-weight: 300; margin-top: 3pt; }
   .tag { position: absolute; left: -19pt; width: 12pt; height: 12pt; border-radius: 50%; background: var(--mck-chart-accent);
-         color: var(--mck-text-headline); font-size: 7pt; font-weight: 700; text-align: center; line-height: 12pt; }
+         color: var(--mck-text-inverse); font-size: 7pt; font-weight: 700; text-align: center; line-height: 12pt; }
   .anatomy-key { margin-top: 5pt; display: grid; grid-template-columns: 12pt 1fr; gap: 1pt 4pt; font-size: 8pt; }
   .anatomy-key b { display: inline-block; width: 11pt; height: 11pt; border-radius: 50%; background: var(--mck-chart-accent);
-                   color: var(--mck-text-headline); font-size: 7pt; text-align: center; line-height: 11pt; }
+                   color: var(--mck-text-inverse); font-size: 7pt; text-align: center; line-height: 11pt; }
   .ex { display: grid; grid-template-columns: 30pt 1fr; gap: 2pt 6pt; font-size: 8.5pt; margin-top: 3pt; }
   .ex .lab { font-weight: 700; font-size: 7.5pt; text-transform: uppercase; padding-top: 1pt; }
   .roles { display: grid; grid-template-columns: auto 1fr auto; gap: 3pt 5pt; align-items: center; }
@@ -90,8 +90,8 @@
       <section>
         <h3>Three highlight patterns</h3>
         <div class="pattern"><svg data-pattern="focus" width="70" height="20"></svg><span><strong>Focus</strong> (default): all grey, headline items blue</span></div>
-        <div class="pattern"><svg data-pattern="uniform" width="70" height="20"></svg><span><strong>Uniform + accent</strong>: one series blue, the exception orange</span></div>
-        <div class="pattern"><svg data-pattern="both" width="70" height="20"></svg><span><strong>Focus + accent</strong>: grey, blue group, one orange exception</span></div>
+        <div class="pattern"><svg data-pattern="uniform" width="70" height="20"></svg><span><strong>Uniform + accent</strong>: one series light blue, the exception navy</span></div>
+        <div class="pattern"><svg data-pattern="both" width="70" height="20"></svg><span><strong>Focus + accent</strong>: grey, blue group, one navy exception</span></div>
         <p class="muted">At most 2 highlighted items. Bold the matching category label.</p>
       </section>
       <section>
@@ -105,7 +105,7 @@
       <section class="panel">
         <h3>Never</h3>
         <ul>
-          <li>Red vs. green (use orange vs. blue), rainbow bars, or color as the only cue</li>
+          <li>Orange as a plain highlight (it means "worse"), red vs. green, rainbow bars, or color as the only cue</li>
           <li>3D, shadows, gradients, borders, or a legend labels could replace</li>
           <li>Truncated bars or dual axes</li>
         </ul>
@@ -188,7 +188,7 @@ const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag)
 // Color roles with live hex values
 (function () {
   const roles = [["chart-context", "Context", "everything else"], ["chart-focus", "Focus", "what the headline names"],
-                 ["chart-accent", "Accent", "the one exception"], ["chart-total", "Total / benchmark", "totals, targets (dashed)"],
+                 ["chart-accent", "Accent", "the one exception (navy)"], ["chart-total", "Total / benchmark", "totals, targets (dashed)"],
                  ["chart-context-light", "Context light", "de-emphasized fills"]];
   const box = document.getElementById("roles");
   roles.forEach(([v, name, use]) => {
@@ -201,7 +201,7 @@ const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag)
 document.querySelectorAll("[data-pattern]").forEach(svg => {
   const p = svg.dataset.pattern;
   const fills = { focus: ["chart-context", "chart-focus", "chart-focus", "chart-context", "chart-context"],
-                  uniform: ["chart-focus", "chart-focus", "chart-accent", "chart-focus", "chart-focus"],
+                  uniform: ["chart-focus-light", "chart-focus-light", "chart-accent", "chart-focus-light", "chart-focus-light"],
                   both: ["chart-context", "chart-focus", "chart-focus", "chart-accent", "chart-context"] }[p];
   const heights = [10, 17, 15, 12, 7];
   fills.forEach((f, i) => el("rect", { x: 2 + i * 13.5, y: 20 - heights[i], width: 9, height: heights[i], fill: tok(f) }, svg));

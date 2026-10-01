@@ -23,8 +23,8 @@
 
 | Element | Rule |
 |---|---|
-| Color | **Greys plus one story color.** The segment the headline names gets `chart.accent` `#EF8200` (or `chart.focus` `#005A8C`). Other segments alternate `chart.context` `#B4B0A5` and `chart.context_light` `#DEDBD1`, so neighbors stay distinct. "Other" is always `#DEDBD1`. Highlight at most **2** segments. Use the categorical order (`#005A8C`, `#EF8200`, `#00AF9D`, `#143359`, `#66C4FF`) only when every part must be told apart, and then label every one. Separate segments with a 1.5–2 pt **white** border. **Dials:** value arc `#005A8C` for the dial(s) the headline names, `#B4B0A5` for the rest, on a light-sand track `surface.subtle` `#EFEDE7`. Mark targets with a short `chart.total` `#143359` tick. Use semantic `#00AF9D` / `#EF8200` only when good vs. bad is the message (e.g., coverage above vs. below target), with text in `#00737A` / `#A75B00`. Never use red vs. green. |
-| Labels | For 2–3 short segments, label next to each segment, outside the ring. For 4–5 segments, use an **aligned key to the right of the ring**: marker, name, then a right-aligned value column, in wedge order. Never scatter bare values around the ring. Values are whole-number % (12 pt / 13 px Medium `#505050`). The story segment's name is bold Navy `#143359`, and its value is bold in `#A75B00` (orange story) or `#143359`. The **center** holds one number, the story share or the total, in big-number style (Light, Navy or `#A75B00`), plus 1–2 words in the subtitle style. Never put a legend at the bottom. |
+| Color | **Greys plus one story color.** The segment the headline names gets `chart.focus` `#005A8C` (or `chart.accent` navy `#143359` for a single exception next to a blue group). Never orange as the story color. Other segments alternate `chart.context` `#B4B0A5` and `chart.context_light` `#DEDBD1`, so neighbors stay distinct. "Other" is always `#DEDBD1`. Highlight at most **2** segments. Use the categorical order (`#005A8C`, `#143359`, `#66C4FF`, `#00AF9D`, `#00737A`) only when every part must be told apart, and then label every one. Separate segments with a 1.5–2 pt **white** border. **Dials:** value arc `#005A8C` for the dial(s) the headline names, `#B4B0A5` for the rest, on a light-sand track `surface.subtle` `#EFEDE7`. Mark targets with a short `chart.total` `#143359` tick. Use semantic `#00AF9D` / `#EF8200` only when good vs. bad is the message (e.g., coverage above vs. orange below target), with text in `#00737A` / `#A75B00`. Never use red vs. green. |
+| Labels | For 2–3 short segments, label next to each segment, outside the ring. For 4–5 segments, use an **aligned key to the right of the ring**: marker, name, then a right-aligned value column, in wedge order. Never scatter bare values around the ring. Values are whole-number % (12 pt / 13 px Medium `#505050`). The story segment's name is bold Navy `#143359`, and its value is bold Navy `#143359`. The **center** holds one number, the story share or the total, in big-number style (Light, Navy `#143359`), plus 1–2 words in the subtitle style. Never put a legend at the bottom. |
 | Axes / gridlines | None. No 3D, no shadows, no exploded wedges, no gradient fills. |
 | Sort / order | Start at **12 o'clock** and run **clockwise**, largest segment first, then descending. "Other" goes last, whatever its size. A natural order (e.g., survey scale, tenure bands) overrides size. Keep the same order and colors for the same categories across the deck. In a dial row, sort the dials by value unless the groups have a fixed order. |
 | Proportions | The hole is **62% of the diameter** (`chart.donut.hole`). That is Excel **Doughnut Hole Size ≈ 60–62%**, Plotly `hole=0.62`, matplotlib `wedgeprops=dict(width=0.38)`. Dials use the same ring. In a pie matrix, pie **area** (not diameter) is proportional to size: radius ∝ √value. |
@@ -43,7 +43,7 @@
 | Size pies in a matrix by **area** and keep 2 segments each | Scale pie diameter by value (overstates the big ones) |
 
 ## Workforce examples
-- **Function, internal:** *Headline:* "Contingent workers make up 30% of Technology's workforce, more than 4x the rate in other functions". *Subtitle:* "Technology workforce by worker type, 2026 (% of workers)". *Data:* [`examples/data/workforce_mix.csv`](../../examples/data/workforce_mix.csv), HRIS plus vendor-management (contingent) records. Contingent in orange, full-time and part-time in greys, and the 6.5% average for other functions stated beside the key.
+- **Function, internal:** *Headline:* "Contingent workers make up 30% of Technology's workforce, more than 4x the rate in other functions". *Subtitle:* "Technology workforce by worker type, 2026 (% of workers)". *Data:* [`examples/data/workforce_mix.csv`](../../examples/data/workforce_mix.csv), HRIS plus vendor-management (contingent) records. Contingent in blue, full-time and part-time in greys, and the 6.5% average for other functions stated beside the key.
 - **Individuals → functions, internal (dial row):** *Headline:* "Only Pharmacy Ops has enrolled more than half of its high-exposure employees in reskilling". *Subtitle:* "Employees in high gen-AI-exposure roles enrolled in a reskilling pathway, by function, Q2 FY26 (%)". *Data:* individual learning-system enrollments joined to role-level exposure scores from [`examples/data/automation_exposure.csv`](../../examples/data/automation_exposure.csv), aggregated to function (n ≥ 10). One dial per function, a navy 50% target tick on each, and only the dial above target in blue.
 - **Sector, external (pie matrix):** *Headline:* "In our three largest hiring metros, most pharmacy technician postings now require national certification". *Subtitle:* "Pharmacy technician job postings, top 8 McKesson hiring metros, Q2 2026 (pie area = postings; blue = % requiring certification)". *Data:* external job-postings data, metros ranked by McKesson hires. Use two-segment pies sized by area: the certification share in `#005A8C`, the rest in `#DEDBD1`, with the % under each pie and the three largest metros bolded.
 
@@ -71,12 +71,12 @@ others = mix.drop("Technology").contingent_pct.mean()
 story = "Contingent workers"
 parts = pd.Series({"Full-time employees": tech.employee_ft_pct, story: tech.contingent_pct,
                    "Part-time employees": tech.employee_pt_pct}).sort_values(ascending=False)   # largest first
-fills = {"Full-time employees": C.context, "Part-time employees": C.context_light, story: C.accent}
+fills = {"Full-time employees": C.context, "Part-time employees": C.context_light, story: C.focus}
 
 fig, ax = plt.subplots(figsize=(10, 5.6))
 ax.pie(parts, colors=[fills[k] for k in parts.index], startangle=90, counterclock=False,   # 12 o'clock, clockwise
        wedgeprops=dict(width=1 - HOLE, edgecolor="white", linewidth=2))
-ax.text(0, 0.08, f"{parts[story]:.0f}%", ha="center", va="center", fontsize=40, fontweight=300, color=C.negative_text)
+ax.text(0, 0.08, f"{parts[story]:.0f}%", ha="center", va="center", fontsize=40, fontweight=300, color=C.headline)
 ax.text(0, -0.24, "contingent", ha="center", va="center", fontsize=12, color=C.text)
 
 for i, (name, val) in enumerate(parts.items()):                # aligned key = labels + values, in wedge order
@@ -85,7 +85,7 @@ for i, (name, val) in enumerate(parts.items()):                # aligned key = l
     ax.text(1.55, y, name, va="center", fontsize=11, fontweight="bold" if hi else "normal",
             color=C.headline if hi else C.text)
     ax.text(3.0, y, f"{val:.0f}%", va="center", ha="right", fontsize=11, fontweight="bold",
-            color=C.negative_text if hi else C.text)
+            color=C.headline if hi else C.text)
 ax.plot([1.35, 3.0], [-0.42, -0.42], color=C.grid, lw=0.75)
 ax.text(1.35, -0.55, f"Other functions average {others:.1f}% contingent", va="top", fontsize=10, color=C.annotation)
 ax.set_xlim(-1.05, 3.05)
@@ -157,7 +157,7 @@ others = mix.drop("Technology").contingent_pct.mean()
 story = "Contingent workers"
 parts = pd.Series({"Full-time employees": tech.employee_ft_pct, story: tech.contingent_pct,
                    "Part-time employees": tech.employee_pt_pct}).sort_values(ascending=False)
-fills = {"Full-time employees": C.context, "Part-time employees": C.context_light, story: C.accent}
+fills = {"Full-time employees": C.context, "Part-time employees": C.context_light, story: C.focus}
 
 fig = go.Figure(go.Pie(
     labels=parts.index, values=parts.values, hole=HOLE, sort=False, direction="clockwise", rotation=0,  # 12 o'clock
@@ -166,7 +166,7 @@ fig = go.Figure(go.Pie(
     hovertemplate="%{label}: %{value:.0f}%<extra></extra>"))
 fig.add_annotation(text=f"<b>{parts[story]:.0f}%</b><br><span style='font-size:13px'>contingent</span>",
                    x=0.5, y=0.5, xref="paper", yref="paper", showarrow=False,
-                   font={"size": 40, "color": C.negative_text})
+                   font={"size": 40, "color": C.headline})
 fig.update_layout(showlegend=False, margin={"l": 80, "r": 80})
 ratio = int(parts[story] // others)
 mv.pl_finish(fig, f"Contingent workers make up {parts[story]:.0f}% of Technology's workforce, more than {ratio}x the "
@@ -183,10 +183,10 @@ Plotly defaults to counter-clockwise and sorts by value, so always set `sort=Fal
 2. Prepare the data: one column of names, one of values. Sort it **descending**, merge anything beyond 5 parts into "Other", and put "Other" in the last row. Excel draws the rows clockwise in sheet order.
 3. Select the data, then **Insert › Charts › Insert Pie or Doughnut Chart › Doughnut**.
 4. Right-click the ring › **Format Data Series › Series Options**. Set **Angle of first slice 0°** (start at 12 o'clock) and **Doughnut Hole Size 62%** (≈ 60%). Under **Fill & Line › Border**, set **Solid line, white, 1.5 pt**.
-5. Per-point fill: click the ring once (selects the series), then click the story slice again (selects only that point). Set **Format Data Point › Fill › Solid fill › More Colors › Hex `EF8200`** (or `005A8C`). Make the other slices `B4B0A5` and `DEDBD1`, alternating, with "Other" always `DEDBD1`.
+5. Per-point fill: click the ring once (selects the series), then click the story slice again (selects only that point). Set **Format Data Point › Fill › Solid fill › More Colors › Hex `005A8C`** (or `143359` for a single navy exception). Make the other slices `B4B0A5` and `DEDBD1`, alternating, with "Other" always `DEDBD1`.
 6. Delete the legend and the default chart title (the headline goes in the slide title or a text box).
 7. Labels. Excel can't place doughnut labels **Outside End**. For 2–3 segments, use **Chart Elements (+) › Data Labels › More Options**, tick **Category Name** and **Value**, set **Separator › (New Line)**, then drag each label just outside its slice. For 4–5 segments, delete the labels and build the aligned key in cells next to the chart (● in the slice color | name | value, right-aligned), or as a 3-column table in PowerPoint. Use Libre Franklin Medium 12 pt `#505050`, and set the story row **Bold**, Navy `#143359`.
-8. Center number: select the chart, choose **Insert › Text Box**, and draw it inside the hole. With the box selected, type `=Sheet1!$B$3` in the formula bar so it updates with the data. Format it Libre Franklin Light 40 pt in `#A75B00` (orange story) or `#143359`, with a second line at 12 pt `#505050`.
+8. Center number: select the chart, choose **Insert › Text Box**, and draw it inside the hole. With the box selected, type `=Sheet1!$B$3` in the formula bar so it updates with the data. Format it Libre Franklin Light 40 pt in Navy `#143359`, with a second line at 12 pt `#505050`.
 9. **Progress dials:** give each group two cells, *Value* and *Remainder* (`=1-Value`). Build one doughnut (Angle 0°, hole 62%, **Border › No line**). Fill the Value point `005A8C` (focus) or `B4B0A5` and the Remainder point `EFEDE7`. Ctrl+drag to copy the chart, then repoint each copy with **Chart Design › Select Data**. Give all dials the same **Format › Size** (e.g., 1.6 × 1.6 in) and use **Shape Format › Align › Align Top / Distribute Horizontally**. Draw the target tick with a short navy line.
 10. **Pie** (2–3 parts only): use **Insert Pie or Doughnut Chart › Pie** with the same angle, fills and borders. Pies, unlike doughnuts, do support **Data Labels › Outside End**. In a pie matrix, set each chart's **Format › Size** so that diameter ∝ √(value ÷ max value), which keeps pie **area** proportional.
 11. In PowerPoint, insert a native chart (**Insert › Chart › Pie › Doughnut**, or paste with **Use Destination Theme & Embed Workbook**). Put the headline in the title placeholder (24 pt Bold Navy) and the source at 9 pt Libre Franklin Light `#737373`, bottom-left. Save the formatted chart via **Right-click › Save as Template** (`.crtx`).
@@ -195,7 +195,7 @@ Plotly defaults to counter-clockwise and sorts by value, so always set `sort=Fal
 ### Power BI
 - Import [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
 - Use the native **Donut chart** (Legend = category, Values = measure). Use **⋯ › Sort by › [measure] › Sort descending**. Under **Format visual › Rotation**, set the start angle to **0**. Where your Desktop version offers **Slices › Spacing › Inner radius**, set it to ~62%.
-- Set each slice under **Slices › Colors**: story `#EF8200` or `#005A8C`, the rest `#B4B0A5` / `#DEDBD1`. If **fx** (field-value color) isn't offered for slices in your version, drive the color with a measure on a bar chart instead.
+- Set each slice under **Slices › Colors**: story `#005A8C` (or `#143359` for a navy exception), the rest `#B4B0A5` / `#DEDBD1`. If **fx** (field-value color) isn't offered for slices in your version, drive the color with a measure on a bar chart instead.
 - **Detail labels:** Position *Outside*, Label contents *Category, percent of total*. Turn the **Legend** off. Put the story number in a **Card** layered over the hole.
 - Dials: a donut with two measures, `[Enrolled %]` and `Remainder = 1 - [Enrolled %]`, with the remainder colored `#EFEDE7`. Copy one visual per group, filter each one, and keep identical sizes. Avoid the native **Gauge**, which uses a half-circle with a different scale per visual.
 - Enforce minimum n in the measures, so tooltips and drill-throughs inherit it: `Share (safe) = IF([Headcount] < 10, BLANK(), [Share])`.
@@ -210,13 +210,13 @@ parts <- tibble(type = c("Full-time employees", "Contingent workers", "Part-time
                 pct  = c(tech$employee_ft_pct, tech$contingent_pct, tech$employee_pt_pct)) |>
   arrange(desc(pct)) |>
   mutate(type = factor(type, levels = type), key = sprintf("%s   %d%%", type, pct))
-fills <- mck_highlight(levels(parts$type), accent = "Contingent workers")
+fills <- mck_highlight(levels(parts$type), focus = "Contingent workers")
 fills["Part-time employees"] <- mck_colors$context_light
 
 ggplot(parts, aes(x = 2, y = pct, fill = type)) +
   geom_col(width = 1, color = "white", linewidth = 0.8, position = position_stack(reverse = TRUE)) +
   annotate("text", x = -0.13, y = 0, label = sprintf("%d%%\ncontingent", parts$pct[parts$type == "Contingent workers"]),
-           size = 7, lineheight = 0.9, color = "#A75B00") +
+           size = 7, lineheight = 0.9, color = mck_colors$headline) +
   scale_fill_manual(values = fills, labels = parts$key, name = NULL) +
   coord_polar(theta = "y", start = 0, direction = 1) +   # 12 o'clock, clockwise
   xlim(c(-0.13, 2.5)) +                                   # hole = (1.5 + 0.13) / (2.5 + 0.13) = 62% of the diameter

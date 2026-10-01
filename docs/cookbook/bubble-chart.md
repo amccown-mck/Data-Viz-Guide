@@ -21,7 +21,7 @@
 
 | Element | Rule |
 |---|---|
-| Color | **One color** for all bubbles, `chart.focus` `#005A8C`, **or** `chart.context` `#B4B0A5` for all with the headline bubble in `chart.focus` `#005A8C` (one exception in `chart.accent` `#EF8200`). Highlight at most 2. Use the categorical order (`#005A8C`, `#EF8200`, `#00AF9D`, …) only when color **encodes a group** (≤ 3–4 groups), with a small top-left key. Never use decorative multi-color bubbles. No gradients, 3D or shadows. |
+| Color | **One color** for all bubbles, `chart.focus` `#005A8C`, **or** `chart.context` `#B4B0A5` for all with the headline bubble in `chart.focus` `#005A8C` (one exception in `chart.accent` navy `#143359`). Highlight at most 2. Use the categorical order (`#005A8C`, `#143359`, `#66C4FF`, `#00AF9D`, …) only when color **encodes a group** (≤ 3–4 groups), with a small top-left key. Never use decorative multi-color bubbles. No gradients, 3D or shadows. |
 | Labels | Every bubble shows a **bold value** plus its category name in regular weight. Put the label **inside** when the bubble is big enough (white on `#005A8C`, navy `#143359` on grey; use `mv.text_on()`). Otherwise put it **below** (or beside) the bubble, aligned on one shared line. Use one unit in the subtitle ("thousand hours", "$M") and consistent K/M. |
 | Axes / gridlines | None: no axes, gridlines, size legend or frame. Values are labelled, so the size key is redundant. |
 | Sort / order | **Descending by size.** Largest first (left, or top-left), wrapping into a second row like text if needed; keep the order monotonic. The arrangement may adapt to the layout, but never scatter bubbles randomly. Bubbles sit on a **shared baseline** (single row) or are packed with 2–4 px white gaps and no overlap. |

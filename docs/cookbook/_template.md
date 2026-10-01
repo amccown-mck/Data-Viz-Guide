@@ -15,7 +15,7 @@
 
 | Element | Rule |
 |---|---|
-| Color | … (roles: `chart.focus`, `chart.context`, `chart.accent`, …) |
+| Color | … (roles: `chart.focus`, `chart.context`, `chart.accent` (navy), `chart.focus_light`, …; orange only via `semantic.negative`) |
 | Labels | … |
 | Axes / gridlines | … |
 | Sort / order | … |

@@ -60,6 +60,7 @@ const css = getComputedStyle(document.documentElement);
 const tok = name => css.getPropertyValue(`--mck-${name}`).trim();
 const C = {
   focus: tok("chart-focus"), context: tok("chart-context"), accent: tok("chart-accent"), total: tok("chart-total"),
+  negative: tok("semantic-negative"),
   annotation: tok("chart-annotation"), headline: tok("text-headline"), text: tok("text-primary"), muted: tok("text-muted"),
 };
 const alpha = (hex, a) => {                                      // token hex -> rgba() for washes
@@ -124,7 +125,7 @@ function drawLine() {
     { x: years, y: supply, mode: "lines", line: { color: C.focus, width: 2 }, name: "Internal supply",
       hovertemplate: "%{y:,} FTE<extra>Internal supply</extra>" },
     { x: years, y: demand, mode: "lines", line: { color: C.total, width: 2 }, name: "Demand",
-      fill: "tonexty", fillcolor: alpha(C.accent, 0.12),            // light accent wash marks the gap
+      fill: "tonexty", fillcolor: alpha(C.negative, 0.12),          // light orange wash: the shortfall is a negative
       hovertemplate: "%{y:,} FTE<extra>Demand</extra>" },
   ], {
     ...base,

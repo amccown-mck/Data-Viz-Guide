@@ -10,9 +10,9 @@ Dashboards are exploratory, but they follow the same visual rules as slides: gre
 ### What the theme sets
 | Setting | Value | Why |
 |---|---|---|
-| Data colors 1–6 | `#005A8C` `#EF8200` `#00AF9D` `#143359` `#66C4FF` `#FFB502` | The categorical palette in its fixed order. Use more than 6 only for exploration; for a published page, group the tail into "Other". |
-| Data colors 7–12 | Green, lime, then light blue and orange tints | Only so 7+ series don't repeat a color. Every color is unique. |
-| Good / neutral / bad | Teal `#00AF9D` / grey `#B4B0A5` / orange `#EF8200` | KPI and conditional-formatting defaults. Blue–orange, never red–green. |
+| Data colors 1–6 | `#005A8C` `#143359` `#66C4FF` `#00AF9D` `#00737A` `#EF8200` | The categorical palette in its fixed order: blue, navy, light blue, teal, deep teal, then orange as a last resort. Prefer ≤ 5 series. Use more than 6 only for exploration; for a published page, group the tail into "Other". |
+| Data colors 7–10 | Light blue and teal tints (`#B6E2FA` `#66CFC4` `#009EFF` `#B3E7E2`) | Only so 7+ series don't repeat a color. Every color is unique. |
+| Good / neutral / bad | Teal `#00AF9D` / grey `#B4B0A5` / orange `#EF8200` | KPI and conditional-formatting defaults. Orange means worse. Never red–green. |
 | Min / center / max | `#E6F3FB` / `#EFEDE7` / `#143359` | Default gradient for heat tables and maps. |
 | Titles | Libre Franklin, 14 pt, bold, navy, left-aligned; subtitle 11 pt grey | Question or insight titles, top-left like every other chart. |
 | Axes and gridlines | Labels `#737373` 9 pt, gridlines `#E6E4DE`, axis titles off | Units go in the subtitle. |
@@ -45,7 +45,7 @@ Bar color =
 VAR rate = [Attrition %]
 RETURN IF ( rate > 0.20, "#005A8C", "#B4B0A5" )      -- focus blue above the threshold, context grey otherwise
 ```
-Apply it with **Format › Columns (or Bars) › Colors › fx › Format style: Field value › Bar color**. The same pattern works for an orange accent (`#EF8200`) or a data-label font color. Keep the hex codes in one "Colors" measure table, so a palette change is one edit.
+Apply it with **Format › Columns (or Bars) › Colors › fx › Format style: Field value › Bar color**. The same pattern works for a navy accent on the one exception (`#143359`), an orange flag for values below target (`#EF8200`, only when below target is the message), or a data-label font color. Keep the hex codes in one "Colors" measure table, so a palette change is one edit.
 
 ## 4. Titles that state the insight
 Use a measure for the title, so it stays true when filters change:

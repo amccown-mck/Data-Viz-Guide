@@ -71,7 +71,7 @@ line_gap <- function() {
   lab <- function(y, text, colour) annotate("text", x = last$year + 0.12, y = y, hjust = 0, size = 3.4,
                                             family = ff, fontface = "bold", colour = colour, label = text)
   ggplot(df, aes(year)) +
-    geom_ribbon(aes(ymin = internal_supply_fte, ymax = demand_fte), fill = mck_colors$accent, alpha = 0.12) +
+    geom_ribbon(aes(ymin = internal_supply_fte, ymax = demand_fte), fill = mck_colors$negative, alpha = 0.12) +
     geom_line(aes(y = demand_fte), colour = mck_colors$total, linewidth = 1) +
     geom_line(aes(y = internal_supply_fte), colour = mck_colors$focus, linewidth = 1) +
     lab(last$demand_fte, paste("Demand", scales::comma(last$demand_fte)), mck_colors$total) +

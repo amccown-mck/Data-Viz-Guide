@@ -15,7 +15,8 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 - An **insight headline**: a full sentence with a verb stating the "so what", ≤ 2 lines, sentence case, no final period. Every claim is visibly true in the chart.
 - A **neutral subtitle**: metric, unit, scope, period. Example: "Voluntary attrition by job family, FY26 (%)".
 - **Direct labels** instead of a legend. A legend only when labels would collide, top-left. When values are labelled, remove the value axis and gridlines.
-- **Grey context with one blue focus** (plus an optional single orange accent). At most {{chart:limits.highlighted_series}} highlighted items.
+- **Grey context with one blue focus** (plus an optional single navy accent). At most {{chart:limits.highlighted_series}} highlighted items. For one series with one exception: all light blue, the exception navy.
+- **Orange means worse.** Use orange only for negatives, decreases, below target or benchmark, and the low end of the diverging scale. Never as a highlight or decoration.
 - At most **{{chart:limits.categorical_series}} categorical colors**, in the fixed order below. Group the tail into "Other".
 - A **"Source:"** line bottom-left (system, as-of date, population), with footnotes for definitions.
 
@@ -25,8 +26,9 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 |---|---|---|
 | Context | `{{color:chart.context}}` | Everything the reader should see but not focus on |
 | Context light | `{{color:chart.context_light}}` | De-emphasized fills, suppressed cells |
-| **Focus** | `{{color:chart.focus}}` | What the headline is about; default single-series color |
-| **Accent** | `{{color:chart.accent}}` | The one exception that must pop |
+| **Focus** | `{{color:chart.focus}}` | What the headline is about; default single-series color. The color used most |
+| Focus light | `{{color:chart.focus_light}}` | The series fill when every bar is one series and one exception gets the accent |
+| **Accent** | `{{color:chart.accent}}` | The one exception that must pop (navy, never orange) |
 | Total / benchmark | `{{color:chart.total}}` | Totals, target and benchmark lines (dashed, labelled) |
 | Axis / baseline | `{{color:chart.axis}}` | Thin zero baseline |
 | Grid | `{{color:chart.grid}}` | Gridlines, only when values aren't labelled |
@@ -34,11 +36,11 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 | Body / label text | `{{color:text.primary}}` | Subtitle, data labels |
 | Muted text | `{{color:text.muted}}` | Ticks, footnotes, source (the lightest allowed text) |
 | Favorable | `{{color:semantic.positive}}` (text `{{color:semantic.positive_text}}`) | Only when good vs. bad is the message |
-| Unfavorable | `{{color:semantic.negative}}` (text `{{color:semantic.negative_text}}`) | Never pair red with green |
+| Unfavorable | `{{color:semantic.negative}}` (text `{{color:semantic.negative_text}}`) | Negatives, below target. The only job orange has. Never pair red with green |
 
-- **Categorical, in order:** {{list:categorical.values}}
-- **Sequential blue (light → dark):** {{list:sequential.blue}}
-- **Sequential orange (risk, intensity):** {{list:sequential.orange}}
+- **Categorical, in order:** {{list:categorical.values}}. Prefer ≤ 5; orange (6th) is a last resort. Amber is not used.
+- **Sequential blue (light → dark, the default for one measure):** {{list:sequential.blue}}
+- **Sequential orange (only when darker means worse, e.g., risk; say so):** {{list:sequential.orange}}
 - **Diverging orange–blue (midpoint = benchmark, symmetric):** {{list:diverging.orange_blue.values}}
 - Text on a filled mark: white on dark fills, `{{color:text.headline}}` on light fills.
 
@@ -68,7 +70,7 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 ## QA checklist (run before returning a chart)
 - [ ] The headline is an insight sentence, and its numbers are computed from the data.
 - [ ] The subtitle states metric, unit, scope and period. The source line has system, date and population.
-- [ ] Grey context, ≤ 2 highlights matching the headline, ≤ 6 categorical colors, no red vs. green.
+- [ ] Grey context, ≤ 2 highlights matching the headline, ≤ 6 categorical colors, no red vs. green. Orange only where something is worse.
 - [ ] Direct labels. No redundant axis, gridlines or legend. Nothing overlaps.
 - [ ] Bars from zero, honest areas, no dual axes, sorted with intent.
 - [ ] No group under 10 people anywhere, including tooltips.

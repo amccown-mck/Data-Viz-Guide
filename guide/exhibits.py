@@ -277,7 +277,7 @@ def line_anatomy():
     spread = np.clip((yr - now) / (yr[-1] - now), 0, 1) * 0.08          # range opens from the last actual year
     lo, hi = dem * (1 - spread), dem * (1 + spread)
     ax.fill_between(yr[fc], lo[fc], hi[fc], color=C.focus, alpha=0.12, lw=0, zorder=1)
-    ax.fill_between(yr[fc], sup[fc], lo[fc], color=C.accent, alpha=0.10, lw=0, zorder=1)
+    ax.fill_between(yr[fc], sup[fc], lo[fc], color=C.negative, alpha=0.10, lw=0, zorder=1)   # shortfall = negative
     ax.plot(yr[act], dem[act], color=C.focus, lw=2.4, zorder=3)
     ax.plot(yr[fc], dem[fc], color=C.focus, lw=2.4, ls=(0, (4, 2.5)), zorder=3)
     ax.plot(yr[act], sup[act], color=C.context, lw=2.4, zorder=3)
@@ -342,15 +342,15 @@ def pattern_focus():
 
 @exhibit
 def pattern_uniform_accent():
-    return (_pattern(lambda l: mv.highlight(l, accent=["Pharmacy Tech"], base=C.focus), {"Pharmacy Tech"}),
-            "All bars blue except the highest in orange.")
+    return (_pattern(lambda l: mv.highlight(l, accent=["Pharmacy Tech"], base=C.focus_light), {"Pharmacy Tech"}),
+            "All bars light blue except the highest in navy.")
 
 
 @exhibit
 def pattern_focus_accent():
     return (_pattern(lambda l: mv.highlight(l, focus=["DC Associate", "Customer Care"], accent=["Pharmacy Tech"]),
                      {"Pharmacy Tech", "DC Associate", "Customer Care"}),
-            "Grey bars, two in blue and the highest in orange.")
+            "Grey bars, two in blue and the highest in navy.")
 
 
 @exhibit
@@ -377,7 +377,7 @@ def palette_categorical():
     ax.set_xticks([])
     ax.tick_params(labelsize=MINI, length=0)
     _plain(ax)
-    return fig, "100% stacked bars of workforce mix by function in blue, orange and teal."
+    return fig, "100% stacked bars of workforce mix by function in blue, navy and light blue."
 
 
 @exhibit
@@ -504,7 +504,7 @@ def scale_dual_avoid():
     ax = fig.add_subplot()
     ax.plot(s.year, s.demand_fte, color=C.focus)
     ax2 = ax.twinx()
-    ax2.plot(s.year, s.internal_supply_fte / s.demand_fte * 100, color=C.accent)
+    ax2.plot(s.year, s.internal_supply_fte / s.demand_fte * 100, color=C.focus_light)
     for a in (ax, ax2):
         a.tick_params(labelsize=MINI - 2, length=0)
         for side in ("top",):
@@ -620,8 +620,8 @@ def a11y_redgreen_avoid():
 
 @exhibit
 def a11y_redgreen_fix():
-    return (_two_series(C.focus, C.accent, simulate=True),
-            "Blue and orange bars as seen with deuteranopia: the two series stay distinct.")
+    return (_two_series(C.focus, C.focus_light, simulate=True),
+            "Blue and light-blue bars as seen with deuteranopia: the two series stay distinct.")
 
 
 @exhibit
@@ -657,7 +657,7 @@ def a11y_legend_fix():
 
 
 def _text_on_fills(good: bool):
-    fills = [C.context_light, C.context, C.accent, C.focus, C.total]
+    fills = [C.context_light, C.focus_light, C.context, C.focus, C.total]
     fig = fig_px(200, 140)
     ax = fig.add_subplot()
     for i, f in enumerate(fills):
@@ -672,7 +672,7 @@ def _text_on_fills(good: bool):
 
 @exhibit
 def a11y_contrast_avoid():
-    return _text_on_fills(False), "White labels on every fill, unreadable on the light and orange fills."
+    return _text_on_fills(False), "White labels on every fill, unreadable on the light fills."
 
 
 @exhibit
@@ -743,7 +743,7 @@ def var_diverging():
     fig = fig_px(300, 180)
     ax = fig.add_subplot()
     y = np.arange(len(d))
-    cols = [C.accent if v < 0 else C.context for v in d.net_change_fy26]
+    cols = [C.negative if v < 0 else C.context for v in d.net_change_fy26]          # shrinking = negative: orange
     ax.barh(y, d.net_change_fy26, color=cols, height=BAND)
     for yy, v in zip(y, d.net_change_fy26):
         ax.text(v + (8 if v >= 0 else -8), yy, mv.signed(v), va="center", ha="left" if v >= 0 else "right",
@@ -869,8 +869,8 @@ def _bp2(kind: str):
         hbars(ax, labels, d.vol_attrition_pct, mv.highlight(d.job_family, focus=FOCUS), size=tick, tick=tick,
               fmt="{:.0f}%", xmax=42 if kind == "bench_avoid" else 34)
         if kind == "bench_avoid":
-            ax.axvline(ENT, color=C.accent, lw=1)
-            ax.legend(handles=[plt.Line2D([], [], color=C.accent)], labels=["Benchmark"], fontsize=tick - 1,
+            ax.axvline(ENT, color=C.focus_light, lw=1.2)
+            ax.legend(handles=[plt.Line2D([], [], color=C.focus_light)], labels=["Benchmark"], fontsize=tick - 1,
                       loc="lower right", frameon=True)
         else:
             bench(ax, ENT, f"Enterprise {ENT:.0f}%", size=tick)
@@ -914,7 +914,9 @@ HTML["swatch_diverging"] = _swatch_row(mv.DIVERGING)
 
 _ROLES = [("context", "Context", "everything the reader should see but not focus on"),
           ("focus", "Focus", "what the headline names"),
-          ("accent", "Accent", "the one exception that must pop"),
+          ("accent", "Accent", "the one exception that must pop (navy, not orange)"),
+          ("focus_light", "Light blue", "the series when navy marks the exception"),
+          ("negative", "Orange", "only when it means worse: below target, shrinking, a shortfall"),
           ("total", "Total and benchmark", "totals, targets, reference lines"),
           ("context_light", "Context light", "de-emphasized fills in stacks and areas")]
 HTML["roles"] = "".join(
@@ -967,3 +969,11 @@ def _people_table(suppress: bool) -> str:
 HTML["people_before"] = _people_table(False)
 HTML["people_after"] = _people_table(True)
 TEXT["min_n"] = str(MIN_N)
+
+
+# ================================================================== section modules (guide/ex_*.py)
+# Each section's exhibits live in their own module and register into EXHIBITS / TEXT / HTML on import.
+import importlib as _importlib  # noqa: E402
+
+for _mod in sorted(Path(__file__).parent.glob("ex_*.py")):
+    _importlib.import_module(_mod.stem)

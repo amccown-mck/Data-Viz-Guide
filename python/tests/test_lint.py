@@ -122,3 +122,23 @@ def test_plotly_bar_from_pl_finish_passes():
                  "Voluntary attrition by job family, FY26 (%)", "Source: Synthetic data for illustration only")
     found = mv.lint(fig, quiet=True)
     assert not [f for f in found if f.level in ("error", "warn")], found
+
+
+def test_amber_is_do_not_use_and_orange_gets_a_semantic_reminder():
+    fig = good_bar()
+    ax = fig.axes[0]
+    ax.patches[0].set_facecolor(mv.extended["amber"]["base"])
+    assert "do-not-use" in rules(mv.lint(fig, quiet=True), "error")
+    ax.patches[0].set_facecolor(C.orange)
+    found = mv.lint(fig, quiet=True)
+    assert "do-not-use" not in rules(found) and "orange-semantic" in rules(found, "info")
+    plt.close(fig)
+
+
+def test_uniform_accent_pattern_is_clean():
+    fig = good_bar()
+    for p, col in zip(fig.axes[0].patches, mv.highlight(CATS[::-1], accent=CATS[0], base=C.focus_light)):
+        p.set_facecolor(col)
+    found = mv.lint(fig, quiet=True)
+    assert not [f for f in found if f.level in ("error", "warn")], found
+    plt.close(fig)

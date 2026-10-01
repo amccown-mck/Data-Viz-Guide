@@ -21,8 +21,8 @@
 
 | Element | Rule |
 |---|---|
-| Color | All items in `chart.context` `#B4B0A5` (lines and markers). The item the headline is about is `chart.focus` `#005A8C`. At most one contrasting mover is `chart.accent` `#EF8200` (`limits.highlighted_series` = 2). On dark social cards use `chart.focus_on_dark` `#66C4FF` and `chart.context_on_dark` `#5A7194` on Deep Navy `#0B3266`. |
-| Labels | Put names at **both ends**: left in starting order, right in ending order. No legend. Slope charts show the value (or rank) next to each name. Bump charts put the rank number inside circular markers, with the text color from `mv.text_on(fill)`. Highlighted names are bold: navy `#143359` for the focus and `semantic.negative_text` `#A75B00` for orange items (orange text is below 3:1 contrast). Put bold period headers (`2023`, `FY26`) above each column. |
+| Color | All items in `chart.context` `#B4B0A5` (lines and markers). The item the headline is about is `chart.focus` `#005A8C`. At most one contrasting mover (`limits.highlighted_series` = 2): `chart.accent` navy `#143359`, or `semantic.negative` orange `#EF8200` when that mover is a decline, as in the bump example below. Orange never marks a plain highlight. On dark social cards use `chart.focus_on_dark` `#66C4FF` and `chart.context_on_dark` `#5A7194` on Deep Navy `#0B3266`. |
+| Labels | Put names at **both ends**: left in starting order, right in ending order. No legend. Slope charts show the value (or rank) next to each name. Bump charts put the rank number inside circular markers, with the text color from `mv.text_on(fill)`. Highlighted names are bold: navy `#143359` for the focus and `semantic.negative_text` `#A75B00` for an orange (declining) item (orange text is below 3:1 contrast). Put bold period headers (`2023`, `FY26`) above each column. |
 | Axes / gridlines | No axes and no gridlines. For ranks, put 1 at the top and space ranks evenly. For value slopes, use one linear scale shared by both columns (it doesn't have to start at 0). The column positions are the time axis, spaced evenly. |
 | Sort / order | Rank 1 is at the top, with labels following the order on each side. Draw context lines first and highlighted lines last, so they sit on top. For top-N lists, say "Top N" in the subtitle and show items entering or leaving with a "new" marker or a stub that drops off. |
 | Proportions | Line weights come from `chart.line`: focus 2.25 pt / 2 px, context 1.25 px. Bump markers are ~18–22 px circles with 1.5 px white outlines. Slope charts work narrow (4:3, 1:1 or one print column); bump charts use 16:9 with even column spacing. |
@@ -70,7 +70,8 @@ ranks = {
     "Corporate":                 [5, 6, 6, 5, 5],
     "Oncology & Multispecialty": [3, 4, 5, 6, 6],
 }
-colors = dict(zip(ranks, mv.highlight(ranks, focus="Technology", accent="Oncology & Multispecialty")))
+colors = dict(zip(ranks, mv.highlight(ranks, focus="Technology")))
+colors["Oncology & Multispecialty"] = C.negative     # slid to last: orange means worse
 x = range(len(years))
 
 fig, ax = plt.subplots(figsize=(10, 5.6))
@@ -81,7 +82,7 @@ for name, r in ranks.items():
     for xi, ri in zip(x, r):
         ax.text(xi, ri, str(ri), ha="center", va="center", fontsize=9, fontweight="bold", color=mv.text_on(col), zorder=5)
     kw = dict(va="center", fontsize=11 if hi else 10, fontweight="bold" if hi else "normal",
-              color=C.negative_text if col == C.accent else C.headline if hi else C.text_muted)
+              color=C.negative_text if col == C.negative else C.headline if hi else C.text_muted)
     ax.text(-0.18, r[0], name, ha="right", **kw)
     ax.text(len(years) - 1 + 0.18, r[-1], name, ha="left", **kw)
 for xi, yr in zip(x, years):
@@ -113,7 +114,8 @@ ranks = {
     "Corporate":                 [5, 6, 6, 5, 5],
     "Oncology & Multispecialty": [3, 4, 5, 6, 6],
 }
-colors = dict(zip(ranks, mv.pl_highlight(ranks, focus="Technology", accent="Oncology & Multispecialty")))
+colors = dict(zip(ranks, mv.pl_highlight(ranks, focus="Technology")))
+colors["Oncology & Multispecialty"] = C.negative     # slid to last: orange means worse
 fig = go.Figure()
 for name in sorted(ranks, key=lambda n: colors[n] != C.context):   # context first, highlights on top
     col, hi = colors[name], colors[name] != C.context
@@ -124,7 +126,7 @@ for name in sorted(ranks, key=lambda n: colors[n] != C.context):   # context fir
                     hovertemplate=name + ": rank %{y} in %{x}<extra></extra>")
     for x, r, anchor, shift in ((years[0], ranks[name][0], "right", -18), (years[-1], ranks[name][-1], "left", 18)):
         fig.add_annotation(x=x, y=r, text=f"<b>{name}</b>" if hi else name, xanchor=anchor, xshift=shift, showarrow=False,
-                           font={"color": C.negative_text if col == C.accent else C.headline if hi else C.text_muted})
+                           font={"color": C.negative_text if col == C.negative else C.headline if hi else C.text_muted})
 fig.update_yaxes(autorange="reversed", visible=False)
 fig.update_xaxes(side="top", showgrid=False, showline=False)
 fig.update_layout(showlegend=False, margin={"l": 190, "r": 190})
@@ -140,9 +142,9 @@ Put the underlying rate in the hover text (`customdata`) so readers can see the 
 2. Arrange the data with periods across the columns and one row per item (ranks or values). Select it and click **Insert → Insert Line or Area Chart → Line with Markers**. If items end up on the x-axis, click **Chart Design → Switch Row/Column**.
 3. For ranks: **Vertical axis → Format Axis → Values in reverse order**, Bounds 0.5 to n + 0.5, then **Labels: None** and **Line: No line**. Delete the gridlines, the legend and the chart title. For a value slope, keep one fixed min/max scale.
 4. Context series: **Ctrl+1 → Fill & Line → Line → Solid, Hex `B4B0A5`, 1 pt**. Under **Marker → Built-in, Circle, Size 14**, set **Fill `#B4B0A5`** and **Border White 1.5 pt**. Press **F4** to repeat on the next series.
-5. Focus series: **Accent 1 `#005A8C`**, **2.25 pt**, markers in the same color. Accent series: **Accent 2 `#EF8200`**. In **Select Data**, move the highlighted series to the bottom of the list so they draw on top.
-6. Rank numbers: **+ (Chart Elements) → Data Labels → More Options → Value, Position: Center**, in Libre Franklin Bold 9 pt (white on blue, `#143359` on grey).
-7. Names: select a series' **first point → Add Data Label → Series Name, Position: Left**, and its **last point → Series Name, Position: Right**. Use bold `#143359` (focus) or `#A75B00` (accent) and `#737373` for context. Put period headers on the top axis, or use text boxes, in bold.
+5. Focus series: **Accent 1 `#005A8C`**, **2.25 pt**, markers in the same color. Declining series: **Accent 6 `#EF8200`** (orange because it fell; use **Accent 2 `#143359`** navy for a contrast that isn't worse). In **Select Data**, move the highlighted series to the bottom of the list so they draw on top.
+6. Rank numbers: **+ (Chart Elements) → Data Labels → More Options → Value, Position: Center**, in Libre Franklin Bold 9 pt (white on blue and navy, `#143359` on grey and orange).
+7. Names: select a series' **first point → Add Data Label → Series Name, Position: Left**, and its **last point → Series Name, Position: Right**. Use bold `#143359` (focus) or `#A75B00` (declining, orange) and `#737373` for context. Put period headers on the top axis, or use text boxes, in bold.
 8. Paste into PowerPoint with **Use Destination Theme & Embed Workbook**. For inline print, set the chart width to one text column.
 
 ### Power BI
@@ -163,12 +165,13 @@ ranks <- rbind(FY22 = c(1, 2, 3, 4, 6, 5), FY23 = c(1, 3, 2, 4, 5, 6), FY24 = c(
 df <- data.frame(bu = rep(bus, times = nrow(ranks)), fy = rep(rownames(ranks), each = length(bus)),
                  rank = as.vector(t(ranks)))
 
-cols <- mck_highlight(unique(df$bu), focus = "Technology", accent = "Oncology & Multispecialty")
+cols <- mck_highlight(unique(df$bu), focus = "Technology")
+cols["Oncology & Multispecialty"] <- mck_colors$negative                   # slid to last: orange means worse
 df <- df |>
   mutate(hi = bu %in% c("Technology", "Oncology & Multispecialty"),
-         num_col = ifelse(hi, "white", mck_colors$headline),                     # text_on() logic
+         num_col = ifelse(bu == "Technology", "white", mck_colors$headline),     # text_on() logic
          lab_col = case_when(bu == "Technology" ~ mck_colors$headline,
-                             bu == "Oncology & Multispecialty" ~ "#A75B00", TRUE ~ mck_colors$muted)) |>
+                             bu == "Oncology & Multispecialty" ~ mck_colors$negative_text, TRUE ~ mck_colors$muted)) |>
   arrange(hi)
 first <- filter(df, fy == min(fy)); last <- filter(df, fy == max(fy))
 ggplot(df, aes(fy, rank, group = bu, colour = bu)) +
@@ -186,7 +189,7 @@ ggplot(df, aes(fy, rank, group = bu, colour = bu)) +
        subtitle = "Rank of business units by internal fill rate, FY22–FY26 (1 = highest)",
        caption = "Source: Workday Recruiting, requisitions closed FY22–FY26; U.S. regular roles")
 ```
-Use white rank numbers on blue and orange markers only. On grey `#B4B0A5` markers, map the text color to `#143359` (as `mv.text_on()` does).
+Use white rank numbers on blue and navy markers only. On orange `#EF8200` and grey `#B4B0A5` markers, map the text color to `#143359` (as `mv.text_on()` does).
 
 ## QA specifics
 - [ ] There are ≤ 2 highlighted items, and they're exactly the ones the headline names. Everything else is `#B4B0A5`.

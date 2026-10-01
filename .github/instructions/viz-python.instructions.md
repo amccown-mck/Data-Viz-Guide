@@ -17,7 +17,7 @@ C = mv.colors
 ```
 
 ## Rules
-- **No hex literals and no named colors** (`"red"`, `"tab:blue"`). Use roles: `C.focus`, `C.context`, `C.context_light`, `C.accent`, `C.total`, `C.annotation`, `C.text`, `C.text_muted`, `C.headline`, `C.negative_text`, `C.positive_text`. Use ramps from `mv.SEQUENTIAL[...]` and `mv.DIVERGING`, and series colors from `mv.categorical(n)` (≤ 6).
+- **No hex literals and no named colors** (`"red"`, `"tab:blue"`). Use roles: `C.focus`, `C.focus_light`, `C.context`, `C.context_light`, `C.accent` (navy exception), `C.negative` (orange, only for "worse"), `C.total`, `C.annotation`, `C.text`, `C.text_muted`, `C.headline`, `C.negative_text`, `C.positive_text`. Use ramps from `mv.SEQUENTIAL[...]` and `mv.DIVERGING`, and series colors from `mv.categorical(n)` (≤ 6).
 - **Highlight with `mv.highlight(labels, focus=..., accent=...)`**: grey everything, then color only what the headline names. Bold the matching tick label in `C.headline`.
 - **Titles through the helpers.** Use `mv.titles(fig, headline, subtitle)` and `mv.source(fig, "Source: ...", footnote=...)`, then `mv.save(fig, path)`, which lays them out. Don't use `ax.set_title` or `fig.suptitle`. In Plotly, use `mv.pl_finish(fig, headline, subtitle, source_text, footnote)`, or the HTML chart-card pattern from `examples/python/gallery_plotly.py`.
 - **Headline numbers come from variables** (`f"... {share:.0f}% ..."`), computed from the same data the chart plots.

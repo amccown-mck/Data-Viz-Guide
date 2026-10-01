@@ -249,7 +249,7 @@ def slide_rules(prs):
     rules = [
         ("Headline = the insight", "A full sentence with the number. The slide title is the headline."),
         ("Subtitle = the measure", "Metric, unit, scope, period. Neutral, no opinion."),
-        ("Grey, then highlight", "Everything grey (B4B0A5); the headline's item blue (005A8C); one exception orange."),
+        ("Grey, then highlight", "Everything grey (B4B0A5); the headline's item blue (005A8C); one exception navy (143359). Orange only means worse."),
         ("Label directly", "Data labels on bars and line ends; delete the value axis, gridlines and legend."),
         ("Honest scales", "Bars from zero (waterfall breaks marked); no dual axes; ≤ 6 colors."),
         ("Source and n", "Source, as-of date and population bottom-left. No group under 10 people."),
@@ -405,8 +405,8 @@ def slide_waterfall(prs):
             tops.append(base[i] + change[i])
             hit = r.step in focus
             if hit:
-                fill(s_change.points[i], C.accent)
-            point_label(s_label.points[i], mv.signed(r.value_musd), C.negative_text if hit else C.text, bold=hit,
+                fill(s_change.points[i], C.focus)
+            point_label(s_label.points[i], mv.signed(r.value_musd), C.headline if hit else C.text, bold=hit,
                         position=XL_LABEL_POSITION.INSIDE_BASE)
     va = chart.value_axis
     va.minimum_scale, va.maximum_scale = lo, hi
@@ -437,12 +437,12 @@ def slide_stacked(prs):
     slide = chart_slide(
         prs, f"Technology uses contingent labor at more than {int(tech / others)}x the average rate of other functions",
         "Workforce composition by function, 2026 (% of workers)", None,
-        "100% stacked bar. The segment the headline is about (contingent) sits at the end of each bar in orange; "
+        "100% stacked bar. The segment the headline is about (contingent) sits at the end of each bar in blue; "
         "the rest are greys. The legend is pinned top-left; delete it and label the first bar if you prefer.")
     data = CategoryChartData()
     data.categories = list(df.function)
     parts = [("employee_ft_pct", "Full-time", C.context), ("employee_pt_pct", "Part-time", C.context_light),
-             ("contingent_pct", "Contingent", C.accent)]
+             ("contingent_pct", "Contingent", C.focus)]
     for col, name, _ in parts:
         data.add_series(name, list(df[col]))
     frame, chart = add_chart(slide, XL_CHART_TYPE.BAR_STACKED_100, data)
@@ -560,7 +560,7 @@ def build_xlsx() -> Path:
         ("The rules (full version: docs/principles.md)", f["bold"]),
         ("• The headline is the insight, as a full sentence with the number. The subtitle is the metric, unit, "
          "scope and period.", None),
-        ("• Grey context, blue focus, one orange exception. At most 6 categorical colors (see the Palette sheet).",
+        ("• Grey context, blue focus, one navy exception; orange only for negatives. At most 6 categorical colors.",
          None),
         ("• Label values directly and delete the value axis, gridlines and legend. Bars start at zero.", None),
         ("• Source, as-of date and population at the bottom. No group of fewer than 10 people.", None),
@@ -585,14 +585,15 @@ def build_xlsx() -> Path:
     roles = [("Context", C.context, "Everything the reader should see but not focus on"),
              ("Context light", C.context_light, "De-emphasized fills, suppressed cells"),
              ("Focus", C.focus, "What the headline is about; default single-series color"),
-             ("Accent", C.accent, "The one exception that must pop"),
+             ("Accent", C.accent, "The one exception that must pop (navy; never orange)"),
+             ("Light blue series", C.focus_light, "The series when navy marks the exception"),
              ("Total / benchmark", C.total, "Totals, target and benchmark lines"),
              ("Axis / baseline", C.axis, "Thin zero baseline"),
              ("Grid", C.grid, "Gridlines, only when values aren't labelled"),
              ("Headline text", C.headline, "Headlines, emphasized labels"),
              ("Body text", C.text, "Subtitles, data labels"),
              ("Muted text", C.text_muted, "Ticks, footnotes, source"),
-             ("Unfavorable text", C.negative_text, "Unfavorable values as text (fill: accent orange)"),
+             ("Unfavorable text", C.negative_text, "Unfavorable values as text (fill: orange, for negatives only)"),
              ("Favorable", C.positive, "Favorable fills (text: " + C.positive_text + ")")]
     row = 3
     ws.write_row(row, 0, ["", "Role", "Hex", "RGB", "Use"], f["th"])
@@ -606,7 +607,7 @@ def build_xlsx() -> Path:
     row = 1
     for title, colors, note in (("Categorical (fixed order, max 6)", mv.CATEGORICAL[:6], "Series 1 → 6"),
                                 ("Sequential blue (light → dark)", mv.SEQUENTIAL["blue"], "Heatmaps, single measure"),
-                                ("Sequential orange (risk)", mv.SEQUENTIAL["orange"], "Attrition, vacancy, flight risk"),
+                                ("Sequential orange (risk only)", mv.SEQUENTIAL["orange"], "Only when darker means worse, and say so"),
                                 ("Diverging orange–blue (midpoint = benchmark)", mv.DIVERGING, "Gaps to benchmark")):
         row += 2                                           # ramps sit in equal-width columns G:M
         ws.write(row, 6, f"{title}: {note.lower()}", f["bold"])
@@ -709,7 +710,7 @@ def build_xlsx() -> Path:
     chart.add_series({
         "name": "Change", "categories": ["Waterfall", 4, 0, 3 + n, 0], "values": ["Waterfall", 4, 3, 3 + n, 3],
         "fill": {"color": C.context},
-        "points": [{"fill": {"color": C.accent if st in wf_focus else C.context}} for st in df.step],
+        "points": [{"fill": {"color": C.focus if st in wf_focus else C.context}} for st in df.step],
     })
     chart.add_series({"name": "Total", "categories": ["Waterfall", 4, 0, 3 + n, 0],
                       "values": ["Waterfall", 4, 4, 3 + n, 4], "fill": {"color": C.total}})
@@ -718,7 +719,7 @@ def build_xlsx() -> Path:
         hot = st in wf_focus
         labels.append({"value": f"{v:,.0f}" if k == "total" else mv.signed(v),
                        "font": {**label_font, "bold": k == "total" or hot,
-                                "color": C.headline if k == "total" else C.negative_text if hot else C.text}})
+                                "color": C.headline if k == "total" or hot else C.text}})
     chart.add_series({"name": "Label", "categories": ["Waterfall", 4, 0, 3 + n, 0],
                       "values": ["Waterfall", 4, 5, 3 + n, 5], "fill": {"none": True}, "border": {"none": True},
                       "data_labels": {"value": True, "position": "inside_base", "custom": labels}})
@@ -738,7 +739,7 @@ def build_xlsx() -> Path:
         ws.write_row(i, 1, [r.employee_ft_pct, r.employee_pt_pct, r.contingent_pct], f["int"])
     n = len(df)
     chart = base_chart("bar", "percent_stacked")
-    for col, color in ((1, C.context), (2, C.context_light), (3, C.accent)):
+    for col, color in ((1, C.context), (2, C.context_light), (3, C.focus)):
         chart.add_series({
             "name": ["Stacked 100%", 3, col], "categories": ["Stacked 100%", 4, 0, 3 + n, 0],
             "values": ["Stacked 100%", 4, col, 3 + n, col], "fill": {"color": color},
@@ -786,7 +787,7 @@ def build_xlsx() -> Path:
     for j, (col, fmt) in enumerate((("D", "0.0"), ("E", '+0.0;"−"0.0;0.0'), ("F", "0"), ("G", "0"), ("H", "0")), start=3):
         ws.write_formula(tot, j, f"=SUMPRODUCT({col}{first + 1}:{col}{last + 1},{weights})/SUM({weights})",
                          wb.add_format({**total, "num_format": fmt}))     # weighted, not an average of rates
-    ramp = mv.SEQUENTIAL["orange"]
+    ramp = mv.SEQUENTIAL["blue"]
     rng = f"D{first + 1}:D{last + 1}"
     for k, color in enumerate(ramp):                                    # 6 even 5-pt classes, last one open-ended
         lo = k * 5

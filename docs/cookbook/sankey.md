@@ -19,7 +19,7 @@
 
 | Element | Rule |
 |---|---|
-| Color | Color **transfer type** (or origin), not stage, and keep it the same at every step. Default: main path `chart.focus` `#005A8C`, other flows `chart.context` `#B4B0A5`, the one exception the headline names `chart.accent` `#EF8200`. Links are **semi-transparent** (opacity 0.45–0.65) so crossings stay visible. Nodes are thin bars in `chart.total` `#143359`. If you must tell origins apart, use the first 2–3 `color.categorical` values, never a rainbow. |
+| Color | Color **transfer type** (or origin), not stage, and keep it the same at every step. Default: main path `chart.focus` `#005A8C`, other flows `chart.context` `#B4B0A5`, the one exception the headline names `chart.accent` navy `#143359`, or `semantic.negative` orange `#EF8200` when that exception is a loss or leak (people who drop out or aren't placed). Orange only ever means worse. Links are **semi-transparent** (opacity 0.45–0.65) so crossings stay visible. Nodes are thin bars in `chart.total` `#143359`. If you must tell origins apart, use the first 2–3 `color.categorical` values, never a rainbow. |
 | Labels | Put the node name and value right next to the node (`Completed  840`). Use plain numbers with thousands separators and no boxes. Bold stage headers (Nominated · Enrolled · …) go above each column. The unit goes in the subtitle. Hover shows `source → target: value`. |
 | Axes / gridlines | None. No frame, no background fill. |
 | Sort / order | Stages run left → right in process order. Within a column, keep the main path together and the exits/leakage at the edge. Keep the same node order on every slide of a build-up. |
@@ -48,7 +48,7 @@
 Not recommended for Sankeys. `matplotlib.sankey` draws engineering-style single-node diagrams with straight arrows, which breaks the "organic bands" rule. Use the Plotly route below. For a static PNG/SVG, export the Plotly figure with `fig.write_image("sankey.svg")`. This needs `kaleido` and a local Chrome. You can also screenshot the HTML card.
 
 ### Python — Plotly / HTML
-Primary route. In this example the headline names the orange "not placed" leak, so orange is the one accent. The `snap` arrangement lets Plotly place nodes. It may stack the exits at the top. That's fine as long as no bands cross needlessly.
+Primary route. In this example the headline names the "not placed" leak, a loss, so it is the one flow in orange (`C.negative`). The `snap` arrangement lets Plotly place nodes. It may stack the exits at the top. That's fine as long as no bands cross needlessly.
 
 ```python
 import tempfile
@@ -76,7 +76,7 @@ flows = [
     ("Completed", "Left McKesson", 80, "not_placed"),
 ]
 # One color per transfer TYPE, reused at every step; semi-transparent so overlaps stay visible.
-link_color = {"progressed": rgba(C.focus, 0.55), "dropped": rgba(C.context, 0.45), "not_placed": rgba(C.accent, 0.65)}
+link_color = {"progressed": rgba(C.focus, 0.55), "dropped": rgba(C.context, 0.45), "not_placed": rgba(C.negative, 0.65)}
 
 nodes = list(dict.fromkeys(n for f in flows for n in f[:2]))
 idx = {n: i for i, n in enumerate(nodes)}
@@ -147,7 +147,7 @@ ggplot(paths, aes(axis1 = nominated, axis2 = enrolment, axis3 = course, axis4 = 
             hjust = 0, nudge_x = 0.04, size = 3.4, color = mck_colors$headline) +
   scale_x_discrete(limits = c("Nominated", "Enrolled", "Completed", "Outcome"), position = "top") +
   scale_fill_manual(values = c(progressed = mck_colors$focus, dropped = mck_colors$context,
-                               not_placed = mck_colors$accent), guide = "none") +
+                               not_placed = mck_colors$negative), guide = "none") +
   labs(title = "Half of reskilling graduates are not redeployed",
        subtitle = "Data & AI reskilling academy, FY25–FY26 cohorts (people)",
        caption = "Source: Learning records and Workday HCM; synthetic data", x = NULL, y = NULL) +

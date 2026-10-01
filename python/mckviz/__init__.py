@@ -90,10 +90,10 @@ def use(plotly_default: bool = True) -> None:
 
 # ------------------------------------------------------------------ color logic
 def highlight(labels: Iterable, focus=None, accent=None, base: str | None = None) -> list[str]:
-    """Color list aligned to `labels`: grey context, blue `focus`, orange `accent`.
+    """Color list aligned to `labels`: grey context, blue `focus`, navy `accent`.
 
-    focus / accent may be a single label or a collection of labels. Use `base=colors.focus` to make
-    everything blue and only the accent orange (the 'uniform' pattern).
+    focus / accent may be a single label or a collection of labels. Use `base=colors.focus_light` to make
+    everything light blue and only the accent navy (the 'uniform + accent' pattern).
     """
     def as_set(x):
         if x is None:

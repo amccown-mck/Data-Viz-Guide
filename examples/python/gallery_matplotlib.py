@@ -3,7 +3,7 @@
     python examples/python/gallery_matplotlib.py      -> examples/output/*.png
 
 Each function demonstrates one chart type AND the house rules: insight headline, neutral subtitle,
-grey context vs. blue focus vs. orange accent, direct labels instead of legends/axes, source line.
+grey context vs. blue focus vs. navy accent (orange only for negatives), direct labels instead of legends/axes, source line.
 """
 from pathlib import Path
 import textwrap
@@ -52,7 +52,7 @@ def bar_highlight():
 def line_gap():
     df = pd.read_csv(DATA / "data_ai_supply_demand.csv")
     fig, ax = plt.subplots(figsize=(10, 5.6))
-    ax.fill_between(df.year, df.internal_supply_fte, df.demand_fte, color=C.accent, alpha=0.12, lw=0)
+    ax.fill_between(df.year, df.internal_supply_fte, df.demand_fte, color=C.negative, alpha=0.12, lw=0)   # shortfall
     ax.plot(df.year, df.demand_fte, color=C.navy, label="Demand")
     ax.plot(df.year, df.internal_supply_fte, color=C.focus, label="Internal supply")
     mv.label_line_ends(ax, fmt="{:,.0f}")
@@ -84,7 +84,7 @@ def waterfall():
         else:
             bottoms.append(running if r.value_musd >= 0 else running + r.value_musd)
             heights.append(abs(r.value_musd))
-            cols.append(C.accent if r.step in focus else C.context)
+            cols.append(C.focus if r.step in focus else C.context)
             running += r.value_musd
     x = np.arange(len(df))
     ax.bar(x, heights, bottom=bottoms, color=cols, width=BAND)
@@ -96,7 +96,7 @@ def waterfall():
         total = r.kind == "total"
         txt = f"{r.value_musd:,.0f}" if total else mv.signed(r.value_musd)
         ax.text(i, tops[i] + 8, txt, ha="center", va="bottom", fontsize=10, fontweight="bold" if total or r.step in focus else "medium",
-                color=C.headline if total else NEG_TEXT if r.step in focus else C.text)
+                color=C.headline if total or r.step in focus else C.text)
     ax.set_xticks(x, [textwrap.fill(s, 13) for s in df.step], fontsize=9)
     ax.set_ylim(3900, max(tops) + 45)
     for i in (0, len(df) - 1):
@@ -152,7 +152,7 @@ def dumbbell():
     fig, ax = plt.subplots(figsize=(10, 5.6))
     lag = df.gap_pct <= -5
     for i, r in df.iterrows():
-        col = C.accent if lag[i] else C.focus
+        col = C.negative if lag[i] else C.focus                      # below market: orange carries meaning
         ax.plot([r.market_median_k, r.internal_median_k], [i, i], color=C.context_light, lw=3, solid_capstyle="round", zorder=1)
         ax.scatter(r.market_median_k, i, s=55, color=C.context, zorder=2)
         ax.scatter(r.internal_median_k, i, s=70, color=col, zorder=3)
@@ -161,9 +161,9 @@ def dumbbell():
                 bbox=dict(boxstyle="square,pad=0.15", fc="white", ec="none"))
     top = 0
     r0 = df.iloc[top]
-    ax.annotate("Market", (r0.market_median_k, top), xytext=(0, 9), textcoords="offset points", ha="center", va="bottom",
+    ax.annotate("Market", (r0.market_median_k, top), xytext=(3, 9), textcoords="offset points", ha="left", va="bottom",
                 fontsize=8, color=C.text_muted)
-    ax.annotate("McKesson", (r0.internal_median_k, top), xytext=(0, 9), textcoords="offset points", ha="center", va="bottom",
+    ax.annotate("McKesson", (r0.internal_median_k, top), xytext=(-3, 9), textcoords="offset points", ha="right", va="bottom",
                 fontsize=8, color=NEG_TEXT, fontweight="bold")
     ax.set_yticks(range(len(df)), df.role)
     ax.invert_yaxis()
@@ -244,7 +244,7 @@ def slope():
 def stacked_100():
     df = pd.read_csv(DATA / "workforce_mix.csv").sort_values("contingent_pct").reset_index(drop=True)
     parts = [("employee_ft_pct", "Full-time", C.context), ("employee_pt_pct", "Part-time", C.context_light),
-             ("contingent_pct", "Contingent", C.accent)]
+             ("contingent_pct", "Contingent", C.focus)]
     fig, ax = plt.subplots(figsize=(10, 4.8))
     left = np.zeros(len(df))
     for col, name, color in parts:
@@ -253,7 +253,7 @@ def stacked_100():
             if col == "contingent_pct":
                 hi = df.function[y] == "Technology"
                 ax.text(101, y, f"{w:.0f}%", ha="left", va="center", fontsize=10 if hi else 9,
-                        color=NEG_TEXT, fontweight="bold" if hi else "medium")
+                        color=C.headline, fontweight="bold" if hi else "medium")
             elif w >= 4:
                 ax.text(l + w / 2, y, f"{w:.0f}%", ha="center", va="center", fontsize=9 if w >= 8 else 8, color=mv.text_on(color))
         left += df[col].values
@@ -320,7 +320,7 @@ def heat_table():
             ("attrition_change_pts", "Change vs.\nFY25 (pts)", None), ("median_days_to_fill", "Median\ndays to fill", "{:.0f}"),
             ("internal_fill_pct", "Internal fill\nrate (%)", "{:.0f}"), ("engagement_index", "Engagement\nindex", "{:.0f}")]
     focus = set(df.job_family[df.vol_attrition_pct > 20])
-    ramp = mv.SEQUENTIAL["orange"]                                      # 6 even 5-pt classes: 0-5, 5-10, ... 25+
+    ramp = mv.SEQUENTIAL["blue"]                                        # 6 even 5-pt classes: 0-5, 5-10, ... 25+
     n = len(df)
     fig, ax = plt.subplots(figsize=(11, 5.4))
     ax.set_xlim(0, 10)

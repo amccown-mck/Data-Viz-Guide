@@ -22,7 +22,7 @@
 
 | Element | Rule |
 |---|---|
-| Color | Comparator dot (market, before, benchmark): `chart.context` `#B4B0A5`. Focus dot (McKesson, after, actual): `chart.focus` `#005A8C`. Exception rows the headline calls out: focus dot in `chart.accent` `#EF8200`. Connector: `chart.context_light` `#DEDBD1`. Benchmark line on a dot plot: `chart.total` `#143359`, dashed, 0.75 pt, labelled. Use semantic colors (`#00AF9D` favorable / `#EF8200` unfavorable) only when direction = good/bad is the message. |
+| Color | Comparator dot (market, before, benchmark): `chart.context` `#B4B0A5`. Focus dot (McKesson, after, actual): `chart.focus` `#005A8C`. Exception rows the headline calls out: focus dot in `chart.accent` navy `#143359`, or in `semantic.negative` orange `#EF8200` when the exception is worse (below market, below benchmark), as in the pay example below. Orange never marks a plain highlight. Connector: `chart.context_light` `#DEDBD1`. Benchmark line on a dot plot: `chart.total` `#143359`, dashed, 0.75 pt, labelled. Use semantic colors (`#00AF9D` favorable / `#EF8200` unfavorable) only when direction = good/bad is the message. |
 | Labels | Name the two dot types **once**, above the top row ("Market", "McKesson") instead of a legend. Put the gap label at the right end of each row as a signed value with a true minus (`−6.9%`, `+2.1%`), using `semantic.negative_text` `#A75B00` bold for the exceptions and `#505050` otherwise. Bold the exception rows' category labels and set them in Navy `#143359`. |
 | Axes / gridlines | A **non-zero value range is allowed**: pick round bounds that just contain the data. Show the value axis with tick labels (dots aren't value-labelled) and light **vertical** gridlines in `chart.grid` `#E6E4DE`, 0.75 pt. No baseline, no tick marks, no y-axis line. Small multiples share the same range. |
 | Sort / order | Sort by the gap (largest unfavorable first) or by the focus value. Keep a natural order (job level, survey item order) where it exists. Use the same order across the deck. |
@@ -38,13 +38,13 @@
 | Label the dot types once on the top row | Add a legend box for two series |
 | Write the gap at the row end with an explicit sign (`+2.1%`, `−6.9%`) | Make the reader subtract axis positions |
 | Sort by the gap or the focus value | Sort alphabetically by default |
-| Use grey for the comparator and blue/orange for the focus | Use two equally strong colors so neither reads as "us" |
+| Use grey for the comparator and blue for the focus (navy for an exception, orange only if it is below the comparator) | Use two equally strong colors so neither reads as "us" |
 | State the comparator in the subtitle or footnote (market definition, benchmark source, cohort n) | Leave "market" or "benchmark" undefined |
 
 ## Workforce examples
 - **Firm vs. external market:** *Headline:* "McKesson pay trails the market by 5% or more for three clinical and pharmacy roles". *Subtitle:* "Median base pay, McKesson vs. external market, 2026 ($K)". *Data:* [`examples/data/pay_vs_market.csv`](../../examples/data/pay_vs_market.csv): internal compensation vs. external posted-pay medians for matched roles and metros.
 - **Team, internal (dot plot):** *Headline:* "Two distribution-center teams score 8+ points below the company engagement index of 76". *Subtitle:* "Employee engagement index by DC team, Q2 2026 (0–100)". *Data:* engagement survey, teams with n ≥ 10 respondents. Range 60–90, with a company line in navy, dashed and labelled.
-- **Individual → cohort, internal (before/after):** *Headline:* "The first Data Academy cohort lifted SQL proficiency from 1.8 to 3.1, the largest gain of any skill". *Subtitle:* "Average assessed proficiency before vs. after the program, cohort 1 (n = 48), 1–5 scale". *Data:* pre- and post-program skill assessments (LMS). "Before" dots in grey, "after" dots in blue, SQL in orange.
+- **Individual → cohort, internal (before/after):** *Headline:* "The first Data Academy cohort lifted SQL proficiency from 1.8 to 3.1, the largest gain of any skill". *Subtitle:* "Average assessed proficiency before vs. after the program, cohort 1 (n = 48), 1–5 scale". *Data:* pre- and post-program skill assessments (LMS). "Before" dots in grey, "after" dots in blue, SQL in navy.
 
 ## Build it
 
@@ -72,7 +72,7 @@ for i, r in df.iterrows():
     ax.plot([r.market_median_k, r.internal_median_k], [i, i], color=C.context_light, lw=3,
             solid_capstyle="round", zorder=1)            # connector = the gap
     ax.scatter(r.market_median_k, i, s=55, color=C.context, zorder=2)                     # comparator
-    ax.scatter(r.internal_median_k, i, s=70, color=C.accent if lag[i] else C.focus, zorder=3)
+    ax.scatter(r.internal_median_k, i, s=70, color=C.negative if lag[i] else C.focus, zorder=3)   # below market: orange = worse
     ax.text(max(r.market_median_k, r.internal_median_k) + 3, i, mv.signed(r.gap_pct, 1, "%"), va="center",
             fontsize=9, color=C.negative_text if lag[i] else C.text, fontweight="bold" if lag[i] else "normal")
 
@@ -126,7 +126,7 @@ fig.add_scatter(x=xs, y=ys, mode="lines", line={"color": C.context_light, "width
 fig.add_scatter(x=df.market_median_k, y=df.role, mode="markers", name="Market",
                 marker={"color": C.context, "size": 10}, hovertemplate="Market: $%{x}K<extra></extra>")
 fig.add_scatter(x=df.internal_median_k, y=df.role, mode="markers+text", name="McKesson",
-                marker={"color": [C.accent if b else C.focus for b in lag], "size": 12},
+                marker={"color": [C.negative if b else C.focus for b in lag], "size": 12},   # below market = orange
                 text=[mv.signed(g, 1, "%") for g in df.gap_pct], textposition="middle right",
                 hovertemplate="McKesson: $%{x}K<extra></extra>")
 fig.update_layout(legend={"orientation": "h", "x": 0, "y": 1.02, "yanchor": "bottom"})
@@ -145,7 +145,7 @@ Excel has no native dumbbell; build it from an **XY scatter** once, then save it
 2. Set up the sheet with these columns: `Role`, `Market`, `McKesson`, `Row` (1…n), `Plus = MAX(0, Market − McKesson)`, `Minus = MAX(0, McKesson − Market)`, `LabelX = MAX(Market, McKesson) + 3`, `GapPct = (McKesson − Market) / Market`, `GapLabel = IF(GapPct<0,"−","+")&TEXT(ABS(GapPct),"0.0%")` and `AxisX` (the axis minimum, e.g. 35).
 3. **Insert › Charts › Scatter (markers only)**. In **Select Data**, add the series *Market* (X = Market, Y = Row) and *McKesson* (X = McKesson, Y = Row).
 4. Select *McKesson* › **Chart Elements (+) › Error Bars › More Options**. Delete the vertical error bars. For the horizontal ones, set **Direction: Both**, **End Style: No Cap**, **Error Amount › Custom › Specify Value** (Positive = `Plus`, Negative = `Minus`), and **Line: solid `DEDBD1`, 3 pt, Round cap**.
-5. Markers: **Format Data Series › Marker › Built-in › Circle**. Set *Market* to size 7, fill `B4B0A5`, no border, and *McKesson* to size 9, fill `005A8C`, no border. Click an exception point twice and set its fill to `EF8200`.
+5. Markers: **Format Data Series › Marker › Built-in › Circle**. Set *Market* to size 7, fill `B4B0A5`, no border, and *McKesson* to size 9, fill `005A8C`, no border. Click an exception point twice and set its fill to `EF8200` (orange, because these roles are below market; use navy `143359` for an exception that isn't worse).
 6. Y axis: **Bounds 0.5 to n + 0.5**, **Values in reverse order**, **Labels: None**, no line. Add a helper series at (`AxisX`, `Row`) with no marker. Give it **Data Labels › Value From Cells = Role**, untick Y Value, and set **Position: Left**.
 7. Gap labels: add a helper series at (`LabelX`, `Row`) with no marker, with **Data Labels › Value From Cells = GapLabel** at **Position: Right**. Bold the exception labels and set them to `A75B00`.
 8. Delete the horizontal gridlines. Keep the vertical gridlines at `E6E4DE`, 0.75 pt. Set the X axis number format to `"$"#,##0"K"` with fixed bounds (e.g., 35–160). Delete the legend and type "Market" and "McKesson" above the top row.
@@ -156,7 +156,7 @@ Excel has no native dumbbell; build it from an **XY scatter** once, then save it
 - Apply [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json).
 - **Most faithful:** the certified **Deneb** visual with a Vega-Lite spec (`rule` mark for the connector, two `circle` layers, a `text` layer for gaps). Store the spec in the report so it's versioned.
 - **Native fallback (vertical dumbbells):** use a **Line chart** with role on the X-axis and *Market* and *McKesson* as values. Set **Lines › Stroke width 0** and turn **Markers** on. In the **Analytics pane › Error bars**, set Upper/Lower bound = `MAX`/`MIN` of the two measures, bar color `#DEDBD1`. Turn off the Y-axis gridlines except light vertical guides.
-- Highlight with marker conditional formatting (**fx** on a color measure returning `#EF8200` / `#005A8C`).
+- Highlight with marker conditional formatting (**fx** on a color measure returning `#EF8200` for below-market rows / `#005A8C` otherwise; `#143359` for an exception that isn't worse).
 - Minimum n: `Median Pay (safe) = IF([Headcount] < 10, BLANK(), [Median Pay])`. This applies to tooltips as well.
 
 ### R — ggplot2 (optional)
@@ -175,7 +175,7 @@ ggplot(pay, aes(y = role)) +
   geom_point(aes(x = internal_median_k, color = lag), size = 3.2) +
   geom_text(aes(x = pmax(market_median_k, internal_median_k) + 3, label = gap_lbl),
             hjust = 0, size = 3.2, color = ifelse(pay$lag, "#A75B00", mck_colors$text)) +
-  scale_color_manual(values = c(`TRUE` = mck_colors$accent, `FALSE` = mck_colors$focus), guide = "none") +
+  scale_color_manual(values = c(`TRUE` = mck_colors$negative, `FALSE` = mck_colors$focus), guide = "none") +
   scale_x_continuous(limits = c(35, 160), labels = function(x) paste0("$", x, "K")) +
   labs(title = "McKesson pay trails the market by 5% or more for three clinical and pharmacy roles",
        subtitle = "Median base pay, McKesson vs. external market, 2026 ($K)",
@@ -189,7 +189,7 @@ ggplot(pay, aes(y = role)) +
 ## QA specifics
 - [ ] A dot/dumbbell is used **because** the values sit far from zero or the gap is the story. No truncated bars anywhere in the deck.
 - [ ] The value axis range is round and stated (tick labels visible); small multiples share it.
-- [ ] Comparator dots are grey and focus dots blue/orange; the connector is light and sits behind the dots.
+- [ ] Comparator dots are grey and focus dots blue (exceptions navy, or orange only when below the comparator); the connector is light and sits behind the dots.
 - [ ] Dot types are labelled once in place (no legend box); every row has a signed gap label with a true minus.
 - [ ] Sorted by the gap or the focus value; the highlighted rows match the headline count exactly (recompute).
 - [ ] The comparator (market, benchmark, cohort) is defined in a footnote with its source and n; no row has n < 10.

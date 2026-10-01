@@ -304,7 +304,7 @@ def build_r() -> None:
 
 mck_colors <- list(
   blue = "{CORE['blue']['value']}", navy = "{CORE['navy']['value']}", orange = "{CORE['orange']['value']}", sand = "{CORE['sand']['value']}",
-  focus = "{v('chart.focus')}", accent = "{v('chart.accent')}", context = "{v('chart.context')}",
+  focus = "{v('chart.focus')}", focus_light = "{v('chart.focus_light')}", accent = "{v('chart.accent')}", context = "{v('chart.context')}",
   context_light = "{v('chart.context_light')}", total = "{v('chart.total')}",
   positive = "{v('semantic.positive')}", negative = "{v('semantic.negative')}",
   text = "{v('text.primary')}", muted = "{v('text.muted')}", headline = "{v('text.headline')}",
@@ -343,9 +343,10 @@ scale_color_mck <- function(...) ggplot2::scale_color_manual(values = mck_catego
 scale_fill_mck_seq <- function(...) ggplot2::scale_fill_gradientn(colors = mck_sequential, ...)
 scale_fill_mck_div <- function(...) ggplot2::scale_fill_gradientn(colors = mck_diverging, ...)
 
-# Highlight helper: returns a named vector mapping every level to context grey except `focus` (blue) and `accent` (orange).
-mck_highlight <- function(levels, focus = NULL, accent = NULL) {{
-  cols <- stats::setNames(rep(mck_colors$context, length(levels)), levels)
+# Highlight helper: returns a named vector mapping every level to `base` (context grey) except `focus` (blue) and
+# `accent` (navy). For the "uniform + accent" pattern pass base = mck_colors$focus_light.
+mck_highlight <- function(levels, focus = NULL, accent = NULL, base = mck_colors$context) {{
+  cols <- stats::setNames(rep(base, length(levels)), levels)
   cols[focus] <- mck_colors$focus
   cols[accent] <- mck_colors$accent
   cols
@@ -380,7 +381,7 @@ def build_powerbi() -> None:
     theme = {
         "name": "McKesson Data Viz",
         # Categorical order first; tints only extend the cycle for 9+ series. No repeats, so no two series share a color.
-        "dataColors": list(dict.fromkeys(CAT + C["sequential"]["blue"][1:4] + C["sequential"]["orange"][1:4])),
+        "dataColors": list(dict.fromkeys(CAT + C["sequential"]["blue"][1:4] + C["sequential"]["teal"][1:4])),
         "foreground": v("text.primary"),
         "foregroundNeutralSecondary": v("text.muted"),
         "foregroundNeutralTertiary": v("chart.context"),

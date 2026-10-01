@@ -20,7 +20,7 @@
 
 | Element | Rule |
 |---|---|
-| Color | Give every bubble **one color**, `chart.focus` `#005A8C`. Rows already separate the categories, so coloring by row is redundant. If the headline is about one row, that row is `#005A8C` and the others are `chart.context` `#B4B0A5`. Use `chart.accent` `#EF8200` for at most one single event that must pop. Mark the insight period with a `surface.subtle` `#EFEDE7` band behind the bubbles. |
+| Color | Give every bubble **one color**, `chart.focus` `#005A8C`. Rows already separate the categories, so coloring by row is redundant. If the headline is about one row, that row is `#005A8C` and the others are `chart.context` `#B4B0A5`. Use `chart.accent` navy `#143359` for at most one single event that must pop. Mark the insight period with a `surface.subtle` `#EFEDE7` band behind the bubbles. |
 | Labels | Put row labels on the left in sentence case, with the focus row bold `#143359`. Place a **size key** top-left under the subtitle: 2–3 reference circles at round values (e.g. 1,000 / 5,000 / 10,000) plus the unit. Label only the events the headline mentions (value + short name). Add a bold callout for the shaded period. |
 | Axes / gridlines | Time runs on the x-axis at even intervals with year labels (`2020`, `'21`, `'22`, …) and no axis line. There's no y-axis; each row gets a thin guide line in `chart.grid` `#E6E4DE` at 0.75 px. No vertical gridlines. |
 | Sort / order | Order rows naturally (org order, value chain) or by total magnitude, largest on top. Keep that order across the deck. **Draw the largest bubbles first** so the small ones sit on top, and give every bubble a 1 px white outline with 85–90% opacity so the overlapping edges stay visible. |

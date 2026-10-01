@@ -24,7 +24,7 @@ If you are resuming unfinished work on the kit, read [`ROADMAP.md`](ROADMAP.md) 
 |---|---|
 | Insight headline | A full sentence with a verb that states the "so what", ideally with a number. ≤ 2 lines, sentence case, no final period. Every claim is visibly supported by the chart. |
 | Neutral subtitle | Metric, unit, scope and period ("Voluntary attrition by job family, FY26 (%)"). No opinions. |
-| Highlight logic | Grey context (`chart.context`), blue focus (`chart.focus`) for what the headline names, and an optional orange accent (`chart.accent`) for the single exception. At most 2 highlighted items. |
+| Highlight logic | Grey context (`chart.context`), blue focus (`chart.focus`) for what the headline names, and an optional navy accent (`chart.accent`) for the single exception (against a light-blue series, `chart.focus_light`, in the uniform pattern). At most 2 highlighted items. **Orange means "worse"**: use it (`semantic.negative`) only for below target, shrinking or a shortfall, never as a plain highlight. Amber is never used. |
 | Categorical colors | Only when categories must be told apart. At most 6, in the fixed token order; group the tail into "Other". |
 | Direct labels | Label bar ends, line ends and segments in place. A legend only when labels would collide, placed top-left. When values are labelled, delete the value axis and gridlines. |
 | Honest scales | Bars start at zero. Bubble **area** ∝ value. No dual axes. Small multiples share a scale. |
@@ -38,7 +38,7 @@ If you are resuming unfinished work on the kit, read [`ROADMAP.md`](ROADMAP.md) 
 ```python
 import mckviz as mv
 mv.use()                     # Libre Franklin + matplotlib style + Plotly template "mck"
-C = mv.colors                # roles: C.focus, C.context, C.context_light, C.accent, C.total, C.annotation, C.text, ...
+C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.context_light, C.accent (navy), C.negative (orange = worse), C.total, C.text, ...
 ```
 | Need | Use |
 |---|---|
@@ -51,7 +51,7 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 | Annotations | `mv.callout(ax, xy, title, body)`, `mv.shade_period(ax, start, end, label)` |
 | Clean axes | `mv.clean_axes(ax, keep=("bottom",), grid="y")` |
 | Numbers | `mv.signed(v, decimals, suffix)` (true minus, explicit +), `mv.text_on(fill)` (white or navy text on a fill) |
-| Translucent fills (Plotly) | `mv.rgba(C.accent, 0.12)` for gap washes and Sankey links, instead of an `rgba(...)` literal |
+| Translucent fills (Plotly) | `mv.rgba(C.negative, 0.12)` for a shortfall wash, `mv.rgba(C.focus, 0.4)` for Sankey links, instead of an `rgba(...)` literal |
 | Save | `mv.save(fig, path, dpi=200)`, which also lays out the titles and source |
 | Check | `mv.lint(fig)` (matplotlib or Plotly; pass `headline=`, `subtitle=`, `source=` when they live in HTML); `strict=True` raises on errors |
 | Plotly titles | `mv.pl_finish(fig, headline, subtitle, source_text, footnote)` |

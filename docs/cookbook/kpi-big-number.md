@@ -25,9 +25,9 @@
 |---|---|
 | Number | Typography role `kpi`: Libre Franklin **Light 300**, **54 pt** on a 13.33 in slide / **56 px** on screen, Navy `#143359` on white, white on `surface.dark` `#0B3266`. Scale with the canvas (≈ 40 pt on an 8 in card). Never bold the numeral. **One** big number per card. Round hard (62%, 4.3K, $1.2M); the `%` or unit stays with the number. |
 | Context sentence | **One sentence** (≤ ~15 words) saying exactly what is counted, set directly below or beside the number: 14 pt / 15 px Regular `#505050` (white on dark). Prefer counts that make the % concrete: "254 of 410 critical roles have a ready-now successor". The headline above it still states the insight. |
-| Comparison / delta | Always give the reader a reference: prior period, target, benchmark or peer ("+14 pts vs. Mar 2025", "13 pts short of the 75% target"). Medium/Semibold, 12–14 pt. Use an explicit + and a true minus (−), and say **"pts"** for percentage-point changes (never "%"). Color it only when good vs. bad is the point: `semantic.positive_text` `#00737A` / `semantic.negative_text` `#A75B00` on white, `semantic.positive` `#00AF9D` / `chart.accent` `#EF8200` on dark. Judge favorability from the audience's view (time to fill down = good). Pair the color with ▲/▼ or words, never red vs. green. |
+| Comparison / delta | Always give the reader a reference: prior period, target, benchmark or peer ("+14 pts vs. Mar 2025", "13 pts short of the 75% target"). Medium/Semibold, 12–14 pt. Use an explicit + and a true minus (−), and say **"pts"** for percentage-point changes (never "%"). Color it only when good vs. bad is the point: `semantic.positive_text` `#00737A` / `semantic.negative_text` `#A75B00` on white, `semantic.positive` `#00AF9D` / `semantic.negative` `#EF8200` on dark. Judge favorability from the audience's view (time to fill down = good). Pair the color with ▲/▼ or words, never red vs. green. |
 | Ring gauge | Starts at 12 o'clock and runs **clockwise**. Filled arc `chart.focus` `#005A8C` with the remainder in `chart.context_light` `#DEDBD1`; on dark, `chart.focus_on_dark` `#66C4FF` with `chart.context_on_dark` `#5A7194`. Stroke ≈ 15–20% of the radius (hole ≈ 80%, thinner than the 62% donut hole). No rounded caps, gaps, gradients or 3D. The number sits centered inside. A target is a thin tick across the ring, labelled ("Target 75%"). 0–100% of one whole only. |
-| Dark card | Background `surface.dark` `#0B3266`, text white, one highlight `#66C4FF`; `#EF8200` for at most one element. Stick to the 3-tone `color.social` combinations. The card must stand alone: headline, number, comparison, source and as-of date all on the card. |
+| Dark card | Background `surface.dark` `#0B3266`, text white, one highlight `#66C4FF`. Orange `#EF8200` only for an unfavorable comparison, never as decoration. Stick to the 3-tone `color.social` combinations. The card must stand alone: headline, number, comparison, source and as-of date all on the card. |
 | Layout / limits | Left-align text on one edge (only the numeral inside a ring is centered). ≤ 5 KPI cards in a dashboard row, ≤ 2 big numbers per live slide. Identical anatomy and order across cards: name → number → comparison → sentence. Every card has a source and as-of date, and every number is based on **n ≥ 10** people. |
 
 ## Do / don't
@@ -122,7 +122,7 @@ KPI = mv.TOKENS["typography"]["roles"]["kpi"]                    # Light 300, 56
 kpis = [("Internal fill rate", 41, 35, ".0f", "%", True, "of open Pharmacy Ops roles were filled<br>by internal candidates"),
         ("Median time to fill", 38, 43, ".0f", " days", False, "from requisition approval to accepted<br>offer, all Pharmacy Ops roles"),
         ("Regrettable attrition", 6.8, 5.9, ".1f", "%", False, "of high performers left voluntarily,<br>trailing 12 months")]
-good, bad = C.positive_text, C.negative_text                      # blue-orange semantics, text-safe on white
+good, bad = C.positive_text, C.negative_text                      # teal good / orange bad, text-safe on white
 
 fig = go.Figure()
 for i, (name, val, prior, fmt, suffix, up_good, context) in enumerate(kpis):

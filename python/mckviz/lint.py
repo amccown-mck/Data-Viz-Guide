@@ -55,6 +55,17 @@ def _palette() -> set[str]:
     return found | {"#FFFFFF", "#000000"}
 
 
+def _do_not_use() -> set[str]:
+    """Hexes of brand families whose tokens say they are not used internally (e.g. amber)."""
+    from . import TOKENS
+
+    out: set[str] = set()
+    for fam in TOKENS["brand"]["extended"].values():
+        if isinstance(fam, dict) and "do not use" in str(fam.get("usage", "")).lower():
+            out |= {v.upper() for k, v in fam.items() if k in ("light", "mid", "base", "dark") and v}
+    return out
+
+
 def _neutrals() -> set[str]:
     from . import colors as c
 
@@ -123,7 +134,15 @@ def _color_findings(used: list[str]) -> list[Finding]:
         has_red |= (deg < 15 or deg > 345) and s > 0.4 and v > 0.3
         has_green |= 85 < deg < 150 and s > 0.35 and v > 0.3
     if has_red and has_green:
-        out.append(Finding("error", "no-red-green", "red and green are both used; use orange vs. blue"))
+        out.append(Finding("error", "no-red-green", "red and green are both used; use blue vs. navy (orange only for negatives)"))
+    banned = sorted({h for h in used if _near(h, _do_not_use(), 6)})
+    if banned:
+        out.append(Finding("error", "do-not-use", f"{', '.join(banned)} is not used internally (amber family); "
+                                                  "pick from mv.CATEGORICAL"))
+    from . import colors as c
+    if any(_near(h, {c.orange.upper()}, 6) for h in hues) and not any(i == len(ramps) - 1 for i in in_ramp):
+        out.append(Finding("info", "orange-semantic", "orange appears: keep it for negatives / below target only, "
+                                                      "never as a plain highlight (use navy, chart.accent)"))
     return out
 
 

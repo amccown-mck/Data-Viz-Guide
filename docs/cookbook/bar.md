@@ -25,7 +25,7 @@
 
 | Element | Rule |
 |---|---|
-| Color | Pick one of the three highlight patterns. **Focus:** all bars `chart.context` `#B4B0A5` and the headline bars `chart.focus` `#005A8C`. **Uniform + accent:** all bars `#005A8C` and the single exception `chart.accent` `#EF8200`. Highlight at most **2** bars. Never give each bar its own color. Draw benchmark or target lines in `chart.total` `#143359`, dashed, 0.75 pt, and label them. For diverging bars, use `semantic.negative` `#EF8200` (text `#A75B00`) for unfavorable values and `#005A8C` or `semantic.positive` `#00AF9D` for favorable ones. Never use red vs. green. |
+| Color | Pick one of the three highlight patterns. **Focus:** all bars `chart.context` `#B4B0A5` and the headline bars `chart.focus` `#005A8C`. **Uniform + accent:** all bars `chart.focus_light` `#66C4FF` and the single exception `chart.accent` navy `#143359`. Highlight at most **2** bars. Never give each bar its own color. Draw benchmark or target lines in `chart.total` `#143359`, dashed, 0.75 pt, and label them. For diverging bars, use `semantic.negative` orange `#EF8200` (text `#A75B00`) for unfavorable values (orange means worse, so never use it as a plain highlight) and `#005A8C` or `semantic.positive` `#00AF9D` for favorable ones. Never use red vs. green. |
 | Labels | Put direct value labels at the bar end (outside end) in the label role: 12 pt / 13 px, Medium, `#505050`. Bold the focus category label and set it in Navy `#143359`. The unit goes in the subtitle; only `%` repeats on labels. Use a true minus (−) and an explicit + on deltas. Category labels never rotate: if they don't fit under columns, switch to horizontal bars. |
 | Axes / gridlines | When bars carry labels, remove the value axis **and** the gridlines. Keep a thin **zero baseline** in `chart.axis` `#8C8C8C`, 0.75 pt. No tick marks. Use gridlines in `chart.grid` `#E6E4DE` only when the bars aren't labelled (e.g., grouped bars with 3 series). |
 | Sort / order | Horizontal bars run largest at the top. Columns run left to right in time order, or sorted by value. Keep a natural order (tenure bands, job levels, survey scale) wherever one exists. Keep the same order for the same categories across the whole deck, and across every step of a build-up. |
@@ -91,7 +91,7 @@ mv.source(fig, "Source: Synthetic data for illustration only",
           footnote="Voluntary attrition = voluntary exits \u00f7 average headcount, trailing 12 months.")
 mv.save(fig, "out/bar-highlight.png", dpi=200)
 ```
-To show one exception against all-blue bars instead, use `mv.highlight(labels, accent="Pharmacy Technician", base=C.focus)`. For grouped bars, offset each series by `±width/2` with `width = 0.67 / n_series`, color the series with `mv.categorical(n)`, and put a top-left legend or label the first cluster.
+To show one navy exception against all-light-blue bars instead, use `mv.highlight(labels, accent="Pharmacy Technician", base=C.focus_light)`. For grouped bars, offset each series by `±width/2` with `width = 0.67 / n_series`, color the series with `mv.categorical(n)`, and put a top-left legend or label the first cluster.
 
 ### Python — Plotly / HTML
 ```python
@@ -130,10 +130,10 @@ fig.write_html("out/bar-highlight.html", include_plotlyjs="cdn")
 For HTML pages, prefer the chart-card pattern in [`examples/python/gallery_plotly.py`](../../examples/python/gallery_plotly.py): the headline, subtitle and source go in HTML, and the figure carries only the data. Hover text may show headcount, but never for groups with n < 10.
 
 ### Excel and PowerPoint
-1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**). Accent 1 = `#005A8C`, Accent 2 = `#EF8200`.
+1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**). Accent 1 = `#005A8C` (focus), Accent 2 = `#143359` (navy accent), Accent 3 = `#66C4FF` (light blue).
 2. Sort the data by value, select it, then **Insert › Charts › Insert Column or Bar Chart › 2-D Clustered Bar**. Excel draws the first row at the bottom, so either sort ascending or set **Format Axis › Axis Options › Categories in reverse order**.
 3. Right-click a bar › **Format Data Series › Series Options › Gap Width 50%**. This gives bar : gap ≈ 2 : 1. For grouped bars, also set **Series Overlap 0%**.
-4. **Fill › Solid fill › More Colors › Hex B4B0A5** for all bars. Then click the focus bar a second time to select only that point, and set **Fill › Hex 005A8C** (or `EF8200` for the single accent).
+4. **Fill › Solid fill › More Colors › Hex B4B0A5** for all bars. Then click the focus bar a second time to select only that point, and set **Fill › Hex 005A8C** (or `143359` for the single navy accent; for the uniform + accent pattern, make all bars `66C4FF` first).
 5. Click the gridlines and press **Delete**. Click the value axis and press **Delete**. Delete the legend and the default chart title (the headline goes in the slide title or a text box).
 6. **Chart Elements (+) › Data Labels › Outside End**. Set **Format Data Labels › Number › Custom** to `0.0"%"`, with the label font Libre Franklin Medium 12 pt in `#505050`. Select the focus bar's label alone and set it **Bold**, Navy `#143359`.
 7. On the category axis, set **Format Axis › Tick Marks › None** and **Line › Solid line, `#8C8C8C`, 0.75 pt**: this is the zero baseline. Excel can't bold a single axis label, so bold the focus category with an overlaid text box, or hide the axis labels and use **Data Labels › Value From Cells**.

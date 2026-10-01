@@ -20,8 +20,8 @@
 
 | Element | Rule |
 |---|---|
-| Color | In each panel, that panel's series is `chart.focus` `#005A8C`. All other groups are drawn behind it in `chart.context_light` `#DEDBD1`, lighter than `#B4B0A5` because there are many of them. The single panel the headline is about uses `chart.accent` `#EF8200`. A benchmark or enterprise line is `chart.total` `#143359`, thin and dashed, in **every** panel. Ring or dial matrices use `#005A8C` for the value arc, a `#EFEDE7` track and `#EF8200` for the exception. |
-| Labels | Panel titles are left-aligned and sentence case at 11 pt. The accent panel's title is bold `#143359`. Label the end value of each panel's own series (start value optional) in the series color (orange uses `#A75B00` text). No legend: the panel title names the series. If there's a benchmark, label it once, in the first panel only. |
+| Color | In each panel, that panel's series is `chart.focus` `#005A8C`. All other groups are drawn behind it in `chart.context_light` `#DEDBD1`, lighter than `#B4B0A5` because there are many of them. The single panel the headline is about uses `chart.accent` navy `#143359`, or `semantic.negative` orange `#EF8200` when that panel is the one getting worse (as in the example below). A benchmark or enterprise line is `chart.total` `#143359`, thin and dashed, in **every** panel. Ring or dial matrices use `#005A8C` for the value arc, a `#EFEDE7` track and navy `#143359` for the exception (orange `#EF8200` only if it is below target). |
+| Labels | Panel titles are left-aligned and sentence case at 11 pt. The accent panel's title is bold `#143359`. Label the end value of each panel's own series (start value optional) in the series color (an orange panel uses `#A75B00` text). No legend: the panel title names the series. If there's a benchmark, label it once, in the first panel only. |
 | Axes / gridlines | Use the **same x and y scale in every panel** (`sharex=True, sharey=True`). Show y tick labels only on the left column and x tick labels only on the bottom row. Keep 2–3 gridlines in `chart.grid` `#E6E4DE`. Use sparse time ticks: the first period and each year change. |
 | Sort / order | When explaining, put the focus panel first (top-left), then sort by the measure (latest value or change). Use a natural order (region, level) or alphabetical order for look-up grids. Keep the panel order identical across the deck. |
 | Proportions | Use 2×2, 2×3, 3×3 or 3×4 grids with panels of equal size and aspect. Keep the gutters at ~15–20% of panel width and each panel at least ~1.5 in wide on slides. Line weights follow `chart.line`: own series 2.25 pt / 2 px, context 1.25 px. |
@@ -33,14 +33,14 @@
 |---|---|
 | Put every panel on one scale, so differences in height mean differences in value | Let each panel autoscale. A flat line and a steep line can then mean the same change |
 | Draw the other groups faintly behind each panel's own series | Show each panel in isolation, so the reader can't tell whether the group is high or low |
-| Highlight the one exception panel in orange and say why in the headline | Use a different hue for every panel. Position already identifies the group |
+| Highlight the one exception panel (navy, or orange if it is worse) and say why in the headline | Use a different hue for every panel. Position already identifies the group |
 | Sort panels with intent and put the focus panel first | Default to database order |
 | Repeat rings or dials on a common 0–100% track, one value each | Mix pies of different totals with unlabeled slices |
 | Label the end value inside each panel | Add a shared legend far below the grid |
 | Drop to a heatmap when there are more than ~12 panels | Shrink 30 panels until the text falls below 9 pt |
 
 ## Workforce examples
-- **Headline:** "Oncology is the only business unit where regretted attrition rose over the past two years, up 4 points" — *Subtitle:* "Regretted attrition by business unit, trailing 12 months, Q1 2025–Q4 2026 (%)" — data: firm/BU-level Workday HCM exits ÷ average headcount (snippet below). The Oncology panel is orange.
+- **Headline:** "Oncology is the only business unit where regretted attrition rose over the past two years, up 4 points" — *Subtitle:* "Regretted attrition by business unit, trailing 12 months, Q1 2025–Q4 2026 (%)" — data: firm/BU-level Workday HCM exits ÷ average headcount (snippet below). The Oncology panel is orange, because rising attrition is worse.
 - **Headline:** "Market pay for warehouse associates grew faster than ours in 4 of 6 hub metros" — *Subtitle:* "Median hourly pay, warehouse associates, McKesson vs. external market, by metro, 2023–2026 ($/hr)" — data: sector-level external posted-pay feed vs. internal payroll. McKesson is blue, the market is navy `#143359` dashed, and the 4 lagging metros have bold titles.
 - **Headline:** "New pharmacists on the mentored path reach full productivity ~5 weeks sooner in every region" — *Subtitle:* "Productivity index of new-hire pharmacists by week since start, by region (100 = tenured median)" — data: individual-level productivity ramps aggregated by onboarding path and region (n ≥ 10 per panel). The mentored path is blue and the standard path grey.
 
@@ -77,7 +77,7 @@ for ax, (name, y) in zip(axes.flat, bu.items()):
     for other, oy in bu.items():                          # every other unit as grey context
         if other != name:
             ax.plot(x, oy, color=C.context_light, lw=CONTEXT_LW, zorder=1)
-    col = C.accent if name == accent else C.focus
+    col = C.negative if name == accent else C.focus          # attrition rose: orange means worse
     ax.plot(x, y, color=col, zorder=3)
     for xi, v, ha in ((0, y[0], "right"), (len(y) - 1, y[-1], "left")):
         ax.annotate(f"{v:.1f}", (xi, v), xytext=(-4 if ha == "right" else 4, 0), textcoords="offset points", ha=ha,
@@ -126,10 +126,10 @@ for i, (name, y) in enumerate(bu.items()):
         if other != name:
             fig.add_scatter(x=quarters, y=oy, mode="lines", line={"color": C.context_light, "width": 1.25},
                             hoverinfo="skip", row=row, col=col)
-    color = C.accent if name == accent else C.focus
+    color = C.negative if name == accent else C.focus        # attrition rose: orange means worse
     fig.add_scatter(x=quarters, y=y, mode="lines", line={"color": color, "width": 2.5},
                     hovertemplate=name + "<br>%{x}: %{y:.1f}%<extra></extra>", row=row, col=col)
-for ann in fig.layout.annotations:                         # left-align panel titles; bold the accent panel
+for ann in fig.layout.annotations:                         # left-align panel titles; bold the exception panel
     ann.update(x=ann.x - 0.145, xanchor="left", font={"size": 13, "color": C.headline if ann.text == accent else C.text},
                text=f"<b>{ann.text}</b>" if ann.text == accent else ann.text)
 fig.update_yaxes(range=[5, 15], dtick=5)
@@ -148,7 +148,7 @@ fig.show()
 2. Build **one** panel completely first: **Insert → Insert Line or Area Chart → 2-D Line → Line**, with all groups as series. Set every series to **Hex `DEDBD1`, 1 pt** and the panel's own group to **Accent 1 `#005A8C`, 2.25 pt**. Set **Marker: None**, delete the legend, and replace the chart title with the group name (Libre Franklin 11 pt, left-aligned).
 3. **Fix the scale:** **Vertical axis → Format Axis → Bounds Minimum / Maximum** to fixed values (e.g. 5 and 15) and **Major unit** to 5. Never leave the bounds on Auto. This is what makes the panels comparable.
 4. Add an end-value data label to the own series' **last point** (**Add Data Label → Value, Position: Right**, bold, in the series color).
-5. Copy the chart (**Ctrl+C / Ctrl+V**) for each group. In each copy, recolor the panel's own series to blue and set the previous one back to grey (**Ctrl+1**, or **F4** to repeat), then change the title. The accent panel uses **Accent 2 `#EF8200`** with a bold `#143359` title.
+5. Copy the chart (**Ctrl+C / Ctrl+V**) for each group. In each copy, recolor the panel's own series to blue and set the previous one back to grey (**Ctrl+1**, or **F4** to repeat), then change the title. The exception panel uses **Accent 6 `#EF8200`** here, because its attrition rose (use **Accent 2 `#143359`** navy for an exception that isn't worse), with a bold `#143359` title.
 6. Remove the y tick labels from inner columns (**Format Axis → Labels → Label Position: None**) and the x labels from upper rows.
 7. Paste all panels into PowerPoint (**Use Destination Theme & Embed Workbook**), select them and use **Shape Format → Align → Align Top / Distribute Horizontally**, then **Group**. Give every panel the same size under **Shape Format → Size**.
 8. Put the headline in the slide title. Add one subtitle (metric, unit, period) and one source line for the whole grid.
@@ -179,7 +179,7 @@ df$bu <- factor(df$bu, levels = df |> filter(quarter == max(quarter)) |> arrange
 ggplot(df, aes(quarter, rate)) +
   geom_line(data = bg, aes(group = other), colour = mck_colors$context_light, linewidth = 0.45) +
   geom_line(aes(colour = bu == accent), linewidth = 1.05) +
-  scale_colour_manual(values = c(`TRUE` = mck_colors$accent, `FALSE` = mck_colors$focus), guide = "none") +
+  scale_colour_manual(values = c(`TRUE` = mck_colors$negative, `FALSE` = mck_colors$focus), guide = "none") +
   facet_wrap(~bu, ncol = 3) +                              # fixed scales by default: keep it that way
   coord_cartesian(ylim = c(5, 15)) +
   theme_mck() + theme(strip.text = element_text(hjust = 0, size = 11, colour = mck_colors$text)) +
@@ -191,7 +191,7 @@ ggplot(df, aes(quarter, rate)) +
 
 ## QA specifics
 - [ ] Every panel uses the same x and y scale. If not, the subtitle says "independent scales" and explains why.
-- [ ] Each panel's own series is blue and the other groups are faint `#DEDBD1` context. At most one exception panel is orange, and the headline names it.
+- [ ] Each panel's own series is blue and the other groups are faint `#DEDBD1` context. At most one exception panel is highlighted (navy, or orange only if it is worse), and the headline names it.
 - [ ] Panel titles are left-aligned and in a deliberate order (focus first, then by value or natural order), consistent across the deck.
 - [ ] Tick labels appear only on the outer panels, with no per-panel legends and no text below 9 pt.
 - [ ] The grid has ≤ 6 panels for live slides and ≤ 12 for reports, and every panel meets the minimum n (suppressed panels are footnoted).

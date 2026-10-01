@@ -72,7 +72,7 @@ def line_gap():
     fig.add_scatter(x=df.year, y=df.internal_supply_fte, name="Internal supply", line_color=C.focus, mode="lines",
                     hovertemplate="%{y:,} FTE<extra>Internal supply</extra>")
     fig.add_scatter(x=df.year, y=df.demand_fte, name="Demand", line_color=C.navy, mode="lines", fill="tonexty",
-                    fillcolor=mv.rgba(C.accent, 0.12), hovertemplate="%{y:,} FTE<extra>Demand</extra>")
+                    fillcolor=mv.rgba(C.negative, 0.12), hovertemplate="%{y:,} FTE<extra>Demand</extra>")
     for r, col, name, ya in ((df.iloc[-1].demand_fte, C.navy, "Demand", "bottom"),
                              (df.iloc[-1].internal_supply_fte, C.focus, "Internal supply", "top")):
         fig.add_annotation(x=df.year.iloc[-1], y=r, text=f"<b>{name}</b> {r:,.0f}", xanchor="right", yanchor=ya,

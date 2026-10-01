@@ -9,8 +9,8 @@ All values live in [`tokens/tokens.json`](../tokens/tokens.json) — the single 
 | Name | Hex | Notes |
 |---|---|---|
 | McKesson Blue | `#005A8C` | Primary brand color. Our **focus** color in charts. |
-| McKesson Navy | `#143359` | Headlines, totals, dark series. |
-| McKesson Orange | `#EF8200` | Core accent — our **accent** color in charts. |
+| McKesson Navy | `#143359` | Headlines, totals, benchmarks. Our **accent** color in charts. |
+| McKesson Orange | `#EF8200` | A brand color, but in charts it means **worse**. Never decoration, never the accent (see [Orange means worse](#orange-means-worse)). |
 | Sand (warm grey) | `#DEDBD1` | Backgrounds, de-emphasized fills. |
 | Deep Navy (FY26) | `#0B3266` | Dark slides / cards. |
 | Light Sand (FY26) | `#EFEDE7` | Panels, callout boxes, shaded periods. |
@@ -26,9 +26,10 @@ All values live in [`tokens/tokens.json`](../tokens/tokens.json) — the single 
 | Teal | Oncology / Specialty | `#B3E7E2` | `#66CFC4` | `#00AF9D` | `#00737A` |
 | Sky | Providers | `#B3ECFF` | `#66D8FF` | `#00BEFF` | `#0074D0` |
 | Azure | Health Systems | `#B6E2FA` | `#66C4FF` | `#009EFF` | `#0A5FBC` |
-| Amber | Payer | `#FFE9B3` | `#FFD366` | `#FFB502` | — |
 
 > Source: McKesson Social Media Guide (Extended Audience Palette) and FY26 Impact Report. Full swatches and ASE files: BrandHQ.
+
+**Amber (the Payer family) is not used internally.** It is left out of this table on purpose. Don't use any amber step in charts, tables or dashboards.
 
 ## 2. Chart color roles (how we use it)
 
@@ -38,8 +39,9 @@ Think in **roles**, not hex codes. Code and templates reference roles so the pal
 |---|---|---|---|
 | Context | `chart.context` | `#B4B0A5` | Data the reader should see but not focus on |
 | Context (light) | `chart.context_light` | `#DEDBD1` | De-emphasized stack segments, masked columns, dumbbell bars |
-| **Focus** | `chart.focus` | `#005A8C` | What the headline is about; default single-series color |
-| **Accent** | `chart.accent` | `#EF8200` | The one element that must pop (esp. against blue) |
+| **Focus** | `chart.focus` | `#005A8C` | What the headline is about; default single-series color. The color used most |
+| Focus (light) | `chart.focus_light` | `#66C4FF` | The series fill in the "uniform + accent" pattern; a secondary series |
+| **Accent** | `chart.accent` | `#143359` | The one exception that must pop (navy, against light blue or next to a blue group). Never orange |
 | Total | `chart.total` | `#143359` | Totals, subtotals, benchmark / target lines |
 | Axis | `chart.axis` | `#8C8C8C` | Baselines, axis lines |
 | Grid | `chart.grid` | `#E6E4DE` | Gridlines — only when labels don't carry values |
@@ -48,21 +50,28 @@ Think in **roles**, not hex codes. Code and templates reference roles so the pal
 | Context on dark | `chart.context_on_dark` | `#5A7194` | De-emphasis on Deep Navy backgrounds |
 
 ### The three highlight patterns
-1. **Focus** (default): everything grey, headline item(s) blue.
-2. **Uniform + accent**: all bars blue (a single series with no "context"), one bar orange.
-3. **Focus + accent**: grey context, blue for the main group, orange for the single exception the headline calls out.
+1. **Focus** (default): everything grey `#B4B0A5`, headline item(s) blue `#005A8C`.
+2. **Uniform + accent**: all bars light blue `#66C4FF` (a single series with no "context"), the one exception navy `#143359`.
+3. **Focus + accent**: grey context, blue for the main group, navy for the single exception the headline calls out.
 
-Python: `mv.highlight(labels, focus=..., accent=..., base=None)`; R: `mck_highlight()`; HTML/CSS: `var(--mck-chart-focus)` etc.
+Python: `mv.highlight(labels, focus=..., accent=..., base=None)`; for pattern 2 pass `base=C.focus_light`: `mv.highlight(labels, accent=X, base=C.focus_light)`. R: `mck_highlight(levels, accent = x, base = mck_colors$focus_light)`. HTML/CSS: `var(--mck-chart-focus)` etc.
+
+### Orange means worse
+Orange `#EF8200` has one job in our charts: it marks something **worse**. Negatives, decreases and losses, below target or benchmark, shortfalls, and the low end of the orange–blue diverging scale. Executives read orange as a warning, so a decorative orange bar sends the wrong message.
+
+- Use it through `semantic.negative` (text: `semantic.negative_text` `#A75B00`), never through the accent role.
+- Don't use orange to highlight, to decorate, or to make one item "pop". Use navy for that.
+- If nothing in the chart is worse, the chart has no orange.
 
 ## 3. Semantic colors
 
 | Meaning | Fill | Text on white |
 |---|---|---|
 | Positive / increase / favorable | Teal `#00AF9D` | `#00737A` |
-| Negative / decrease / unfavorable | Orange `#EF8200` | `#A75B00` |
+| Negative / decrease / below target / unfavorable | Orange `#EF8200` | `#A75B00` |
 | Neutral / no change | `#B4B0A5` | `#505050` |
 
-- **Blue–orange, not red–green.** Red/green is the most common color-vision conflict and red is not a brand color.
+- **No red vs. green.** Red/green is the most common color-vision conflict and red is not a brand color. Use blues and navy; orange only for "worse".
 - Only use semantic color when "good vs. bad" *is* the message (variance to plan, benchmark gaps). Otherwise use focus/context.
 - Headcount growth isn't automatically "good" — pick semantic colors from the audience's point of view (e.g., cost reduction = favorable).
 
@@ -73,15 +82,17 @@ When categories must be distinguished (e.g., 4 business units in a line chart), 
 | # | Hex | Name | Lines/text? |
 |---|---|---|---|
 | 1 | `#005A8C` | McKesson Blue | yes |
-| 2 | `#EF8200` | Orange | fill; label it |
-| 3 | `#00AF9D` | Teal | fill; label it |
-| 4 | `#143359` | Navy | yes |
-| 5 | `#66C4FF` | Azure mid | fill only |
-| 6 | `#FFB502` | Amber | fill only |
-| 7 | `#00622C` | Green dark | (avoid if possible) |
-| 8 | `#D9F14E` | Lime | (avoid if possible) |
+| 2 | `#143359` | Navy | yes |
+| 3 | `#66C4FF` | Azure mid (light blue) | fill only; label it |
+| 4 | `#00AF9D` | Teal | fill; label it |
+| 5 | `#00737A` | Deep teal | yes |
+| 6 | `#EF8200` | Orange | last resort only; fill, label it |
+| 7 | `#B6E2FA` | Azure light | fills only |
+| 8 | `#66CFC4` | Teal mid | fills only |
 
-- **≤ 6 categories.** Tested for deuteranopia/protanopia/tritanopia — the first 6 stay separable (min ΔE ≥ 14). Beyond 6, group the tail into **"Other"** in context grey.
+- **Prefer ≤ 5 categories.** Orange is the last-resort 6th: reach for it only when you truly need six hues, because readers will still read it as "worse". Beyond 6, group the tail into **"Other"** in context grey. Check separability with `python tokens/build.py` → `dist/palette-report.md`.
+- Blue and navy sit next to each other in stacks: keep the white separators between segments.
+- Amber is not in the palette and is not used internally.
 - Keep a category's color **constant across the whole deck** (e.g., Technology is always teal).
 - Business-unit colors *may* follow the audience palette (Pharmacy = green, Oncology = teal, …) when the audience expects it — check separability if you do.
 
@@ -89,10 +100,10 @@ When categories must be distinguished (e.g., 4 business units in a line chart), 
 
 | Scale | Stops (light → dark) | Use |
 |---|---|---|
-| Sequential blue | `#E6F3FB` `#B6E2FA` `#66C4FF` `#009EFF` `#0A5FBC` `#143359` | Heatmaps, choropleths of a single measure (headcount, tenure, exposure) |
+| Sequential blue | `#E6F3FB` `#B6E2FA` `#66C4FF` `#009EFF` `#0A5FBC` `#143359` | **Default** for one measure, light to dark: heat tables, heatmaps, choropleths (headcount, tenure, exposure) |
 | Sequential teal | `#E6F7F5` `#B3E7E2` `#66CFC4` `#00AF9D` `#00737A` `#004B4F` | Alternate single-measure scale |
-| Sequential orange | `#FFF3E0` `#FFD9A8` `#F7B25C` `#EF8200` `#A75B00` `#6B3A00` | Risk / intensity (e.g., flight risk) |
-| Diverging orange–blue | `#A75B00` `#EF8200` `#F7C180` **`#EFEDE7`** `#99BDD1` `#005A8C` `#143359` | Above/below benchmark, variance to plan, change vs. prior |
+| Sequential orange | `#FFF3E0` `#FFD9A8` `#F7B25C` `#EF8200` `#A75B00` `#6B3A00` | Only when darker explicitly means **worse** (risk, e.g., flight risk). Say so in the subtitle or key |
+| Diverging orange–blue | `#A75B00` `#EF8200` `#F7C180` **`#EFEDE7`** `#99BDD1` `#005A8C` `#143359` | Above/below benchmark, variance to plan, change vs. prior. Orange = below (worse), blue = above |
 
 - Diverging scales need a **meaningful midpoint** (0, benchmark, target) — center the scale on it and make the range symmetric.
 - Prefer **5–7 binned classes** for maps and heatmaps shown on slides; continuous is fine for interactive.
@@ -105,6 +116,6 @@ When categories must be distinguished (e.g., 4 business units in a line chart), 
 
 ## 7. Accessibility rules
 - Text ≥ 4.5:1 contrast. The lightest text color is `text.muted #737373`.
-- Orange, teal, azure and amber are **below 3:1** on white as thin lines/text — use them as **fills** and add labels, or use their `dark` step for text.
+- Orange, teal and light blue are **below 3:1** on white as thin lines/text — use them as **fills** and add labels, or use their `dark` step for text.
 - Never encode meaning by color alone — add labels, patterns, position or shape.
 - Check new palettes with `python tokens/build.py` → `dist/palette-report.md`.

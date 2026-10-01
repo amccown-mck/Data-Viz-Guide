@@ -27,7 +27,7 @@ Start from `templates/html/chart-card.html`, which is a working page.
 The headline, subtitle and source are HTML text, and the chart library draws only the data (no in-chart title). Use `Plotly.newPlot(el, data, {template: MCK_PLOTLY_TEMPLATE, ...}, {displayModeBar: false, responsive: true})`.
 
 ## Rules
-- **No hex literals in CSS or JS.** Use the variables in `mck-viz.css`: `var(--mck-chart-focus)`, `--mck-chart-context`, `--mck-chart-accent`, `--mck-chart-total`, `--mck-seq-blue-1`…`6`, `--mck-div-1`…`7`, `--mck-cat-1`…`6`. In JS, read them with `getComputedStyle(document.documentElement).getPropertyValue("--mck-chart-focus")`, or use the template's `colorway`.
+- **No hex literals in CSS or JS.** Use the variables in `mck-viz.css`: `var(--mck-chart-focus)`, `--mck-chart-focus-light`, `--mck-chart-context`, `--mck-chart-accent` (navy exception), `--mck-semantic-negative` (orange, only for "worse"), `--mck-chart-total`, `--mck-seq-blue-1`…`6`, `--mck-div-1`…`7`, `--mck-cat-1`…`6`. In JS, read them with `getComputedStyle(document.documentElement).getPropertyValue("--mck-chart-focus")`, or use the template's `colorway`.
 - **Highlight, don't decorate:** context grey, one focus blue, optionally one orange accent. At most 6 categorical colors.
 - **Direct labels** over legends. If a legend is unavoidable, use `.mck-legend` above the plot, top-left.
 - **Tables** use `<table class="mck-table">` with `<th scope>`, right-aligned `.num` cells, `tr.is-focus` / `tr.is-total` rows and `td.is-muted` for suppressed cells. See `docs/cookbook/tables.md`.

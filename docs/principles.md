@@ -33,11 +33,13 @@ Color is for **meaning**, never decoration.
 | Role | Color | Use |
 |---|---|---|
 | Context | warm grey `#B4B0A5` | Everything the reader should *see but not focus on* |
-| Focus | McKesson Blue `#005A8C` | The data the headline is about; default single-series color |
-| Accent | McKesson Orange `#EF8200` | The *one* thing that must pop (use sparingly) |
+| Focus | McKesson Blue `#005A8C` | The data the headline is about; default single-series color. The color used most |
+| Focus (light) | Light blue `#66C4FF` | The series fill when every bar is one series and one exception gets the accent |
+| Accent | Navy `#143359` | The *one* exception that must pop (use sparingly) |
 | Total | Navy `#143359` | Totals, subtotals, benchmark lines |
 
 - Default pattern: **grey everything, then color only what the headline mentions**.
+- **Orange means worse.** Use orange `#EF8200` only for negatives, decreases, below target or benchmark, and the low end of a diverging scale. Never as a highlight or decoration: executives read it as a warning.
 - Max **2 highlighted** items/series. More highlights = no highlight.
 - Use a categorical palette only when categories genuinely need to be told apart — and then ≤ 6 colors, in the fixed order (see [color.md](color.md)).
 - Echo the highlight in text: bold the matching category label; match callout color to the mark.
