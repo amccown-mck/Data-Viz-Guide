@@ -271,6 +271,83 @@ def regretted_attrition_bu() -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["business_unit", "quarter", "regretted_attrition_pct"])
 
 
+STATE_POP_M = {  # approximate resident population (millions); used only to make synthetic counts scale with size
+    "AL": 5.1, "AK": 0.7, "AZ": 7.4, "AR": 3.1, "CA": 39.0, "CO": 5.9, "CT": 3.6, "DE": 1.0, "DC": 0.7, "FL": 22.6,
+    "GA": 11.0, "HI": 1.4, "ID": 2.0, "IL": 12.5, "IN": 6.9, "IA": 3.2, "KS": 2.9, "KY": 4.5, "LA": 4.6, "ME": 1.4,
+    "MD": 6.2, "MA": 7.0, "MI": 10.0, "MN": 5.7, "MS": 2.9, "MO": 6.2, "MT": 1.1, "NE": 2.0, "NV": 3.2, "NH": 1.4,
+    "NJ": 9.3, "NM": 2.1, "NY": 19.6, "NC": 10.8, "ND": 0.8, "OH": 11.8, "OK": 4.0, "OR": 4.2, "PA": 13.0, "RI": 1.1,
+    "SC": 5.4, "SD": 0.9, "TN": 7.1, "TX": 30.5, "UT": 3.4, "VT": 0.6, "VA": 8.7, "WA": 7.8, "WV": 1.8, "WI": 5.9,
+    "WY": 0.6}
+
+
+def talent_market_by_state() -> pd.DataFrame:
+    """Sector level, external. Pharmacy technician labor market by state: open postings (a count), postings per
+    qualified candidate in Q2 2024 and Q2 2026 (a rate), and our technician pay vs. the local market median (%)."""
+    rng = np.random.default_rng(26)
+    states = sorted(STATE_POP_M)
+    r26 = pd.Series(rng.normal(1.05, 0.15, len(states)).clip(0.6, 1.45).round(2), index=states)
+    r26.update(pd.Series({"TX": 1.92, "AZ": 1.84, "NV": 1.76, "FL": 1.71, "CO": 1.58, "UT": 1.52}))
+    r24 = (r26 * rng.uniform(0.82, 0.97, len(states))).round(2)
+    r24.update(pd.Series({"TX": 1.74, "AZ": 1.55, "NV": 1.47, "FL": 1.44, "CO": 1.31, "UT": 1.36}))
+    pay = pd.Series(rng.normal(0.8, 2.4, len(states)).clip(-5.5, 5.5).round(1) + 0.0, index=states)  # no "-0.0"
+    pay.update(pd.Series({"TX": -7.4, "AZ": -6.6, "FL": -6.2, "NV": -4.8, "CO": -3.1, "MA": 6.4, "WA": 6.1}))
+    pop = pd.Series(STATE_POP_M)[states]
+    postings = (pop * 46 * r26 * rng.uniform(0.85, 1.15, len(states))).round(-1).astype(int)
+    return pd.DataFrame({"state": states, "population_m": pop.values, "open_postings_q2_2026": postings.values,
+                         "postings_per_candidate_q2_2024": r24.values, "postings_per_candidate_q2_2026": r26.values,
+                         "tech_pay_vs_market_pct": pay.values})
+
+
+def dc_network() -> pd.DataFrame:
+    """Site level, internal. Distribution center associates by site and vacancy rate (open reqs / budgeted), Mar 2026.
+    Associates sum to the 11,800 DC Associate headcount; one satellite site has fewer than 10 associates."""
+    rows = [("Memphis", "TN", 1680, 13.8), ("Dallas", "TX", 1450, 14.6), ("Columbus", "OH", 1310, 7.2),
+            ("Atlanta", "GA", 1180, 8.4), ("Phoenix", "AZ", 980, 12.9), ("Sacramento", "CA", 890, 6.9),
+            ("Harrisburg", "PA", 860, 5.8), ("Chicago", "IL", 820, 7.7), ("Kansas City", "MO", 640, 6.1),
+            ("Orlando", "FL", 610, 10.4), ("Denver", "CO", 560, 9.6), ("Seattle", "WA", 430, 6.3),
+            ("Albany", "NY", 383, 5.1), ("Boise (satellite)", "ID", 7, 0.0)]
+    df = pd.DataFrame(rows, columns=["site", "state", "associates", "vacancy_pct"])
+    assert df.associates.sum() == 11800
+    return df
+
+
+def remote_care_agents() -> pd.DataFrame:
+    """Team level, internal. Remote and hybrid Customer Care agents by home state, aggregated (Mar 2026).
+    Hub states host the three contact centers."""
+    rng = np.random.default_rng(31)
+    hubs = {"TX": 290, "OH": 250, "GA": 210}
+    rows = []
+    for st, pop in STATE_POP_M.items():
+        if st in hubs:
+            rows.append((st, hubs[st], True))
+        else:
+            rows.append((st, int(round(pop * 4.4 * rng.uniform(0.55, 1.45))), False))
+    return pd.DataFrame(rows, columns=["state", "agents", "hub_state"]).sort_values("state")
+
+
+def succession_coverage_bu() -> pd.DataFrame:
+    """Business-unit level, internal SWP. Critical roles and those with at least one ready-now successor, Mar 2025
+    and Mar 2026 (talent review). Enterprise target: 75% coverage by FY27."""
+    rows = [("Corporate", 70, 38, 49), ("Medical-Surgical", 62, 30, 40), ("Oncology & Multispecialty", 48, 19, 21),
+            ("RxTS", 40, 24, 31), ("Technology", 85, 36, 50), ("U.S. Pharmaceutical", 105, 50, 63)]
+    df = pd.DataFrame(rows, columns=["business_unit", "critical_roles", "ready_now_mar25", "ready_now_mar26"])
+    df["target_pct"] = 75
+    return df
+
+
+def skills_profile_completion() -> pd.DataFrame:
+    """Function level, internal. Employees with a verified skills profile in the skills inventory, Mar 2025 and
+    Mar 2026. Employees = full- and part-time workers in workforce_mix. Target: 80% by FY27."""
+    mix = workforce_mix().set_index("function")
+    rates = {"Distribution": (0.50, 0.61), "Pharmacy Ops": (0.57, 0.66), "Technology": (0.81, 0.88),
+             "Customer Care": (0.60, 0.71), "Corporate": (0.70, 0.79)}
+    rows = []
+    for fn, (r25, r26) in rates.items():
+        emp = int(round(mix.workers[fn] * (mix.employee_ft_pct[fn] + mix.employee_pt_pct[fn]) / 100))
+        rows.append((fn, emp, int(round(emp * r25)), int(round(emp * r26)), 80))
+    return pd.DataFrame(rows, columns=["function", "employees", "profiles_mar25", "profiles_mar26", "target_pct"])
+
+
 def main() -> None:
     sets = {
         "attrition_quarterly": attrition_quarterly(),
@@ -296,6 +373,11 @@ def main() -> None:
         "compa_ratio_individuals": compa_ratio_individuals(),
         "job_family_scorecard": job_family_scorecard(),
         "skills_overlap": skills_overlap(),
+        "talent_market_by_state": talent_market_by_state(),
+        "dc_network": dc_network(),
+        "remote_care_agents": remote_care_agents(),
+        "succession_coverage_bu": succession_coverage_bu(),
+        "skills_profile_completion": skills_profile_completion(),
     }
     for name, df in sets.items():
         df.to_csv(OUT / f"{name}.csv", index=False)

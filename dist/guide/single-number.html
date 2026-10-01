@@ -1,0 +1,1717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>McKesson Data Visualization Guide: Single number</title>
+<link rel="stylesheet" href="mck-viz.css">
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html">Overview</a><a href="fundamentals.html">Fundamentals</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="geo.html">Geo-spatial</a><a href="single-number.html" aria-current=page>Single number</a><span title="Coming next">Ranking</span><span title="Coming next">Distribution</span><span title="Coming next">Correlation</span><span title="Coming next">Flows</span><span title="Coming next">Formats</span><span title="Coming next">Toolkit</span></nav><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></header>
+<main>
+<style>
+  /* Big-number KPI card (Single number section). Type and color come from the kpi and semantic tokens. */
+  .kpi-ana { padding: 6px 0 2px; }
+  .kpi-main { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 34px; align-items: center; }
+  .kpi-num { font-size: calc(var(--mck-kpi-size) * 1.6); font-weight: var(--mck-kpi-weight); color: var(--mck-kpi-color);
+             line-height: 1; letter-spacing: -0.02em; margin: 0; white-space: nowrap; }
+  .kpi-num .mk { vertical-align: 0.9em; margin-left: 4px; letter-spacing: 0; }
+  .kpi-sent { font-size: 15px; line-height: 1.4; color: var(--mck-text-primary); margin: 0 0 10px; max-width: 22em; }
+  .kpi-delta { font-size: 13.5px; font-weight: 600; margin: 0 0 4px; }
+  .kpi-delta.good { color: var(--mck-semantic-positive-text); }
+  .kpi-delta.bad { color: var(--mck-semantic-negative-text); }
+  .kpi-ana .mk { margin-left: 8px; font-size: 10.5px; font-weight: 700; }
+  .kpi-track-row { display: flex; align-items: center; gap: 4px; margin-top: 34px; }
+  .kpi-track { position: relative; flex: 1; height: 10px; background: var(--mck-chart-context-light); }
+  .kpi-track .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--mck-chart-focus); }
+  .kpi-track .tgt { position: absolute; top: -6px; bottom: -6px; width: 2px; margin-left: -1px; background: var(--mck-chart-total); }
+  .kpi-track .tgt span { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding-bottom: 3px;
+                         font-size: 11.5px; color: var(--mck-chart-annotation); white-space: nowrap; }
+  .kpi-scale { display: flex; justify-content: space-between; margin-right: 32px; font-size: 11px; color: var(--mck-text-muted); padding-top: 4px; }
+  @media screen and (max-width: 560px) { .kpi-main { grid-template-columns: 1fr; } .kpi-num { margin-bottom: 12px; } }
+</style>
+
+<section class="spread" id="big-number">
+  <div class="rail">
+    <p class="eyebrow">Single number</p>
+    <h2 class="title"><b>Big number</b> and KPI card</h2>
+    <div class="defbox">Single-number charts make one value the message, with the context and comparison that give it meaning.</div>
+    <p>Use a big number when one value is the finding: an executive summary, a slide opener, a report margin, the header row of a dashboard.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Numeral Light 300, navy; never bold</li>
+      <li>One sentence on exactly what is counted</li>
+      <li>Always a comparison; "pts" for point changes</li>
+      <li>Source and as-of date on the card itself</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>The movement and the gap that remains.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Metric, scope, date and the base.</span></li>
+        <li><span class="mk">3</span><span><b>The number</b>Large, Light weight, rounded hard.</span></li>
+        <li><span class="mk">4</span><span><b>One sentence</b>Counts make the % concrete.</span></li>
+        <li><span class="mk">5</span><span><b>Comparison</b>Signed, in pts, teal and ▲ because it's good news.</span></li>
+        <li><span class="mk">6</span><span><b>Gap to target</b>Orange text because it's worse, said in words.</span></li>
+        <li><span class="mk">7</span><span><b>Progress bar</b>0–100% track, target tick labelled.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>Define the measure; date it.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">Succession coverage rose 14 points in a year but is still 13 short of the 75% target<span class="mk">1</span></p>
+        <p class="card-sub">Critical roles with at least one ready-now successor, Mar 2026 (% of 410 roles)<span class="mk">2</span></p>
+        <div class="kpi-ana">
+  <div class="kpi-main">
+    <p class="kpi-num">62%<span class="mk">3</span></p>
+    <div>
+      <p class="kpi-sent">254 of 410 critical roles have at least one ready-now successor<span class="mk">4</span></p>
+      <p class="kpi-delta good">▲ +14 pts vs. Mar 2025 (48%)<span class="mk">5</span></p>
+      <p class="kpi-delta bad">13 pts short of the 75% FY27 target<span class="mk">6</span></p>
+    </div>
+  </div>
+  <div class="kpi-track-row">
+    <div class="kpi-track" role="img" aria-label="Progress bar: 62% of 100%, target 75%">
+      <div class="fill" style="width:62%"></div>
+      <div class="tgt" style="left:75%"><span>Target 75%</span></div>
+    </div><span class="mk">7</span>
+  </div>
+  <div class="kpi-scale"><span>0%</span><span>100%</span></div>
+</div>
+        <p class="card-foot">Ready-now = assessed in the FY26 talent review as able to step in within 12 months.<br>Source: Workday talent review and succession records (synthetic data for illustration), as of 31 Mar 2026<span class="mk">8</span></p>
+      </figure>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">48</span></div>
+</section>
+
+<section class="spread" id="progress-ring">
+  <div class="rail">
+    <p class="eyebrow">Single number</p>
+    <h2 class="title"><b>Progress</b> ring</h2>
+    <p class="lede">A ring shows one share of one whole moving toward a target: skills profiles completed, required learning done, plan positions filled.</p>
+    <p>It works only on a 0–100% scale. If the value can pass 100% or go negative, show the big number and the delta instead.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Starts at 12 o'clock, runs clockwise</li>
+      <li>Blue arc, sand remainder; hole about 80%</li>
+      <li>No rounded caps, gaps, gradients or 3D</li>
+      <li>Target as a thin tick, labelled</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Where we are and how far to go.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Metric, date and the base.</span></li>
+        <li><span class="mk">3</span><span><b>Start at 12</b>Then clockwise, like a clock.</span></li>
+        <li><span class="mk">4</span><span><b>Blue arc, sand track</b>The remainder stays visible.</span></li>
+        <li><span class="mk">5</span><span><b>Number in the center</b>Light weight; the only centered text.</span></li>
+        <li><span class="mk">6</span><span><b>Target tick</b>Thin, navy, named.</span></li>
+        <li><span class="mk">7</span><span><b>Thin stroke</b>About 18% of the radius.</span></li>
+        <li><span class="mk">8</span><span><b>Sentence and comparison</b>Left-aligned beside the ring.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>What "verified" means.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">Two in three employees now have a verified skills profile, 12 points short of the 80% target<span class="mk">1</span></p>
+        <p class="card-sub">Employees with a verified skills profile, Mar 2026 (% of 33.3K employees)<span class="mk">2</span></p>
+        <div class="ex-wrap min"><svg class="ex" style="--w:620px" role="img" aria-label="Two in three employees now have a verified skills profile, 12 points short of the 80% target: 68% of 33,268 employees, up 10 points from 58% in Mar 2025." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 620 290" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_ring_anatomy-figure_1">
+  <g id="sn_ring_anatomy-patch_1">
+   <path d="M 0 290 
+L 620 290 
+L 620 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_ring_anatomy-axes_1">
+   <g id="sn_ring_anatomy-patch_2">
+    <path d="M 60.434494 199.406134 
+C 69.74014 219.181639 84.189103 236.099201 102.265415 248.38385 
+C 120.341726 260.668498 141.390295 267.875034 163.202732 269.247357 
+C 185.015168 270.619679 206.800982 266.108054 226.274431 256.185836 
+C 245.747881 246.263618 262.203242 231.290391 273.914038 212.837129 
+C 285.624835 194.383866 292.166663 173.11932 292.853163 151.274541 
+C 293.539663 129.429763 288.345955 107.796413 277.816957 88.644237 
+C 267.287959 69.49206 251.805246 53.51514 232.993244 42.389753 
+C 214.181242 31.264366 192.721705 25.393701 170.866142 25.393701 
+L 170.866142 47.362205 
+C 188.787704 47.362205 206.384524 52.17615 221.810365 61.298967 
+C 237.236207 70.421784 249.932032 83.52286 258.56581 99.227644 
+C 267.199589 114.932429 271.458429 132.671775 270.895499 150.584494 
+C 270.332569 168.497213 264.96827 185.93414 255.365417 201.065815 
+C 245.762564 216.197491 232.269168 228.475536 216.300939 236.611755 
+C 200.33271 244.747974 182.468343 248.447507 164.582146 247.322203 
+C 146.695948 246.196898 129.436121 240.287539 114.613545 230.214127 
+C 99.79097 220.140715 87.94282 206.268314 80.31219 190.0524 
+z
+" clip-path="url(#sn_ring_anatomy-p2cee06926b)" style="fill: #005a8c"/>
+   </g>
+   <g id="sn_ring_anatomy-patch_3">
+    <path d="M 170.866142 25.393701 
+C 150.309904 25.393701 130.083002 30.587086 112.069433 40.49013 
+C 94.055865 50.393173 78.832829 64.688555 67.818245 82.044761 
+C 56.803662 99.400967 50.350467 119.26186 49.05973 139.777535 
+C 47.768993 160.29321 51.682073 180.806294 60.434494 199.406134 
+L 80.31219 190.0524 
+C 73.135205 174.800531 69.92648 157.979802 70.984884 141.156949 
+C 72.043288 124.334095 77.334908 108.048163 86.366867 93.816074 
+C 95.398825 79.583985 107.881715 67.861772 122.652841 59.741276 
+C 137.423967 51.620781 154.010026 47.362205 170.866142 47.362205 
+z
+" clip-path="url(#sn_ring_anatomy-p2cee06926b)" style="fill: #dedbd1"/>
+   </g>
+   <g id="sn_ring_anatomy-text_1">
+    <text style="font-size: 11px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #143359" transform="translate(8.441421 100.955001)">Target</text>
+    <text style="font-size: 11px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #143359" transform="translate(16.801421 117.254457)">80%</text>
+   </g>
+   <g id="sn_ring_anatomy-text_2">
+    <text style="font-weight: 300; font-size: 52px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="170.866142" y="164.208189" transform="rotate(-0 170.866142 164.208189)">68%</text>
+   </g>
+   <g id="sn_ring_anatomy-text_3">
+    <text style="font-size: 14px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(341.732283 102.043931)">22.7K of 33.3K employees have a verified</text>
+    <text style="font-size: 14px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(341.732283 124.032331)">profile in the skills inventory</text>
+   </g>
+   <g id="sn_ring_anatomy-text_4">
+    <text style="font-weight: 600; font-size: 12.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="341.732283" y="175.278128" transform="rotate(-0 341.732283 175.278128)">▲ +10 pts vs. Mar 2025 (58%)</text>
+   </g>
+   <g id="sn_ring_anatomy-text_5">
+    <text style="font-weight: 600; font-size: 12.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #a75b00" x="341.732283" y="211.588683" transform="rotate(-0 341.732283 211.588683)">12 pts short of the 80% FY27 target</text>
+   </g>
+   <g id="sn_ring_anatomy-line2d_1">
+    <path d="M 83.810772 119.15494 
+L 46.667147 107.086245 
+" clip-path="url(#sn_ring_anatomy-p2cee06926b)" style="fill: none; stroke: #143359; stroke-width: 1.8"/>
+   </g>
+   <g id="sn_ring_anatomy-text_6">
+    <g id="sn_ring_anatomy-patch_4">
+     <path d="M 170.866142 20.653701 
+C 173.321922 20.653701 175.677451 19.678009 177.413951 17.94151 
+C 179.15045 16.20501 180.126142 13.849481 180.126142 11.393701 
+C 180.126142 8.93792 179.15045 6.582391 177.413951 4.845892 
+C 175.677451 3.109393 173.321922 2.133701 170.866142 2.133701 
+C 168.410361 2.133701 166.054832 3.109393 164.318333 4.845892 
+C 162.581834 6.582391 161.606142 8.93792 161.606142 11.393701 
+C 161.606142 13.849481 162.581834 16.20501 164.318333 17.94151 
+C 166.054832 19.678009 168.410361 20.653701 170.866142 20.653701 
+z
+" style="fill: #ffffff; stroke: #143359; stroke-width: 1.3; stroke-linejoin: miter"/>
+    </g>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="170.866142" y="14.993701" transform="rotate(-0 170.866142 14.993701)">3</text>
+   </g>
+   <g id="sn_ring_anatomy-text_7">
+    <g id="sn_ring_anatomy-patch_5">
+     <path d="M 306.913386 156.700945 
+C 309.369167 156.700945 311.724695 155.725253 313.461195 153.988754 
+C 315.197694 152.252254 316.173386 149.896726 316.173386 147.440945 
+C 316.173386 144.985164 315.197694 142.629635 313.461195 140.893136 
+C 311.724695 139.156637 309.369167 138.180945 306.913386 138.180945 
+C 304.457605 138.180945 302.102076 139.156637 300.365577 140.893136 
+C 298.629078 142.629635 297.653386 144.985164 297.653386 147.440945 
+C 297.653386 149.896726 298.629078 152.252254 300.365577 153.988754 
+C 302.102076 155.725253 304.457605 156.700945 306.913386 156.700945 
+z
+" style="fill: #ffffff; stroke: #143359; stroke-width: 1.3; stroke-linejoin: miter"/>
+    </g>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="306.913386" y="151.040945" transform="rotate(-0 306.913386 151.040945)">4</text>
+   </g>
+   <g id="sn_ring_anatomy-text_8">
+    <g id="sn_ring_anatomy-patch_6">
+     <path d="M 170.866142 207.472598 
+C 173.321922 207.472598 175.677451 206.496906 177.413951 204.760407 
+C 179.15045 203.023908 180.126142 200.668379 180.126142 198.212598 
+C 180.126142 195.756818 179.15045 193.401289 177.413951 191.66479 
+C 175.677451 189.92829 173.321922 188.952598 170.866142 188.952598 
+C 168.410361 188.952598 166.054832 189.92829 164.318333 191.66479 
+C 162.581834 193.401289 161.606142 195.756818 161.606142 198.212598 
+C 161.606142 200.668379 162.581834 203.023908 164.318333 204.760407 
+C 166.054832 206.496906 168.410361 207.472598 170.866142 207.472598 
+z
+" style="fill: #ffffff; stroke: #143359; stroke-width: 1.3; stroke-linejoin: miter"/>
+    </g>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="170.866142" y="201.812598" transform="rotate(-0 170.866142 201.812598)">5</text>
+   </g>
+   <g id="sn_ring_anatomy-text_9">
+    <g id="sn_ring_anatomy-patch_7">
+     <path d="M -20.207954 114.762229 
+C -17.752173 114.762229 -15.396644 113.786537 -13.660145 112.050038 
+C -11.923646 110.313539 -10.947954 107.95801 -10.947954 105.502229 
+C -10.947954 103.046448 -11.923646 100.690919 -13.660145 98.95442 
+C -15.396644 97.217921 -17.752173 96.242229 -20.207954 96.242229 
+C -22.663734 96.242229 -25.019263 97.217921 -26.755762 98.95442 
+C -28.492262 100.690919 -29.467954 103.046448 -29.467954 105.502229 
+C -29.467954 107.95801 -28.492262 110.313539 -26.755762 112.050038 
+C -25.019263 113.786537 -22.663734 114.762229 -20.207954 114.762229 
+z
+" style="fill: #ffffff; stroke: #143359; stroke-width: 1.3; stroke-linejoin: miter"/>
+    </g>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="-20.207954" y="109.102229" transform="rotate(-0 -20.207954 109.102229)">6</text>
+   </g>
+   <g id="sn_ring_anatomy-text_10">
+    <g id="sn_ring_anatomy-patch_8">
+     <path d="M 170.866142 291.748189 
+C 173.321922 291.748189 175.677451 290.772497 177.413951 289.035998 
+C 179.15045 287.299499 180.126142 284.94397 180.126142 282.488189 
+C 180.126142 280.032408 179.15045 277.676879 177.413951 275.94038 
+C 175.677451 274.203881 173.321922 273.228189 170.866142 273.228189 
+C 168.410361 273.228189 166.054832 274.203881 164.318333 275.94038 
+C 162.581834 277.676879 161.606142 280.032408 161.606142 282.488189 
+C 161.606142 284.94397 162.581834 287.299499 164.318333 289.035998 
+C 166.054832 290.772497 168.410361 291.748189 170.866142 291.748189 
+z
+" style="fill: #ffffff; stroke: #143359; stroke-width: 1.3; stroke-linejoin: miter"/>
+    </g>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="170.866142" y="286.088189" transform="rotate(-0 170.866142 286.088189)">7</text>
+   </g>
+   <g id="sn_ring_anatomy-text_11">
+    <g id="sn_ring_anatomy-patch_9">
+     <path d="M 325.732283 112.763937 
+C 328.188064 112.763937 330.543593 111.788245 332.280092 110.051746 
+C 334.016591 108.315247 334.992283 105.959718 334.992283 103.503937 
+C 334.992283 101.048156 334.016591 98.692627 332.280092 96.956128 
+C 330.543593 95.219629 328.188064 94.243937 325.732283 94.243937 
+C 323.276503 94.243937 320.920974 95.219629 319.184475 96.956128 
+C 317.447975 98.692627 316.472283 101.048156 316.472283 103.503937 
+C 316.472283 105.959718 317.447975 108.315247 319.184475 110.051746 
+C 320.920974 111.788245 323.276503 112.763937 325.732283 112.763937 
+z
+" style="fill: #ffffff; stroke: #143359; stroke-width: 1.3; stroke-linejoin: miter"/>
+    </g>
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="325.732283" y="107.103937" transform="rotate(-0 325.732283 107.103937)">8</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_ring_anatomy-p2cee06926b">
+   <rect x="0" y="0.984252" width="620" height="288.031496"/>
+  </clipPath>
+ </defs>
+</svg></div>
+        <p class="card-foot">Verified = at least five skills confirmed by the employee's manager in the skills inventory. Employees = full- and part-time.<br>Source: Workday skills inventory (synthetic data for illustration), as of 31 Mar 2026<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">49</span></div>
+</section>
+
+<section class="spread" id="single-number-variants">
+  <div class="rail">
+    <p class="eyebrow">Single number</p>
+    <h2 class="title"><b>Single number</b> variants</h2>
+    <p class="lede">The anatomy stays the same: name, number, comparison, sentence.</p>
+    <h3>When a single number is the wrong chart</h3>
+    <ul>
+      <li>The trend is the message: a <strong>line</strong>, or a sparkline under the number</li>
+      <li>Many groups to compare: <strong>bars</strong>; eight KPI cards are a bar chart in disguise</li>
+      <li>Several parts of a whole: a <strong>donut</strong> or <strong>stacked bar</strong></li>
+      <li>The base is under 10 people: don't headline it</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Big number with a trend</h4>
+        <p class="note">A sparkline adds the shape without a full chart: internal fill reached 29%, +5 pts in a year.</p>
+        <div class="ex-wrap"><svg class="ex" style="--w:300px" role="img" aria-label="Big number 29% internal fill rate with a sparkline FY22–FY26 and +5 pts vs. FY25." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_var_spark-figure_1">
+  <g id="sn_var_spark-patch_1">
+   <path d="M 0 190 
+L 300 190 
+L 300 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_var_spark-axes_1">
+   <g id="sn_var_spark-text_1">
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="0" y="30" transform="rotate(-0 0 30)">Internal fill rate, FY26</text>
+   </g>
+   <g id="sn_var_spark-text_2">
+    <text style="font-weight: 300; font-size: 44px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="0" y="92" transform="rotate(-0 0 92)">29%</text>
+   </g>
+   <g id="sn_var_spark-text_3">
+    <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="0" y="120" transform="rotate(-0 0 120)">▲ +5 pts vs. FY25 (24%)</text>
+   </g>
+   <g id="sn_var_spark-text_4">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(0 141.1221)">of open roles were filled by</text>
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(0 156)">internal candidates</text>
+   </g>
+  </g>
+  <g id="sn_var_spark-axes_2">
+   <g id="sn_var_spark-patch_2">
+    <path d="M 174 114 
+L 276 114 
+L 276 45.6 
+L 174 45.6 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="sn_var_spark-matplotlib.axis_1">
+    <g id="sn_var_spark-xtick_1">
+     <g id="sn_var_spark-line2d_1"/>
+     <g id="sn_var_spark-text_5">
+      <text style="font-size: 8px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #737373" x="175.961538" y="126.728" transform="rotate(-0 175.961538 126.728)">FY22</text>
+     </g>
+    </g>
+    <g id="sn_var_spark-xtick_2">
+     <g id="sn_var_spark-line2d_2"/>
+     <g id="sn_var_spark-text_6">
+      <text style="font-size: 8px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #737373" x="274.038462" y="126.728" transform="rotate(-0 274.038462 126.728)">FY26</text>
+     </g>
+    </g>
+   </g>
+   <g id="sn_var_spark-matplotlib.axis_2"/>
+   <g id="sn_var_spark-line2d_3">
+    <path d="M 175.961538 94.457143 
+L 200.480769 89.571429 
+L 225 79.8 
+L 249.519231 84.685714 
+L 274.038462 60.257143 
+" clip-path="url(#sn_var_spark-pf4e7d62d40)" style="fill: none; stroke: #005a8c; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="sn_var_spark-line2d_4">
+    <defs>
+     <path id="sn_var_spark-m028aed9761" d="M 0 2 
+C 0.530406 2 1.03916 1.789267 1.414214 1.414214 
+C 1.789267 1.03916 2 0.530406 2 0 
+C 2 -0.530406 1.789267 -1.03916 1.414214 -1.414214 
+C 1.03916 -1.789267 0.530406 -2 0 -2 
+C -0.530406 -2 -1.03916 -1.789267 -1.414214 -1.414214 
+C -1.789267 -1.03916 -2 -0.530406 -2 0 
+C -2 0.530406 -1.789267 1.03916 -1.414214 1.414214 
+C -1.03916 1.789267 -0.530406 2 0 2 
+z
+" style="stroke: #005a8c"/>
+    </defs>
+    <g clip-path="url(#sn_var_spark-pf4e7d62d40)">
+     <use xlink:href="#sn_var_spark-m028aed9761" x="274.038462" y="60.257143" style="fill: #005a8c; stroke: #005a8c"/>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_var_spark-pf4e7d62d40">
+   <rect x="174" y="45.6" width="102" height="68.4"/>
+  </clipPath>
+ </defs>
+</svg></div>
+      </div>
+      <div class="tile">
+        <h4>Progress bars to a target</h4>
+        <p class="note">One share per group on a shared 0–100% track. 5 of 6 units are below target; Oncology is lowest at 44%.</p>
+        <div class="ex-wrap"><svg class="ex" style="--w:300px" role="img" aria-label="Progress bars of succession coverage by business unit on a 0–100% track with the 75% target; Oncology lowest at 44%." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_var_bars-figure_1">
+  <g id="sn_var_bars-patch_1">
+   <path d="M 0 190 
+L 300 190 
+L 300 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_var_bars-axes_1">
+   <g id="sn_var_bars-patch_2">
+    <path d="M 90 182.4 
+L 270 182.4 
+L 270 30.4 
+L 90 30.4 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="sn_var_bars-matplotlib.axis_1"/>
+   <g id="sn_var_bars-matplotlib.axis_2">
+    <g id="sn_var_bars-ytick_1">
+     <g id="sn_var_bars-line2d_1"/>
+     <g id="sn_var_bars-text_1">
+      <text style="font-weight: 700; font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #143359" x="84" y="172.89356" transform="rotate(-0 84 172.89356)">Oncology</text>
+     </g>
+    </g>
+    <g id="sn_var_bars-ytick_2">
+     <g id="sn_var_bars-line2d_2"/>
+     <g id="sn_var_bars-text_2">
+      <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="84" y="150.206993" transform="rotate(-0 84 150.206993)">Technology</text>
+     </g>
+    </g>
+    <g id="sn_var_bars-ytick_3">
+     <g id="sn_var_bars-line2d_3"/>
+     <g id="sn_var_bars-text_3">
+      <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="84" y="127.520425" transform="rotate(-0 84 127.520425)">U.S. Pharma</text>
+     </g>
+    </g>
+    <g id="sn_var_bars-ytick_4">
+     <g id="sn_var_bars-line2d_4"/>
+     <g id="sn_var_bars-text_4">
+      <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="84" y="104.833858" transform="rotate(-0 84 104.833858)">Med-Surg</text>
+     </g>
+    </g>
+    <g id="sn_var_bars-ytick_5">
+     <g id="sn_var_bars-line2d_5"/>
+     <g id="sn_var_bars-text_5">
+      <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="84" y="82.147291" transform="rotate(-0 84 82.147291)">Corporate</text>
+     </g>
+    </g>
+    <g id="sn_var_bars-ytick_6">
+     <g id="sn_var_bars-line2d_6"/>
+     <g id="sn_var_bars-text_6">
+      <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: end; fill: #737373" x="84" y="59.460724" transform="rotate(-0 84 59.460724)">RxTS</text>
+     </g>
+    </g>
+   </g>
+   <g id="sn_var_bars-patch_3">
+    <path d="M 90 174.459701 
+L 270 174.459701 
+L 270 163.116418 
+L 90 163.116418 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_bars-patch_4">
+    <path d="M 90 151.773134 
+L 270 151.773134 
+L 270 140.429851 
+L 90 140.429851 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_bars-patch_5">
+    <path d="M 90 129.086567 
+L 270 129.086567 
+L 270 117.743284 
+L 90 117.743284 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_bars-patch_6">
+    <path d="M 90 106.4 
+L 270 106.4 
+L 270 95.056716 
+L 90 95.056716 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_bars-patch_7">
+    <path d="M 90 83.713433 
+L 270 83.713433 
+L 270 72.370149 
+L 90 72.370149 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_bars-patch_8">
+    <path d="M 90 61.026866 
+L 270 61.026866 
+L 270 49.683582 
+L 90 49.683582 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_bars-patch_9">
+    <path d="M 90 174.459701 
+L 168.75 174.459701 
+L 168.75 163.116418 
+L 90 163.116418 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #005a8c"/>
+   </g>
+   <g id="sn_var_bars-patch_10">
+    <path d="M 90 151.773134 
+L 195.882353 151.773134 
+L 195.882353 140.429851 
+L 90 140.429851 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_bars-patch_11">
+    <path d="M 90 129.086567 
+L 198 129.086567 
+L 198 117.743284 
+L 90 117.743284 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_bars-patch_12">
+    <path d="M 90 106.4 
+L 206.129032 106.4 
+L 206.129032 95.056716 
+L 90 95.056716 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_bars-patch_13">
+    <path d="M 90 83.713433 
+L 216 83.713433 
+L 216 72.370149 
+L 90 72.370149 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_bars-patch_14">
+    <path d="M 90 61.026866 
+L 229.5 61.026866 
+L 229.5 49.683582 
+L 90 49.683582 
+z
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_bars-LineCollection_1">
+    <path d="M 225 178.997015 
+L 225 45.146269 
+" clip-path="url(#sn_var_bars-pa98d1177e6)" style="fill: none; stroke-dasharray: 2.25,2.25; stroke-dashoffset: 0; stroke: #143359; stroke-width: 0.9"/>
+   </g>
+   <g id="sn_var_bars-text_7">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="272.7" y="171.84806" transform="rotate(-0 272.7 171.84806)">44%</text>
+   </g>
+   <g id="sn_var_bars-text_8">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="272.7" y="149.161493" transform="rotate(-0 272.7 149.161493)">59%</text>
+   </g>
+   <g id="sn_var_bars-text_9">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="272.7" y="126.474925" transform="rotate(-0 272.7 126.474925)">60%</text>
+   </g>
+   <g id="sn_var_bars-text_10">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="272.7" y="103.788358" transform="rotate(-0 272.7 103.788358)">65%</text>
+   </g>
+   <g id="sn_var_bars-text_11">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="272.7" y="81.101791" transform="rotate(-0 272.7 81.101791)">70%</text>
+   </g>
+   <g id="sn_var_bars-text_12">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="272.7" y="58.415224" transform="rotate(-0 272.7 58.415224)">78%</text>
+   </g>
+   <g id="sn_var_bars-text_13">
+    <text style="font-size: 8px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="225" y="40.909612" transform="rotate(-0 225 40.909612)">Target 75%</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_var_bars-pa98d1177e6">
+   <rect x="90" y="30.4" width="180" height="152"/>
+  </clipPath>
+ </defs>
+</svg></div>
+      </div>
+      <div class="tile">
+        <h4>Circular dials</h4>
+        <p class="note">One % across a few groups, every ring 0–100%. Distribution trails at 61%.</p>
+        <div class="ex-wrap"><svg class="ex" style="--w:300px" role="img" aria-label="Five rings of skills-profile completion by function, highest to lowest; Distribution lowest at 61% in blue." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_var_dials-figure_1">
+  <g id="sn_var_dials-patch_1">
+   <path d="M 0 190 
+L 300 190 
+L 300 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_var_dials-axes_1">
+   <g id="sn_var_dials-patch_2">
+    <path d="M 12.902288 66.760805 
+C 10.795735 68.735521 9.047125 71.06034 7.734162 73.631954 
+C 6.421199 76.203568 5.563623 78.983313 5.199541 81.847665 
+C 4.835459 84.712018 4.970345 87.617912 5.598207 90.43622 
+C 6.226068 93.254528 7.337464 95.942877 8.883008 98.381804 
+C 10.428552 100.82073 12.385007 102.973567 14.665434 104.744647 
+C 16.94586 106.515727 19.515973 107.878423 22.261563 108.772181 
+C 25.007154 109.665939 27.886942 110.077322 30.77296 109.988048 
+C 33.658978 109.898774 36.507835 109.310186 39.192935 108.24844 
+C 41.878036 107.186693 44.35901 105.66775 46.525611 103.759109 
+C 48.692212 101.850468 50.511865 99.580825 51.903711 97.051035 
+C 53.295556 94.521246 54.238668 91.769345 54.691137 88.917619 
+C 55.143606 86.065893 55.09863 83.157217 54.558206 80.320843 
+C 54.017783 77.48447 52.990037 74.763045 51.52064 72.277498 
+C 50.051243 69.791951 48.162286 67.579654 45.937708 65.738913 
+C 43.713131 63.898173 41.18638 62.456664 38.469735 61.478444 
+C 35.753091 60.500224 32.887399 60 30 60 
+L 30 64.5 
+C 32.367667 64.5 34.717535 64.910184 36.945183 65.712324 
+C 39.172831 66.514465 41.244767 67.696502 43.068921 69.205909 
+C 44.893074 70.715316 46.442019 72.5294 47.646925 74.567548 
+C 48.851831 76.605697 49.694582 78.837266 50.137729 81.163092 
+C 50.580876 83.488918 50.617757 85.874032 50.246733 88.212447 
+C 49.875708 90.550863 49.102356 92.807421 47.961043 94.881849 
+C 46.819729 96.956277 45.327614 98.817384 43.551001 100.38247 
+C 41.774388 101.947555 39.739989 103.193088 37.538207 104.06372 
+C 35.336425 104.934353 33.000362 105.416995 30.633827 105.490199 
+C 28.267293 105.563404 25.905866 105.22607 23.654482 104.493189 
+C 21.403098 103.760307 19.295605 102.642896 17.425656 101.19061 
+C 15.555706 99.738325 13.951413 97.972999 12.684067 95.973079 
+C 11.416721 93.973159 10.505376 91.768713 9.99053 89.457701 
+C 9.475683 87.146688 9.365076 84.763854 9.663623 82.415085 
+C 9.96217 80.066316 10.665383 77.786926 11.742013 75.678202 
+C 12.818643 73.569479 14.252503 71.663127 15.979876 70.04386 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_dials-patch_3">
+    <path d="M 30 60 
+C 26.852816 60 23.733749 60.594286 20.807065 61.75156 
+C 17.88038 62.908835 15.198372 64.608419 12.902288 66.760805 
+L 15.979876 70.04386 
+C 17.862665 68.278903 20.061912 66.885245 22.461793 65.93628 
+C 24.861675 64.987315 27.419309 64.5 30 64.5 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_dials-patch_4">
+    <path d="M 65.785101 78.784001 
+C 65.14102 81.293066 64.890806 83.887062 65.043431 86.472976 
+C 65.196056 89.05889 65.749673 91.605443 66.684431 94.021322 
+C 67.61919 96.437202 68.923782 98.693184 70.551431 100.708379 
+C 72.17908 102.723573 74.110095 104.473602 76.275237 105.895715 
+C 78.44038 107.317828 80.813459 108.394822 83.309383 109.088081 
+C 85.805308 109.78134 88.393886 110.082477 90.9823 109.980694 
+C 93.570714 109.878912 96.127653 109.375441 98.561434 108.488334 
+C 100.995215 107.601228 103.276397 106.341217 105.323185 104.75348 
+C 107.369974 103.165744 109.157608 101.26949 110.621991 99.132709 
+C 112.086374 96.995929 113.209792 94.644471 113.951961 92.162651 
+C 114.69413 89.68083 115.046074 87.09867 114.995173 84.508755 
+C 114.944272 81.918841 114.491142 79.352502 113.65203 76.90176 
+C 112.812918 74.451017 111.597975 72.145517 110.050764 70.067925 
+C 108.503553 67.990333 106.642791 66.165783 104.535199 64.659695 
+C 102.427606 63.153607 100.098677 61.984202 97.631919 61.193408 
+C 95.165161 60.402615 92.590415 60 90 60 
+L 90 64.5 
+C 92.12414 64.5 94.235432 64.830144 96.258174 65.478595 
+C 98.280915 66.127045 100.190637 67.085958 101.918863 68.32095 
+C 103.647089 69.555942 105.172914 71.052073 106.441626 72.755698 
+C 107.710339 74.459324 108.706592 76.349834 109.394664 78.359443 
+C 110.082736 80.369052 110.454303 82.473449 110.496042 84.597179 
+C 110.537781 86.720909 110.249187 88.838281 109.640608 90.873374 
+C 109.032029 92.908466 108.110827 94.836662 106.910033 96.588822 
+C 105.709239 98.340981 104.243378 99.89591 102.565012 101.197854 
+C 100.886646 102.499798 99.016076 103.533007 97.020376 104.260434 
+C 95.024676 104.987861 92.927986 105.400708 90.805486 105.484169 
+C 88.682986 105.567631 86.560352 105.320699 84.513694 104.752226 
+C 82.467036 104.183754 80.521112 103.300619 78.745695 102.134486 
+C 76.970278 100.968353 75.386845 99.53333 74.052173 97.880871 
+C 72.717502 96.228411 71.647736 94.378505 70.881234 92.397484 
+C 70.114732 90.416463 69.660766 88.32829 69.535613 86.20784 
+C 69.410461 84.087391 69.615636 81.960314 70.143782 79.902881 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_dials-patch_5">
+    <path d="M 90 60 
+C 84.452641 60 79.06 61.846391 74.676815 65.24652 
+C 70.293629 68.646648 67.164396 73.410852 65.785101 78.784001 
+L 70.143782 79.902881 
+C 71.274804 75.496898 73.840776 71.590251 77.434988 68.802146 
+C 81.0292 66.014041 85.451166 64.5 90 64.5 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_dials-patch_6">
+    <path d="M 125.787378 91.224864 
+C 126.9518 95.754073 129.364039 99.866968 132.748698 103.093993 
+C 136.133358 106.321019 140.356538 108.534512 144.936093 109.481766 
+C 149.515648 110.429019 154.270408 110.072559 158.657537 108.453082 
+C 163.044667 106.833604 166.890609 104.015177 169.756285 100.319569 
+C 172.621961 96.623962 174.394003 92.197376 174.870104 87.545178 
+C 175.346205 82.89298 174.507528 78.199216 172.449824 73.999755 
+C 170.39212 69.800295 167.196793 66.261272 163.228641 63.786724 
+C 159.260489 61.312177 154.676496 60 150 60 
+L 150 64.5 
+C 153.834727 64.5 157.593601 65.575985 160.847486 67.605114 
+C 164.10137 69.634243 166.721539 72.536242 168.408856 75.979799 
+C 170.096173 79.423357 170.783888 83.272244 170.393485 87.087046 
+C 170.003083 90.901848 168.550008 94.531649 166.200154 97.562047 
+C 163.850299 100.592445 160.696627 102.903555 157.099181 104.231527 
+C 153.501734 105.559499 149.602832 105.851796 145.847596 105.075048 
+C 142.092361 104.2983 138.629354 102.483236 135.853933 99.837075 
+C 133.078512 97.190913 131.100476 93.81834 130.14565 90.104388 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_dials-patch_7">
+    <path d="M 150 60 
+C 146.186911 60 142.423883 60.872379 138.999755 62.550176 
+C 135.575628 64.227972 132.58031 66.667132 130.243715 69.680431 
+C 127.90712 72.69373 126.2906 76.202047 125.518234 79.936093 
+C 124.745869 83.670139 124.837939 87.531868 125.787378 91.224864 
+L 130.14565 90.104388 
+C 129.36711 87.076132 129.291613 83.909514 129.924952 80.847596 
+C 130.558292 77.785678 131.883838 74.908858 133.799846 72.437953 
+C 135.715855 69.967048 138.172015 67.966937 140.979799 66.591144 
+C 143.787584 65.215351 146.873267 64.5 150 64.5 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_dials-patch_8">
+    <path d="M 188.893648 98.398578 
+C 191.221559 102.065662 194.465468 105.063524 198.304419 107.095551 
+C 202.143369 109.127578 206.44643 110.124466 210.787851 109.987583 
+C 215.129272 109.850699 219.360986 108.584711 223.0643 106.314879 
+C 226.767614 104.045047 229.816224 100.848783 231.908497 97.042333 
+C 234.000769 93.235882 235.065346 88.949064 234.996895 84.606025 
+C 234.928445 80.262987 233.729302 76.011848 231.518112 72.273223 
+C 229.306922 68.534599 226.159099 65.435997 222.386093 63.283999 
+C 218.613087 61.132 214.343578 60 210 60 
+L 210 64.5 
+C 213.561734 64.5 217.062731 65.42824 220.156596 67.192879 
+C 223.250461 68.957518 225.831676 71.498371 227.644852 74.564043 
+C 229.458028 77.629715 230.441325 81.115649 230.497454 84.676941 
+C 230.553584 88.238233 229.680631 91.753423 227.964967 94.874713 
+C 226.249304 97.996002 223.749443 100.616938 220.712726 102.478201 
+C 217.676009 104.339463 214.206003 105.377573 210.646038 105.489818 
+C 207.086073 105.602063 203.557562 104.784614 200.409623 103.118352 
+C 197.261684 101.45209 194.601678 98.993843 192.692791 95.986834 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #b4b0a5"/>
+   </g>
+   <g id="sn_var_dials-patch_9">
+    <path d="M 210 60 
+C 205.522842 60 201.126822 61.202696 197.273223 63.481888 
+C 193.419624 65.761079 190.24812 69.034156 188.091503 72.957667 
+C 185.934887 76.881179 184.871324 81.312917 185.012417 85.787851 
+C 185.153511 90.262785 186.494146 94.61872 188.893648 98.398578 
+L 192.692791 95.986834 
+C 190.7252 92.88735 189.625879 89.315484 189.510182 85.646038 
+C 189.394486 81.976592 190.266607 78.342567 192.035033 75.125287 
+C 193.803458 71.908008 196.404092 69.224085 199.564043 67.355148 
+C 202.723994 65.486211 206.328731 64.5 210 64.5 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_dials-patch_10">
+    <path d="M 254.061284 104.260253 
+C 257.151865 106.817846 260.813122 108.594369 264.734747 109.439253 
+C 268.656371 110.284138 272.72435 110.17282 276.593901 109.114736 
+C 280.463452 108.056651 284.022076 106.08256 286.968162 103.359778 
+C 289.914249 100.636996 292.162146 97.244682 293.521334 93.470351 
+C 294.880522 89.696019 295.311484 85.649402 294.777696 81.67347 
+C 294.243907 77.697537 292.760885 73.907882 290.454324 70.625696 
+C 288.147763 67.34351 285.084722 64.664216 281.524808 62.814897 
+C 277.964894 60.965578 274.011604 60 270 60 
+L 270 64.5 
+C 273.289515 64.5 276.531213 65.291774 279.450343 66.808215 
+C 282.369472 68.324657 284.881166 70.521678 286.772546 73.213071 
+C 288.663926 75.904463 289.880003 79.011981 290.31771 82.272245 
+C 290.755417 85.53251 290.402028 88.850736 289.287494 91.945687 
+C 288.17296 95.040639 286.329684 97.822337 283.913893 100.055018 
+C 281.498102 102.2877 278.58003 103.906454 275.406998 104.774083 
+C 272.233967 105.641713 268.898224 105.732993 265.682492 105.040188 
+C 262.46676 104.347383 259.464529 102.890634 256.930253 100.793407 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #005a8c"/>
+   </g>
+   <g id="sn_var_dials-patch_11">
+    <path d="M 270 60 
+C 264.855686 60 259.834635 61.587838 255.625696 64.545676 
+C 251.416757 67.503513 248.221632 71.689604 246.478666 76.529649 
+C 244.7357 81.369695 244.52842 86.631749 245.885264 91.593901 
+C 247.242108 96.556052 250.098053 100.980502 254.061284 104.260253 
+L 256.930253 100.793407 
+C 253.680403 98.104012 251.338529 94.475962 250.225917 90.406998 
+C 249.113305 86.338035 249.283274 82.02315 250.712506 78.054313 
+C 252.141738 74.085475 254.761741 70.652881 258.213071 68.227454 
+C 261.664401 65.802027 265.781662 64.5 270 64.5 
+z
+" clip-path="url(#sn_var_dials-p8199a63e2d)" style="fill: #e6e4de"/>
+   </g>
+   <g id="sn_var_dials-text_1">
+    <text style="font-size: 11px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="30" y="88.96" transform="rotate(-0 30 88.96)">88%</text>
+   </g>
+   <g id="sn_var_dials-text_2">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #505050" x="30" y="126.551041" transform="rotate(-0 30 126.551041)">Technology</text>
+   </g>
+   <g id="sn_var_dials-text_3">
+    <text style="font-size: 11px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="90" y="88.96" transform="rotate(-0 90 88.96)">79%</text>
+   </g>
+   <g id="sn_var_dials-text_4">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #505050" x="90" y="126.641041" transform="rotate(-0 90 126.641041)">Corporate</text>
+   </g>
+   <g id="sn_var_dials-text_5">
+    <text style="font-size: 11px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="150" y="88.96" transform="rotate(-0 150 88.96)">71%</text>
+   </g>
+   <g id="sn_var_dials-text_6">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(129.173438 127.338541)">Customer</text>
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(140.073281 139.337341)">Care</text>
+   </g>
+   <g id="sn_var_dials-text_7">
+    <text style="font-size: 11px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="210" y="88.96" transform="rotate(-0 210 88.96)">66%</text>
+   </g>
+   <g id="sn_var_dials-text_8">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(188.769141 126.596041)">Pharmacy</text>
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(201.570938 138.639841)">Ops</text>
+   </g>
+   <g id="sn_var_dials-text_9">
+    <text style="font-weight: 600; font-size: 12px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="270" y="89.32" transform="rotate(-0 270 89.32)">61%</text>
+   </g>
+   <g id="sn_var_dials-text_10">
+    <text style="font-weight: 700; font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="270" y="127.293541" transform="rotate(-0 270 127.293541)">Distribution</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_var_dials-p8199a63e2d">
+   <rect x="0" y="0" width="300" height="190"/>
+  </clipPath>
+ </defs>
+</svg></div>
+      </div>
+      <div class="tile">
+        <h4>KPI row</h4>
+        <p class="note">Three to five cards above a dashboard's main chart, each built the same way. Days to fill rose 2 days, so it's orange.</p>
+        <div class="ex-wrap"><svg class="ex" style="--w:300px" role="img" aria-label="A row of three KPI cards with identical anatomy: internal fill rate, days to fill, succession coverage; favorable deltas teal, the unfavorable one orange." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 190" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_var_row-figure_1">
+  <g id="sn_var_row-patch_1">
+   <path d="M 0 190 
+L 300 190 
+L 300 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_var_row-axes_1">
+   <g id="sn_var_row-line2d_1">
+    <path d="M 98 104 
+L 98 34 
+" clip-path="url(#sn_var_row-p8199a63e2d)" style="fill: none; stroke: #e6e4de; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="sn_var_row-line2d_2">
+    <path d="M 200 104 
+L 200 34 
+" clip-path="url(#sn_var_row-p8199a63e2d)" style="fill: none; stroke: #e6e4de; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="sn_var_row-text_1">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="4" y="48" transform="rotate(-0 4 48)">Internal fill rate</text>
+   </g>
+   <g id="sn_var_row-text_2">
+    <text style="font-weight: 300; font-size: 30px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="4" y="80" transform="rotate(-0 4 80)">29%</text>
+   </g>
+   <g id="sn_var_row-text_3">
+    <text style="font-weight: 600; font-size: 8px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="4" y="100" transform="rotate(-0 4 100)">▲ +5 pts vs. FY25</text>
+   </g>
+   <g id="sn_var_row-text_4">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="106" y="48" transform="rotate(-0 106 48)">Days to fill</text>
+   </g>
+   <g id="sn_var_row-text_5">
+    <text style="font-weight: 300; font-size: 30px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="106" y="80" transform="rotate(-0 106 80)">37</text>
+   </g>
+   <g id="sn_var_row-text_6">
+    <text style="font-weight: 600; font-size: 8px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #a75b00" x="106" y="100" transform="rotate(-0 106 100)">▲ +2 days vs. FY25</text>
+   </g>
+   <g id="sn_var_row-text_7">
+    <text style="font-size: 8.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="208" y="48" transform="rotate(-0 208 48)">Succession coverage</text>
+   </g>
+   <g id="sn_var_row-text_8">
+    <text style="font-weight: 300; font-size: 30px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="208" y="80" transform="rotate(-0 208 80)">62%</text>
+   </g>
+   <g id="sn_var_row-text_9">
+    <text style="font-weight: 600; font-size: 8px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="208" y="100" transform="rotate(-0 208 100)">▲ +14 pts vs. Mar 2025</text>
+   </g>
+   <g id="sn_var_row-text_10">
+    <text style="font-size: 7.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #737373" transform="translate(4 138.183)">Teal = favorable, orange = unfavorable; the arrow</text>
+    <text style="font-size: 7.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #737373" transform="translate(4 150)">gives the direction, the color the judgment.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_var_row-p8199a63e2d">
+   <rect x="0" y="0" width="300" height="190"/>
+  </clipPath>
+ </defs>
+</svg></div>
+      </div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">50</span></div>
+</section>
+
+<section class="spread" id="single-number-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Single number</p>
+    <h2 class="title"><b>Single number</b> best practice</h2>
+    <p class="lede">A number alone is a fact. Context and comparison make it a finding.</p>
+    <p><strong>Light, large, plain.</strong> The numeral needs size and space, not bold type, boxes or shadows.</p>
+    <p><strong>Say what is counted.</strong> One sentence, with the base: "254 of 410 critical roles".</p>
+    <p><strong>Always compare.</strong> Prior period, target or benchmark, with a sign. Percentage-point changes are "pts", never "%".</p>
+    <p><strong>No speedometers.</strong> Gauges spend ink on a dial and invite red and green. A ring or a bar with a target does the job.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Light, large, plain</h4><div class="pair">
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="A bold blue numeral in a bordered box with a drop shadow." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_weight_avoid-figure_1">
+  <g id="sn_bp_weight_avoid-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_weight_avoid-axes_1">
+   <g id="sn_bp_weight_avoid-patch_2">
+    <path d="M 34 116 
+L 172 116 
+Q 180 116 180 108 
+L 180 32 
+Q 180 24 172 24 
+L 34 24 
+Q 26 24 26 32 
+L 26 108 
+Q 26 116 34 116 
+z
+" clip-path="url(#sn_bp_weight_avoid-p318efcee82)" style="fill: #9a9a9a"/>
+   </g>
+   <g id="sn_bp_weight_avoid-patch_3">
+    <path d="M 28 110 
+L 166 110 
+Q 174 110 174 102 
+L 174 26 
+Q 174 18 166 18 
+L 28 18 
+Q 20 18 20 26 
+L 20 102 
+Q 20 110 28 110 
+z
+" clip-path="url(#sn_bp_weight_avoid-p318efcee82)" style="fill: #efede7; stroke: #143359; stroke-width: 2.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="sn_bp_weight_avoid-text_1">
+    <text style="font-weight: 800; font-size: 38px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #005a8c" x="97" y="81.68" transform="rotate(-0 97 81.68)">62%</text>
+   </g>
+   <g id="sn_bp_weight_avoid-text_2">
+    <text style="font-weight: 700; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="97" y="98" transform="rotate(-0 97 98)">SUCCESSION</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_bp_weight_avoid-p318efcee82">
+   <rect x="0" y="0" width="200" height="140"/>
+  </clipPath>
+ </defs>
+</svg></div><div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Bold, boxed, shadowed.</span></div></div>
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="A light-weight navy numeral with one line of context." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_weight_fix-figure_1">
+  <g id="sn_bp_weight_fix-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_weight_fix-axes_1">
+   <g id="sn_bp_weight_fix-text_1">
+    <text style="font-weight: 300; font-size: 42px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="78" transform="rotate(-0 14 78)">62%</text>
+   </g>
+   <g id="sn_bp_weight_fix-text_2">
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(14 115.008748)">254 of 410 critical roles have</text>
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(14 129.193198)">a ready-now successor</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>Light numeral, white space.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Say what is counted</h4><div class="pair">
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="A bare 62% with no explanation." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_context_avoid-figure_1">
+  <g id="sn_bp_context_avoid-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_context_avoid-axes_1">
+   <g id="sn_bp_context_avoid-text_1">
+    <text style="font-weight: 300; font-size: 46px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="100" y="92.56" transform="rotate(-0 100 92.56)">62%</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>62% of what?</span></div></div>
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="62% with a sentence saying 254 of 410 critical roles are covered." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_context_fix-figure_1">
+  <g id="sn_bp_context_fix-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_context_fix-axes_1">
+   <g id="sn_bp_context_fix-text_1">
+    <text style="font-weight: 300; font-size: 42px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="70" transform="rotate(-0 14 70)">62%</text>
+   </g>
+   <g id="sn_bp_context_fix-text_2">
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(14 101.008748)">254 of 410 critical roles have</text>
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(14 115.193198)">at least one ready-now successor</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>One sentence with the base.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Always compare</h4><div class="pair">
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="A delta of '+14%' with no reference period." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_compare_avoid-figure_1">
+  <g id="sn_bp_compare_avoid-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_compare_avoid-axes_1">
+   <g id="sn_bp_compare_avoid-text_1">
+    <text style="font-weight: 300; font-size: 42px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="78" transform="rotate(-0 14 78)">62%</text>
+   </g>
+   <g id="sn_bp_compare_avoid-text_2">
+    <text style="font-weight: 600; font-size: 10.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="14" y="104" transform="rotate(-0 14 104)">+14%</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>"+14%" against nothing.</span></div></div>
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="+14 pts vs. Mar 2025 in teal, and the gap to target in orange." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_compare_fix-figure_1">
+  <g id="sn_bp_compare_fix-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_compare_fix-axes_1">
+   <g id="sn_bp_compare_fix-text_1">
+    <text style="font-weight: 300; font-size: 42px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="78" transform="rotate(-0 14 78)">62%</text>
+   </g>
+   <g id="sn_bp_compare_fix-text_2">
+    <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="14" y="104" transform="rotate(-0 14 104)">▲ +14 pts vs. Mar 2025 (48%)</text>
+   </g>
+   <g id="sn_bp_compare_fix-text_3">
+    <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #a75b00" x="14" y="120" transform="rotate(-0 14 120)">13 pts short of the 75% target</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>Pts vs. a date; gap to target.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>No speedometers</h4><div class="pair">
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="A speedometer gauge with red, orange and green zones and a needle." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_gauge_avoid-figure_1">
+  <g id="sn_bp_gauge_avoid-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_gauge_avoid-axes_1">
+   <g id="sn_bp_gauge_avoid-patch_2">
+    <path d="M 64 39.646171 
+C 53.055432 45.96502 43.96502 55.055432 37.646171 66 
+C 31.327322 76.944568 28 89.362301 28 102 
+L 52 102 
+C 52 93.574867 54.218214 85.296379 58.430781 78 
+C 62.643347 70.703621 68.703621 64.643347 76 60.430781 
+z
+" clip-path="url(#sn_bp_gauge_avoid-p318efcee82)" style="fill: #d62728"/>
+   </g>
+   <g id="sn_bp_gauge_avoid-patch_3">
+    <path d="M 136 39.646171 
+C 125.055432 33.327322 112.637699 30 100 30 
+C 87.362301 30 74.944568 33.327322 64 39.646171 
+L 76 60.430781 
+C 83.296379 56.218214 91.574867 54 100 54 
+C 108.425133 54 116.703621 56.218214 124 60.430781 
+z
+" clip-path="url(#sn_bp_gauge_avoid-p318efcee82)" style="fill: #ff7f0e"/>
+   </g>
+   <g id="sn_bp_gauge_avoid-patch_4">
+    <path d="M 172 102 
+C 172 89.362301 168.672678 76.944568 162.353829 66 
+C 156.03498 55.055432 146.944568 45.96502 136 39.646171 
+L 124 60.430781 
+C 131.296379 64.643347 137.356653 70.703621 141.569219 78 
+C 145.781786 85.296379 148 93.574867 148 102 
+z
+" clip-path="url(#sn_bp_gauge_avoid-p318efcee82)" style="fill: #2ca02c"/>
+   </g>
+   <g id="sn_bp_gauge_avoid-patch_5">
+    <path d="M 108 102 
+C 108 100.94945 107.793064 99.909115 107.391036 98.938533 
+C 106.989008 97.967951 106.399706 97.085997 105.656854 96.343146 
+C 104.914003 95.600294 104.032049 95.010992 103.061467 94.608964 
+C 102.090885 94.206936 101.05055 94 100 94 
+C 98.94945 94 97.909115 94.206936 96.938533 94.608964 
+C 95.967951 95.010992 95.085997 95.600294 94.343146 96.343146 
+C 93.600294 97.085997 93.010992 97.967951 92.608964 98.938533 
+C 92.206936 99.909115 92 100.94945 92 102 
+C 92 103.05055 92.206936 104.090885 92.608964 105.061467 
+C 93.010992 106.032049 93.600294 106.914003 94.343146 107.656854 
+C 95.085997 108.399706 95.967951 108.989008 96.938533 109.391036 
+C 97.909115 109.793064 98.94945 110 100 110 
+C 101.05055 110 102.090885 109.793064 103.061467 109.391036 
+C 104.032049 108.989008 104.914003 108.399706 105.656854 107.656854 
+C 106.399706 106.914003 106.989008 106.032049 107.391036 105.061467 
+C 107.793064 104.090885 108 103.05055 108 102 
+M 100 102 
+z
+" clip-path="url(#sn_bp_gauge_avoid-p318efcee82)" style="fill: #222222"/>
+   </g>
+   <g id="sn_bp_gauge_avoid-line2d_1">
+    <path d="M 100 102 
+L 122.823722 44.353858 
+" clip-path="url(#sn_bp_gauge_avoid-p318efcee82)" style="fill: none; stroke: #222222; stroke-width: 2.5; stroke-linecap: round"/>
+   </g>
+   <g id="sn_bp_gauge_avoid-text_1">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #222222" x="100" y="128" transform="rotate(-0 100 128)">62%</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_bp_gauge_avoid-p318efcee82">
+   <rect x="0" y="0" width="200" height="140"/>
+  </clipPath>
+ </defs>
+</svg></div><div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Dial, needle, traffic lights.</span></div></div>
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="A thin progress ring with a labelled target tick." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_gauge_fix-figure_1">
+  <g id="sn_bp_gauge_fix-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_gauge_fix-axes_1">
+   <g id="sn_bp_gauge_fix-patch_2">
+    <path d="M 82.40355 107.906369 
+C 88.586578 113.712618 96.097337 117.918845 104.278601 120.156986 
+C 112.459866 122.395127 121.065835 122.597937 129.343449 120.747672 
+C 137.621062 118.897406 145.321623 115.049654 151.771299 109.54111 
+C 158.220974 104.032567 163.225987 97.028734 166.348377 89.142477 
+C 169.470767 81.25622 170.616723 72.724478 169.68597 64.293816 
+C 168.755216 55.863154 165.775716 47.786866 161.00819 40.771664 
+C 156.240664 33.756462 149.828348 28.013114 142.33235 24.044187 
+C 134.836352 20.075261 126.481885 18 118 18 
+L 118 27.5 
+C 124.93231 27.5 131.76048 29.196126 137.887017 32.439961 
+C 144.013554 35.683795 149.254388 40.377878 153.150924 46.111456 
+C 157.04746 51.845035 159.482628 58.445847 160.243341 65.336292 
+C 161.004053 72.226737 160.067454 79.199795 157.515501 85.645293 
+C 154.963547 92.090792 150.872912 97.815079 145.601542 102.317254 
+C 140.330173 106.819428 134.036445 109.964226 127.271088 111.476462 
+C 120.505731 112.988699 113.472006 112.82294 106.785395 110.99369 
+C 100.098785 109.164441 93.960184 105.726659 88.906748 100.981167 
+z
+" clip-path="url(#sn_bp_gauge_fix-p318efcee82)" style="fill: #005a8c"/>
+   </g>
+   <g id="sn_bp_gauge_fix-patch_3">
+    <path d="M 118 18 
+C 107.577516 18 97.391899 21.133505 88.771664 26.99181 
+C 80.15143 32.850115 73.488395 41.166943 69.651623 50.857523 
+C 65.81485 60.548104 64.978734 71.171972 67.252328 81.343449 
+C 69.525923 91.514926 74.805887 100.771687 82.40355 107.906369 
+L 88.906748 100.981167 
+C 82.697119 95.149937 78.381764 87.584314 76.523538 79.271088 
+C 74.665311 70.957861 75.348676 62.274893 78.484499 54.354707 
+C 81.620323 46.43452 87.066073 39.637113 94.111456 34.849076 
+C 101.15684 30.061038 109.481624 27.5 118 27.5 
+z
+" clip-path="url(#sn_bp_gauge_fix-p318efcee82)" style="fill: #dedbd1"/>
+   </g>
+   <g id="sn_bp_gauge_fix-text_1">
+    <text style="font-weight: 300; font-size: 22px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="118" y="77.92" transform="rotate(-0 118 77.92)">62%</text>
+   </g>
+   <g id="sn_bp_gauge_fix-text_2">
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #143359" transform="translate(29.197187 66.360698)">Target</text>
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #143359" transform="translate(37.393906 79.861802)">75%</text>
+   </g>
+   <g id="sn_bp_gauge_fix-line2d_1">
+    <path d="M 79.14 70 
+L 62.36 70 
+" clip-path="url(#sn_bp_gauge_fix-p318efcee82)" style="fill: none; stroke: #143359; stroke-width: 1.8"/>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_bp_gauge_fix-p318efcee82">
+   <rect x="0" y="0" width="200" height="140"/>
+  </clipPath>
+ </defs>
+</svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>A thin ring with a target.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">51</span></div>
+</section>
+
+<section class="spread" id="single-number-best-practice-2">
+  <div class="rail">
+    <p class="eyebrow">Single number</p>
+    <h2 class="title"><b>Single number</b> best practice, continued</h2>
+    <p class="lede">Four more, from dashboards and scorecards.</p>
+    <p><strong>Color by judgment, not direction.</strong> Teal when the change is good, orange when it's worse. Days to fill going up is bad news; pair the color with ▲▼ or words.</p>
+    <p><strong>Round hard.</strong> 62%, 4.3K, $1.2M. Decimals suggest a precision the data doesn't have.</p>
+    <p><strong>Rings are for 0–100%.</strong> Growth, indexes and variances get a big number and a delta.</p>
+    <p><strong>One anatomy per row.</strong> Same order, weight and alignment in every card.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Color by judgment</h4><div class="pair">
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="Two deltas colored green because both went up." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_favor_avoid-figure_1">
+  <g id="sn_bp_favor_avoid-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_favor_avoid-axes_1">
+   <g id="sn_bp_favor_avoid-text_1">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="14" y="24" transform="rotate(-0 14 24)">Internal fill rate</text>
+   </g>
+   <g id="sn_bp_favor_avoid-text_2">
+    <text style="font-weight: 300; font-size: 28px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="54" transform="rotate(-0 14 54)">29%</text>
+   </g>
+   <g id="sn_bp_favor_avoid-text_3">
+    <text style="font-weight: 600; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2ca02c" x="88" y="52" transform="rotate(-0 88 52)">▲ +5 pts</text>
+   </g>
+   <g id="sn_bp_favor_avoid-text_4">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="14" y="86" transform="rotate(-0 14 86)">Days to fill</text>
+   </g>
+   <g id="sn_bp_favor_avoid-text_5">
+    <text style="font-weight: 300; font-size: 28px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="116" transform="rotate(-0 14 116)">37</text>
+   </g>
+   <g id="sn_bp_favor_avoid-text_6">
+    <text style="font-weight: 600; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #2ca02c" x="88" y="114" transform="rotate(-0 88 114)">▲ +2 days</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Up = green, whatever it means.</span></div></div>
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="Fill rate up in teal (good), days to fill up in orange (worse)." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_favor_fix-figure_1">
+  <g id="sn_bp_favor_fix-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_favor_fix-axes_1">
+   <g id="sn_bp_favor_fix-text_1">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="14" y="24" transform="rotate(-0 14 24)">Internal fill rate</text>
+   </g>
+   <g id="sn_bp_favor_fix-text_2">
+    <text style="font-weight: 300; font-size: 28px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="54" transform="rotate(-0 14 54)">29%</text>
+   </g>
+   <g id="sn_bp_favor_fix-text_3">
+    <text style="font-weight: 600; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="88" y="52" transform="rotate(-0 88 52)">▲ +5 pts</text>
+   </g>
+   <g id="sn_bp_favor_fix-text_4">
+    <text style="font-size: 9px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="14" y="86" transform="rotate(-0 14 86)">Days to fill</text>
+   </g>
+   <g id="sn_bp_favor_fix-text_5">
+    <text style="font-weight: 300; font-size: 28px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="116" transform="rotate(-0 14 116)">37</text>
+   </g>
+   <g id="sn_bp_favor_fix-text_6">
+    <text style="font-weight: 600; font-size: 10px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #a75b00" x="88" y="114" transform="rotate(-0 88 114)">▲ +2 days</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>Teal good, orange worse.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Round hard</h4><div class="pair">
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="A number shown to four decimal places." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_round_avoid-figure_1">
+  <g id="sn_bp_round_avoid-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_round_avoid-axes_1">
+   <g id="sn_bp_round_avoid-text_1">
+    <text style="font-weight: 300; font-size: 30px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="74" transform="rotate(-0 14 74)">61.9512%</text>
+   </g>
+   <g id="sn_bp_round_avoid-text_2">
+    <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="14" y="102" transform="rotate(-0 14 102)">+13.90244 vs. prior</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>False precision.</span></div></div>
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="The same number rounded to 62%." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_round_fix-figure_1">
+  <g id="sn_bp_round_fix-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_round_fix-axes_1">
+   <g id="sn_bp_round_fix-text_1">
+    <text style="font-weight: 300; font-size: 42px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="74" transform="rotate(-0 14 74)">62%</text>
+   </g>
+   <g id="sn_bp_round_fix-text_2">
+    <text style="font-weight: 600; font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="14" y="102" transform="rotate(-0 14 102)">▲ +14 pts vs. Mar 2025</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>Whole points.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Rings are for 0–100%</h4><div class="pair">
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="An index of 122 forced into a ring that laps itself." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_ring_avoid-figure_1">
+  <g id="sn_bp_ring_avoid-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_ring_avoid-axes_1">
+   <g id="sn_bp_ring_avoid-patch_2">
+    <path d="M 120 70 
+C 120 63.43406 118.706653 56.931966 116.193977 50.865828 
+C 113.6813 44.799691 109.99816 39.287482 105.355339 34.644661 
+C 100.712518 30.00184 95.200309 26.3187 89.134172 23.806023 
+C 83.068034 21.293347 76.56594 20 70 20 
+C 63.43406 20 56.931966 21.293347 50.865828 23.806023 
+C 44.799691 26.3187 39.287482 30.00184 34.644661 34.644661 
+C 30.00184 39.287482 26.3187 44.799691 23.806023 50.865828 
+C 21.293347 56.931966 20 63.43406 20 70 
+C 20 76.56594 21.293347 83.068034 23.806023 89.134172 
+C 26.3187 95.200309 30.00184 100.712518 34.644661 105.355339 
+C 39.287482 109.99816 44.799691 113.6813 50.865828 116.193977 
+C 56.931966 118.706653 63.43406 120 70 120 
+C 76.56594 120 83.068034 118.706653 89.134172 116.193977 
+C 95.200309 113.6813 100.712518 109.99816 105.355339 105.355339 
+C 109.99816 100.712518 113.6813 95.200309 116.193977 89.134172 
+C 118.706653 83.068034 120 76.56594 120 70 
+M 111 70 
+C 111 75.384071 109.939455 80.715788 107.879061 85.690021 
+C 105.818666 90.664253 102.798491 95.184265 98.991378 98.991378 
+C 95.184265 102.798491 90.664253 105.818666 85.690021 107.879061 
+C 80.715788 109.939455 75.384071 111 70 111 
+C 64.615929 111 59.284212 109.939455 54.309979 107.879061 
+C 49.335747 105.818666 44.815735 102.798491 41.008622 98.991378 
+C 37.201509 95.184265 34.181334 90.664253 32.120939 85.690021 
+C 30.060545 80.715788 29 75.384071 29 70 
+C 29 64.615929 30.060545 59.284212 32.120939 54.309979 
+C 34.181334 49.335747 37.201509 44.815735 41.008622 41.008622 
+C 44.815735 37.201509 49.335747 34.181334 54.309979 32.120939 
+C 59.284212 30.060545 64.615929 29 70 29 
+C 75.384071 29 80.715788 30.060545 85.690021 32.120939 
+C 90.664253 34.181334 95.184265 37.201509 98.991378 41.008622 
+C 102.798491 44.815735 105.818666 49.335747 107.879061 54.309979 
+C 109.939455 59.284212 111 64.615929 111 70 
+z
+" clip-path="url(#sn_bp_ring_avoid-p318efcee82)" style="fill: #005a8c"/>
+   </g>
+   <g id="sn_bp_ring_avoid-patch_3">
+    <path d="M 70 20 
+C 70 20 70 20 70 20 
+L 70 29 
+C 70 29 70 29 70 29 
+z
+" clip-path="url(#sn_bp_ring_avoid-p318efcee82)" style="fill: #dedbd1"/>
+   </g>
+   <g id="sn_bp_ring_avoid-patch_4">
+    <path d="M 110.273777 62.317366 
+C 108.486407 52.947641 103.484064 44.489142 96.134384 38.408957 
+C 88.784703 32.328773 79.538682 29 70 29 
+L 70 38 
+C 77.444825 38 84.661232 40.598066 90.397568 45.343576 
+C 96.133904 50.089086 100.038171 56.690842 101.433192 64.003798 
+z
+" clip-path="url(#sn_bp_ring_avoid-p318efcee82)" style="fill: #66c4ff"/>
+   </g>
+   <g id="sn_bp_ring_avoid-patch_5">
+    <path d="M 70 29 
+C 65.805662 29 61.636052 29.643627 57.636944 30.908379 
+C 53.637835 32.173131 49.856381 34.044095 46.424785 36.455862 
+C 42.993188 38.867628 39.951912 41.791759 37.407282 45.126024 
+C 34.862651 48.460289 32.84467 52.165374 31.423888 56.111745 
+C 30.003107 60.058117 29.196278 64.199244 29.03161 68.390348 
+C 28.866941 72.581452 29.346373 76.773116 30.453146 80.818795 
+C 31.559919 84.864475 33.280981 88.716467 35.556164 92.240103 
+C 37.831347 95.763739 40.633824 98.917471 43.865616 101.591043 
+C 47.097409 104.264614 50.720412 106.426501 54.607962 108.00112 
+C 58.495511 109.57574 62.601769 110.544527 66.783177 110.873611 
+C 70.964585 111.202695 75.17184 110.888196 79.257852 109.941109 
+C 83.343864 108.994022 87.260455 107.425515 90.870698 105.290423 
+C 94.480941 103.155332 97.742266 100.478831 100.540656 97.354493 
+C 103.339046 94.230156 105.641504 90.694822 107.367534 86.872089 
+C 109.093565 83.049356 110.222815 78.984298 110.715807 74.819033 
+C 111.208798 70.653769 111.059718 66.437411 110.273777 62.317366 
+L 101.433192 64.003798 
+C 102.046609 67.219442 102.162965 70.510259 101.778191 73.761197 
+C 101.393417 77.012135 100.51205 80.184863 99.164905 83.168459 
+C 97.817759 86.152056 96.020719 88.911341 93.83661 91.349849 
+C 91.652501 93.788356 89.107076 95.877332 86.289325 97.543745 
+C 83.471575 99.210158 80.414723 100.434359 77.225641 101.173548 
+C 74.036558 101.912738 70.752847 102.158201 67.489309 101.901355 
+C 64.225771 101.644509 61.020887 100.888383 57.986702 99.659411 
+C 54.952517 98.43044 52.124807 96.743114 49.602432 94.656424 
+C 47.080058 92.569734 44.892759 90.108284 43.117006 87.358129 
+C 41.341254 84.607974 39.997985 81.601541 39.134163 78.443938 
+C 38.27034 75.286334 37.896149 72.014791 38.024671 68.743686 
+C 38.153193 65.47258 38.782913 62.240482 39.891815 59.160387 
+C 41.000718 56.080292 42.575727 53.188518 44.561781 50.586165 
+C 46.547834 47.983812 48.921513 45.701563 51.599832 43.819209 
+C 54.278151 41.936855 57.22953 40.47659 60.350785 39.489466 
+C 63.472041 38.502343 66.726371 38 70 38 
+z
+" clip-path="url(#sn_bp_ring_avoid-p318efcee82)" style="fill: #ffffff"/>
+   </g>
+   <g id="sn_bp_ring_avoid-text_1">
+    <text style="font-weight: 300; font-size: 20px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #143359" x="70" y="77.2" transform="rotate(-0 70 77.2)">122%</text>
+   </g>
+   <g id="sn_bp_ring_avoid-text_2">
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(130 62.045002)">Data &amp; AI</text>
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(130 76.961248)">headcount</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_bp_ring_avoid-p318efcee82">
+   <rect x="0" y="0" width="200" height="140"/>
+  </clipPath>
+ </defs>
+</svg></div><div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A ring that laps itself.</span></div></div>
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="The growth as a big number with a market comparison." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_ring_fix-figure_1">
+  <g id="sn_bp_ring_fix-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_ring_fix-axes_1">
+   <g id="sn_bp_ring_fix-text_1">
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="14" y="28" transform="rotate(-0 14 28)">Data &amp; AI headcount since 2021</text>
+   </g>
+   <g id="sn_bp_ring_fix-text_2">
+    <text style="font-weight: 300; font-size: 40px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="14" y="72" transform="rotate(-0 14 72)">+22%</text>
+   </g>
+   <g id="sn_bp_ring_fix-text_3">
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(14 109.013202)">vs. +96% for market</text>
+    <text style="font-size: 9.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; fill: #505050" transform="translate(14 123.197652)">Data &amp; AI postings</text>
+   </g>
+  </g>
+ </g>
+</svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>Big number, with a benchmark.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>One anatomy per row</h4><div class="pair">
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="Three KPI cards, each with a different order, weight and box." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_row_avoid-figure_1">
+  <g id="sn_bp_row_avoid-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_row_avoid-axes_1">
+   <g id="sn_bp_row_avoid-patch_2">
+    <path d="M 136 98 
+L 190 98 
+L 190 32 
+L 136 32 
+z
+" clip-path="url(#sn_bp_row_avoid-p318efcee82)" style="fill: #efede7; stroke: #8c8c8c; stroke-width: 0.8; stroke-linejoin: miter"/>
+   </g>
+   <g id="sn_bp_row_avoid-text_1">
+    <text style="font-size: 7px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="6" y="44" transform="rotate(-0 6 44)">Internal fill rate</text>
+   </g>
+   <g id="sn_bp_row_avoid-text_2">
+    <text style="font-weight: 300; font-size: 19px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="6" y="76" transform="rotate(-0 6 76)">29%</text>
+   </g>
+   <g id="sn_bp_row_avoid-text_3">
+    <text style="font-weight: 600; font-size: 7px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="6" y="96" transform="rotate(-0 6 96)">▲ +5 pts vs. FY25</text>
+   </g>
+   <g id="sn_bp_row_avoid-text_4">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #005a8c" x="97" y="66" transform="rotate(-0 97 66)">37</text>
+   </g>
+   <g id="sn_bp_row_avoid-text_5">
+    <text style="font-size: 5.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: middle; fill: #737373" x="97" y="40" transform="rotate(-0 97 40)">DAYS TO FILL</text>
+   </g>
+   <g id="sn_bp_row_avoid-text_6">
+    <text style="font-style: italic; font-size: 6px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="141" y="44" transform="rotate(-0 141 44)">Succession coverage</text>
+   </g>
+   <g id="sn_bp_row_avoid-text_7">
+    <text style="font-size: 11px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="141" y="78" transform="rotate(-0 141 78)">62%</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_bp_row_avoid-p318efcee82">
+   <rect x="0" y="0" width="200" height="140"/>
+  </clipPath>
+ </defs>
+</svg></div><div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Every card different.</span></div></div>
+        <div><div class="ex-wrap"><svg class="ex" style="--w:200px" role="img" aria-label="Three KPI cards with identical anatomy." xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="sn_bp_row_fix-figure_1">
+  <g id="sn_bp_row_fix-patch_1">
+   <path d="M 0 140 
+L 200 140 
+L 200 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="sn_bp_row_fix-axes_1">
+   <g id="sn_bp_row_fix-line2d_1">
+    <path d="M 64 100 
+L 64 30 
+" clip-path="url(#sn_bp_row_fix-p318efcee82)" style="fill: none; stroke: #e6e4de; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="sn_bp_row_fix-line2d_2">
+    <path d="M 130 100 
+L 130 30 
+" clip-path="url(#sn_bp_row_fix-p318efcee82)" style="fill: none; stroke: #e6e4de; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="sn_bp_row_fix-text_1">
+    <text style="font-size: 7px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="6" y="44" transform="rotate(-0 6 44)">Internal fill rate</text>
+   </g>
+   <g id="sn_bp_row_fix-text_2">
+    <text style="font-weight: 300; font-size: 19px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="6" y="76" transform="rotate(-0 6 76)">29%</text>
+   </g>
+   <g id="sn_bp_row_fix-text_3">
+    <text style="font-weight: 600; font-size: 7.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="6" y="96" transform="rotate(-0 6 96)">▲ +5 pts</text>
+   </g>
+   <g id="sn_bp_row_fix-text_4">
+    <text style="font-size: 7px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="72" y="44" transform="rotate(-0 72 44)">Days to fill</text>
+   </g>
+   <g id="sn_bp_row_fix-text_5">
+    <text style="font-weight: 300; font-size: 19px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="72" y="76" transform="rotate(-0 72 76)">37</text>
+   </g>
+   <g id="sn_bp_row_fix-text_6">
+    <text style="font-weight: 600; font-size: 7.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #a75b00" x="72" y="96" transform="rotate(-0 72 96)">▲ +2 days</text>
+   </g>
+   <g id="sn_bp_row_fix-text_7">
+    <text style="font-size: 7px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #505050" x="138" y="44" transform="rotate(-0 138 44)">Succession</text>
+   </g>
+   <g id="sn_bp_row_fix-text_8">
+    <text style="font-weight: 300; font-size: 19px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #143359" x="138" y="76" transform="rotate(-0 138 76)">62%</text>
+   </g>
+   <g id="sn_bp_row_fix-text_9">
+    <text style="font-weight: 600; font-size: 7.5px; font-family: 'Libre Franklin', 'Arial', 'DejaVu Sans', sans-serif; text-anchor: start; fill: #00737a" x="138" y="96" transform="rotate(-0 138 96)">▲ +14 pts</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="sn_bp_row_fix-p318efcee82">
+   <rect x="0" y="0" width="200" height="140"/>
+  </clipPath>
+ </defs>
+</svg></div><div class="verdict rec"><i>✓</i><span><b>Recommended</b>Name, number, change.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">52</span></div>
+</section>
+
+<section class="spread" id="single-number-build">
+  <div class="rail">
+    <p class="eyebrow">Single number</p>
+    <h2 class="title"><b>Build</b> a KPI card</h2>
+    <p class="lede">A big number is type, not a chart: build it from text wherever you can, so it stays sharp and editable.</p>
+    <p><a href="../../docs/cookbook/kpi-big-number.md">kpi-big-number.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Number, sentence and headline agree (62% × 410 ≈ 254)</li>
+      <li>A comparison with a sign; "pts" for points</li>
+      <li>Colors by favorability, plus ▲▼ or words</li>
+      <li>Rings only for 0–100% of one whole</li>
+      <li>No KPI based on fewer than 10 people</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Big number:</strong> a text box in Libre Franklin <em>Light</em>, 54 pt, Navy <code>#143359</code>, left inset 0; the sentence below at 14 pt; the comparison in Medium, teal <code>#00737A</code> or orange <code>#A75B00</code>. Align left and group. <strong>Ring:</strong> a Doughnut of value and remainder, Angle of first slice 0°, Hole Size 80%, fills <code>#005A8C</code> / <code>#DEDBD1</code>, no borders, title, legend or labels; lay the number over the center.</p></div>
+      <div class="platform"><h5>Power BI</h5><p><strong>Card (new)</strong>: the measure as the callout value (raise it to 40–54; Segoe UI Light in the service), <em>Reference labels</em> for the comparison. The <strong>KPI</strong> visual adds trend and target: set Good <code>#00AF9D</code>, Bad <code>#EF8200</code> and the direction per metric. Rings: a Donut with Inner radius ≈ 80 and a transparent Card on top.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>matplotlib <code>Wedge</code> for the ring; Plotly <code>go.Indicator(mode="number+delta")</code> for a KPI row, with <code>increasing</code> / <code>decreasing</code> colors set by favorability.</p>
+<pre class="snip">KPI = mv.TOKENS["typography"]["roles"]["kpi"]        # Light 300
+ax.text(0, 0, f"{value}%", fontsize=KPI["size_pt"] * 0.75,
+        fontweight=KPI["weight"], color=C.headline)
+txt = f"{mv.signed(value - prior)} pts vs. Mar 2025"   # true minus, explicit +</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plain HTML text beats a chart library here: <code>&lt;p class="mck-kpi"&gt;</code> from <code>mck-viz.css</code> sets <code>--mck-kpi-size</code> (56 px) and <code>--mck-kpi-weight</code> (300). Color deltas with <code>var(--mck-semantic-positive-text)</code> and <code>var(--mck-semantic-negative-text)</code>.</p></div>
+      <div class="platform"><h5>R</h5><p><code>annotate("text", ..., family = "Libre Franklin Light")</code> for the number; a ring with <code>geom_col()</code> + <code>coord_polar(theta = "y", start = 0, direction = 1)</code>.</p></div>
+    </div>
+  </div>
+  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Single number</span><span class="n">53</span></div>
+</section>
+
+</main>
+</body>
+</html>

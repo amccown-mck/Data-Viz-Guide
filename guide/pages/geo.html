@@ -1,0 +1,210 @@
+<section class="spread" id="choropleth">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Choropleth</b> map</h2>
+    <div class="defbox">Geo-spatial charts show where: a pattern across geography, or values at precise locations.</div>
+    <p>A choropleth shades each area by a <strong>rate</strong>: postings per candidate, attrition, share eligible to retire. Use it when the pattern only makes sense on a map.</p>
+    <p class="small">Real shapes let big, empty states dominate. A tile grid gives each state one equal square in roughly its place.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Sequential blue in 3–5 even classes</li>
+      <li>Light base, thin white boundaries</li>
+      <li>Label only the areas the headline names</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Names the states and the threshold.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>A rate, with its unit, scope and period.</span></li>
+        <li><span class="mk">3</span><span><b>One tile per state</b>Equal size, in roughly its place.</span></li>
+        <li><span class="mk">4</span><span><b>Classed key</b>Five even classes, open-ended, high on top.</span></li>
+        <li><span class="mk">5</span><span><b>Values on the few</b>Only the 1.7+ states carry a number.</span></li>
+        <li><span class="mk">6</span><span><b>Callout on the outlier</b>A ring and a two-line note.</span></li>
+        <li><span class="mk">7</span><span><b>Quiet structure</b>Thin white gutters, small abbreviations.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>Define the rate; say it's a tile map.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:geo_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:geo_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:geo_anatomy|min}}
+        <p class="card-foot">Each tile is one state at equal size. Classes are even-width; the top and bottom are open-ended.<br>Source: External job-postings and candidate-profile data (synthetic data for illustration), Q2 2026<span class="mk">8</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="bubble-map">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Bubble</b> map</h2>
+    <p class="lede">Bubbles on a quiet base map show counts at locations: headcount by site, open requisitions by metro, hires by campus.</p>
+    <p>Bubble <strong>area</strong> carries the count. Color can carry a second measure with the focus rule: blue for the sites the headline names, grey for the rest.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Area ∝ value; largest drawn first, white outlines</li>
+      <li>Largest bubble about 40–56 px across</li>
+      <li>Label the focus sites: bold value, then name</li>
+      <li>Drop sites under {{text:min_n}} people and footnote them</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>The sites, the threshold, what's at stake.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>Says what area and color mean.</span></li>
+        <li><span class="mk">3</span><span><b>Area = associates</b>Scaled by area, never radius.</span></li>
+        <li><span class="mk">4</span><span><b>Focus in blue</b>The sites at 12%+ vacancy.</span></li>
+        <li><span class="mk">5</span><span><b>Direct labels</b>Bold value and site name, for the focus only.</span></li>
+        <li><span class="mk">6</span><span><b>Grey context</b>Every other site; overlaps stay readable.</span></li>
+        <li><span class="mk">7</span><span><b>Size and color key</b>Two reference circles, two swatches.</span></li>
+        <li><span class="mk">8</span><span><b>Quiet base</b>Sand tiles, no borders: the map is context.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define vacancy; note what's suppressed.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:dc_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:dc_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:dc_anatomy|min}}
+        <p class="card-foot">Vacancy rate = open associate requisitions ÷ budgeted positions. {{text:dc_sites}} sites shown; {{text:dc_small_n}} satellite site with fewer than {{text:min_n}} associates not shown.<br>Source: Workday HCM and ATS (synthetic data for illustration), as of 31 Mar 2026<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="map-variants">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Map</b> variants</h2>
+    <p class="lede">Same base, same quiet structure; the variant follows the question.</p>
+    <h3>When a map is the wrong chart</h3>
+    <ul>
+      <li>Readers need to rank or compare precisely: a sorted <strong>bar</strong></li>
+      <li>Five locations or fewer: a <strong>bar</strong> or a <strong>table</strong></li>
+      <li>Change over time in each region: <strong>small multiples</strong> of lines</li>
+      <li>Geography is only a grouping (business units, divisions): no map at all</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Diverging classes</h4>
+        <p class="note">When a midpoint means something. Technician pay is 6%+ below market in {{text:geo_pay_low_n}} states, {{text:geo_pay_low_all_tight}} among the tightest.</p>
+        {{exhibit:geo_var_diverging}}
+      </div>
+      <div class="tile">
+        <h4>Dot density</h4>
+        <p class="note">Spread and concentration. {{text:rc_outside}} of remote Customer Care agents live outside the three hub states.</p>
+        {{exhibit:geo_var_dots}}
+      </div>
+      <div class="tile">
+        <h4>Small-multiple maps</h4>
+        <p class="note">Two periods on the same classes: {{text:geo_tight24_n}} state at 1.7+ in 2024, {{text:geo_tight_n}} in 2026.</p>
+        {{exhibit:geo_var_multiples}}
+      </div>
+      <div class="tile">
+        <h4>Map plus ranked bar</h4>
+        <p class="note">The map shows where; the bar shows by how much. Same blue for the same states.</p>
+        {{exhibit:geo_var_bar}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="maps-best-practice">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Maps</b> best practice</h2>
+    <p class="lede">Maps are persuasive, so they must be honest about what the color means.</p>
+    <p><strong>Rates, not counts.</strong> Shading headcount or postings just redraws where people live. Normalize: per candidate, per 1,000, a %. Show counts as bubbles.</p>
+    <p><strong>Even, round classes.</strong> Three to five, no gaps or overlaps, open-ended at both ends.</p>
+    <p><strong>One sequential hue.</strong> A rainbow makes some hues pop for no reason. Diverging only around a meaningful midpoint.</p>
+    <p><strong>A quiet base.</strong> Light sand, thin white boundaries. For print, darken them to grey.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Rates, not counts</h4><div class="pair">
+        <div>{{exhibit:geo_bp_rates_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Raw postings: big states win.</span></div></div>
+        <div>{{exhibit:geo_bp_rates_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Postings per candidate.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Class breaks</h4><div class="pair">
+        <div>{{exhibit:geo_bp_classes_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Uneven, gappy, overlapping.</span></div></div>
+        <div>{{exhibit:geo_bp_classes_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Five even, round classes.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Color scale</h4><div class="pair">
+        <div>{{exhibit:geo_bp_hue_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Rainbow, off palette.</span></div></div>
+        <div>{{exhibit:geo_bp_hue_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Light to dark blue.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Base map</h4><div class="pair">
+        <div>{{exhibit:geo_bp_base_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A dark base competes.</span></div></div>
+        <div>{{exhibit:geo_bp_base_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Sand base, data on top.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="maps-best-practice-2">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Maps</b> best practice, continued</h2>
+    <p class="lede">Four more, from workforce data in particular.</p>
+    <p><strong>Bubbles by area.</strong> Scaling the radius makes a site twice as big look four times as big.</p>
+    <p><strong>Label the few that matter.</strong> A number in every state is a table in the wrong shape.</p>
+    <p><strong>Is it really geographic?</strong> Three hubs don't need a map of fifty states.</p>
+    <p><strong>Aggregate, then map.</strong> Never plot home addresses. Map to state, metro or site, and drop anything under {{text:min_n}} people, in tooltips too.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>Bubble size</h4><div class="pair">
+        <div>{{exhibit:geo_bp_area_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Radius ∝ value.</span></div></div>
+        <div>{{exhibit:geo_bp_area_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Area ∝ value.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Labels</h4><div class="pair">
+        <div>{{exhibit:geo_bp_label_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A value in every state.</span></div></div>
+        <div>{{exhibit:geo_bp_label_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Only the four named.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Is it geographic?</h4><div class="pair">
+        <div>{{exhibit:geo_bp_few_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A US map for three sites.</span></div></div>
+        <div>{{exhibit:geo_bp_few_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>A sorted bar.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Protect people</h4><div class="pair">
+        <div>{{exhibit:geo_bp_privacy_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Exact spots; a site of 7.</span></div></div>
+        <div>{{exhibit:geo_bp_privacy_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Aggregated; small sites dropped.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="geo-build">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Build</b> maps</h2>
+    <p class="lede">Choropleths are native in every tool; bubble and dot maps are easiest in Python or Plotly. Tested code and click-by-click steps are on the cookbook page.</p>
+    <p><a href="../../docs/cookbook/maps.md">maps.md</a></p>
+    <h3>Before you send it</h3>
+    <ul class="checklist small">
+      <li>Shaded values are rates; counts are bubbles</li>
+      <li>3–5 even classes; the key names the unit</li>
+      <li>Equal-area projection or tile grid</li>
+      <li>Only the named areas or sites labelled</li>
+      <li>No area, site or cluster under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage top">
+    <div class="panel">
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Choropleth:</strong> Insert › Charts › Maps › Filled Map (online: Excel geocodes through Bing). Format Data Series: Map projection <em>Albers</em>, Map area <em>Only regions with data</em>, Map labels <em>None</em>. Excel only draws continuous scales, so map a class-number column (1–5) to get binned shades, and draw the key as five small squares. Delete the title and legend; label the focus states with text boxes. Bubble and dot maps aren't native: build them in Python and insert the SVG.</p></div>
+      <div class="platform"><h5>Power BI</h5><p><strong>Azure Maps</strong> visual (your admin must enable it): Filled map layer for rates; Bubble layer with Range scaling <em>Magnitude</em> for counts. Bin colors with a <code>SWITCH</code> measure in <em>Fill color › fx › Field value</em>. Suppress small groups with <code>IF([Headcount] &lt; 10, BLANK(), ...)</code>, and check geocoding against data-handling rules.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>The tile grid needs only matplotlib and <code>mckviz</code>. For real shapes, Plotly <code>go.Choropleth(locationmode="USA-states")</code> and <code>go.Scattergeo(scope="usa")</code> use Albers USA.</p>
+<pre class="snip">cls = pd.cut(rate, [-np.inf, 0.8, 1.1, 1.4, 1.7, np.inf], labels=False, right=False)
+ramp = [mv.SEQUENTIAL["blue"][i] for i in (0, 1, 2, 4, 5)]
+marker={"size": n, "sizemode": "area", "color": mv.pl_highlight(sites, focus=hot)}</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plotly with <code>MCK_PLOTLY_TEMPLATE</code>; headline, subtitle and source in the chart card's HTML. Tooltips may show n, but never for an area or site under {{text:min_n}}.</p></div>
+      <div class="platform"><h5>R</h5><p><code>geom_polygon()</code> on <code>map_data("state")</code> with <code>coord_map("albers", lat0 = 29.5, lat1 = 45.5)</code> and <code>scale_fill_manual()</code> on the classes; bubbles with <code>scale_size_area()</code>.</p></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
