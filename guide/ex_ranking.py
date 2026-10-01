@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import html as _html
 
+import matplotlib as mpl
 import numpy as np
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
@@ -359,7 +360,8 @@ for _k, _alt in {"hl_avoid": "Six slope lines in six colors.",
 
 # ================================================================== DOT PLOT AND DUMBBELL
 def dumbbell(ax, d, *, size=LABEL, tick=TICK, s=(46, 60), lab=True, gaps=True, names=True, conn=True,
-             cols=("context", "auto"), xlim=(35, 160), xticks=(40, 80, 120, 160), short=None, label_size=None):
+             cols=("context", "auto"), xlim=(35, 160), xticks=(40, 80, 120, 160), short=None, label_size=None,
+             key_short=False):
     """Market (grey) vs. McKesson (blue; orange when 5%+ below) per row, top row first."""
     y = np.arange(len(d))
     lag = d.gap_pct <= -5
@@ -375,14 +377,22 @@ def dumbbell(ax, d, *, size=LABEL, tick=TICK, s=(46, 60), lab=True, gaps=True, n
             ax.text(max(r.market_median_k, r.internal_median_k) + (xlim[1] - xlim[0]) * 0.03, i,
                     mv.signed(r.gap_pct, 1, "%"), va="center", fontsize=label_size or size,
                     color=C.negative_text if lag.iloc[i] else C.text, fontweight=700 if lag.iloc[i] else 400)
-    if lab:
-        top = d.iloc[0]
-        lo_first = top.internal_median_k < top.market_median_k
-        ax.annotate("Market", (top.market_median_k, 0), xytext=(4 if lo_first else -4, 8), textcoords="offset points",
-                    ha="left" if lo_first else "right", va="bottom", fontsize=size - 0.5, color=C.text_muted)
-        ax.annotate("McKesson", (top.internal_median_k, 0), xytext=(-4 if lo_first else 4, 8),
-                    textcoords="offset points", ha="right" if lo_first else "left", va="bottom", fontsize=size - 0.5,
-                    color=C.negative_text if lag.iloc[0] else C.focus, fontweight=700)
+    if lab:                                                   # name every dot type once, in a top-left key
+        fig = ax.figure
+        r = fig.canvas.get_renderer()
+        to_pt = 72 / fig.dpi
+        items = [("McKesson", C.focus, C.focus, 600),
+                 ("5%+ below" if key_short else "McKesson, 5%+ below market", C.negative, C.negative_text, 600),
+                 ("Market", c0, C.text_muted, 400)]
+        fs = size - 0.5
+        dot_r = (s[1] * 0.8) ** 0.5 / 2                         # marker radius in points
+        x = dot_r
+        for name, dot, txt, w in items:                         # laid out in points, so the layout can't shift it
+            ax.scatter([0], [1.035], s=s[1] * 0.8, color=dot, transform=ax.transAxes + mpl.transforms.ScaledTranslation(
+                x / 72, 0, fig.dpi_scale_trans), clip_on=False, lw=0)
+            t = ax.annotate(name, (0, 1.035), xycoords="axes fraction", xytext=(x + dot_r + 3, 0),
+                            textcoords="offset points", fontsize=fs, color=txt, fontweight=w, va="center")
+            x += dot_r + 3 + t.get_window_extent(r).width * to_pt + fs * 1.1 + dot_r
     if names:
         ax.set_yticks(y, [short.get(r, r) for r in d.role] if short else d.role)
         for t, hi in zip(ax.get_yticklabels(), lag):
@@ -416,8 +426,7 @@ def rk_db_anatomy():
     marker(ax, (rp.internal_median_k, pt), 4, offset=(-15, 0))
     rph = PAY.loc[ph]
     marker(ax, ((rph.internal_median_k + rph.market_median_k) / 2, ph), 5, offset=(0, 13))
-    top = PAY.iloc[0]
-    marker(ax, (top.internal_median_k, 0), 6, offset=(-80, 15))
+    marker(ax, (0, 1.035), 6, offset=(-14, 0), coords="axes fraction")
     marker(ax, (rp.market_median_k, pt), 7, offset=(70, 0))
     marker(ax, (80, len(PAY) - 1.5), 8)
     return fig, (TEXT["rk_db_headline"] + ". " + "; ".join(f"{r.role} {mv.signed(r.gap_pct, 1, '%')}"
@@ -575,7 +584,7 @@ def _dot_mini(kind):
                            for c in (C.context, C.focus)], labels=["Market", "McKesson"], fontsize=t - 0.5,
                   loc="lower right", frameon=True, handletextpad=0.2, borderpad=0.3)
     elif kind == "connect_fix":
-        dumbbell(ax, d, gaps=False, **kw)
+        dumbbell(ax, d, gaps=False, key_short=True, **kw)
     elif kind == "color_avoid":
         dumbbell(ax, d, cols=(mv.CATEGORICAL[3], mv.CATEGORICAL[0]), lab=False, gaps=False, **kw)
     elif kind == "color_fix":
@@ -594,7 +603,7 @@ def _dot_mini(kind):
 for _k, _alt in {"zero_avoid": "Bars on an axis cut at 70, exaggerating small differences.",
                  "zero_fix": "A dot plot of the same scores on a 60–80 scale.",
                  "connect_avoid": "Two unconnected dot series decoded through a legend.",
-                 "connect_fix": "A light connector per row and the dot types named once on the top row.",
+                 "connect_fix": "A light connector per row and a small key naming each dot type once.",
                  "color_avoid": "Market and McKesson dots in two equally strong colors.",
                  "color_fix": "Market dots grey, McKesson dots blue, orange only where pay is 5% or more below.",
                  "sort_avoid": "Rows in alphabetical order.",
@@ -633,8 +642,8 @@ def _heat_table() -> str:
         rows.append(
             f'<tr{" class=is-focus" if hot else ""}><th scope="row" style="{pad};white-space:nowrap">{_html.escape(name)}'
             f'{_mk(3) if i == 0 else ""}</th>'
-            f'<td class="num" style="{pad}"><span class="bar" style="width:{round(44 * r.headcount / bar_max)}px">'
-            f'</span>{r.headcount:,.0f}</td>'
+            f'<td class="num" style="{pad}">{r.headcount:,.0f}<span class="bars"><span class="bar" '
+            f'style="width:{r.headcount / bar_max * 100:.0f}%"></span></span></td>'
             f'<td class="num" style="{pad};background:{fill};color:{mv.text_on(fill)}">{r.vol_attrition_pct:.1f}</td>'
             f'<td class="num" style="{pad}">{r.engagement_index:.0f}</td>'
             f'<td class="num" style="{pad}">{r.median_days_to_fill:.0f}</td>'
@@ -642,7 +651,7 @@ def _heat_table() -> str:
     days25 = np.average([FL.loc[f, "days_to_fill_fy25"] for f in d.job_family], weights=d.headcount)
     tot_dd = _w("median_days_to_fill") - days25
     rows.append(f'<tr class="is-total"><th scope="row" style="{pad};white-space:nowrap">All {len(d)} job families{_mk(8)}</th>'
-                f'<td class="num" style="{pad}">{d.headcount.sum():,.0f}</td>'
+                f'<td class="num" style="{pad}">{d.headcount.sum():,.0f}<span class="bars"></span></td>'
                 f'<td class="num" style="{pad}">{_w("vol_attrition_pct"):.1f}</td>'
                 f'<td class="num" style="{pad}">{_w("engagement_index"):.0f}</td>'
                 f'<td class="num" style="{pad}">{_w("median_days_to_fill"):.0f}</td>'

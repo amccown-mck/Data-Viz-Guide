@@ -3,13 +3,13 @@
     <p class="eyebrow">Part-to-whole</p>
     <h2 class="title"><b>Stacked</b> bar chart</h2>
     <div class="defbox">Part-to-whole charts show how a whole breaks into its parts, and how each part relates to the total.</div>
-    <p>A 100% stacked bar compares the mix of several wholes at once. Color only the segment the headline is about, and put it on the baseline or at the end of each bar.</p>
+    <p>A 100% stacked bar compares the mix of several wholes at once. Color only the segment the headline is about, and put it on the baseline so every bar's value starts level.</p>
     <h3>McKesson spec</h3>
     <ul class="small">
       <li>Five segments at most; group the rest as "Other"</li>
-      <li>White separators between segments</li>
-      <li>Labels inside segments that fit; key top-left in stack order</li>
-      <li>Sort the bars by the segment that matters</li>
+      <li>The story segment in blue, on the baseline</li>
+      <li>Values inside segments that fit; names over the top bar</li>
+      <li>Show each bar's base: 100% hides size</li>
     </ul>
   </div>
   <div class="stage">
@@ -17,11 +17,11 @@
       <ol class="callouts">
         <li><span class="mk">1</span><span><b>Insight headline</b>Names the part and how far it stands out.</span></li>
         <li><span class="mk">2</span><span><b>Subtitle</b>Metric, unit, scope, period.</span></li>
-        <li><span class="mk">3</span><span><b>The part that matters</b>One segment in blue, at the end of every bar.</span></li>
-        <li><span class="mk">4</span><span><b>Grey context</b>Two greys for the other parts.</span></li>
-        <li><span class="mk">5</span><span><b>Labels in the segments</b>Where they fit; navy on grey, white on blue.</span></li>
-        <li><span class="mk">6</span><span><b>Key in stack order</b>Top-left, left to right as the segments run.</span></li>
-        <li><span class="mk">7</span><span><b>Echo the value</b>The story segment's value at the bar end, bold for the focus bar.</span></li>
+        <li><span class="mk">3</span><span><b>The part that matters</b>Blue, on the baseline, so every bar compares from zero.</span></li>
+        <li><span class="mk">4</span><span><b>Grey context</b>Two greys, split by white separators.</span></li>
+        <li><span class="mk">5</span><span><b>Values in the segments</b>Where they fit; white on blue, navy on grey.</span></li>
+        <li><span class="mk">6</span><span><b>Names, not a key</b>Each segment named once, over the top bar.</span></li>
+        <li><span class="mk">7</span><span><b>The base</b>A 100% bar hides how big each whole is; give the count.</span></li>
         <li><span class="mk">8</span><span><b>Sorted by the story</b>Bars ordered by the blue segment, not alphabetically.</span></li>
         <li><span class="mk">9</span><span><b>Footnote and source</b>Define the parts.</span></li>
       </ol>
@@ -29,7 +29,7 @@
         <p class="card-head">{{text:mix_headline}}<span class="mk">1</span></p>
         <p class="card-sub">{{text:mix_subtitle}}<span class="mk">2</span></p>
         {{exhibit:stack_anatomy|min}}
-        <p class="card-foot">Contingent = agency, contract and statement-of-work workers paid through the vendor-management system.<br>Source: Workday HCM and VMS (synthetic data for illustration), as of 31 Mar 2026; U.S. workers<span class="mk">9</span></p>
+        <p class="card-foot">Contingent = agency, contract and statement-of-work workers paid through the vendor-management system. Workers = employees plus contingent workers.<br>Source: Workday HCM and VMS (synthetic data for illustration), as of 31 Mar 2026; U.S. workers<span class="mk">9</span></p>
       </figure>
     </div>
   </div>
@@ -83,7 +83,7 @@
     <p class="lede">Stacks are easy to make and easy to misread. Four rules keep them honest.</p>
     <p><strong>The part that matters on the baseline.</strong> Only segments that share a starting line can be compared by eye.</p>
     <p><strong>Five segments at most.</strong> More slices turn a bar into a barcode. Keep the parts the story needs and group the rest.</p>
-    <p><strong>Label in place; key in stack order.</strong> If a key is needed, put it top-left, in the same order as the segments.</p>
+    <p><strong>Label in place.</strong> Values inside the segments; name each segment once over the top bar. If a key is unavoidable, top-left, in stack order.</p>
     <p><strong>One order in every bar.</strong> Never re-sort segments within each bar.</p>
   </div>
   <div class="stage">
@@ -96,9 +96,9 @@
         <div>{{exhibit:stack_bp_many_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Eight colored slices nobody can follow.</span></div></div>
         <div>{{exhibit:stack_bp_many_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The part in blue, the rest in grey.</span></div></div>
       </div></div>
-      <div class="tile"><h4>Label in place, key in order</h4><div class="pair">
-        <div>{{exhibit:stack_bp_key_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A bottom legend in a different order.</span></div></div>
-        <div>{{exhibit:stack_bp_key_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Values inside, key top-left in stack order.</span></div></div>
+      <div class="tile"><h4>Label in place</h4><div class="pair">
+        <div>{{exhibit:stack_bp_key_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>A bottom legend in another order; no values.</span></div></div>
+        <div>{{exhibit:stack_bp_key_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Values inside; names over the top bar.</span></div></div>
       </div></div>
       <div class="tile"><h4>One order in every bar</h4><div class="pair">
         <div>{{exhibit:stack_bp_order_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Segments re-sorted inside each bar.</span></div></div>
@@ -117,7 +117,8 @@
     <p>It is a stacked column chart with an invisible spacer series that floats each driver at the running total. Use it for labor cost bridges, headcount bridges and budget-to-actual walks.</p>
     <h3>McKesson spec</h3>
     <ul class="small">
-      <li>Totals in navy; drivers grey; the drivers the headline names in blue</li>
+      <li>Totals in navy; drivers grey, the ones the headline names in blue</li>
+      <li>Or by meaning: favorable teal, unfavorable orange</li>
       <li>Thin light connectors between bars</li>
       <li>Signed labels on drivers (true minus, explicit +); bold totals</li>
       <li>If the axis starts above zero, mark the break and say so</li>
@@ -152,7 +153,7 @@
     <p class="eyebrow">Part-to-whole</p>
     <h2 class="title"><b>Waterfall</b> variants</h2>
     <p class="lede">The same build, turned or recolored for the job.</p>
-    <p><strong>Color by direction only when direction is the point.</strong> In a headcount bridge, additions in blue and losses in orange read instantly, because orange means "worse". In a cost bridge the default stays grey with a blue highlight.</p>
+    <p><strong>Two color patterns.</strong> When good vs. bad is the message, color every driver by meaning: favorable teal, unfavorable orange. When the headline names one or two drivers, grey the rest and make those blue. Totals stay navy either way.</p>
     <p class="small">Excel's built-in Waterfall chart is vertical only. For horizontal waterfalls or per-bar colors, build a stacked bar with a transparent spacer series (see the cookbook).</p>
   </div>
   <div class="stage">
@@ -163,7 +164,7 @@
         {{exhibit:wf_var_horizontal}}
       </div>
       <div class="tile">
-        <h4>Colored by direction</h4>
+        <h4>Colored by meaning</h4>
         <p class="note">Frontline headcount bridge: voluntary exits equal {{text:hc_exit_share}} of external hires.</p>
         {{exhibit:wf_var_direction}}
       </div>
@@ -188,7 +189,7 @@
     <h2 class="title"><b>Waterfall</b> best practice</h2>
     <p class="lede">The bars carry the story; everything else stays quiet.</p>
     <p><strong>Thin connectors.</strong> Heavy dark connectors compete with the bars. Use hairlines in light grey.</p>
-    <p><strong>No red and green.</strong> They fail for color-blind readers and aren't McKesson colors. Grey drivers with a blue highlight, or blue and orange when direction is the story.</p>
+    <p><strong>Color by meaning, in the palette.</strong> Favorable teal, unfavorable orange, judged from the reader's view: in a cost bridge, growth is the bad news. Never red and green: they fail for color-blind readers, and green-up makes cost growth look good.</p>
     <p><strong>Mark a broken axis.</strong> Totals often dwarf the drivers. Starting the axis above zero is allowed here, and only here, if the break is drawn and footnoted.</p>
     <p><strong>Group the small steps.</strong> Keep the drivers the story needs; fold the rest together.</p>
   </div>
@@ -199,8 +200,8 @@
         <div>{{exhibit:wf_bp_conn_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Thin, light grey.</span></div></div>
       </div></div>
       <div class="tile"><h4>Coloring the bars</h4><div class="pair">
-        <div>{{exhibit:wf_bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Green up, red down.</span></div></div>
-        <div>{{exhibit:wf_bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Grey drivers; the named ones blue.</span></div></div>
+        <div>{{exhibit:wf_bp_color_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Green up, red down: cost growth looks good.</span></div></div>
+        <div>{{exhibit:wf_bp_color_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Cost growth orange, savings teal.</span></div></div>
       </div></div>
       <div class="tile"><h4>A broken axis</h4><div class="pair">
         <div>{{exhibit:wf_bp_break_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Cut totals with no warning.</span></div></div>

@@ -46,7 +46,7 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 
 ## Type and layout
 - Font: **Libre Franklin** (fallback: Franklin Gothic Book, Arial).
-- Headline: bold 18 pt / 20 px, `#143359`. Subtitle: regular 14 pt / 15 px. Labels: medium 12 pt / 13 px. Footnote and source: light 9 pt / 11 px, `#737373`. Nothing smaller.
+- Slide title: bold 24 pt, `#143359` (with one chart on a slide, its headline is the slide title). Chart headline (a chart with its own title): semibold 18 pt / 20 px, still an insight sentence. Two charts on a slide: a bold slide title for the shared message, a semibold insight headline per chart. Big KPI numbers: bold. Subtitle: regular 14 pt / 15 px. Labels: medium 12 pt / 13 px. Footnote and source: light 9 pt / 11 px, `#737373`. Nothing smaller.
 - Everything is left-aligned on one edge, with no centered titles, chart borders, 3D, shadows or gradients.
 - Bar width : gap ≈ 2 : 1 (band fill 0.67). Lines 2.0 px; context lines 1.25 px.
 

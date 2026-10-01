@@ -126,25 +126,25 @@
   <div class="stage">
     <div class="grid g2">
       <div class="tile">
-        <h4>The same data, story one</h4>
+        <h4>Did overtime move with vacancies? Dual axis</h4>
         <p class="note">Ranges picked so the lines lie on top of each other: "overtime tracks vacancies exactly".</p>
         {{exhibit:corr_dual_avoid_a}}
         <div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>The fit is an artifact of two chosen ranges.</span></div>
       </div>
       <div class="tile">
-        <h4>The same data, story two</h4>
-        <p class="note">Change the right-hand range and overtime now looks flat while vacancies soar.</p>
-        {{exhibit:corr_dual_avoid_b}}
-        <div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Two scales, two contradictory stories.</span></div>
-      </div>
-      <div class="tile">
-        <h4>Two aligned panels</h4>
+        <h4>Did overtime move with vacancies? Two aligned panels</h4>
         <p class="note">Each measure on its own scale from zero; the shared time axis makes timing exact. Both peaked in {{text:corr_dual_peak_month}}.</p>
         {{exhibit:corr_dual_panels}}
         <div class="verdict rec"><i>✓</i><span><b>Recommended</b>When the question is timing.</span></div>
       </div>
       <div class="tile">
-        <h4>Indexed to 100</h4>
+        <h4>Which grew faster? Dual axis</h4>
+        <p class="note">The same data, another right-hand range: now overtime looks flat while vacancies soar.</p>
+        {{exhibit:corr_dual_avoid_b}}
+        <div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Two scales, two contradictory stories.</span></div>
+      </div>
+      <div class="tile">
+        <h4>Which grew faster? Indexed to 100</h4>
         <p class="note">One honest axis: by {{text:corr_dual_peak_month}}, vacancies were up {{text:corr_dual_vac_idx}} and overtime {{text:corr_dual_ot_idx}}.</p>
         {{exhibit:corr_dual_indexed}}
         <div class="verdict rec"><i>✓</i><span><b>Recommended</b>When the question is relative change.</span></div>

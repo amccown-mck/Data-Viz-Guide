@@ -247,28 +247,44 @@ TEXT["donut_headline"] = (f"Reskilling can close {TEXT['plan_build_share']} of t
 
 
 # ================================================================== STACKED BAR
+STACK_PARTS = [("contingent_pct", C.focus, "Contingent"), ("employee_ft_pct", C.context, "Full-time"),
+               ("employee_pt_pct", C.context_light, "Part-time")]    # story segment first: it sits on the baseline
+
+
+def seg_names(ax, top, y, size, *, pad=0.6, align=None):
+    """Name each segment once, above the top bar (instead of a key). top = [(value in the top bar, color, name)] in
+    stack order; align = per-segment "left" (from the segment start), "center" or "right" (to the segment end)."""
+    left = 0.0
+    for i, (v, col, name) in enumerate(top):
+        hot = col == C.focus
+        a = (align or ["left"] * len(top))[i]
+        x = {"left": left + pad, "center": left + v / 2, "right": left + v - pad}[a]
+        ax.text(x, y, name, fontsize=size, color=C.focus if hot else C.text, fontweight=600 if hot else 400,
+                va="bottom", ha=a)
+        left += v
+
+
 @exhibit
 def stack_anatomy():
-    parts = [(MIX.employee_ft_pct, C.context, "Full-time"), (MIX.employee_pt_pct, C.context_light, "Part-time"),
-             (MIX.contingent_pct, C.focus, "Contingent")]
     fig = fig_px(620, 300)
     ax = fig.add_subplot()
-    ends = [(f"{v:.0f}%", f == "Technology") for f, v in zip(MIX.function, MIX.contingent_pct)]
-    hstack(ax, list(MIX.function), [(p[0], p[1], p[2]) for p in parts], size=LABEL, tick=TICK, bold={"Technology"},
-           end_label=None)
-    for yy, (lab, b) in enumerate(ends):
-        ax.text(101.2, yy, lab, va="center", fontsize=LABEL, color=C.headline if b else C.text,
-                fontweight=700 if b else 500)
-    ax.set_xlim(0, 113)
-    ax.set_ylim(-0.6, len(MIX) + 0.15)
-    key(ax, [(n, c) for _, c, n in parts], y=0.94, size=TICK - 0.5)
     n = len(MIX)
-    marker(ax, (100 - TECH / 2, n - 1), 3, offset=(0, 21))
-    marker(ax, (35, 0), 4, offset=(0, 0))
-    marker(ax, (29, n - 1), 5, offset=(26, 0))
-    marker(ax, (0, n - 0.05), 6, offset=(-12, 6))
-    marker(ax, (101.2, n - 1), 7, offset=(34, 0))
-    marker(ax, (101.2, 0), 8, offset=(34, 0))
+    parts = [(MIX[c].values, col, name) for c, col, name in STACK_PARTS]
+    hstack(ax, list(MIX.function), parts, size=LABEL, tick=TICK, bold={"Technology"}, label_min=5)
+    top = [(p[0][-1], p[1], p[2]) for p in parts]
+    seg_names(ax, top, n - 1 + 0.42, TICK - 0.5)
+    ax.text(103, n - 1 + 0.42, "Workers", fontsize=TICK - 0.5, color=C.text, va="bottom")
+    for yy, w in enumerate(MIX.workers):
+        ax.text(103, yy, f"{w:,}", fontsize=LABEL - 0.5, color=C.text_muted, va="center")
+    ax.set_xlim(0, 118)
+    ax.set_ylim(-0.6, n - 0.1)
+    marker(ax, (TECH * 0.86, n - 1), 3)
+    marker(ax, (72, 0), 4)
+    cc = MIX.function.tolist().index("Customer Care")
+    marker(ax, (100 - float(MIX.employee_pt_pct.iloc[cc]) / 2, cc), 5, offset=(26, 0))
+    marker(ax, (0, n - 1 + 0.6), 6, offset=(-13, 0))
+    marker(ax, (103, n - 1 + 0.6), 7, offset=(60, 0))
+    marker(ax, (103, 0), 8, offset=(44, 0))
     return fig, (TEXT["mix_headline"] + f". Technology {TECH:.0f}% contingent; the other four functions "
                  f"{int(MIX.contingent_pct[MIX.function != 'Technology'].min())}–"
                  f"{int(MIX.contingent_pct[MIX.function != 'Technology'].max())}%.")
@@ -279,28 +295,32 @@ def stack_var_absolute():
     fig = fig_px(300, 190)
     ax = fig.add_subplot()
     x = np.arange(len(PLAN))
-    parts = [("build_fte", C.focus, "Build"), ("buy_fte", C.context, "Buy"), ("borrow_fte", C.context_light, "Borrow"),
-             ("automate_fte", C.grid, "Automate")]
+    other = PLAN.borrow_fte + PLAN.automate_fte                 # two small parts grouped: three segments read easily
+    parts = [(PLAN.build_fte, C.focus, "Build (reskill)"), (PLAN.buy_fte, C.context, "Buy (hire)"),
+             (other, C.context_light, "Borrow and\nautomate")]
     bottom = np.zeros(len(PLAN))
-    for col, c, name in parts:
-        ax.bar(x, PLAN[col], bottom=bottom, color=c, width=0.55, edgecolor="white", lw=1)
-        if col in ("build_fte", "buy_fte"):
-            for xx, (b, v) in enumerate(zip(bottom, PLAN[col])):
-                if v > 60:
-                    ax.text(xx, b + v / 2, f"{v:.0f}", ha="center", va="center", fontsize=MINI - 1.5, color=mv.text_on(c))
-        bottom += PLAN[col].values
+    w = 0.56
+    for vals, c, name in parts:
+        ax.bar(x, vals, bottom=bottom, color=c, width=w, edgecolor="white", lw=1)
+        for xx, (b0, v) in enumerate(zip(bottom, vals)):
+            if v >= 55:
+                ax.text(xx, b0 + v / 2, f"{v:.0f}", ha="center", va="center", fontsize=MINI - 1.5, color=mv.text_on(c),
+                        fontweight=600 if c == C.focus else 400)
+        hot = c == C.focus                                        # names beside the last column, at each segment
+        ax.text(x[-1] + w / 2 + 0.08, bottom[-1] + vals.iloc[-1] / 2, name, va="center", fontsize=MINI - 1.5,
+                color=C.focus if hot else C.text, fontweight=600 if hot else 400, linespacing=1.05)
+        bottom += vals.values
     for xx, t in enumerate(PLAN.gap_fte):
-        ax.text(xx, t + 12, f"{t:,}", ha="center", va="bottom", fontsize=MINI - 1, color=C.headline, fontweight=700)
-    for i, (name, c) in enumerate([(p[2], p[1]) for p in parts][::-1]):         # key in stack order, top first
-        ax.add_patch(Rectangle((-0.42, 600 - i * 52), 0.08, 30, color=c))
-        ax.text(-0.3, 615 - i * 52, name, fontsize=MINI - 1.5, color=C.text, va="center")
+        ax.text(xx, t + 10, f"{t:,}", ha="center", va="bottom", fontsize=MINI - 1, color=C.headline, fontweight=700)
+    ax.text(-w / 2, PLAN.gap_fte.max() + 10, "Gap (FTE)", fontsize=MINI - 2, color=C.text_muted, va="bottom")
     ax.set_xticks(x, PLAN.fiscal_year)
-    ax.set_xlim(-0.5, len(PLAN) - 0.5)
-    ax.set_ylim(0, 700)
+    ax.set_xlim(-0.45, len(PLAN) + 0.35)
+    ax.set_ylim(0, PLAN.gap_fte.max() * 1.12)
     ax.set_yticks([])
     ax.tick_params(labelsize=MINI - 1, length=0)
     _plain(ax, bottom=True)
-    return fig, f"Stacked columns of how the Data & AI gap closes; build reaches {TEXT['plan_build_share']} by {TEXT['plan_year']}."
+    return fig, (f"Stacked columns of how the Data & AI gap closes, with the total gap on top; build (reskilling) "
+                 f"reaches {TEXT['plan_build_share']} of the {TEXT['plan_gap']} FTE gap by {TEXT['plan_year']}.")
 
 
 @exhibit
@@ -341,7 +361,7 @@ def stack_var_marimekko():
     for f, w, ft, pt, ct in zip(d.function, d.workers, d.employee_ft_pct, d.employee_pt_pct, d.contingent_pct):
         ww = w / total * 100
         b = 0
-        for v, c in ((ct, C.focus if f == "Technology" else C.context_light), (pt, C.grid), (ft, C.context)):
+        for v, c in ((ct, C.focus), (pt, C.context_light), (ft, C.context)):
             ax.add_patch(Rectangle((x, b), ww, v, color=c, ec="white", lw=1.2))
             b += v
         name = {"Pharmacy Ops": "Pharmacy\nOps", "Customer Care": "Cust.\nCare", "Technology": "Tech",
@@ -351,12 +371,15 @@ def stack_var_marimekko():
         if f == "Technology":
             ax.text(x + ww / 2, ct / 2, f"{ct}%", ha="center", va="center", fontsize=MINI - 2, color="white", fontweight=600)
         x += ww
-    ax.text(100.8, 4, "Contingent", fontsize=MINI - 2, color=C.text, va="center")
-    ax.text(100.8, 50, "Full-time", fontsize=MINI - 2, color=C.text, va="center")
+    last = d.iloc[-1]                                          # name the segments beside the last column
+    ax.text(100.8, last.contingent_pct / 2, "Contingent", fontsize=MINI - 2, color=C.focus, va="center", fontweight=600)
+    ax.text(100.8, last.contingent_pct + last.employee_pt_pct / 2, "Part-time", fontsize=MINI - 2, color=C.text,
+            va="center")
+    ax.text(100.8, 100 - last.employee_ft_pct / 2, "Full-time", fontsize=MINI - 2, color=C.text, va="center")
     ax.set_xlim(0, 118)
     ax.set_ylim(-14, 100)
     ax.axis("off")
-    return fig, "Marimekko: column width is each function's workforce, height its mix; Technology's contingent share in blue."
+    return fig, "Marimekko: column width is each function's workforce, height its mix; contingent in blue on the baseline, Technology's 30% labelled."
 
 
 @exhibit
@@ -389,39 +412,40 @@ def _mini_mix(kind):
     d = MIX.tail(4)
     cats = [{"Pharmacy Ops": "Pharmacy", "Customer Care": "Care"}.get(f, f) for f in d.function]
     ft, pt, ct = d.employee_ft_pct.values, d.employee_pt_pct.values, d.contingent_pct.values
+    house = [(ct, C.focus, "Contingent"), (ft, C.context, "Full-time"), (pt, C.context_light, "Part-time")]
     lab = dict(size=MINI - 1, tick=MINI - 2, label_min=99)
+    vals = dict(size=MINI - 1, tick=MINI - 2, label_min=14)
     if kind == "base_avoid":
         hstack(ax, cats, [(ft, C.context, ""), (ct, C.focus, ""), (pt, C.context_light, "")], **lab)
     elif kind == "base_fix":
-        hstack(ax, cats, [(ct, C.focus, ""), (ft, C.context, ""), (pt, C.context_light, "")], **lab)
+        hstack(ax, cats, house, **lab)
     elif kind == "many_avoid":
         rng = np.random.default_rng(3)
         segs = [rng.integers(6, 20, 4) for _ in range(8)]
         tot = np.sum(segs, axis=0)
         hstack(ax, cats, [(s / tot * 100, c, "") for s, c in zip(segs, mv.CATEGORICAL)], **lab)
     elif kind == "many_fix":
-        hstack(ax, cats, [(ct, C.focus, ""), (pt, C.context_light, ""), (ft, C.context, "")], size=MINI - 1,
-               tick=MINI - 2, label_min=10)
+        hstack(ax, cats, house, **vals)
     elif kind == "key_avoid":
-        hstack(ax, cats, [(ft, C.context, ""), (pt, C.context_light, ""), (ct, C.focus, "")], **lab)
-        ax.legend(handles=[Rectangle((0, 0), 1, 1, color=c) for c in (C.focus, C.context, C.context_light)],
-                  labels=["Contingent", "Full-time", "Part-time"], fontsize=MINI - 3, loc="upper center",
+        hstack(ax, cats, house, **lab)
+        ax.legend(handles=[Rectangle((0, 0), 1, 1, color=c) for c in (C.context_light, C.focus, C.context)],
+                  labels=["Part-time", "Contingent", "Full-time"], fontsize=MINI - 2.5, loc="upper center",
                   bbox_to_anchor=(0.5, -0.02), ncol=3, frameon=False, handlelength=0.8, columnspacing=0.8)
     elif kind == "key_fix":
-        hstack(ax, cats, [(ft, C.context, ""), (pt, C.context_light, ""), (ct, C.focus, "")], size=MINI - 1,
-               tick=MINI - 2, label_min=10)
-        key(ax, [("Full-time", C.context), ("Part-time", C.context_light), ("Contingent", C.focus)], y=1.0,
-            size=MINI - 3, gap=0.06, sq=0.035)
-        ax.set_ylim(-0.6, len(cats) - 0.2)
+        hstack(ax, cats, house, **vals)
+        seg_names(ax, [(v[-1], c, n) for v, c, n in house], len(cats) - 1 + 0.42, MINI - 2.5, pad=0.8,
+                  align=["left", "center", "right"])
+        ax.set_xlim(0, 100)
+        ax.set_ylim(-0.6, len(cats) + 0.05)
     elif kind in ("order_avoid", "order_fix"):
-        parts = [(ft, C.context), (pt, C.context_light), (ct, C.focus)]
+        parts = [(v, c) for v, c, _ in house]
         y = np.arange(len(cats))
         for yy in y:
-            seq = sorted(parts, key=lambda p: -p[0][yy]) if kind == "order_avoid" else parts
+            seq = sorted(parts, key=lambda p: p[0][yy]) if kind == "order_avoid" else parts
             left = 0
-            for vals, col in seq:
-                ax.barh(yy, vals[yy], left=left, color=col, height=BAND, edgecolor="white", lw=1.2)
-                left += vals[yy]
+            for v, col in seq:
+                ax.barh(yy, v[yy], left=left, color=col, height=BAND, edgecolor="white", lw=1.2)
+                left += v[yy]
         ax.set_yticks(y, cats)
         ax.set_xticks([])
         ax.tick_params(labelsize=MINI - 2, length=0)
@@ -434,7 +458,7 @@ for _k, _alt in {"base_avoid": "The highlighted segment floats in the middle of 
                  "many_avoid": "Bars cut into eight colored segments.",
                  "many_fix": "Three segments: the one that matters in blue, the rest grey.",
                  "key_avoid": "A legend below the chart in a different order from the stack.",
-                 "key_fix": "Values in the segments and a key top-left in stack order.",
+                 "key_fix": "Values in the segments and each segment named once over the top bar.",
                  "order_avoid": "Segments change order from bar to bar.",
                  "order_fix": "Segments keep the same order in every bar."}.items():
     EXHIBITS[f"stack_bp_{_k}"] = (lambda k=_k, a=_alt: (_mini_mix(k), a))
@@ -481,11 +505,11 @@ def wf_var_direction():
     fig = fig_px(300, 190)
     ax = fig.add_subplot()
     steps = ["FY25", "Hires", "Moves\nin", "Vol.\nexits", "Invol.\nexits", "Moves\nout", "FY26"]
-    cols = [None if k == "total" else (C.focus if v > 0 else C.negative) for v, k in zip(h.people, h.kind)]
+    cols = [None if k == "total" else (C.positive if v > 0 else C.negative) for v, k in zip(h.people, h.kind)]
     waterfall(ax, steps, list(h.people), list(h.kind), colors=cols, lo=12000, size=MINI - 1.5, tick=MINI - 1.5,
               fmt=lambda v, k: f"{v / 1000:,.1f}K" if k == "total" else mv.signed(v / 1000, 1, "K"))
     ax.set_ylim(12000, 24300)
-    return fig, f"Headcount bridge with additions in blue and losses in orange; voluntary exits equal {TEXT['hc_exit_share']} of hires."
+    return fig, f"Headcount bridge with additions in teal and losses in orange; voluntary exits equal {TEXT['hc_exit_share']} of hires."
 
 
 @exhibit
@@ -537,8 +561,9 @@ def _wf_mini(kind):
     elif kind == "color_avoid":
         cols = [None if k == "total" else (ANTI["green"] if v > 0 else ANTI["red"]) for v, k in zip(vals, kinds)]
         waterfall(ax, steps, vals, kinds, lo=3900, colors=cols, labels=False, **common)
-    elif kind == "color_fix":
-        waterfall(ax, steps, vals, kinds, lo=3900, focus={"Auto", "Contr"}, labels=False, **common)
+    elif kind == "color_fix":                         # semantic: cost growth is unfavorable (orange), savings teal
+        cols = [None if k == "total" else (C.negative if v > 0 else C.positive) for v, k in zip(vals, kinds)]
+        waterfall(ax, steps, vals, kinds, lo=3900, colors=cols, labels=False, **common)
     elif kind == "break_avoid":
         waterfall(ax, steps, vals, kinds, lo=3900, break_marks=False, labels=False, **common)
         ax.set_yticks([3900, 4200, 4500])
@@ -565,8 +590,8 @@ def _wf_mini(kind):
 
 for _k, _alt in {"conn_avoid": "Heavy dark connectors compete with the bars.",
                  "conn_fix": "Thin light-grey connectors stay in the background.",
-                 "color_avoid": "Increases in green and decreases in red.",
-                 "color_fix": "Grey drivers, navy totals, the two the headline names in blue.",
+                 "color_avoid": "A labor cost bridge with increases in green and decreases in red, so cost growth looks good.",
+                 "color_fix": "The same bridge in the palette: cost increases orange (unfavorable), reductions teal (favorable), totals navy.",
                  "break_avoid": "A truncated axis with no sign that the totals are cut.",
                  "break_fix": "Break marks on the totals and a note that the axis starts at $3.9B.",
                  "group_avoid": "Ten narrow steps, each labelled, too many to follow.",

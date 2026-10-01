@@ -443,7 +443,7 @@ def bubble_rows(ax, *, focus="Pharma manufacturers", single=True, big_behind=Tru
     d["y"] = d.sub_sector.map({r: len(rows) - 1 - i for i, r in enumerate(rows)})
     d = d.sort_values("roles_affected", ascending=not big_behind)
     for i, r in enumerate(rows):
-        ax.axhline(len(rows) - 1 - i, color=C.grid, lw=0.6, zorder=1)
+        ax.hlines(len(rows) - 1 - i, -1, len(WQ) - 0.5, color=C.grid, lw=0.6, zorder=1)   # stop before any key
     cols = [(C.focus if s == focus else C.context) if single else mv.CATEGORICAL[rows.index(s) % 6] for s in d.sub_sector]
     ax.scatter(d.x, d.y, s=d.roles_affected * k, c=cols, alpha=0.9, edgecolors="white" if outline else "none",
                linewidths=1 if outline else 0, zorder=3)
@@ -455,7 +455,7 @@ def bubble_rows(ax, *, focus="Pharma manufacturers", single=True, big_behind=Tru
             t.set_color(C.headline)
     ax.set_xticks([WQ.index(f"{y} Q1") for y in range(2020, 2027)], [str(y) for y in range(2020, 2027)])
     ax.tick_params(length=0, labelsize=label_size - 1)
-    ax.set_xlim(-1, len(WQ))
+    ax.set_xlim(-1, len(WQ) + 0.8)                              # room for the largest last-quarter bubble
     ax.set_ylim(-0.7, len(rows) - 0.3)
     _plain(ax)
     return rows, k
@@ -466,16 +466,17 @@ def bt_anatomy():
     fig = fig_px(640, 320)
     ax = fig.add_subplot()
     rows, k = bubble_rows(ax)
-    ax.set_xlim(-1, len(WQ) + 4.2)
-    for i, v in enumerate([500, 2000, 5000]):                    # size key, top-right
-        ax.scatter(len(WQ) + 2.2, 4.75 - i * 0.9, s=v * k, facecolors="none", edgecolors=C.text_muted, lw=0.8)
-        ax.text(len(WQ) + 3.4, 4.75 - i * 0.9, f"{v:,}", va="center", fontsize=TICK - 1.5, color=C.text_muted)
-    ax.text(len(WQ) + 2.2, 5.45, "Roles", ha="center", fontsize=TICK - 1.5, color=C.text_muted)
+    ax.set_xlim(-1, len(WQ) + 6)
+    kx = len(WQ) + 1.9                                          # size key, top-right, clear of the data and the edge
+    for i, v in enumerate([500, 2000, 5000]):
+        ax.scatter(kx, 4.75 - i * 0.9, s=v * k, facecolors="none", edgecolors=C.text_muted, lw=0.8, clip_on=False)
+        ax.text(kx + 1.3, 4.75 - i * 0.9, f"{v:,}", va="center", fontsize=TICK - 1.5, color=C.text_muted)
+    ax.text(kx, 5.45, "Roles", ha="center", fontsize=TICK - 1.5, color=C.text_muted)
     ax.text(WQ.index("2023 Q1") - 0.3, len(rows) - 0.35, "Since 2023", fontsize=ANNOT, color=C.text_muted, va="bottom")
     ax.set_ylim(-0.7, len(rows) - 0.05)
     marker(ax, (-1, 0), 3, offset=(-6, 12))
     marker(ax, (len(WQ) - 0.5, -0.45), 4, offset=(14, 0))
-    marker(ax, (len(WQ) + 2.2, 3.85), 5, offset=(-26, 0))
+    marker(ax, (kx, 3.85), 5, offset=(-26, 0))
     big = WR[WR.sub_sector == "Pharma manufacturers"].roles_affected.idxmax()
     marker(ax, (WQ.index(WR.quarter[big]), len(rows) - 1), 6, offset=(-30, 12))
     marker(ax, (WQ.index("2023 Q1") - 0.5, 2.5), 7, offset=(-10, 0))
@@ -504,8 +505,8 @@ def _bt_mini(kind):
         rows, k = bubble_rows(ax, **kw)
         ax.set_xlim(-1, len(WQ) + 6)
         for i, v in enumerate([1000, 4000]):
-            ax.scatter(len(WQ) + 3, 4.6 - i * 1.3, s=v * k, facecolors="none", edgecolors=C.text_muted, lw=0.6)
-            ax.text(len(WQ) + 3, 3.95 - i * 1.3, f"{v // 1000}K", ha="center", va="top", fontsize=MINI - 4,
+            ax.scatter(len(WQ) + 4.4, 4.6 - i * 1.3, s=v * k, facecolors="none", edgecolors=C.text_muted, lw=0.6)
+            ax.text(len(WQ) + 4.4, 3.95 - i * 1.3, f"{v // 1000}K", ha="center", va="top", fontsize=MINI - 4,
                     color=C.text_muted)
     ax.set_xticks([])
     return fig
