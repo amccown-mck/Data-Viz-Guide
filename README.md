@@ -11,7 +11,7 @@ This is the McKesson data-visualization starter kit. It covers principles, desig
 | Coding in Python | `pip install -e ./python`, then `import mckviz as mv; mv.use()`. Examples are in [examples/python/](examples/python/) |
 | Building HTML / JS | Start from [templates/html/chart-card.html](templates/html/chart-card.html); themes in [dist/web/](dist/web/): CSS variables, Plotly template, Vega-Lite config |
 | Using Excel / PowerPoint | [docs/office-setup.md](docs/office-setup.md): install the fonts and theme, then start from the template, starter deck and chart workbook in [dist/office/](dist/office/) |
-| Using Power BI | [dist/powerbi/mckesson-dataviz-theme.json](dist/powerbi/mckesson-dataviz-theme.json) |
+| Using Power BI | [docs/powerbi-setup.md](docs/powerbi-setup.md), then import [dist/powerbi/mckesson-dataviz-theme.json](dist/powerbi/mckesson-dataviz-theme.json) |
 | Using R | [dist/r/theme_mck.R](dist/r/theme_mck.R) |
 | A coding agent | [AGENTS.md](AGENTS.md) (also loaded via `CLAUDE.md` and `.github/copilot-instructions.md`); chart workflow skill in [.github/skills/mck-chart](.github/skills/mck-chart/SKILL.md) |
 | Adding chart rules to another repo | Copy [dist/agents/mck-viz-rules.md](dist/agents/mck-viz-rules.md), a single self-contained rules file |

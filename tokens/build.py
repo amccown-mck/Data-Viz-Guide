@@ -358,7 +358,8 @@ def build_powerbi() -> None:
     font = f"{FONT}, Segoe UI, wf_segoe-ui_normal, helvetica, arial, sans-serif"
     theme = {
         "name": "McKesson Data Viz",
-        "dataColors": CAT + C["sequential"]["blue"][1:4] + C["sequential"]["orange"][1:4],
+        # Categorical order first; tints only extend the cycle for 9+ series. No repeats, so no two series share a color.
+        "dataColors": list(dict.fromkeys(CAT + C["sequential"]["blue"][1:4] + C["sequential"]["orange"][1:4])),
         "foreground": v("text.primary"),
         "foregroundNeutralSecondary": v("text.muted"),
         "foregroundNeutralTertiary": v("chart.context"),

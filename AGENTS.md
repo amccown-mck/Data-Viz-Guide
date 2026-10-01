@@ -60,7 +60,7 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 
 **Excel / PowerPoint:** set up per `docs/office-setup.md` (Libre Franklin plus the theme XML from `dist/office/`). Start from `dist/office/McKesson-DataViz.potx`, the starter deck or the chart workbook. Build **native, editable** charts. Each cookbook page has click-by-click steps. To generate Office files from Python, follow `office/build_office.py` (python-pptx / xlsxwriter, theme injected into the package).
 
-**Power BI:** import `dist/powerbi/mckesson-dataviz-theme.json`. Apply highlight colors with conditional formatting on a measure, and enforce minimum n in DAX (`IF([Headcount] < 10, BLANK(), ...)`).
+**Power BI:** follow `docs/powerbi-setup.md` and import `dist/powerbi/mckesson-dataviz-theme.json`. Apply highlight colors with conditional formatting on a measure, and enforce minimum n in DAX (`IF([Headcount] < 10, BLANK(), ...)`). Most Service viewers see Segoe UI instead of Libre Franklin, so leave label slack. After changing tokens, run `python tools/check_powerbi_theme.py`.
 
 **R:** `source("dist/r/theme_mck.R")` gives `theme_mck()`, `mck_colors`, `mck_highlight()` and the fill scales.
 
