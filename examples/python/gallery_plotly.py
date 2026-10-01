@@ -104,7 +104,7 @@ def bubble_scatter():
     fig.update_xaxes(title="Median base pay ($K)", range=[28, 155], tickprefix="$", ticksuffix="K")
     fig.update_yaxes(title="", range=[0, 75], ticksuffix="%")
     return card(fig, "Four support roles carry the highest gen AI exposure \u2013 start redesign and reskilling there",
-                "Share of task hours exposed to gen AI vs. median pay by role; bubble size = headcount. Hover for detail.", SRC,
+                "Share of task hours exposed to gen AI (%) vs. median base pay ($K) by role, 2026; bubble area = headcount", SRC,
                 "Exposure = share of task hours matched to gen-AI-capable activities in an external task taxonomy.")
 
 

@@ -346,9 +346,11 @@ def pl_highlight(labels: Iterable, focus=None, accent=None, base: str | None = N
     return highlight(labels, focus, accent, base)
 
 
+from .lint import Finding, LintError, lint  # noqa: E402  (needs the names above)
+
 __all__ = [
     "TOKENS", "FONT", "CATEGORICAL", "SEQUENTIAL", "DIVERGING", "colors", "extended",
     "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",
-    "plotly_template", "pl_finish", "pl_highlight",
+    "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
 ]

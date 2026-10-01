@@ -142,7 +142,7 @@ def bubble_scatter():
     ax.yaxis.set_label_coords(0, 1.01)
     mv.clean_axes(ax, keep=("bottom",), grid="y")
     mv.titles(fig, "Four support roles carry the highest gen AI exposure \u2013 start redesign and reskilling there",
-              "Gen AI exposure vs. median pay by role; bubble size = headcount")
+              "Share of task hours exposed to gen AI (%) vs. median base pay ($K) by role, 2026; bubble area = headcount")
     mv.source(fig, SRC, footnote="Exposure = share of task hours matched to gen-AI-capable activities in an external task taxonomy.")
     return fig
 

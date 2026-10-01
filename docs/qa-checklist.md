@@ -2,6 +2,8 @@
 
 Run this before any chart leaves your hands. Agents: run it on your own output and report failures before handing back.
 
+> **Python shortcut:** `mv.lint(fig)` checks the mechanical items automatically, for matplotlib and Plotly figures: headline, subtitle and source present; ≤ 6 colors, palette only, no red–green; bars from zero; labels vs. value axis; legends; dual axes; pies ≤ 5; rotated or tiny text. Fix every `error`, then read the `warn` and `info` items. The lint can't tell whether the headline is true or the chart type fits the question, so the rest of this list still needs a human (or agent) eye. `python tools/lint_charts.py` lints the whole gallery.
+
 ## Message
 - [ ] Headline is a **full-sentence insight**, ≤ 2 lines, no final period, balanced line breaks.
 - [ ] Every claim in the headline is **visibly supported** (recompute counts, multipliers, "all/most/none").

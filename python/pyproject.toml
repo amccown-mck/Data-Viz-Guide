@@ -12,6 +12,7 @@ dependencies = ["matplotlib>=3.8"]
 [project.optional-dependencies]
 plotly = ["plotly>=5.20"]
 examples = ["plotly>=5.20", "pandas>=2.0", "numpy>=1.26"]
+dev = ["pytest>=8", "jsonschema>=4"]
 
 [tool.setuptools.packages.find]
 where = ["."]

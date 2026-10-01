@@ -44,6 +44,7 @@ QA:           pass | exceptions: <list>
 - The subtitle is neutral: metric, unit, scope, period. The source line names the system, the as-of date and the population (or "Synthetic data for illustration only").
 
 ## 5. QA
+- Python: run `mv.lint(fig)` (for HTML chart cards, pass `headline=`, `subtitle=`, `source=`). Fix every error and read the warnings.
 - Render the chart and **look at it**: open the PNG, or screenshot the HTML at desktop width and at 390 px.
 - Go through `docs/qa-checklist.md` and the cookbook page's "QA specifics". Fix what fails. For anything you can't fix, name it in the brief under "QA exceptions".
 - Write alt text: the headline plus 2–3 key numbers.

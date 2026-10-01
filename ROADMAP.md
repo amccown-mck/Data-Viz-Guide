@@ -21,6 +21,7 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 | Print sheets | One-page consultant cheat sheet and chart chooser (PDF), colors read from tokens | `dist/print/`, `templates/print/`, `tools/build_print.py` |
 | HTML starter | Self-contained chart-card page using `dist/web/` | `templates/html/chart-card.html` |
 | Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook; `--lang r` runs every R block | `tools/check_snippets.py` |
+| Chart lint | `mv.lint(fig)` for matplotlib/Plotly, gallery runner, pytest suite | `python/mckviz/lint.py`, `tools/lint_charts.py`, `python/tests/` |
 | R examples | ggplot2 gallery (bar highlight, line with end labels, diverging heatmap) using the generated theme | `examples/r/`, `examples/output/r-*.png` |
 
 ## Next steps (in priority order)
@@ -31,14 +32,14 @@ Last updated: 2026-09-30. Read this first when resuming work, whether you're a p
 4. ~~**Excel / PowerPoint (priority 2 audience).**~~ Done: `office/build_office.py` generates `dist/office/McKesson-DataViz.potx`, `McKesson-DataViz-Starter.pptx` (native bar highlight, line, waterfall, 100% stacked) and `McKesson-DataViz-Charts.xlsx`; set-up how-to in `docs/office-setup.md`; one-page `dist/print/cheat-sheet.pdf` and `chart-chooser.pdf` (sources in `templates/print/`, printed by `tools/build_print.py`).
 5. **Power BI (priority 3).** Partly done: the theme validates against Microsoft's report-theme schema 2.157 (`tools/check_powerbi_theme.py`, which also caught and now guards against duplicate data colors), and `docs/powerbi-setup.md` covers applying the theme, the font fallback, measure-driven highlights, insight titles and minimum-n DAX. **Still needs a person with Power BI** (Desktop has no scripting interface, and the Service can't be reached from here): load the theme in Desktop, build one sample page (bar highlight with a color measure, matrix heat table, KPI cards), publish it, and view it in the Service from a machine without Libre Franklin. Confirm or correct the font table in `docs/powerbi-setup.md`, and remove its "Status" note.
 6. ~~**R (nice-to-have).**~~ Done: smoke-tested with R 4.5.1 / ggplot2 4.0.3, and all 23 cookbook R blocks now run (`tools/check_snippets.py --lang r`; six used an undefined `df`/`events` and now build synthetic data). `theme_mck.R` fixes: gridlines moved to the parent element so `panel.grid = element_blank()` works; new `mck_font()` (by-name matching picked the italic TTF for regular text) and `mck_wrap()`. Three examples in `examples/r/gallery_ggplot2.R` render `examples/output/r-*.png`.
-7. **QA automation.** Add a lint script that checks a matplotlib or Plotly figure against the rules: more than 6 colors, a missing headline or source, legend vs. direct labels, and so on.
+7. ~~**QA automation.**~~ Done: `mv.lint(fig)` (`python/mckviz/lint.py`) checks matplotlib and Plotly figures for missing headline/subtitle/source, label-like headlines, > 6 colors (a ramp counts once), off-palette colors, red–green, truncated bars (waterfall breaks warn), labels plus value axis, legends, dual axes, pies > 5, rotated and tiny text, 3D. `tools/lint_charts.py` lints the whole gallery (0 errors); `python -m pytest python/tests` covers each rule. Not covered (needs judgment): whether the headline is true, chart choice, overlaps.
 8. **Brand confirmation.** Confirm with Brand that the full swatch values on BrandHQ match the values extracted from the PDFs, and check the derived ramps (sequential, diverging, context grey).
 
 ## Resume commands
 
 ```powershell
 cd C:\Users\exs4yig\repos\data-viz-guide
-python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[examples] kaleido python-pptx openpyxl xlsxwriter pymupdf jsonschema
+python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[examples] kaleido python-pptx openpyxl xlsxwriter pymupdf jsonschema pytest
 .\.venv\Scripts\python.exe tokens\build.py                      # regenerate dist/
 .\.venv\Scripts\python.exe examples\data\make_data.py           # regenerate data
 .\.venv\Scripts\python.exe examples\python\gallery_matplotlib.py
@@ -48,6 +49,8 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 .\.venv\Scripts\python.exe tools\check_snippets.py                # run every verified cookbook snippet (~40 s)
 .\.venv\Scripts\python.exe tools\check_snippets.py --lang r       # run every cookbook R block (needs R + packages below)
 .\.venv\Scripts\python.exe tools\check_powerbi_theme.py           # validate the Power BI theme against Microsoft's schema
+.\.venv\Scripts\python.exe tools\lint_charts.py                   # lint every gallery chart (mv.lint)
+.\.venv\Scripts\python.exe -m pytest python\tests                 # mckviz unit tests
 & "C:\Program Files\R\R-4.5.1\bin\Rscript.exe" examples\r\gallery_ggplot2.R   # R gallery -> examples/output/r-*.png
 # R packages: ggplot2 dplyr readr tidyr stringr scales ragg systemfonts gt sf maps mapproj ggalluvial treemapify packcircles
 ```

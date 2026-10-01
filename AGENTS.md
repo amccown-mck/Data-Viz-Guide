@@ -17,7 +17,7 @@ If you are resuming unfinished work on the kit, read [`ROADMAP.md`](ROADMAP.md) 
 2. **Chart type.** Name the question type, then pick from [`docs/choosing-a-chart.md`](docs/choosing-a-chart.md). Read [`docs/principles.md`](docs/principles.md) and the matching `docs/cookbook/<chart>.md` page **before** writing code. Each page has a spec table, do/don't rules and runnable code for each platform.
 3. **Build.** Start from the cookbook snippet for your platform (see [Platform recipes](#platform-recipes)). Take every color from the tokens; never type a hex value.
 4. **Headline.** Compute the finding from the data, then write it as a full sentence. Build the numbers in the headline from variables, not by eyeballing.
-5. **QA.** Go through [`docs/qa-checklist.md`](docs/qa-checklist.md) and the cookbook page's "QA specifics". Render the chart and look at it (open the PNG, or screenshot the HTML). Report any item you couldn't meet.
+5. **QA.** In Python, run `mv.lint(fig)` and fix every error. Then go through [`docs/qa-checklist.md`](docs/qa-checklist.md) and the cookbook page's "QA specifics". Render the chart and look at it (open the PNG, or screenshot the HTML). Report any item you couldn't meet.
 
 ### Rules every chart must meet
 | Rule | Detail |
@@ -53,6 +53,7 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 | Numbers | `mv.signed(v, decimals, suffix)` (true minus, explicit +), `mv.text_on(fill)` (white or navy text on a fill) |
 | Translucent fills (Plotly) | `mv.rgba(C.accent, 0.12)` for gap washes and Sankey links, instead of an `rgba(...)` literal |
 | Save | `mv.save(fig, path, dpi=200)`, which also lays out the titles and source |
+| Check | `mv.lint(fig)` (matplotlib or Plotly; pass `headline=`, `subtitle=`, `source=` when they live in HTML); `strict=True` raises on errors |
 | Plotly titles | `mv.pl_finish(fig, headline, subtitle, source_text, footnote)` |
 | All tokens | `mv.TOKENS` (the full `tokens.json`) |
 
@@ -98,6 +99,8 @@ C = mv.colors                # roles: C.focus, C.context, C.context_light, C.acc
 .\.venv\Scripts\python.exe examples\python\gallery_plotly.py
 .\.venv\Scripts\python.exe office\build_office.py              # after token or example-data changes (Office files)
 .\.venv\Scripts\python.exe tools\check_snippets.py              # every "# verified" cookbook block must pass
+.\.venv\Scripts\python.exe tools\lint_charts.py                 # mv.lint over the whole gallery: 0 errors
+.\.venv\Scripts\python.exe -m pytest python\tests               # mckviz tests
 ```
 
 ### Conventions

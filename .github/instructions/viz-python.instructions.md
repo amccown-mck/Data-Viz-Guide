@@ -26,4 +26,4 @@ C = mv.colors
 - **Numbers:** `mv.signed(v, decimals, suffix)` for deltas (true minus, explicit +), and `mv.text_on(fill)` for text placed on a colored mark.
 - **People data:** drop or merge any group with n < 10 before plotting, and keep individual values out of hover text.
 - **Output:** PNG at `dpi=200` for slides, SVG/PDF for print, `write_html(..., include_plotlyjs="cdn")` for the web. Example scripts write to `examples/output/`; scratch output goes to `out/` (gitignored) or `tempfile.gettempdir()`.
-- **Check your work:** open the rendered file and look at it. In `docs/cookbook/` code blocks, start with `# verified runnable (from the repo root)` and run `python tools/check_snippets.py <page>`.
+- **Check your work:** run `mv.lint(fig)` and fix every error, then open the rendered file and look at it. In `docs/cookbook/` code blocks, start with `# verified runnable (from the repo root)` and run `python tools/check_snippets.py <page>`.
