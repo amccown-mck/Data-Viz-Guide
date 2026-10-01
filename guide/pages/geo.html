@@ -4,7 +4,7 @@
     <h2 class="title"><b>Choropleth</b> map</h2>
     <div class="defbox">Geo-spatial charts show where: a pattern across geography, or values at precise locations.</div>
     <p>A choropleth shades each area by a <strong>rate</strong>: postings per candidate, attrition, share eligible to retire. Use it when the pattern only makes sense on a map.</p>
-    <p class="small">Real shapes let big, empty states dominate. A tile grid gives each state one equal square in roughly its place.</p>
+    <p class="small">US maps use an equal-area Albers projection, with Alaska and Hawaii moved into insets.</p>
     <h3>McKesson spec</h3>
     <ul class="small">
       <li>Sequential blue in 3–5 even classes</li>
@@ -17,18 +17,18 @@
       <ol class="callouts">
         <li><span class="mk">1</span><span><b>Insight headline</b>Names the states and the threshold.</span></li>
         <li><span class="mk">2</span><span><b>Subtitle</b>A rate, with its unit, scope and period.</span></li>
-        <li><span class="mk">3</span><span><b>One tile per state</b>Equal size, in roughly its place.</span></li>
-        <li><span class="mk">4</span><span><b>Classed key</b>Five even classes, open-ended, high on top.</span></li>
-        <li><span class="mk">5</span><span><b>Values on the few</b>Only the 1.7+ states carry a number.</span></li>
-        <li><span class="mk">6</span><span><b>Callout on the outlier</b>A ring and a two-line note.</span></li>
-        <li><span class="mk">7</span><span><b>Quiet structure</b>Thin white gutters, small abbreviations.</span></li>
-        <li><span class="mk">8</span><span><b>Footnote and source</b>Define the rate; say it's a tile map.</span></li>
+        <li><span class="mk">3</span><span><b>Equal-area projection</b>Albers: each state at its true relative size.</span></li>
+        <li><span class="mk">4</span><span><b>Insets</b>Alaska shrunk and moved, Hawaii moved; both keep their color.</span></li>
+        <li><span class="mk">5</span><span><b>Classed key</b>Five even classes, open-ended, high on top.</span></li>
+        <li><span class="mk">6</span><span><b>Values on the few</b>Only the 1.7+ states carry a number.</span></li>
+        <li><span class="mk">7</span><span><b>Quiet structure</b>Thin white borders; no frame, no graticule.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>Define the rate and the classes.</span></li>
       </ol>
       <figure class="card">
         <p class="card-head">{{text:geo_headline}}<span class="mk">1</span></p>
         <p class="card-sub">{{text:geo_subtitle}}<span class="mk">2</span></p>
         {{exhibit:geo_anatomy|min}}
-        <p class="card-foot">Each tile is one state at equal size. Classes are even-width; the top and bottom are open-ended.<br>Source: External job-postings and candidate-profile data (synthetic data for illustration), Q2 2026<span class="mk">8</span></p>
+        <p class="card-foot">Postings per candidate = open postings ÷ qualified candidates in the state. Classes are even-width; the top and bottom are open-ended. Alaska not to scale.<br>Source: External job-postings and candidate-profile data (synthetic data for illustration), Q2 2026<span class="mk">8</span></p>
       </figure>
     </div>
   </div>
@@ -59,14 +59,89 @@
         <li><span class="mk">5</span><span><b>Direct labels</b>Bold value and site name, for the focus only.</span></li>
         <li><span class="mk">6</span><span><b>Grey context</b>Every other site; overlaps stay readable.</span></li>
         <li><span class="mk">7</span><span><b>Size and color key</b>Two reference circles, two swatches.</span></li>
-        <li><span class="mk">8</span><span><b>Quiet base</b>Sand tiles, no borders: the map is context.</span></li>
+        <li><span class="mk">8</span><span><b>Quiet base</b>Sand states, white borders: the map is context.</span></li>
         <li><span class="mk">9</span><span><b>Footnote and source</b>Define vacancy; note what's suppressed.</span></li>
       </ol>
       <figure class="card">
         <p class="card-head">{{text:dc_headline}}<span class="mk">1</span></p>
         <p class="card-sub">{{text:dc_subtitle}}<span class="mk">2</span></p>
         {{exhibit:dc_anatomy|min}}
-        <p class="card-foot">Vacancy rate = open associate requisitions ÷ budgeted positions. {{text:dc_sites}} sites shown; {{text:dc_small_n}} satellite site with fewer than {{text:min_n}} associates not shown.<br>Source: Workday HCM and ATS (synthetic data for illustration), as of 31 Mar 2026<span class="mk">9</span></p>
+        <p class="card-foot">Vacancy rate = open associate requisitions ÷ budgeted positions. {{text:dc_sites}} sites shown at their city; {{text:dc_small_n}} satellite site with fewer than {{text:min_n}} associates not shown.<br>Source: Workday HCM and ATS (synthetic data for illustration), as of 31 Mar 2026<span class="mk">9</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="world-map">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>World</b> map</h2>
+    <p class="lede">For global questions: where to source talent, where a capability center could go, where our people work.</p>
+    <p>Use an <strong>equal-area</strong> projection such as Equal Earth. Mercator inflates Canada, Russia and Greenland and shrinks India and Africa, so a rate looks bigger the further it is from the equator.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Equal Earth (or Robinson where a tool offers no equal-area option); Antarctica left out</li>
+      <li>Countries without data in base sand, and keyed</li>
+      <li>No palest class: it would read as "no data"</li>
+      <li>Rates as shades; counts as bubbles</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>The standout country, compared with home.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>A rate, the countries in scope, the period.</span></li>
+        <li><span class="mk">3</span><span><b>Equal Earth</b>True relative areas; curved edges, no frame.</span></li>
+        <li><span class="mk">4</span><span><b>Not assessed</b>Base sand, so missing never looks like low.</span></li>
+        <li><span class="mk">5</span><span><b>Classed key</b>Four even classes plus "Not assessed".</span></li>
+        <li><span class="mk">6</span><span><b>The standout</b>Named, with its value, in place.</span></li>
+        <li><span class="mk">7</span><span><b>The comparison</b>The U.S. value the headline uses.</span></li>
+        <li><span class="mk">8</span><span><b>Footnote and source</b>Define the rate and the scope.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:world_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:world_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:geo_world_anatomy|min}}
+        <p class="card-foot">Candidates per role = qualified Data &amp; AI profiles ÷ open Data &amp; AI postings. {{text:world_n}} countries assessed; the rest in sand.<br>Source: External job-postings and professional-profile data (synthetic data for illustration), Q2 2026<span class="mk">8</span></p>
+      </figure>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
+<section class="spread" id="zoom-in">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Zoom-in</b> map</h2>
+    <p class="lede">When the detail is smaller than a state (counties, a metro, a commute shed), zoom in. At national scale it would be a smudge.</p>
+    <p>Texas is the tightest state at {{text:tx_rate}}. The zoom shows where inside it: the core around our Irving campus, not the outer ring.</p>
+    <h3>McKesson spec</h3>
+    <ul class="small">
+      <li>Always a locator: a small US map, the frame in navy</li>
+      <li>The parent map's classes and colors, unchanged</li>
+      <li>Context outside the study area in sand</li>
+      <li>Small areas are noisy: hide any under {{text:min_n}} people</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="anatomy">
+      <ol class="callouts">
+        <li><span class="mk">1</span><span><b>Insight headline</b>Where inside the state, with the contrast.</span></li>
+        <li><span class="mk">2</span><span><b>Subtitle</b>The same rate as the state map, by county.</span></li>
+        <li><span class="mk">3</span><span><b>Locator</b>Where the zoom sits, at a glance.</span></li>
+        <li><span class="mk">4</span><span><b>Same classes</b>1.7+ means the same here as on the state map.</span></li>
+        <li><span class="mk">5</span><span><b>The site</b>Our campus, as a navy-ringed point.</span></li>
+        <li><span class="mk">6</span><span><b>Values on the few</b>The core counties the headline names.</span></li>
+        <li><span class="mk">7</span><span><b>Suppressed</b>Under {{text:min_n}} candidates: grey, no value.</span></li>
+        <li><span class="mk">8</span><span><b>Context</b>Outside the study area in sand; state line dashed.</span></li>
+        <li><span class="mk">9</span><span><b>Footnote and source</b>Define the study area and what's hidden.</span></li>
+      </ol>
+      <figure class="card">
+        <p class="card-head">{{text:zoom_headline}}<span class="mk">1</span></p>
+        <p class="card-sub">{{text:zoom_subtitle}}<span class="mk">2</span></p>
+        {{exhibit:geo_zoom_anatomy|min}}
+        <p class="card-foot">Study area: the {{text:zoom_n}} counties whose center is within {{text:zoom_miles}} miles of Irving; {{text:zoom_small_n}} with fewer than {{text:min_n}} qualified candidates not shown. Same classes as the state map.<br>Source: External job-postings and candidate-profile data (synthetic data for illustration), Q2 2026<span class="mk">9</span></p>
       </figure>
     </div>
   </div>
@@ -113,6 +188,46 @@
   {{folio}}
 </section>
 
+<section class="spread" id="map-geographies">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Choosing</b> the geography</h2>
+    <p class="lede">A real map is the default. Change the geography when it would hide what matters.</p>
+    <ul>
+      <li>Small states matter as much as big ones: a <strong>tile grid</strong></li>
+      <li>Data exists only by region: <strong>dissolve</strong> the states into regions</li>
+      <li>A few areas are too small to read: an enlarged <strong>inset</strong></li>
+      <li>Detail smaller than a state: a <strong>zoom-in</strong> with a locator</li>
+      <li>Countries: an equal-area <strong>world</strong> map</li>
+    </ul>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile">
+        <h4>Tile grid map</h4>
+        <p class="note">Every state the same size, in roughly its place: when Rhode Island matters as much as Montana.</p>
+        {{exhibit:geo_var_tiles}}
+      </div>
+      <div class="tile">
+        <h4>Region map</h4>
+        <p class="note">Nine Census divisions, state lines removed. {{text:geo_div_top}} is tightest at {{text:geo_div_top_rate}}.</p>
+        {{exhibit:geo_var_regions}}
+      </div>
+      <div class="tile">
+        <h4>Inset for small areas</h4>
+        <p class="note">The Northeast at {{text:geo_inset_zoom}}× keeps {{text:geo_inset_n}} small states and DC readable. Outline the source area.</p>
+        {{exhibit:geo_var_inset}}
+      </div>
+      <div class="tile">
+        <h4>World bubble map</h4>
+        <p class="note">Counts as bubbles. {{text:world_people_top}} holds {{text:world_people_top_share}} of our Data &amp; AI people, the most outside the U.S.</p>
+        {{exhibit:geo_var_world}}
+      </div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
 <section class="spread" id="maps-best-practice">
   <div class="rail">
     <p class="eyebrow">Geo-spatial</p>
@@ -152,7 +267,7 @@
     <h2 class="title"><b>Maps</b> best practice, continued</h2>
     <p class="lede">Four more, from workforce data in particular.</p>
     <p><strong>Bubbles by area.</strong> Scaling the radius makes a site twice as big look four times as big.</p>
-    <p><strong>Label the few that matter.</strong> A number in every state is a table in the wrong shape.</p>
+    <p><strong>Label the few that matter.</strong> A number in every state is a table in the wrong shape, and the small states pile up.</p>
     <p><strong>Is it really geographic?</strong> Three hubs don't need a map of fifty states.</p>
     <p><strong>Aggregate, then map.</strong> Never plot home addresses. Map to state, metro or site, and drop anything under {{text:min_n}} people, in tooltips too.</p>
   </div>
@@ -179,31 +294,65 @@
   {{folio}}
 </section>
 
+<section class="spread" id="maps-projection-zoom">
+  <div class="rail">
+    <p class="eyebrow">Geo-spatial</p>
+    <h2 class="title"><b>Projections</b> and zoom-ins</h2>
+    <p class="lede">Where the shapes come from matters as much as the colors on them.</p>
+    <p><strong>Equal-area for the world.</strong> Equal Earth, not Mercator or plain longitude and latitude: on a rate map, area is ink.</p>
+    <p><strong>Albers for the US.</strong> Alaska and Hawaii as insets, said so in the footnote.</p>
+    <p><strong>Zoom in, don't squint.</strong> County detail needs its own map, with a locator.</p>
+    <p><strong>Keep the parent's scale.</strong> Use the same classes on the zoom; an automatic color range makes "dark" mean something new on every map.</p>
+  </div>
+  <div class="stage">
+    <div class="grid g2">
+      <div class="tile"><h4>World projection</h4><div class="pair">
+        <div>{{exhibit:geo_bp_proj_world_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Mercator: the north swells.</span></div></div>
+        <div>{{exhibit:geo_bp_proj_world_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Equal Earth.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>US layout</h4><div class="pair">
+        <div>{{exhibit:geo_bp_proj_us_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Plain lon/lat: Alaska dominates.</span></div></div>
+        <div>{{exhibit:geo_bp_proj_us_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Albers, with insets.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Zoom in</h4><div class="pair">
+        <div>{{exhibit:geo_bp_zoom_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Counties at national scale.</span></div></div>
+        <div>{{exhibit:geo_bp_zoom_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>Zoomed, with a locator.</span></div></div>
+      </div></div>
+      <div class="tile"><h4>Same scale as the parent</h4><div class="pair">
+        <div>{{exhibit:geo_bp_scale_avoid}}<div class="verdict avoid"><i>✕</i><span><b>Try to avoid</b>Auto range: its own min to max.</span></div></div>
+        <div>{{exhibit:geo_bp_scale_fix}}<div class="verdict rec"><i>✓</i><span><b>Recommended</b>The state map's classes.</span></div></div>
+      </div></div>
+    </div>
+  </div>
+  {{folio}}
+</section>
+
 <section class="spread" id="geo-build">
   <div class="rail">
     <p class="eyebrow">Geo-spatial</p>
     <h2 class="title"><b>Build</b> maps</h2>
-    <p class="lede">Choropleths are native in every tool; bubble and dot maps are easiest in Python or Plotly. Tested code and click-by-click steps are on the cookbook page.</p>
+    <p class="lede">Choropleths are native in every tool; bubble, dot and zoom maps are easiest in Python or Plotly. Tested code and click-by-click steps are on the cookbook page.</p>
     <p><a href="../../docs/cookbook/maps.md">maps.md</a></p>
     <h3>Before you send it</h3>
     <ul class="checklist small">
       <li>Shaded values are rates; counts are bubbles</li>
       <li>3–5 even classes; the key names the unit</li>
-      <li>Equal-area projection or tile grid</li>
-      <li>Only the named areas or sites labelled</li>
+      <li>Albers for the US, Equal Earth for the world</li>
+      <li>A zoom has a locator and the parent's classes</li>
       <li>No area, site or cluster under {{text:min_n}} people</li>
     </ul>
   </div>
   <div class="stage top">
     <div class="panel">
-      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Choropleth:</strong> Insert › Charts › Maps › Filled Map (online: Excel geocodes through Bing). Format Data Series: Map projection <em>Albers</em>, Map area <em>Only regions with data</em>, Map labels <em>None</em>. Excel only draws continuous scales, so map a class-number column (1–5) to get binned shades, and draw the key as five small squares. Delete the title and legend; label the focus states with text boxes. Bubble and dot maps aren't native: build them in Python and insert the SVG.</p></div>
-      <div class="platform"><h5>Power BI</h5><p><strong>Azure Maps</strong> visual (your admin must enable it): Filled map layer for rates; Bubble layer with Range scaling <em>Magnitude</em> for counts. Bin colors with a <code>SWITCH</code> measure in <em>Fill color › fx › Field value</em>. Suppress small groups with <code>IF([Headcount] &lt; 10, BLANK(), ...)</code>, and check geocoding against data-handling rules.</p></div>
-      <div class="platform"><h5>Python</h5><div><p>The tile grid needs only matplotlib and <code>mckviz</code>. For real shapes, Plotly <code>go.Choropleth(locationmode="USA-states")</code> and <code>go.Scattergeo(scope="usa")</code> use Albers USA.</p>
-<pre class="snip">cls = pd.cut(rate, [-np.inf, 0.8, 1.1, 1.4, 1.7, np.inf], labels=False, right=False)
-ramp = [mv.SEQUENTIAL["blue"][i] for i in (0, 1, 2, 4, 5)]
-marker={"size": n, "sizemode": "area", "color": mv.pl_highlight(sites, focus=hot)}</pre></div></div>
-      <div class="platform"><h5>HTML</h5><p>Plotly with <code>MCK_PLOTLY_TEMPLATE</code>; headline, subtitle and source in the chart card's HTML. Tooltips may show n, but never for an area or site under {{text:min_n}}.</p></div>
-      <div class="platform"><h5>R</h5><p><code>geom_polygon()</code> on <code>map_data("state")</code> with <code>coord_map("albers", lat0 = 29.5, lat1 = 45.5)</code> and <code>scale_fill_manual()</code> on the classes; bubbles with <code>scale_size_area()</code>.</p></div>
+      <div class="platform"><h5>PowerPoint and Excel</h5><p><strong>Filled Map:</strong> Insert › Charts › Maps › Filled Map (online: Excel geocodes through Bing). It takes countries, states, counties or postal codes. Format Data Series: Map projection <em>Albers</em> for the US or <em>Robinson</em> for the world (never Mercator), Map area <em>Only regions with data</em>, which also zooms to a state's counties. Map a class-number column (1–5) to get binned shades; draw the key as small squares. Bubble and dot maps aren't native: build them in Python and insert the SVG.</p></div>
+      <div class="platform"><h5>Power BI</h5><p><strong>Azure Maps</strong> visual (your admin must enable it): Filled map layer for rates; Bubble layer with Range scaling <em>Magnitude</em> for counts. Bin colors with a <code>SWITCH</code> measure in <em>Fill color › fx › Field value</em>. The <strong>Shape map</strong> visual (preview) takes your own TopoJSON, such as counties or a tile grid. Suppress small groups with <code>IF([Headcount] &lt; 10, BLANK(), ...)</code>.</p></div>
+      <div class="platform"><h5>Python</h5><div><p>The guide's maps use <code>guide/geo_shapes.py</code>: a small TopoJSON reader for the us-atlas and world-atlas files in <code>guide/geodata/</code>, drawn with matplotlib. Or Plotly: <code>go.Choropleth</code> with <code>fig.update_geos(scope="usa")</code> (Albers USA) or <code>projection_type="equal earth"</code>.</p>
+<pre class="snip">ax = gs.canvas(fig)                                # axes in px
+m = gs.Map("states-albers-10m.json", "states", (0, 0, 480, 300), key=gs.FIPS.get)
+m.draw(ax, {s: ramp[c] for s, c in cls.items()}, ec="white", lw=0.6)
+x, y = m.point(-96.80, 32.78)                      # a site, in Albers USA</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p>Plotly with <code>MCK_PLOTLY_TEMPLATE</code>; for a zoom, <code>go.Choropleth(geojson=…)</code> and <code>fitbounds="locations"</code>. Headline, subtitle and source go in the chart card's HTML. Tooltips may show n, but never for an area or site under {{text:min_n}}.</p></div>
+      <div class="platform"><h5>R</h5><p><code>sf</code> with <code>tigris::shift_geometry()</code> and <code>coord_sf(crs = 5070)</code> for Albers with insets; <code>coord_sf(crs = "+proj=eqearth")</code> for the world. <code>scale_fill_manual()</code> on the classes; bubbles with <code>scale_size_area()</code>.</p></div>
     </div>
   </div>
   {{folio}}

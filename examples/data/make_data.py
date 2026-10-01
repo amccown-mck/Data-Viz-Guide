@@ -384,6 +384,64 @@ def span_of_control() -> pd.DataFrame:
     return pd.DataFrame({"direct_reports": span.astype(int)})
 
 
+def data_ai_talent_by_country() -> pd.DataFrame:
+    """Country level, external and internal. Data & AI talent in the countries assessed for a global capability
+    center, Q2 2026: qualified candidates per open Data & AI role (a rate, from external postings and profiles) and
+    our Data & AI people by work country (a count; the U.S. figure is the Data & Analytics headcount, 850).
+    iso_n3 is the ISO 3166 numeric code (the id in world-atlas)."""
+    rows = [("United States", "840", 2.1, 850),
+            ("Canada", "124", 3.4, 140),
+            ("Mexico", "484", 4.6, 6),
+            ("Brazil", "076", 5.2, 0),
+            ("Argentina", "032", 4.1, 0),
+            ("Colombia", "170", 4.8, 0),
+            ("Chile", "152", 3.2, 0),
+            ("United Kingdom", "826", 2.6, 0),
+            ("Ireland", "372", 1.8, 60),
+            ("Germany", "276", 1.6, 0),
+            ("France", "250", 2.4, 0),
+            ("Netherlands", "528", 1.7, 0),
+            ("Spain", "724", 3.6, 0),
+            ("Portugal", "620", 4.4, 0),
+            ("Poland", "616", 5.6, 8),
+            ("Romania", "642", 6.3, 0),
+            ("Czechia", "203", 3.8, 0),
+            ("Israel", "376", 1.5, 24),
+            ("Egypt", "818", 7.1, 0),
+            ("South Africa", "710", 4.9, 0),
+            ("India", "356", 9.4, 380),
+            ("Philippines", "608", 8.3, 0),
+            ("Vietnam", "704", 7.4, 0),
+            ("Malaysia", "458", 5.1, 0),
+            ("Japan", "392", 1.4, 0),
+            ("South Korea", "410", 2.2, 0),
+            ("Australia", "036", 2.0, 0)]
+    return pd.DataFrame(rows, columns=["country", "iso_n3", "candidates_per_role_2026", "our_data_ai_people"])
+
+
+def pharm_tech_north_texas() -> pd.DataFrame:
+    """County level, external. Pharmacy technician labor market in the 19 counties whose centre is within 70 miles
+    of our Irving campus, Q2 2026: qualified candidates, open postings and postings per candidate (the same rate as
+    talent_market_by_state, where Texas is 1.92). Two rural counties have fewer than 10 candidates: never show them.
+    fips matches the us-atlas county ids; population is the 2020 census in thousands, rounded."""
+    rng = np.random.default_rng(48)
+    counties = [("48113", "Dallas", 2614, 2.14), ("48439", "Tarrant", 2111, 1.78), ("48121", "Denton", 906, 1.83),
+                ("48085", "Collin", 1064, 1.96), ("48397", "Rockwall", 108, 1.52), ("48139", "Ellis", 192, 1.44),
+                ("48251", "Johnson", 180, 1.38), ("48257", "Kaufman", 145, 1.31), ("48497", "Wise", 69, 1.12),
+                ("48367", "Parker", 148, 1.47), ("48231", "Hunt", 100, 1.06), ("48217", "Hill", 36, 0.74),
+                ("48221", "Hood", 62, 1.16), ("48181", "Grayson", 136, 1.21), ("48097", "Cooke", 42, 0.93),
+                ("48349", "Navarro", 53, 0.88), ("48425", "Somervell", 9, None), ("48467", "Van Zandt", 60, 0.79),
+                ("48379", "Rains", 12, None)]
+    rows = []
+    for fips, name, pop, ratio in counties:
+        cand = int(round(pop * 0.6 * rng.uniform(0.85, 1.15)))
+        ratio = ratio if ratio is not None else round(rng.uniform(0.5, 2.5), 2)    # noisy where n is tiny
+        post = int(round(cand * ratio))
+        rows.append((fips, name, pop, cand, post, round(post / cand, 2)))
+    return pd.DataFrame(rows, columns=["fips", "county", "population_k", "qualified_candidates", "open_postings",
+                                       "postings_per_candidate"])
+
+
 def main() -> None:
     sets = {
         "attrition_quarterly": attrition_quarterly(),
@@ -418,6 +476,8 @@ def main() -> None:
         "reskilling_pipeline": reskilling_pipeline(),
         "internal_fill_by_bu": internal_fill_by_bu(),
         "span_of_control": span_of_control(),
+        "data_ai_talent_by_country": data_ai_talent_by_country(),
+        "pharm_tech_north_texas": pharm_tech_north_texas(),
     }
     for name, df in sets.items():
         df.to_csv(OUT / f"{name}.csv", index=False)
