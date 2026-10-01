@@ -266,7 +266,7 @@ def stacked_100():
     for lbl in ax.get_yticklabels():
         if lbl.get_text() == "Technology":
             lbl.set_fontweight("bold"); lbl.set_color(C.headline)
-    mv.titles(fig, "Technology uses contingent labor at ~4x the average rate of other functions",
+    mv.titles(fig, "Technology uses contingent labor at more than 4x the average rate of other functions",
               "Workforce composition by function, 2026 (% of workers)")
     mv.source(fig, SRC)
     return fig

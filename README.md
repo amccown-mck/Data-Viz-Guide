@@ -9,7 +9,7 @@ This is the McKesson data-visualization starter kit. It covers principles, desig
 | Making any chart | [docs/principles.md](docs/principles.md) → [docs/choosing-a-chart.md](docs/choosing-a-chart.md) → [docs/qa-checklist.md](docs/qa-checklist.md) |
 | Coding in Python | `pip install -e ./python`, then `import mckviz as mv; mv.use()`. Examples are in [examples/python/](examples/python/) |
 | Building HTML / JS | Start from [templates/html/chart-card.html](templates/html/chart-card.html); themes in [dist/web/](dist/web/): CSS variables, Plotly template, Vega-Lite config |
-| Using Excel / PowerPoint | [dist/office/](dist/office/): theme colors and fonts XML. Install the fonts from [fonts/](fonts/) |
+| Using Excel / PowerPoint | [docs/office-setup.md](docs/office-setup.md): install the fonts and theme, then start from the template, starter deck and chart workbook in [dist/office/](dist/office/) |
 | Using Power BI | [dist/powerbi/mckesson-dataviz-theme.json](dist/powerbi/mckesson-dataviz-theme.json) |
 | Using R | [dist/r/theme_mck.R](dist/r/theme_mck.R) |
 | A coding agent | [AGENTS.md](AGENTS.md) (also loaded via `CLAUDE.md` and `.github/copilot-instructions.md`); chart workflow skill in [.github/skills/mck-chart](.github/skills/mck-chart/SKILL.md) |

@@ -15,7 +15,7 @@ The same finding needs different treatment in a live meeting, a PDF, a phone or 
   - *Alternative:* keep all data visible but **mask** non-focus columns (lighter tints) and reveal on the next slide.
 - Keep **category order and scales fixed** across the build so marks don't jump.
 - **Dark backgrounds** (Deep Navy) for dim rooms, keynotes, town halls: white text, `focus_on_dark` highlight.
-- Use **native, editable charts** (not pasted images) so numbers can be updated — start from the theme in [`dist/office`](../dist/office) and the starter deck in [`office/`](../office).
+- Use **native, editable charts** (not pasted images) so numbers can be updated — start from the template and starter deck in [`dist/office`](../dist/office) (set-up guide: [office-setup.md](office-setup.md)).
 - Put footnotes and source on every slide with data; speaker notes can carry method detail.
 
 ## Reports and print (PDF, Word, memos)
