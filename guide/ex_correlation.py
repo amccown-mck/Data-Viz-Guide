@@ -119,8 +119,9 @@ TEXT["corr_sc_avg"] = f"{EXPO_AVG:.0f}%"
 SC = _csv("job_family_scorecard")
 SC_R = float(np.corrcoef(SC.engagement_index, SC.vol_attrition_pct)[0, 1])
 TEXT["corr_sc_r"] = mv.signed(SC_R, 2)
-_hr = SC[(SC.vol_attrition_pct > ENT) & (SC.attrition_change_pts > 0)]
-TEXT["corr_sc_high_rising"] = word(len(_hr), True)
+ENG_AVG = float(np.average(SC.engagement_index, weights=SC.headcount))      # headcount-weighted, like the scorecard total
+_hr = SC[(SC.vol_attrition_pct > ENT) & (SC.engagement_index < ENG_AVG)]  # the quadrant the headline would name
+TEXT["corr_sc_quadrant_n"] = word(len(_hr), True)
 
 IDX = _csv("data_ai_index")
 TEXT.update(corr_idx_post=str(IDX.external_postings_idx.iloc[-1]), corr_idx_int=str(IDX.internal_headcount_idx.iloc[-1]))
@@ -243,26 +244,27 @@ def corr_sc_var_quadrant():
     ax = fig.add_subplot()
     d = SC
     hot = set(_hr.job_family)
-    ax.add_patch(Rectangle((ENT, 0), 30 - ENT, 4, color=C.surface_subtle, lw=0, zorder=0))
-    ax.axvline(ENT, color=C.total, lw=0.8, ls=(0, (2.5, 2.5)), zorder=1)
-    ax.axhline(0, color=C.axis, lw=0.8, zorder=1)
-    ax.text(29.6, 0.25, "High and rising", ha="right", va="bottom", fontsize=MINI - 1.5, fontweight=600, color=C.annotation)
-    ax.text(ENT + 0.3, -2.4, f"Enterprise {ENT:.1f}%", ha="left", va="bottom", fontsize=MINI - 2, color=C.annotation)
-    ax.scatter(d.vol_attrition_pct, d.attrition_change_pts, s=40, zorder=3, edgecolors="white", linewidths=0.8,
+    ax.add_patch(Rectangle((63, ENT), ENG_AVG - 63, 32 - ENT, color=C.surface_subtle, lw=0, zorder=0))
+    ax.axhline(ENT, color=C.total, lw=0.8, ls=(0, (2.5, 2.5)), zorder=1)
+    ax.axvline(ENG_AVG, color=C.total, lw=0.8, ls=(0, (2.5, 2.5)), zorder=1)
+    ax.text(63.3, 31.5, "Low engagement,\nhigh attrition", ha="left", va="top", fontsize=MINI - 1.5, fontweight=600,
+            color=C.annotation, linespacing=1.1)
+    ax.text(79.8, ENT + 0.4, f"Enterprise {ENT:.1f}%", ha="right", va="bottom", fontsize=MINI - 2, color=C.annotation)
+    ax.text(ENG_AVG + 0.2, 1.0, f"Average {ENG_AVG:.0f}", ha="left", va="bottom", fontsize=MINI - 2, color=C.annotation)
+    ax.scatter(d.engagement_index, d.vol_attrition_pct, s=40, zorder=3, edgecolors="white", linewidths=0.8,
                c=[C.focus if f in hot else C.context for f in d.job_family])
     for r in d[d.job_family.isin(hot)].itertuples():
-        ax.annotate(SHORT[r.job_family], (r.vol_attrition_pct, r.attrition_change_pts), xytext=(-7, 0),
-                    textcoords="offset points", ha="right", va="center", fontsize=MINI - 1.5, fontweight=600,
-                    color=C.headline)
-    ax.set_xlim(5, 30)
-    ax.set_ylim(-2.6, 4)
-    sc_axes(ax, [10, 20, 30], [-2, 0, 2, 4], xfmt="{:.0f}%", yfmt="{:+.0f}", size=MINI)
-    ax.set_yticks([-2, 0, 2, 4], [mv.signed(v) for v in (-2, 0, 2, 4)])
-    ax.spines["bottom"].set_visible(False)
-    ytitle(ax, "Change vs. FY25 (pts)", size=MINI - 0.5)
-    xtitle(ax, "Voluntary attrition, FY26", size=MINI - 0.5)
-    return fig, (f"Quadrant scatter of attrition vs. its change: {TEXT['corr_sc_high_rising'].lower()} job families are "
-                 "above the enterprise rate and still rising.")
+        left = r.engagement_index < ENG_AVG - 2.5                    # keep labels off the reference line
+        ax.annotate(SHORT[r.job_family], (r.engagement_index, r.vol_attrition_pct), xytext=(-7 if left else 7, 0),
+                    textcoords="offset points", ha="right" if left else "left", va="center", fontsize=MINI - 1.5,
+                    fontweight=600, color=C.headline)
+    ax.set_xlim(63, 80)
+    ax.set_ylim(0, 32)
+    sc_axes(ax, [65, 70, 75, 80], [0, 10, 20, 30], yfmt="{:.0f}%", size=MINI)
+    ytitle(ax, "Voluntary attrition, FY26", size=MINI - 0.5)
+    xtitle(ax, "Engagement index", size=MINI - 0.5)
+    return fig, (f"Quadrant scatter of engagement vs. attrition: {TEXT['corr_sc_quadrant_n'].lower()} job families sit in "
+                 "the low-engagement, high-attrition corner.")
 
 
 @exhibit

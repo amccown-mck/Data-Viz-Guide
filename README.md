@@ -2,9 +2,9 @@
 
 This is the McKesson data-visualization starter kit. It covers principles, design tokens, a chart cookbook, and ready-to-use themes for building **explanatory, consulting-grade** charts. It is written for analysts, engineers, consultants, and coding agents.
 
-> Status: v0.1, a work in progress. See [ROADMAP.md](ROADMAP.md) for what is done and what comes next.
+> Status: v1.0 review draft. The guide and toolkit are complete; see [ROADMAP.md](ROADMAP.md) for open questions and what's next.
 
-**Start here: the guide.** Open [dist/guide/index.html](dist/guide/index.html) in a browser, or read the same pages as a 16:9 PDF: [McKesson-DataViz-Guide.pdf](dist/guide/McKesson-DataViz-Guide.pdf). Fundamentals, then each chart family as anatomy, variants, best practice and how to build it. (Pilot: Fundamentals and Magnitude are written; the other families follow the same pattern.)
+**Start here: the guide.** Open [dist/guide/index.html](dist/guide/index.html) in a browser, or read the same 95 pages as a 16:9 PDF: [McKesson-DataViz-Guide.pdf](dist/guide/McKesson-DataViz-Guide.pdf). Fundamentals; then every chart family (magnitude, part-to-whole, change over time, ranking, distribution, correlation, relationships and flows, geo-spatial, single number) as anatomy, variants, best practice and how to build it in each tool; then formats and the toolkit.
 
 | You are... | Go to |
 |---|---|

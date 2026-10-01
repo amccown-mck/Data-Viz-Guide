@@ -122,7 +122,9 @@ def sankey():
               "color": link_col, "hovertemplate": "%{source.label} \u2192 %{target.label}: %{value:,} moves<extra></extra>"}))
     fig.update_layout(font_size=12)
     total_dc = df.moves[df.from_family == focus_src].sum()
-    return card(fig, f"Distribution centers are our strongest internal talent engine \u2013 {total_dc} promotions and moves in two years",
+    up = df.moves[(df.from_family == focus_src) & (df.to_family == "DC Leadership")].sum()
+    return card(fig, f"DC Associates made {total_dc} internal moves in two years; {round(up / total_dc * 10)} in 10 were "
+                     "promotions into DC leadership",
                 "Internal moves between job families, trailing 24 months (number of moves)", SRC)
 
 

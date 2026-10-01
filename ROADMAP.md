@@ -23,18 +23,20 @@ Last updated: 2026-09-30 (guide pilot). Read this first when resuming work, whet
 | Snippet check | `python tools/check_snippets.py` runs every `# verified` Python block in the cookbook; `--lang r` runs every R block | `tools/check_snippets.py` |
 | Chart lint | `mv.lint(fig)` for matplotlib/Plotly, gallery runner, pytest suite | `python/mckviz/lint.py`, `tools/lint_charts.py`, `python/tests/` |
 | R examples | ggplot2 gallery (bar highlight, line with end labels, diverging heatmap) using the generated theme | `examples/r/`, `examples/output/r-*.png` |
-| Guide (pilot) | Browsable HTML guide + 16:9 PDF from one source, modelled on the McKinsey spreads: cover, how to use, contents; 11 Fundamentals spreads; Magnitude (bar anatomy, variants, 2× best practice, build it). 51 exhibits generated from tokens and data | `guide/`, `tools/build_guide.py`, `dist/guide/` |
+| Guide | Browsable HTML guide + 16:9 PDF from one source (95 spreads, 323 exhibits), modelled on the McKinsey spreads: overview, Fundamentals, nine chart families (anatomy, variants, best practice, build it), Formats, Toolkit. Exhibits drawn from tokens and data; every quoted number computed | `guide/`, `tools/build_guide.py`, `dist/guide/` |
 
 ## Current focus: the guide itself (decided 2026-09-30)
 
 The original ask was a McKesson data-viz guideline as thorough as the McKinsey guide, usable by consultants, developers and coding agents. By v0.1 the toolkit was strong but the guide itself was thin, so the guide now comes first. Agreed with the owner: **pilot first** (done), **local files** (HTML + PDF in the repo; sharing decided later), and a look that **balances McKinsey-level polish with the McKesson brand**.
 
-A. **Pilot review (owner).** Review `dist/guide/` (web and PDF) for look, depth and voice. Open questions:
-   - The guide's chart cards use a lighter headline (Semibold, 19 px, about 1.4× the subtitle) than the tokens (Bold, 22 px). If the owner prefers it, move `typography.roles.headline` to match so every tool output follows, then rebuild everything.
-   - Phone view: wide exhibits scroll sideways ("Swipe to see the full chart") rather than shrink. Phone-specific exhibits would be better if the guide is read on phones a lot.
-B. **Roll out the chart families** in this order, each as anatomy, variants, best practice (1–2 spreads) and build it, with exhibits in `guide/exhibits.py`: Part-to-whole (100% stacked, waterfall, treemap, donut) → Change over time (line, stacked area, bubble timeline, small multiples) → Ranking (slope/bump, dot plot/dumbbell, heat table) → Distribution → Correlation (scatter/bubble, heatmaps, dual axis) → Relationships and flows (Sankey, parallel coordinates, Venn) → Geo-spatial → Single number. Source material: `reference/inspiration-mckinsey/pages/` and the matching `docs/cookbook/` page.
-C. **Formats section:** slides, reports and print, web and mobile (McKinsey screen-size spreads), dashboards (Power BI / Fabric), interactivity, scrolly-telling, animation, social.
-D. **Toolkit section:** downloads, set-up per tool (Office, Power BI, web, Python, R), the QA checklist, the agent page. Link the cheat sheet and chart chooser.
+Status: **done** (2026-09-30). The owner approved the pilot ("exactly the right direction"); all sections are written: Fundamentals, Magnitude, Part-to-whole, Change over time, Ranking, Distribution, Correlation, Relationships and flows, Geo-spatial, Single number, Formats, Toolkit. Brand-usage feedback from the same review is applied kit-wide (see Working notes).
+
+Open, for the owner:
+- The guide's chart cards use a lighter headline (Semibold, 19 px, about 1.4× the subtitle) than the tokens (Bold, 22 px). If the owner prefers it, change `typography.roles.headline` so every tool output follows, then rebuild everything.
+- Phone view: wide exhibits scroll sideways ("Swipe to see the full chart") rather than shrink. Phone-specific exhibits would help if the guide is read on phones a lot.
+- Maps use an equal-area US tile grid because no geometry library is installed; real state shapes need geopandas or Plotly with geometry.
+
+How to extend: add `guide/ex_<section>.py` (exhibits register on import) and `guide/pages/<section>.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{folio}}`), add the page to `PAGES` in `tools/build_guide.py`, build, then review contact sheets and the PDF pages by eye.
 
 ## Toolkit steps (v0.1 plan, in priority order)
 
