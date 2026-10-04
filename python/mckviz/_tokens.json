@@ -61,12 +61,14 @@
       "neutral":       { "value": "#B4B0A5" }
     },
     "categorical": {
-      "$description": "Ordered, from the McKesson Standard Template's infographic slides: blues and teals. Use the first N; prefer <= 5. Orange is the last-resort 6th. Beyond 6, group into 'Other' (context grey). Positions 7-8 are light tints for fills only. Green is not a category color: it means 'better' and 'on track'.",
-      "values": ["#005A8C", "#00AF9D", "#143359", "#009DFF", "#05CE90", "#EF8200", "#B3ECFF", "#B3E7E2"]
+      "$description": "The McKesson Standard Template's infographic colors, ordered by how McKesson actually uses them (owner, 2026-10-04): blue, navy, bright blue, teal, mint; orange is the last-resort 6th and otherwise means 'worse'. Use the first N; prefer <= 4, and at 5 or more consider small multiples or group the tail into 'Other' (context grey). Green is not a category color: it means 'better' and 'on track'. Blue and navy sit side by side in stacks: keep the white separators.",
+      "values": ["#005A8C", "#143359", "#009EFF", "#00AF9D", "#05CE90", "#EF8200"],
+      "fill_tints": ["#B3ECFF", "#B3E7E2"],
+      "$fill_tints": "Light tints for large fills only (never lines or text), outside the series order."
     },
     "steps": {
       "$description": "Ordered stages in process infographics (pipelines, journeys, timelines), blue to green as in the template. Not for data magnitude (use sequential) or for unordered categories.",
-      "values": ["#005A8C", "#009DFF", "#00BEFF", "#00AF9D", "#05CE90", "#00AF68"]
+      "values": ["#005A8C", "#009EFF", "#00BEFF", "#00AF9D", "#05CE90", "#00AF68"]
     },
     "status": {
       "$description": "Status (RAG) only: trackers, roadmaps, scorecard status columns, as in the template's Initiative Tracker. Never for data series. Always pair the color with a symbol and a word.",

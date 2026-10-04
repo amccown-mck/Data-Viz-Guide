@@ -63,6 +63,8 @@ def build_css() -> None:
             lines.append(f"  --mck-{group}-{k.replace('_', '-')}: {t['value']};")
     for i, hx in enumerate(CAT, 1):
         lines.append(f"  --mck-cat-{i}: {hx};")
+    for i, hx in enumerate(C["categorical"]["fill_tints"], 1):
+        lines.append(f"  --mck-cat-tint-{i}: {hx};")                 # large fills only, outside the series order
     for i, hx in enumerate(C["steps"]["values"], 1):
         lines.append(f"  --mck-step-{i}: {hx};")
     for k, t in C["status"].items():
@@ -304,6 +306,7 @@ legend.labelcolor: {lab['hex']}
 def build_r() -> None:
     tick, lab, head, sub, foot = role("tick"), role("label"), role("headline"), role("subtitle"), role("footnote")
     cat = ", ".join(f'"{h}"' for h in CAT)
+    tints = ", ".join(f'"{h}"' for h in C["categorical"]["fill_tints"])
     seq = ", ".join(f'"{h}"' for h in C["sequential"]["blue"])
     div = ", ".join(f'"{h}"' for h in C["diverging"]["orange_blue"]["values"])
     r = f"""# GENERATED from tokens/tokens.json - McKesson data-viz theme for ggplot2.
@@ -323,7 +326,8 @@ mck_colors <- list(
 )
 mck_steps <- c({", ".join(f'"{h}"' for h in C["steps"]["values"])})   # ordered process stages, not data magnitude
 mck_status <- c({", ".join(f'{k} = "{t["value"]}"' for k, t in C["status"].items() if not k.startswith("$"))})   # RAG: status only, with symbol + word
-mck_categorical <- c({cat})
+mck_categorical <- c({cat})                                   # series order; at most 6
+mck_fill_tints  <- c({tints})                                 # large fills only, outside the series order
 mck_sequential  <- c({seq})
 mck_sequential_orange <- c({", ".join(f'"{h}"' for h in C["sequential"]["orange"])})
 mck_diverging   <- c({div})

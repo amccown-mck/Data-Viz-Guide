@@ -25,7 +25,9 @@ If you are resuming unfinished work on the kit, read [`ROADMAP.md`](ROADMAP.md) 
 | Insight headline | A full sentence with a verb that states the "so what", ideally with a number. ≤ 2 lines, sentence case, no final period. Every claim is visibly supported by the chart. |
 | Neutral subtitle | Metric, unit, scope and period ("Voluntary attrition by job family, FY26 (%)"). No opinions. |
 | Highlight logic | Grey context (`chart.context`), blue focus (`chart.focus`) for what the headline names, and an optional navy accent (`chart.accent`) for the single exception (against a light-blue series, `chart.focus_light`, in the uniform pattern). At most 2 highlighted items. **Orange means "worse"**: use it (`semantic.negative`) only for below target, shrinking or a shortfall, never as a plain highlight. **Green means "better"** (`semantic.positive`), always with ▲▼ or words. **Red/amber/green only for status** (`color.status`: trackers, roadmaps), each with its symbol and word, never for data series. |
-| Categorical colors | Only when categories must be told apart. At most 6, in the fixed token order (blue, teal, navy, bright blue, mint, orange last); group the tail into "Other". Ordered process stages use `color.steps` (blue to green). |
+| Categorical colors | Only when categories must be told apart. At most 6, in the fixed token order (blue, navy, bright blue, teal, mint, orange last); prefer 4 or fewer; group the tail into "Other". Ordered process stages use `color.steps` (blue to green). |
+| Type hierarchy | Slide title Bold 26 pt McKesson Blue `#005A8C` (24–28 pt); a chart's own headline SemiBold 18 pt navy `#143359`; KPI numbers Bold navy; subtitle Regular 14 pt `#505050`; source Light 9 pt `#737373`. With one chart on a slide, its headline is the slide title. |
+| Flat, not rounded | Square corners on bars, cards and tables; no shadows, gradients, bevels or 3-D. |
 | Direct labels | Label bar ends, line ends and segments in place. A legend only when labels would collide, placed top-left. When values are labelled, delete the value axis and gridlines. |
 | Honest scales | Bars start at zero. Bubble **area** ∝ value. No dual axes. Small multiples share a scale. |
 | Source line | "Source: system, as-of date, population", bottom-left. Footnotes define metrics. |
@@ -50,7 +52,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 | Direct labels | `mv.label_bars(ax, bars, fmt=...)`, `mv.label_line_ends(ax, fmt=...)` |
 | Annotations | `mv.callout(ax, xy, title, body)`, `mv.shade_period(ax, start, end, label)` |
 | Clean axes | `mv.clean_axes(ax, keep=("bottom",), grid="y")` |
-| Numbers | `mv.fmt_num(v, kind="auto" \| "K" \| "M" \| "B" \| "pct" \| "plain", decimals=None, sign=False, prefix="$")` (K/M/B, %, true minus: `"$4.3B"`, `"−$71M"`, `"+2.5%"`), `mv.signed(v, decimals, suffix)` (true minus, explicit +), `mv.text_on(fill)` (white or navy text on a fill) |
+| Numbers | `mv.fmt_num(v, kind="auto" \| "K" \| "M" \| "B" \| "pct" \| "plain", decimals=None, sign=False, prefix="")` (`prefix="$"` for money) (K/M/B, %, true minus: `"$4.3B"`, `"−$71M"`, `"+2.5%"`), `mv.signed(v, decimals, suffix)` (true minus, explicit +), `mv.text_on(fill)` (white or navy text on a fill) |
 | Minimum n (people data) | `df, note = mv.suppress_small(df, "headcount", min_n=10, other_label="Other")` merges groups under 10 into "Other" (or drops them with `other_label=None`; `by=` merges within each period; `sum_cols=` for counts, other numbers are n-weighted) and returns the footnote to pass to `mv.source(..., footnote=note)` |
 | Real maps | `from mckviz import geo`: `geo.canvas(fig)`, `geo.Map("states-albers-10m.json", "states", box, key=geo.FIPS.get)`, `geo.equal_earth` for world maps; US states, world countries and a county subset ship with the package (see `docs/cookbook/maps.md`) |
 | Translucent fills (Plotly) | `mv.rgba(C.negative, 0.12)` for a shortfall wash, `mv.rgba(C.focus, 0.4)` for Sankey links, instead of an `rgba(...)` literal |
@@ -68,7 +70,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 **R:** `source("dist/r/theme_mck.R")` gives `theme_mck()`, `mck_colors`, `mck_highlight()`, the fill scales, `mck_font()` (registers the bundled Libre Franklin; pass the returned name as `base_family` and `family`) and `mck_wrap()` (balanced title wrapping). Render with `ragg`. See `examples/r/gallery_ggplot2.R`.
 
 ### Before you hand back a chart
-- Say which cookbook page you followed, and list any QA items you couldn't meet and why.
+- Return the chart file and the **chart brief** in the `mck-chart` skill's format (question, mode and medium, chart type with its cookbook page, focus, headline, subtitle, source, minimum-n check, QA result); list any QA items you couldn't meet and why.
 - Give alt text: the headline plus 2–3 key numbers.
 - If you used synthetic or placeholder data, say so in the source line.
 

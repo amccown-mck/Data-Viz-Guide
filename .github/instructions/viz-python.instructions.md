@@ -1,6 +1,8 @@
 ---
-applyTo: "**/*.py"
+applyTo: "**/*.{py,ipynb}"
 ---
+
+> These rules are for code that **draws charts**. Skip them when you are editing the kit's own build tools and internals (`tools/`, `tokens/`, `python/mckviz/`, `guide/`, `office/`), which have their own conventions in `AGENTS.md` part B.
 # Python charts (matplotlib, Plotly)
 
 Applies to any Python file that draws a chart. The full rules are in `AGENTS.md` and `docs/principles.md`, and the per-chart recipes are in `docs/cookbook/`.

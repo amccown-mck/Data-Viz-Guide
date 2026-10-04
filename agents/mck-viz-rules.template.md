@@ -39,7 +39,7 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 | Unfavorable | `{{color:semantic.negative}}` (text `{{color:semantic.negative_text}}`) | Negatives, below target. The only job orange has |
 | Status (RAG) | on track `{{color:status.on_track}}`, at risk `{{color:status.at_risk}}`, off track `{{color:status.off_track}}`, not started `{{color:status.not_started}}` | Status only (trackers, roadmaps), each with its symbol and word (✓ On track, ! At risk, ✕ Off track). Never for data series |
 
-- **Categorical, in order:** {{list:categorical.values}}. Prefer ≤ 5; orange (6th) is a last resort. Green and amber are not category colors.
+- **Categorical, in order:** {{list:categorical.values}} (blue, navy, bright blue, teal, mint, orange). Prefer ≤ 4; at 5 or more use small multiples or group the tail into "Other". Orange (6th) is a last resort and otherwise means worse. Green and amber are not category colors. Light tints {{list:categorical.fill_tints}} are for large fills only.
 - **Ordered steps (pipelines, timelines; not magnitude):** {{list:steps.values}}
 - **Sequential blue (light → dark, the default for one measure):** {{list:sequential.blue}}
 - **Sequential orange (only when darker means worse, e.g., risk; say so):** {{list:sequential.orange}}
@@ -48,8 +48,8 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 
 ## Type and layout
 - Font: **{{font}}** (fallback: Franklin Gothic Book, Arial).
-- Slide title: bold {{role:slide_title.size_pt}} pt, `{{color:text.headline}}` (with one chart on a slide, its headline is the slide title). Chart headline (a chart with its own title): semibold {{role:headline.size_pt}} pt / {{role:headline.size_px}} px, still an insight sentence. Two charts on a slide: a bold slide title for the shared message, a semibold insight headline per chart. Big KPI numbers: bold. Subtitle: regular {{role:subtitle.size_pt}} pt / {{role:subtitle.size_px}} px. Labels: medium {{role:label.size_pt}} pt / {{role:label.size_px}} px. Footnote and source: light {{role:footnote.size_pt}} pt / {{role:footnote.size_px}} px, `{{color:text.muted}}`. Nothing smaller.
-- Everything is left-aligned on one edge, with no centered titles, chart borders, 3D, shadows or gradients.
+- Slide title: bold {{role:slide_title.size_pt}} pt, McKesson Blue `{{color:text.title}}` (with one chart on a slide, its headline is the slide title). KPI numbers: bold, `{{color:text.headline}}`. Chart headline (a chart with its own title): semibold {{role:headline.size_pt}} pt / {{role:headline.size_px}} px, still an insight sentence. Two charts on a slide: a bold slide title for the shared message, a semibold insight headline per chart. Big KPI numbers: bold. Subtitle: regular {{role:subtitle.size_pt}} pt / {{role:subtitle.size_px}} px. Labels: medium {{role:label.size_pt}} pt / {{role:label.size_px}} px. Footnote and source: light {{role:footnote.size_pt}} pt / {{role:footnote.size_px}} px, `{{color:text.muted}}`. Nothing smaller.
+- Everything is left-aligned on one edge, with no centered titles, chart borders, 3D, shadows or gradients. Flat, not rounded: square corners on bars, cards and tables.
 - Bar width : gap ≈ 2 : 1 (band fill {{chart:bar.band_fill}}). Lines {{chart:line.width_px}} px; context lines {{chart:line.context_width_px}} px.
 
 ## Honest scales

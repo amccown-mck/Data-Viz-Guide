@@ -13,9 +13,10 @@ mck_colors <- list(
   surface_subtle = "#EFEDE7", negative_text = "#A75B00",
   positive_text = "#007A48", title = "#005A8C"
 )
-mck_steps <- c("#005A8C", "#009DFF", "#00BEFF", "#00AF9D", "#05CE90", "#00AF68")   # ordered process stages, not data magnitude
+mck_steps <- c("#005A8C", "#009EFF", "#00BEFF", "#00AF9D", "#05CE90", "#00AF68")   # ordered process stages, not data magnitude
 mck_status <- c(on_track = "#00AF68", at_risk = "#FFB500", off_track = "#DA2103", not_started = "#BFBFBF", done = "#005A8C")   # RAG: status only, with symbol + word
-mck_categorical <- c("#005A8C", "#00AF9D", "#143359", "#009DFF", "#05CE90", "#EF8200", "#B3ECFF", "#B3E7E2")
+mck_categorical <- c("#005A8C", "#143359", "#009EFF", "#00AF9D", "#05CE90", "#EF8200")                                   # series order; at most 6
+mck_fill_tints  <- c("#B3ECFF", "#B3E7E2")                                 # large fills only, outside the series order
 mck_sequential  <- c("#E6F3FB", "#B6E2FA", "#66C4FF", "#009EFF", "#0A5FBC", "#143359")
 mck_sequential_orange <- c("#FFF3E0", "#FFD9A8", "#F7B25C", "#EF8200", "#A75B00", "#6B3A00")
 mck_diverging   <- c("#A75B00", "#EF8200", "#F7C180", "#EFEDE7", "#99BDD1", "#005A8C", "#143359")

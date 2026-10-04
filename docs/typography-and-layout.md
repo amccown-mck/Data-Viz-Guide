@@ -12,7 +12,7 @@
 | R | Install the TTFs, then use `{systemfonts}` / `{showtext}`; `theme_mck(base_family = "Libre Franklin")`. |
 | Power BI | Custom fonts only render where installed; theme falls back to Segoe UI in the service. |
 
-**Two weights for insight titles:** the **slide title** is Bold, and a **chart headline** (when a chart has its own title) is SemiBold, both in Navy. With one chart on a slide, the chart's headline *is* the slide title, so it is Bold. See [several charts on one slide](#3-several-charts-on-one-slide).
+**Two weights for insight titles:** the **slide title** is Bold, and a **chart headline** (when a chart has its own title) is SemiBold; the slide title is McKesson Blue `#005A8C` (as in the Standard Template) and the chart headline Navy `#143359`. With one chart on a slide, the chart's headline *is* the slide title, so it is Bold. See [several charts on one slide](#3-several-charts-on-one-slide).
 
 **Brand signature for covers, section dividers and guide page titles only:** bold lead word(s) + light remainder, in McKesson Blue — e.g. **Workforce** intelligence gallery. Never on an insight slide.
 
@@ -22,7 +22,7 @@ Sizes are for a 16:9 slide (13.33 × 7.5 in) and a 1× screen. Don't go below th
 
 | Role | Weight | Slide (pt) | Screen (px) | Color | Content |
 |---|---|---|---|---|---|
-| Slide title | Bold 700 | 24 | 28 | Navy `#143359` | The slide's insight. Full sentence, ≤ 2 lines, sentence case, no final period. |
+| Slide title | Bold 700 | 24 | 28 | McKesson Blue `#005A8C` | The slide's insight. Full sentence, ≤ 2 lines, sentence case, no final period. |
 | Chart headline | SemiBold 600 | 18 | 20 | Navy `#143359` | One chart's insight, when it has its own title (two charts on a slide, reports, dashboards, chart images). Still a full sentence. |
 | Subtitle | Regular 400 | 14 | 15 | `#505050` | Metric, unit, scope, period. |
 | Data / series label | Medium 500 | 12 | 13 | `#505050` or series color | Direct labels. |
@@ -41,7 +41,7 @@ One chart per slide is the default; two is the most (`chart.limits.charts_per_sl
 
 | Level | Style | Says |
 |---|---|---|
-| Slide title | Bold 24 pt, Navy | The one message both charts support: *"Frontline attrition is a pay problem in pharmacy and a scheduling problem in the DCs"* |
+| Slide title | Bold 26 pt, McKesson Blue | The one message both charts support: *"Frontline attrition is a pay problem in pharmacy and a scheduling problem in the DCs"* |
 | Chart headline (each chart) | SemiBold 18 pt, Navy | That chart's own finding, still an insight, not a label: *"Pharmacy Technician pay trails the market by 6.8%"*, not *"Pay vs. market"* |
 | Chart subtitle (each chart) | Regular 14 pt, grey | Metric, unit, scope, period, as always |
 | Source | Light 9 pt | One shared line at the bottom when both charts share a source; otherwise one under each chart |

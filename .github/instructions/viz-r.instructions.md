@@ -1,6 +1,8 @@
 ---
-applyTo: "**/*.{R,Rmd,qmd}"
+applyTo: "**/*.{R,r,Rmd,qmd}"
 ---
+
+> These rules are for code that **draws charts**. Skip them when you are editing the kit's own build tools and internals (`tools/`, `tokens/`, `python/mckviz/`, `guide/`, `office/`), which have their own conventions in `AGENTS.md` part B.
 # R charts (ggplot2, gt)
 
 Applies to R scripts, R Markdown and Quarto documents that draw charts or tables. The full rules are in `AGENTS.md`, and each `docs/cookbook/<chart>.md` page has an "R — ggplot2" section.

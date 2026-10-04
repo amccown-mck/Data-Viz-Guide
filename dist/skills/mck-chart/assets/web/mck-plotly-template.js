@@ -27,13 +27,11 @@ window.MCK_PLOTLY_TEMPLATE = {
     },
     "colorway": [
       "#005A8C",
-      "#00AF9D",
       "#143359",
-      "#009DFF",
+      "#009EFF",
+      "#00AF9D",
       "#05CE90",
-      "#EF8200",
-      "#B3ECFF",
-      "#B3E7E2"
+      "#EF8200"
     ],
     "paper_bgcolor": "#FFFFFF",
     "plot_bgcolor": "#FFFFFF",

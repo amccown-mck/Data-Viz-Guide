@@ -96,22 +96,22 @@ For **status only**: initiative trackers, roadmaps, milestone plans, the status 
 
 ## 5. Categorical palette (fixed order)
 
-When categories must be distinguished (e.g., 4 business units in a line chart), use the colors **in this order**. They come from the template's infographic slides: blues with teal and mint.
+When categories must be distinguished (e.g., 4 business units in a line chart), use the colors **in this order**. They are the template's infographic colors, ordered by how McKesson actually uses them: blue everywhere, navy second, bright blue third, then teal and mint.
 
 | # | Hex | Name | Lines/text? |
 |---|---|---|---|
 | 1 | `#005A8C` | McKesson Blue | yes |
-| 2 | `#00AF9D` | Teal | fill; label it (text: `#00737A`) |
-| 3 | `#143359` | Navy | yes |
-| 4 | `#009DFF` | Bright blue | fill; label it |
+| 2 | `#143359` | Navy | yes |
+| 3 | `#009EFF` | Bright blue | fill; label it |
+| 4 | `#00AF9D` | Teal | fill; label it (text: `#00737A`) |
 | 5 | `#05CE90` | Mint | fill only; label it |
 | 6 | `#EF8200` | Orange | last resort only; fill, label it |
-| 7 | `#B3ECFF` | Light sky | fills only |
-| 8 | `#B3E7E2` | Light teal | fills only |
 
-**Ordered steps** (stages of a pipeline, a journey, a timeline) use the template's blue-to-green sequence: `#005A8C` `#009DFF` `#00BEFF` `#00AF9D` `#05CE90` `#00AF68` (`color.steps`, `mv.STEPS`). Not for data magnitude (use a sequential scale) or unordered categories.
+Two light tints, `#B3ECFF` (sky) and `#B3E7E2` (teal), exist for large fills only (`color.categorical.fill_tints`, `mv.FILL_TINTS`, `--mck-cat-tint-1/2`); they are not part of the series order and never carry lines or text.
 
-- **Prefer ≤ 5 categories.** Orange is the last-resort 6th: reach for it only when you truly need six hues, because readers will still read it as "worse". Beyond 6, group the tail into **"Other"** in context grey. Check separability with `python tokens/build.py` → `dist/palette-report.md`.
+**Ordered steps** (stages of a pipeline, a journey, a timeline) use the template's blue-to-green sequence: `#005A8C` `#009EFF` `#00BEFF` `#00AF9D` `#05CE90` `#00AF68` (`color.steps`, `mv.STEPS`). Not for data magnitude (use a sequential scale) or unordered categories.
+
+- **Prefer ≤ 4 categories.** At 5 or more, consider small multiples or group the tail into **"Other"** in context grey. Mint (5th) is a near-green, and green means "better"; orange (6th) reads as "worse": reach for them only when you truly need five or six hues, and label every segment. Check separability with `python tokens/build.py` → `dist/palette-report.md`.
 - Blue and navy sit next to each other in stacks: keep the white separators between segments.
 - Green and amber are not category colors: green means better or on track, amber means at risk.
 - Keep a category's color **constant across the whole deck** (e.g., Technology is always teal).

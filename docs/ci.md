@@ -1,6 +1,6 @@
 # Checking charts in CI
 
-`mv.lint(fig, strict=True)` raises `mckviz.LintError` when a matplotlib or Plotly figure breaks a house rule at "error" level: a missing headline, subtitle or source, more than 6 colors, off-palette or red–green colors, bars not starting at zero, a dual axis, text under the minimum size. Any repo that builds charts in Python can run it on every push, so a broken chart fails the build instead of reaching a deck.
+`mv.lint(fig, strict=True)` raises `mckviz.LintError` when a matplotlib or Plotly figure breaks a house rule at "error" level: a missing headline, subtitle or source, more than 6 colors, off-palette or red–green colors, bars not starting at zero. Dual axes, legends and text under the minimum size are reported at "warn" level, so they show in the log but don't fail the build. Any repo that builds charts in Python can run it on every push, so a broken chart fails the build instead of reaching a deck.
 
 The lint checks the mechanics. It can't tell whether the headline is true or the chart type fits the question, so a person (or agent) still runs [qa-checklist.md](qa-checklist.md).
 

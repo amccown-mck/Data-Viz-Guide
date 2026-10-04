@@ -27,7 +27,7 @@ axes.titlesize: 14
 axes.titleweight: normal
 axes.titlelocation: left
 axes.titlecolor: 505050
-axes.prop_cycle: cycler('color', ['005A8C', '00AF9D', '143359', '009DFF', '05CE90', 'EF8200', 'B3ECFF', 'B3E7E2'])
+axes.prop_cycle: cycler('color', ['005A8C', '143359', '009EFF', '00AF9D', '05CE90', 'EF8200'])
 axes.xmargin: 0.02
 
 grid.color: E6E4DE

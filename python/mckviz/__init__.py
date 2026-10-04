@@ -27,7 +27,8 @@ _T = TOKENS["typography"]
 _K = TOKENS["chart"]
 
 FONT = _T["family"]["primary"]
-CATEGORICAL: list[str] = _C["categorical"]["values"]
+CATEGORICAL: list[str] = _C["categorical"]["values"]            # series order, at most 6
+FILL_TINTS: list[str] = _C["categorical"]["fill_tints"]         # light tints for large fills only, outside the order
 SEQUENTIAL: dict[str, list[str]] = _C["sequential"]
 DIVERGING: list[str] = _C["diverging"]["orange_blue"]["values"]
 STEPS: list[str] = _C["steps"]["values"]            # ordered process stages (blue to green), not data magnitude
@@ -129,7 +130,8 @@ def highlight(labels: Iterable, focus=None, accent=None, base: str | None = None
 
 
 def categorical(n: int) -> list[str]:
-    """First n categorical colors. More than 6 series is a smell: group the tail into 'Other'."""
+    """First n categorical colors (blue, navy, bright blue, teal, mint, orange). Prefer <= 4; more than 6 raises:
+    group the tail into 'Other' or use small multiples."""
     if n > len(CATEGORICAL):
         raise ValueError(f"Max {len(CATEGORICAL)} categorical colors; group the long tail into 'Other'.")
     return CATEGORICAL[:n]
@@ -519,7 +521,7 @@ def __getattr__(name: str):
 
 
 __all__ = [
-    "__version__", "TOKENS", "FONT", "CATEGORICAL", "SEQUENTIAL", "DIVERGING", "STEPS", "STATUS", "colors", "extended",
+    "__version__", "TOKENS", "FONT", "CATEGORICAL", "FILL_TINTS", "SEQUENTIAL", "DIVERGING", "STEPS", "STATUS", "colors", "extended",
     "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
     "fmt_num", "suppress_small",
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",

@@ -217,7 +217,7 @@ print("saved", out)
 7. Format the focus series: **`#005A8C`, 2.25 pt**. To draw it on top, open **Chart Design › Select Data**, select the focus series and click **Move Down** until it's last.
 8. Label the focus lines at the right: click the last point of a focus series twice, then **Add Data Label › Format Data Label › Series Name** only, **Label Position › Right**. Use Libre Franklin SemiBold 12 pt in `#005A8C`.
 9. Bold the story axis names: Excel can't bold one category label, so overlay text boxes (Libre Franklin Bold 11 pt, `#143359`) or hide the axis labels and type all axis names in text boxes.
-10. In PowerPoint, **Home › Paste › Use Destination Theme & Embed Workbook**. Headline in the title placeholder (24 pt Bold Navy), subtitle 14 pt `#505050`, source 9 pt Light `#737373`, bottom-left. Build up by duplicating the slide: all lines grey → focus lines blue → callout. Slides can't brush, so link to the HTML version for exploration.
+10. In PowerPoint, **Home › Paste › Use Destination Theme & Embed Workbook**. Headline in the title placeholder (26 pt Bold McKesson Blue `#005A8C`), subtitle 14 pt `#505050`, source 9 pt Light `#737373`, bottom-left. Build up by duplicating the slide: all lines grey → focus lines blue → callout. Slides can't brush, so link to the HTML version for exploration.
 
 ### Power BI
 - Apply the theme: **View › Themes › Browse for themes ›** `dist/powerbi/mckesson-dataviz-theme.json`.

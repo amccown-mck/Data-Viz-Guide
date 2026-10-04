@@ -160,7 +160,7 @@ For **aligned panels** in Plotly, use `make_subplots(rows=2, cols=1, shared_xaxe
 6. **Only if a dual axis is unavoidable:** **Insert › Insert Combo Chart › Clustered Column – Line on Secondary Axis**. In **Change Chart Type › Combo**, check **Secondary Axis** only for the rate (line) series.
 7. Set **both** vertical axes to **Format Axis › Bounds › Minimum 0** (typed, so it's fixed). Select the gridlines and press **Delete**. Columns: **Gap Width 50%**, fill `#B4B0A5`, with data labels. Line: `#143359`, 2.25 pt, no markers.
 8. Color each axis to its series: **Format Axis › Text Options › Text Fill**, `#737373` for the column axis and `#143359` for the line axis. Add **Axis Titles**, set **Text direction: Horizontal**, and drag each one above its axis ("Open requisitions" left, "Overtime hours per FTE" right). Delete the legend.
-9. In PowerPoint, paste with **Home › Paste › Use Destination Theme & Embed Workbook**. The headline goes in the title placeholder (24 pt Bold Navy), the subtitle at 14 pt `#505050`, and the footnote (index base, definitions) and source at 9 pt Libre Franklin Light `#737373`, bottom-left.
+9. In PowerPoint, paste with **Home › Paste › Use Destination Theme & Embed Workbook**. The headline goes in the title placeholder (26 pt Bold McKesson Blue `#005A8C`), the subtitle at 14 pt `#505050`, and the footnote (index base, definitions) and source at 9 pt Libre Franklin Light `#737373`, bottom-left.
 
 ### Power BI
 - Apply [`dist/powerbi/mckesson-dataviz-theme.json`](../../dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).

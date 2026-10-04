@@ -404,7 +404,7 @@ def palette_categorical():
     ax.set_xticks([])
     ax.tick_params(labelsize=MINI, length=0)
     _plain(ax)
-    return fig, "100% stacked bars of workforce mix by function in blue, navy and light blue."
+    return fig, "100% stacked bars of workforce mix by function in blue, navy and bright blue."
 
 
 @exhibit

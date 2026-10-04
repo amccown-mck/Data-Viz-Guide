@@ -39,8 +39,8 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 | Unfavorable | `#EF8200` (text `#A75B00`) | Negatives, below target. The only job orange has |
 | Status (RAG) | on track `#00AF68`, at risk `#FFB500`, off track `#DA2103`, not started `#BFBFBF` | Status only (trackers, roadmaps), each with its symbol and word (✓ On track, ! At risk, ✕ Off track). Never for data series |
 
-- **Categorical, in order:** `#005A8C`, `#00AF9D`, `#143359`, `#009DFF`, `#05CE90`, `#EF8200`, `#B3ECFF`, `#B3E7E2`. Prefer ≤ 5; orange (6th) is a last resort. Green and amber are not category colors.
-- **Ordered steps (pipelines, timelines; not magnitude):** `#005A8C`, `#009DFF`, `#00BEFF`, `#00AF9D`, `#05CE90`, `#00AF68`
+- **Categorical, in order:** `#005A8C`, `#143359`, `#009EFF`, `#00AF9D`, `#05CE90`, `#EF8200` (blue, navy, bright blue, teal, mint, orange). Prefer ≤ 4; at 5 or more use small multiples or group the tail into "Other". Orange (6th) is a last resort and otherwise means worse. Green and amber are not category colors. Light tints `#B3ECFF`, `#B3E7E2` are for large fills only.
+- **Ordered steps (pipelines, timelines; not magnitude):** `#005A8C`, `#009EFF`, `#00BEFF`, `#00AF9D`, `#05CE90`, `#00AF68`
 - **Sequential blue (light → dark, the default for one measure):** `#E6F3FB`, `#B6E2FA`, `#66C4FF`, `#009EFF`, `#0A5FBC`, `#143359`
 - **Sequential orange (only when darker means worse, e.g., risk; say so):** `#FFF3E0`, `#FFD9A8`, `#F7B25C`, `#EF8200`, `#A75B00`, `#6B3A00`
 - **Diverging orange–blue (midpoint = benchmark, symmetric):** `#A75B00`, `#EF8200`, `#F7C180`, `#EFEDE7`, `#99BDD1`, `#005A8C`, `#143359`
@@ -48,8 +48,8 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 
 ## Type and layout
 - Font: **Libre Franklin** (fallback: Franklin Gothic Book, Arial).
-- Slide title: bold 26 pt, `#143359` (with one chart on a slide, its headline is the slide title). Chart headline (a chart with its own title): semibold 18 pt / 20 px, still an insight sentence. Two charts on a slide: a bold slide title for the shared message, a semibold insight headline per chart. Big KPI numbers: bold. Subtitle: regular 14 pt / 15 px. Labels: medium 12 pt / 13 px. Footnote and source: light 9 pt / 11 px, `#737373`. Nothing smaller.
-- Everything is left-aligned on one edge, with no centered titles, chart borders, 3D, shadows or gradients.
+- Slide title: bold 26 pt, McKesson Blue `#005A8C` (with one chart on a slide, its headline is the slide title). KPI numbers: bold, `#143359`. Chart headline (a chart with its own title): semibold 18 pt / 20 px, still an insight sentence. Two charts on a slide: a bold slide title for the shared message, a semibold insight headline per chart. Big KPI numbers: bold. Subtitle: regular 14 pt / 15 px. Labels: medium 12 pt / 13 px. Footnote and source: light 9 pt / 11 px, `#737373`. Nothing smaller.
+- Everything is left-aligned on one edge, with no centered titles, chart borders, 3D, shadows or gradients. Flat, not rounded: square corners on bars, cards and tables.
 - Bar width : gap ≈ 2 : 1 (band fill 0.67). Lines 2.0 px; context lines 1.25 px.
 
 ## Honest scales

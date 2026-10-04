@@ -46,7 +46,7 @@ Or do it in File Explorer: paste `%APPDATA%\Microsoft\Templates\Document Themes`
 - **Word:** **Design › Colors / Fonts › McKesson Data Viz**.
 - To make it the default for new PowerPoint decks, open the `.potx`, go to **Design**, right-click the current theme thumbnail and choose **Set as Default Theme**.
 
-Once the theme is applied, the color picker's top rows are the McKesson palette. **Accent 1** is McKesson Blue `#005A8C` (focus), **Accent 2** is Navy `#143359` (the accent for the one exception) and **Accent 3** is light blue `#66C4FF` (the series fill when one bar gets the navy accent). **Accent 6** is Orange `#EF8200`: use it only for "worse" (negatives, below target), never as a highlight. The context grey `#B4B0A5` isn't a theme slot: pick it with **More Colors › Hex**, or copy formatting from a sample chart with **Format Painter**.
+Once the theme is applied, the color picker's top rows are the McKesson palette. **Accent 1** is McKesson Blue `#005A8C` (focus), **Accent 2** is Navy `#143359` (the accent for the one exception), **Accent 3** is bright blue `#009EFF`, then teal and mint. **Accent 6** is Orange `#EF8200`: use it only for "worse" (negatives, below target), never as a highlight. The context grey `#B4B0A5` and the light blue `#66C4FF` (the series fill when one bar gets the navy accent) aren't theme slots: pick them with **More Colors › Hex**, or copy formatting from a sample chart with **Format Painter**.
 
 ## 4. Use the starter files
 - **New deck:** copy `McKesson-DataViz.potx` to `Documents\Custom Office Templates` (Mac: `~/Library/Group Containers/UBF8T346G9.Office/User Content/Templates`). It then shows up under **File › New › Personal** (or **Custom**).

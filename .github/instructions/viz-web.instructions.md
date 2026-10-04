@@ -1,6 +1,8 @@
 ---
-applyTo: "**/*.{html,js,ts,css}"
+applyTo: "**/*.{html,js,jsx,ts,tsx,css}"
 ---
+
+> These rules are for code that **draws charts**. Skip them when you are editing the kit's own build tools and internals (`tools/`, `tokens/`, `python/mckviz/`, `guide/`, `office/`), which have their own conventions in `AGENTS.md` part B.
 # Web charts (HTML, JavaScript, TypeScript, CSS)
 
 Applies to web pages, dashboards and components that show charts or tables. The full rules are in `AGENTS.md` and `docs/formats.md#web-and-html-articles-microsites-internal-tools`.
