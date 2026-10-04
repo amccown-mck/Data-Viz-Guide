@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib.patches import FancyBboxPatch, Rectangle, Wedge
 
 import mckviz as mv
-from exhibits import ANNOT, ANTI, BAND, HTML, LABEL, MINI, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px, marker
+from exhibits import ANNOT, ANTI, BAND, HTML, LABEL, MINI, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px, marker, ph
 
 KPI = mv.TOKENS["typography"]["roles"]["kpi"]                 # Bold 700, 56 px on screen
 UP, DOWN, M = "▲", "▼", mv.MINUS
@@ -118,27 +118,27 @@ def sn_ring_anatomy():
     fig = fig_px(620, 290)
     fig.set_layout_engine("none")
     ax = fig.add_axes([0, 0, 1, 1])
-    ax.set_xlim(-1.75, 4.6)
-    ax.set_ylim(-1.45, 1.5)
+    ax.set_xlim(-1.75, ph(4.6, 1.75))                  # phones: the text block moves under the ring
+    ax.set_ylim(ph(-1.45, -3.35), 1.5)
     ax.set_aspect("equal")
     ax.axis("off")
     t = ring(ax, 0, 0, 1.25, SP_PCT, target=SP_TGT)
     ax.text((1.25 + 0.14) * np.cos(t), (1.25 + 0.14) * np.sin(t), f"Target\n{SP_TGT}%", ha="right", va="center",
             fontsize=ANNOT, color=C.annotation, linespacing=1.15)
-    big(ax, 0, 0.02, f"{SP_PCT}%", KPI["size_px"] - 4, ha="center", va="center")
-    x = 1.75
-    small(ax, x, 0.62, f"{SP_NOW / 1000:.1f}K of {SP_EMP / 1000:.1f}K employees have a verified\nprofile in the "
-                       "skills inventory", size=LABEL + 2.5, va="top")
-    small(ax, x, -0.25, f"{UP} {mv.signed(SP_PCT - SP_PCT0)} pts vs. Mar 2025 ({SP_PCT0}%)", size=LABEL + 1,
-          color=C.positive_text, weight=600, va="center")
-    small(ax, x, -0.62, f"{SP_TGT - SP_PCT} pts short of the {SP_TGT}% FY27 target", size=LABEL + 1,
+    big(ax, 0, 0.02, f"{SP_PCT}%", ph(KPI["size_px"] - 4, 36), ha="center", va="center")
+    x = ph(1.75, -1.6)
+    small(ax, x, ph(0.62, -1.7), f"{SP_NOW / 1000:.1f}K of {SP_EMP / 1000:.1f}K employees have a verified\nprofile in the "
+                                 "skills inventory", size=ph(LABEL + 2.5, LABEL + 0.5), va="top")
+    small(ax, x, ph(-0.25, -2.65), f"{UP} {mv.signed(SP_PCT - SP_PCT0)} pts vs. Mar 2025 ({SP_PCT0}%)",
+          size=ph(LABEL + 1, LABEL), color=C.positive_text, weight=600, va="center")
+    small(ax, x, ph(-0.62, -3.05), f"{SP_TGT - SP_PCT} pts short of the {SP_TGT}% FY27 target", size=ph(LABEL + 1, LABEL),
           color=C.negative_text, weight=600, va="center")
     marker(ax, (0, 1.25), 3, offset=(0, 14))
     marker(ax, (1.25, 0), 4, offset=(14, 0))
     marker(ax, (0, -0.52), 5)
-    marker(ax, ((1.25 + 0.14) * np.cos(t), (1.25 + 0.14) * np.sin(t)), 6, offset=(-62, 0))
+    marker(ax, ((1.25 + 0.14) * np.cos(t), (1.25 + 0.14) * np.sin(t)), 6, offset=(ph(-62, -95), 0))
     marker(ax, (0, -1.25), 7, offset=(0, -13))
-    marker(ax, (x, 0.45), 8, offset=(-16, 0))
+    marker(ax, (x, ph(0.45, -1.9)), 8, offset=(-16, 0))
     return fig, (TEXT["sp_headline"] + f": {SP_PCT}% of {SP_EMP:,} employees, up {SP_PCT - SP_PCT0} points from "
                  f"{SP_PCT0}% in Mar 2025.")
 

@@ -7,7 +7,7 @@ from matplotlib.patches import Rectangle, Wedge
 
 import mckviz as mv
 from exhibits import (ANNOT, ANTI, BAND, LABEL, MINI, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px,
-                      marker)
+                      marker, ph)
 
 GREYS = [C.context, C.context_light, C.grid]          # context shades for stacked segments that aren't the point
 
@@ -272,19 +272,20 @@ def stack_anatomy():
     parts = [(MIX[c].values, col, name) for c, col, name in STACK_PARTS]
     hstack(ax, list(MIX.function), parts, size=LABEL, tick=TICK, bold={"Technology"}, label_min=5)
     top = [(p[0][-1], p[1], p[2]) for p in parts]
-    seg_names(ax, top, n - 1 + 0.42, TICK - 0.5)
-    ax.text(103, n - 1 + 0.42, "Workers", fontsize=TICK - 0.5, color=C.text, va="bottom")
+    seg_names(ax, top, n - 1 + 0.42, ph(TICK - 0.5, TICK - 2))
+    wy = n - 1 + ph(0.42, 1.0)                         # phones: "Workers" one line up, clear of the segment names
+    ax.text(103, wy, "Workers", fontsize=ph(TICK - 0.5, TICK - 2), color=C.text, va="bottom")
     for yy, w in enumerate(MIX.workers):
-        ax.text(103, yy, f"{w:,}", fontsize=LABEL - 0.5, color=C.text_muted, va="center")
-    ax.set_xlim(0, 118)
-    ax.set_ylim(-0.6, n - 0.1)
+        ax.text(103, yy, f"{w:,}", fontsize=ph(LABEL - 0.5, LABEL - 2), color=C.text_muted, va="center")
+    ax.set_xlim(0, ph(118, 130))
+    ax.set_ylim(-0.6, n - 0.1 + ph(0, 0.55))
     marker(ax, (TECH * 0.86, n - 1), 3)
     marker(ax, (72, 0), 4)
     cc = MIX.function.tolist().index("Customer Care")
-    marker(ax, (100 - float(MIX.employee_pt_pct.iloc[cc]) / 2, cc), 5, offset=(26, 0))
-    marker(ax, (0, n - 1 + 0.6), 6, offset=(-13, 0))
-    marker(ax, (103, n - 1 + 0.6), 7, offset=(60, 0))
-    marker(ax, (103, 0), 8, offset=(44, 0))
+    marker(ax, (100 - float(MIX.employee_pt_pct.iloc[cc]) / 2, cc), 5, offset=ph((26, 0), (0, 22)))
+    marker(ax, (0, n - 1 + 0.6), 6, offset=(ph(-13, -24), 0))
+    marker(ax, (103, wy + 0.18), 7, offset=(ph(60, 82), 0))
+    marker(ax, (103, 0), 8, offset=(ph(44, 90), 0))
     return fig, (TEXT["mix_headline"] + f". Technology {TECH:.0f}% contingent; the other four functions "
                  f"{int(MIX.contingent_pct[MIX.function != 'Technology'].min())}–"
                  f"{int(MIX.contingent_pct[MIX.function != 'Technology'].max())}%.")
@@ -470,17 +471,19 @@ def wf_anatomy():
     b = BRIDGE
     fig = fig_px(620, 320)
     ax = fig.add_subplot()
-    steps = ["FY25 labor\ncost", "Merit &\nmarket", "Net new\nhires", "Attrition\nbackfill lag", "Automation\nsavings",
-             "Contractor\nconversion", "FY26 labor\ncost"]
+    steps = ph(["FY25 labor\ncost", "Merit &\nmarket", "Net new\nhires", "Attrition\nbackfill lag", "Automation\nsavings",
+                "Contractor\nconversion", "FY26 labor\ncost"],
+               ["FY25", "Merit &\nmarket", "New\nhires", "Backfill\nlag", "Autom.", "Contr.", "FY26"])
     names = list(b.step)
     focus = {steps[i] for i, s in enumerate(names) if s in WF_FOCUS}
-    tops = waterfall(ax, steps, list(b.value_musd), list(b.kind), focus=focus, lo=3900, size=LABEL, tick=TICK)
+    tops = waterfall(ax, steps, list(b.value_musd), list(b.kind), focus=focus, lo=3900, size=ph(LABEL, LABEL - 1.5),
+                     tick=ph(TICK, TICK - 2.5))
     ax.set_ylim(3900, 4520)
     marker(ax, (0, 4100), 3, offset=(0, 0))
     marker(ax, (0, 3900 + 620 * 0.05), 4, offset=(-28, 0))
     marker(ax, (4, tops[4]), 5, offset=(30, -14))
     marker(ax, (2.5, tops[2]), 6, offset=(0, 10))
-    marker(ax, (1, tops[1]), 7, offset=(-30, 10))
+    marker(ax, (1, tops[1]), 7, offset=(ph(-30, -52), 10))
     marker(ax, (3, tops[3] - 30), 8, offset=(0, -14))
     return fig, TEXT["wf_headline"] + ". FY25 $4,210M to FY26 $4,292M; automation savings −71 and contractor conversion −24."
 
@@ -613,14 +616,15 @@ def tm_anatomy():
     fig = fig_px(620, 320)
     fig.set_layout_engine("none")
     ax = fig.add_axes([0, 0, 1, 1])
-    rects, order = treemap(ax, labels, list(d.exposed.round()), cols, size=LABEL - 0.5, min_label=0.0225)
+    rects, order = treemap(ax, labels, list(d.exposed.round()), cols, size=ph(LABEL - 0.5, LABEL - 2),
+                           min_label=ph(0.0225, 0.05))
     pos = {i: r for r, i in zip(rects, order)}
     big = int(np.argmax(d.exposed))
     x, y, w, h = pos[big]
     marker(ax, (x + w - 0.035, y + 0.06), 3)
     second = [i for i in order if d.role.iloc[i] not in _cust][0]
     x, y, w, h = pos[second]
-    marker(ax, (x + w - 0.03, y + 0.06), 4)
+    marker(ax, (x + w - 0.03, y + ph(0.06, h - 0.06)), 4)       # phones: bottom corner, clear of the label
     x, y, w, h = pos[order[-1]]
     marker(ax, (x + w / 2, y + h / 2), 5)
     x, y, w, h = pos[order[0]]

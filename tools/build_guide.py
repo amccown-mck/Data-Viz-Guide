@@ -8,7 +8,8 @@
     python tools/build_guide.py --no-pdf   -> HTML only (no browser needed)
 
 Pages are HTML fragments made of <section class="spread" id="..."> blocks. Placeholders:
-    {{exhibit:name}}       inline SVG from guide/exhibits.py (add |min to keep it readable on phones: scrolls sideways)
+    {{exhibit:name}}       inline SVG from guide/exhibits.py. |phone: also rendered narrow for phones (exhibits.PHONE);
+                           |min: no phone version, scrolls sideways on phones with a swipe hint (slide mock-ups)
     {{text:key}}           a number or sentence computed from the example data (exhibits.TEXT)
     {{html:key}}           a token-driven snippet: swatches, role tables, type specimen (exhibits.HTML)
     {{link:spread-id}}     a link to any spread, resolved for each output (page.html#id, or #id in a single file)
@@ -150,7 +151,9 @@ def render(stem: str, section: str, svgs: dict, text: dict, snippets: dict, used
         if name not in svgs:
             sys.exit(f"{stem}.html: unknown exhibit '{name}'")
         used.add(name)
-        return f'<div class="ex-wrap{" min" if opt == "min" else ""}">{svgs[name]}</div>'
+        if opt == "phone" and name + "@phone" in svgs:
+            return f'<div class="ex-wrap min has-phone">{svgs[name]}{svgs[name + "@phone"]}</div>'
+        return f'<div class="ex-wrap{" min" if opt in ("min", "phone") else ""}">{svgs[name]}</div>'
 
     def txt(m):
         if m.group(1) not in text:
@@ -241,7 +244,9 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     idx = index_spreads()
     stem_of, page_of, first_of = idx
-    svgs = exhibits.render_all()
+    phone = set(re.findall(r"\{\{exhibit:([\w-]+)\|phone\}\}",
+                           "".join(p.read_text(encoding="utf-8") for p in (SRC / "pages").glob("*.html"))))
+    svgs = exhibits.render_all(phone=phone)
     used: set[str] = set()
 
     def multi_link(sid, here):
@@ -287,7 +292,7 @@ def main() -> None:
     shutil.copy2(ROOT / "fonts" / "Inconsolata" / "Inconsolata-Regular.ttf", OUT / "fonts")   # code blocks
     shutil.copy2(ROOT / "fonts" / "Inconsolata" / "OFL.txt", OUT / "fonts" / "OFL-Inconsolata.txt")
 
-    unused = sorted(set(svgs) - used)
+    unused = sorted(n for n in set(svgs) - used if "@" not in n)
     if unused:
         print(f"  note: exhibits not used on any page: {', '.join(unused)}")
     print(f"{len(page_of)} spreads, {len(used)} exhibits")

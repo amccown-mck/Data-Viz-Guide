@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 import mckviz as mv
+import exhibits as _ex
 from exhibits import (ANNOT, ANTI, LABEL, MINI, SHORT, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px,
-                      marker)
+                      marker, ph)
 
 LINE, CTX_LINE, GRID_LW = 2.4, 1.4, 0.75          # data lines about twice the gridline weight
 
@@ -102,15 +103,15 @@ def ts_line_anatomy():
         if fam != "Pharmacy Technician":
             ax.plot(x, PIV[fam], color=C.context, lw=CTX_LINE, zorder=2)
     ax.plot(x, PT, color=C.focus, lw=LINE, zorder=3)
-    ax.set_xlim(-0.3, len(QS) + 2.7)
+    ax.set_xlim(-0.3, len(QS) + ph(2.7, 8))            # room for the end labels
     ax.set_ylim(0, 40)
     ygrid(ax, [0, 10, 20, 30, 40])
     quarter_axis(ax, QS)
-    ax.set_xticks(x, [q.split()[0] for q in QS])
+    ax.set_xticks(x, [q.split()[0] if not _ex.PHONE or q.split()[0] in ("Q1", "Q3") else "" for q in QS])
     _plain(ax, bottom=True)
     end_labels(ax, len(QS) - 1, [(PIV[f].iloc[-1], f"{SHORT[f]} {PIV[f].iloc[-1]:.1f}",
                                   C.focus if f == "Pharmacy Technician" else C.text, f == "Pharmacy Technician")
-                                 for f in PIV.columns], size=LABEL - 1)
+                                 for f in PIV.columns], size=ph(LABEL - 1, LABEL - 2.5))
     ax.annotate("", xy=(len(QS) - 1.3, PT.iloc[-1] + 0.6), xytext=(len(QS) - 1.3, PT.iloc[RESET - 1]),
                 arrowprops=dict(arrowstyle="-|>", color=C.annotation, lw=1, mutation_scale=9))
     ax.plot([RESET - 1, len(QS) - 1.3], [PT.iloc[RESET - 1]] * 2, color=C.annotation, lw=0.7, ls=(0, (2, 2)))
@@ -118,9 +119,9 @@ def ts_line_anatomy():
             va="center", fontsize=ANNOT, color=C.annotation, fontweight=600)
     marker(ax, (4, PT.iloc[4]), 3, offset=(0, 14))
     marker(ax, (2, PIV["Customer Care"].iloc[2]), 4, offset=(0, 13))
-    marker(ax, (RESET - 0.5, 38.5), 5, offset=(-14, 0))
-    marker(ax, (len(QS) - 1, 25), 6, offset=(14, 22))
-    marker(ax, (len(QS) - 1.3, (PT.iloc[RESET - 1] + PT.iloc[-1]) / 2), 7, offset=(-70, 0))
+    marker(ax, (RESET - 0.5, 38.5), 5, offset=(ph(-14, -26), 0))
+    marker(ax, (len(QS) - 1, 25), 6, offset=(14, ph(22, 46)))
+    marker(ax, (len(QS) - 1.3, (PT.iloc[RESET - 1] + PT.iloc[-1]) / 2), 7, offset=(ph(-70, -135), 0))
     marker(ax, (1.0, 30), 8)
     return fig, TEXT["ts_headline"] + f": from {PT.iloc[RESET - 1]:.1f}% in Q2 FY25 to {PT.iloc[-1]:.1f}% in Q4 FY26."
 
@@ -375,9 +376,9 @@ def area_anatomy():
     _plain(ax, bottom=True)
     marker(ax, (2.6, 10), 3)
     marker(ax, (1.0, 55), 4)
-    marker(ax, (x[-1] + 0.08, ys[0][-1] / 2), 5, offset=(122, 0))
-    marker(ax, (2, 104), 6, offset=(-66, 0))
-    marker(ax, (0.05, ys[0][0] / 2), 7, offset=(30, 0))
+    marker(ax, (x[-1] + 0.08, ys[0][-1] / 2), 5, offset=(ph(122, 205), 0))
+    marker(ax, (2, 104), 6, offset=(ph(-66, -135), 0))
+    marker(ax, (0.05, ys[0][0] / 2), 7, offset=(ph(30, 62), 0))
     return fig, TEXT["area_headline"] + "."
 
 
@@ -466,6 +467,8 @@ def bt_anatomy():
     fig = fig_px(640, 320)
     ax = fig.add_subplot()
     rows, k = bubble_rows(ax)
+    if _ex.PHONE:                                            # every other year label, or they run together
+        ax.set_xticks(ax.get_xticks(), [t.get_text() if i % 2 == 0 else "" for i, t in enumerate(ax.get_xticklabels())])
     ax.set_xlim(-1, len(WQ) + 6)
     kx = len(WQ) + 1.9                                          # size key, top-right, clear of the data and the edge
     for i, v in enumerate([500, 2000, 5000]):
@@ -474,7 +477,7 @@ def bt_anatomy():
     ax.text(kx, 5.45, "Roles", ha="center", fontsize=TICK - 1.5, color=C.text_muted)
     ax.text(WQ.index("2023 Q1") - 0.3, len(rows) - 0.35, "Since 2023", fontsize=ANNOT, color=C.text_muted, va="bottom")
     ax.set_ylim(-0.7, len(rows) - 0.05)
-    marker(ax, (-1, 0), 3, offset=(-6, 12))
+    marker(ax, (-1, 0), 3, offset=(-6, ph(12, 24)))
     marker(ax, (len(WQ) - 0.5, -0.45), 4, offset=(14, 0))
     marker(ax, (kx, 3.85), 5, offset=(-26, 0))
     big = WR[WR.sub_sector == "Pharma manufacturers"].roles_affected.idxmax()
@@ -571,7 +574,7 @@ def sm_anatomy():
     marker(axes[1], (2, 9), 4)
     marker(axes[2], (5, RBP[list(RBP.iloc[-1].sort_values(ascending=False).index)[2]].iloc[5]), 5, offset=(0, 14))
     marker(axes[3], (len(RBQ) - 1, 12), 6, offset=(4, -2))
-    marker(axes[1], (0.66, 1.07), 7, coords="axes fraction")
+    marker(axes[1], (ph(0.66, 1.0), 1.07), 7, coords="axes fraction", offset=(ph(0, 12), 0))
     marker(axes[4], (2, 0), 8, offset=(0, -11))
     return fig, TEXT["sm_headline"] + f": Oncology {_onc.iloc[0]:.1f}% to {_onc.iloc[-1]:.1f}%."
 

@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib.patches import Rectangle
 
 import mckviz as mv
-from exhibits import (ANNOT, ANTI, LABEL, MINI, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px, marker)
+from exhibits import (ANNOT, ANTI, LABEL, MINI, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px, marker, ph)
 
 MIN_N = 10
 WORD = {2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
@@ -145,17 +145,17 @@ def histogram(ax, *, size=LABEL, tick=TICK, focus=True, grid=True, callout=True,
 def ds_strip_anatomy():
     fig = fig_px(640, 330)
     ax = fig.add_subplot()
-    strip(ax, s=10, alpha=0.5)
+    strip(ax, s=10, alpha=0.5, size=ph(LABEL, LABEL - 2))
     yf = ORDER.index(FOCUS)
     fx = CR.compa_ratio[CR.job_family == FOCUS]
     marker(ax, (fx.quantile(0.05), yf), 3, offset=(-6, 17))
     oth = ORDER[-1]
     ox = CR.compa_ratio[CR.job_family == oth]
-    marker(ax, (1.155, 1), 4)
+    marker(ax, (1.155, 1), 4, offset=(0, ph(0, 14)))
     q3 = fx.quantile(0.75)
     marker(ax, (q3, yf), 5, offset=(12, 15))
-    marker(ax, (0.78, -0.62), 6, offset=(14, 8))
-    marker(ax, (1.30 - 0.065, yf), 7, offset=(46, 0))
+    marker(ax, *ph(((0.78, -0.62), 6), ((0.745, 1.5), 6)), offset=ph((14, 8), (0, 0)))
+    marker(ax, (1.30 - 0.065, yf), 7, offset=(ph(46, 95), 0))
     marker(ax, (0.75, len(ORDER) - 0.45), 8, offset=(0, -14))
     return fig, (TEXT["ds_strip_headline"] + f". {ST.low[FOCUS]:.0f}% of {int(ST.n[FOCUS])} pharmacy technicians are "
                  f"below 0.90; no other family exceeds {ST.drop(FOCUS).low.max():.0f}%.")

@@ -9,8 +9,9 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 
 import mckviz as mv
+import exhibits as _ex
 from exhibits import (ANNOT, ANTI, BAND, LABEL, MINI, SHORT, TICK, C, EXHIBITS, HTML, TEXT, _csv, _plain, exhibit,
-                      fig_px, marker)
+                      fig_px, marker, ph)
 
 WORD = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine"}
 ORD = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth", 7: "seventh", 8: "eighth", 9: "ninth"}
@@ -128,19 +129,20 @@ def rk_slope_anatomy():
     ax = fig.add_axes([0, 0, 1, 1])
     names = list(SK.skill)
     cols = [C.focus if s in RISERS else C.context for s in names]
-    right = rank_slope(ax, names, list(SK.rank_2023), list(SK.rank_2026), cols, hot=set(RISERS), size=LABEL)
+    right = rank_slope(ax, names, list(SK.rank_2023), list(SK.rank_2026), cols, hot=set(RISERS),
+                       size=ph(LABEL, LABEL - 3), label=ph(None, SK_SHORT))       # phones: short names, smaller
     for s in RISERS:
         ax.annotate(mv.signed(_RISE), xy=(1, 0.5), xycoords=right[s], xytext=(7, 0), textcoords="offset points",
-                    va="center", fontsize=LABEL, color=C.focus, fontweight=700)
-    ax.set_xlim(-0.82, 1.95)
+                    va="center", fontsize=ph(LABEL, LABEL - 3), color=C.focus, fontweight=700)
+    ax.set_xlim(ph(-0.82, -1.05), ph(1.95, 2.1))
     da = SK.set_index("skill").loc["Data analysis"]
     ga = SK.set_index("skill").loc["Gen AI / prompt design"]
     marker(ax, (0.62, da.rank_2023 - 0.62 * 3), 3, offset=(6, 13))
     marker(ax, (0.5, 7.5), 4, offset=(0, -12))
-    marker(ax, (-0.05, 1), 5, offset=(-160, 0))
+    marker(ax, (-0.05, 1), 5, offset=(ph(-160, -190), 0))
     marker(ax, (1, 0.2), 6, offset=(26, 0))
-    marker(ax, (1.05, ga.rank_2026), 7, offset=(178, 0))
-    marker(ax, (-0.7, 8), 8)
+    marker(ax, (1.05, ga.rank_2026), 7, offset=(ph(178, 185), 0))
+    marker(ax, ph((-0.7, 8), (0.5, 9.3)), 8)
     return fig, (TEXT["rk_slope_headline"] + ". Data analysis rose from 4th to 1st and gen AI from 9th to 6th; "
                  "customer service fell from 2nd to 5th.")
 
@@ -416,18 +418,18 @@ def dumbbell(ax, d, *, size=LABEL, tick=TICK, s=(46, 60), lab=True, gaps=True, n
 def rk_db_anatomy():
     fig = fig_px(640, 320)
     ax = fig.add_subplot()
-    dumbbell(ax, PAY)
+    dumbbell(ax, PAY, key_short=_ex.PHONE, xticks=ph((40, 80, 120, 160), (40, 100, 160)))
     ds = PAY.index[PAY.role == "Data Scientist"][0]
-    ph = PAY.index[PAY.role == "Pharmacist"][0]
+    ph_ = PAY.index[PAY.role == "Pharmacist"][0]
     pt = PAY.index[PAY.role == "Pharmacy Technician"][0]
     r = PAY.loc[ds]
-    marker(ax, (r.internal_median_k, ds), 3, offset=(0, -14))
+    marker(ax, (r.internal_median_k, ds), 3, offset=(0, ph(-14, -22)))
     rp = PAY.loc[pt]
-    marker(ax, (rp.internal_median_k, pt), 4, offset=(-15, 0))
-    rph = PAY.loc[ph]
-    marker(ax, ((rph.internal_median_k + rph.market_median_k) / 2, ph), 5, offset=(0, 13))
+    marker(ax, (rp.internal_median_k, pt), 4, offset=ph((-15, 0), (0, 18)))
+    rph = PAY.loc[ph_]
+    marker(ax, ((rph.internal_median_k + rph.market_median_k) / 2, ph_), 5, offset=(0, ph(13, 17)))
     marker(ax, (0, 1.035), 6, offset=(-14, 0), coords="axes fraction")
-    marker(ax, (rp.market_median_k, pt), 7, offset=(70, 0))
+    marker(ax, (rp.market_median_k, pt), 7, offset=(ph(70, 120), 0))
     marker(ax, (80, len(PAY) - 1.5), 8)
     return fig, (TEXT["rk_db_headline"] + ". " + "; ".join(f"{r.role} {mv.signed(r.gap_pct, 1, '%')}"
                                                          for r in PAY[LAG].itertuples()) + ".")

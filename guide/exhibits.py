@@ -47,6 +47,18 @@ ANTI = {"red": "#D62728", "green": "#2CA02C", "rainbow": ["#1F77B4", "#FF7F0E", 
 EXHIBITS: dict = {}
 TEXT: dict[str, str] = {}
 
+# Phone versions. render_all() renders the exhibits a page marks {{exhibit:name|phone}} a second time with PHONE set:
+# fig_px() narrows the figure to PHONE_W and gives it more height, marker() scales its offsets, and an exhibit can
+# branch on ph(desktop, phone) for anything else (shorter labels, fewer ticks). guide.css shows that copy on phones.
+PHONE = False
+PHONE_W = 340                   # fits a 375-430 px phone inside the card and stage padding
+_SCALE = [1.0]                      # PHONE_W / design width of the figure being drawn
+
+
+def ph(desktop, phone):
+    """Pick a value by medium: ph(620, 380), ph(SHORT, TINY)."""
+    return phone if PHONE else desktop
+
 
 def exhibit(fn):
     EXHIBITS[fn.__name__] = fn
@@ -93,6 +105,11 @@ TEXT.update({
 
 # ------------------------------------------------------------------ helpers
 def fig_px(w: float, h: float, pad: float = 2):
+    if PHONE:
+        _SCALE[0] = PHONE_W / w
+        w, h = PHONE_W, min(h * _SCALE[0] * 1.35, 480)       # narrower, and taller than a plain shrink
+    else:
+        _SCALE[0] = 1.0
     fig = plt.figure(figsize=(w / 72, h / 72), layout="constrained")
     fig.get_layout_engine().set(w_pad=pad / 72, h_pad=pad / 72, wspace=0.02, hspace=0.02)
     return fig
@@ -152,6 +169,7 @@ def vbars(ax, labels, values, colors, *, fmt="{:.0f}", size=MINI, tick=MINI, val
 
 def marker(ax, xy, n: int, *, offset=(0, 0), coords="data") -> None:
     """Numbered anatomy marker: white disc, navy ring. Reads as guide furniture, not as data."""
+    offset = (offset[0] * _SCALE[0], offset[1] * _SCALE[0])
     ax.annotate(str(n), xy, xycoords=coords, xytext=offset, textcoords="offset points", ha="center", va="center",
                 fontsize=10, fontweight=700, color=C.headline, zorder=10, annotation_clip=False,
                 bbox=dict(boxstyle="circle,pad=0.32", fc="white", ec=C.headline, lw=1.3))
@@ -175,7 +193,7 @@ def _mini_attr(n: int = 5):
 
 
 # ------------------------------------------------------------------ SVG output
-def to_svg(fig, alt: str, name: str) -> str:
+def to_svg(fig, alt: str, name: str, cls: str = "ex") -> str:
     buf = io.StringIO()
     fig.savefig(buf, format="svg", metadata={"Date": None, "Creator": None})
     plt.close(fig)
@@ -184,7 +202,7 @@ def to_svg(fig, alt: str, name: str) -> str:
     svg = re.sub(r"<metadata>.*?</metadata>\s*", "", svg, flags=re.S)
     w = re.search(r'width="([\d.]+)pt"', svg).group(1)
     svg = re.sub(r'\swidth="[\d.]+pt" height="[\d.]+pt"', "", svg, count=1)
-    svg = svg.replace("<svg ", f'<svg class="ex" style="--w:{float(w):.0f}px" role="img" aria-label="{_esc(alt)}" ', 1)
+    svg = svg.replace("<svg ", f'<svg class="{cls}" style="--w:{float(w):.0f}px" role="img" aria-label="{_esc(alt)}" ', 1)
     # matplotlib ids repeat across figures (figure_1, patch_2 ...); prefix them so inline SVGs don't collide
     svg = re.sub(r'id="([^"]+)"', rf'id="{name}-\1"', svg)
     svg = re.sub(r'url\(#([^)]+)\)', rf'url(#{name}-\1)', svg)
@@ -196,8 +214,17 @@ def _esc(s: str) -> str:
     return s.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
 
 
-def render_all() -> dict[str, str]:
-    return {name: to_svg(*fn(), name) for name, fn in EXHIBITS.items()}
+def render_all(phone: set[str] = frozenset()) -> dict[str, str]:
+    """Every exhibit as inline SVG, plus a '<name>@phone' copy for the names in `phone`."""
+    global PHONE
+    out = {name: to_svg(*fn(), name) for name, fn in EXHIBITS.items()}
+    PHONE = True
+    try:
+        for name in sorted(phone):
+            out[name + "@phone"] = to_svg(*EXHIBITS[name](), name + "-ph", cls="ex phone")
+    finally:
+        PHONE = False
+    return out
 
 
 # ================================================================== FUNDAMENTALS
@@ -293,16 +320,16 @@ def line_anatomy():
             color=C.negative_text, fontweight=600)
     ax.set_xlim(2023.8, 2030.45)
     ax.set_ylim(0, 1800)
-    ax.set_xticks(yr, [str(y) for y in yr])
+    ax.set_xticks(yr, [str(y) if not PHONE or y % 2 == 0 else "" for y in yr])
     ax.set_yticks([0, 500, 1000, 1500], ["0", "500", "1,000", "1,500"])
     ax.grid(axis="y", color=C.grid, lw=0.75)
     _plain(ax, bottom=True)
     ax.set_clip_on(False)
-    marker(ax, (yr[-1], dem[-1]), 3, offset=(96, 14))
+    marker(ax, (yr[-1], dem[-1]), 3, offset=(ph(96, 185), 14))
     marker(ax, (2025, dem[1]), 4, offset=(-10, 16))
     marker(ax, (now, 1700), 5, offset=(-12, -6))
     marker(ax, (2029, hi[5]), 6, offset=(-4, 14))
-    marker(ax, (yr[-1] - 0.12, mid), 7, offset=(-62, 0))
+    marker(ax, (yr[-1] - 0.12, mid), 7, offset=(ph(-62, -110), 0))
     marker(ax, (2024.55, 1500), 8)
     return fig, (TEXT["line_headline"] + f". Demand reaches {dem[-1]:,} FTE and internal supply {sup[-1]:,} FTE "
                  f"in {yr[-1]}.")
@@ -683,22 +710,24 @@ def a11y_contrast_fix():
 # ================================================================== MAGNITUDE: BAR
 @exhibit
 def bar_anatomy():
-    labels = [SHORT[f] if len(f) > 22 else f for f in ATTR.job_family]
-    bold = {SHORT[f] if len(f) > 22 else f for f in FOCUS}
+    cut = ph(22, 12)                                   # phones: short names for everything but the shortest
+    labels = [SHORT[f] if len(f) > cut else f for f in ATTR.job_family]
+    bold = {SHORT[f] if len(f) > cut else f for f in FOCUS}
     fig = fig_px(620, 330)
     ax = fig.add_subplot()
     bars = hbars(ax, labels, ATTR.vol_attrition_pct, mv.highlight(ATTR.job_family, focus=FOCUS), bold=bold,
-                 xmax=33)
+                 xmax=ph(33, 39))
     bench(ax, ENT, f"Enterprise {ENT:.1f}%")
     ax.set_ylim(-1.3, len(labels) - 0.4)
     n = len(labels)
     top = bars[-1]
-    marker(ax, (top.get_width(), n - 1), 3, offset=(52, 0))
-    marker(ax, (0, n - 2), 4, offset=(-98, 0))
-    marker(ax, (bars[-2].get_width(), n - 2), 5, offset=(52, 0))
-    marker(ax, (ENT, n - 0.35), 6, offset=(-58, 9))
+    after = ph(52, 95)                                 # past the value label (offsets scale down on phones)
+    marker(ax, (top.get_width(), n - 1), 3, offset=(after, 0))
+    marker(ax, (0, n - 2), 4, offset=(ph(-98, -175), 0))
+    marker(ax, (bars[-2].get_width(), n - 2), 5, offset=(after, 0))
+    marker(ax, (ENT, n - 0.35), 6, offset=(ph(-58, -120), 9))
     marker(ax, (0, -0.6), 7, offset=(0, -11))
-    marker(ax, (bars[4].get_width(), 4), 8, offset=(52, 0))
+    marker(ax, (bars[4].get_width(), 4), 8, offset=(after, 0))
     return fig, TEXT["bar_headline"] + ". " + TEXT["focus_rates"] + "; all other families are below the enterprise rate."
 
 

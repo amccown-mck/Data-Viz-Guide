@@ -8,8 +8,9 @@ from matplotlib.colors import to_hex
 from matplotlib.patches import Rectangle
 
 import mckviz as mv
+import exhibits as _ex
 from exhibits import (ANNOT, ANTI, ENT, LABEL, MINI, SHORT, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px,
-                      marker)
+                      marker, ph)
 
 WORDS = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine"}
 GRID_LW = 0.75
@@ -185,14 +186,14 @@ def corr_sc_anatomy():
     ax.text(151, EXPO_AVG + 1.2, f"Workforce average {EXPO_AVG:.0f}%", ha="right", va="bottom", fontsize=ANNOT,
             color=C.annotation, zorder=4)
     bubbles(ax, EXPO, k=k, focus=EXPO_FOCUS)
-    place = {"Customer Care": (-1, 0), "Claims & Billing Specialist": (1, 0), "Finance Operations": (1, 0),
+    place = {"Customer Care": ph((-1, 0), (1, -1.6)), "Claims & Billing Specialist": (1, 0), "Finance Operations": (1, 0),
              "HR Operations": (-1, -0.2)}
     for r in EXPO[EXPO.role.isin(EXPO_FOCUS)].itertuples():
         side, dy = place.get(r.role, (1, 0))
         pad = (r.headcount * k) ** 0.5 / 2 + 3
         ax.annotate(ROLE_SHORT.get(r.role, r.role), (r.median_pay_k, r.genai_exposure_pct), xytext=(side * pad, dy * 20),
-                    textcoords="offset points", ha="left" if side > 0 else "right", va="center", fontsize=LABEL,
-                    fontweight=600, color=C.headline, path_effects=mv.halo(), zorder=5)
+                    textcoords="offset points", ha="left" if side > 0 else "right", va="center",
+                    fontsize=ph(LABEL, LABEL - 2), fontweight=600, color=C.headline, path_effects=mv.halo(), zorder=5)
     keyv = [(1000, 121), (5000, 132), (10000, 146)]                            # size key on the same scale
     ax.text(116, 20, "Headcount", fontsize=TICK - 1.5, color=C.text_muted, va="bottom")
     for v, x in keyv:
@@ -209,9 +210,9 @@ def corr_sc_anatomy():
     marker(ax, (cc.median_pay_k, cc.genai_exposure_pct), 4, offset=(0, -17))
     dc = EXPO[EXPO.role == "Distribution Center Associate"].iloc[0]
     marker(ax, (dc.median_pay_k, dc.genai_exposure_pct), 5, offset=(30, 6))
-    marker(ax, (151, EXPO_AVG), 6, offset=(-146, 9))
+    marker(ax, (151, EXPO_AVG), 6, offset=(ph(-146, -270), 9))
     marker(ax, (146, 10), 7, offset=(0, 26))
-    marker(ax, (0, 1.06), 8, coords="axes fraction", offset=(160, 0))
+    marker(ax, (0, 1.06), 8, coords="axes fraction", offset=(ph(160, 330), 0))
     return fig, (TEXT["corr_sc_headline"] + ". " + "; ".join(f"{ROLE_SHORT.get(r, r)} {v}%" for r, v in
                  EXPO.set_index("role").genai_exposure_pct[EXPO_FOCUS].items()) + ".")
 
@@ -457,9 +458,12 @@ for _k, _alt in {"avoid_a": "Dual-axis chart with ranges chosen so vacancy and o
 def corr_hm_anatomy():
     fig = fig_px(640, 320)
     fig.set_layout_engine("none")
-    ax = fig.add_axes([0.2, 0.2, 0.79, 0.66])
+    ax = fig.add_axes(ph([0.2, 0.2, 0.79, 0.66], [0.27, 0.2, 0.72, 0.64]))
     m = HM.rename(index=lambda b: BU_SHORT.get(b, b))
-    heat(ax, m, div_color, size=LABEL, tick=TICK, bold_cols={HM_FOCUS}, gap=0.07)
+    short_cols = {"Manager support": "Manager", "Recognition": "Recog.", "Tools & tech": "Tools", "Belonging": "Belong.",
+                  "Pay fairness": "Pay"}                                               # phones: one word per column
+    m = m.rename(columns=lambda c: short_cols.get(c, c) if _ex.PHONE else c)
+    heat(ax, m, div_color, size=ph(LABEL, LABEL - 2), tick=ph(TICK, TICK - 3), bold_cols={HM_FOCUS}, gap=0.07)
     j = DRIVERS.index(HM_FOCUS)
     nr = len(m)
     ax.add_patch(Rectangle((j + 0.01, 0.01), 0.98, nr - 0.02, fill=False, ec=C.headline, lw=1.6, zorder=4, clip_on=False))

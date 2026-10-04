@@ -103,10 +103,14 @@ main { max-width: 1280px; margin: 0 auto; }
 @media print { .ex-wrap { overflow: visible; } }
 svg.ex { display: block; width: 100%; height: auto; max-width: var(--w); }
 .ex-wrap.min svg.ex { min-width: 0; }
+svg.ex.phone { display: none; }               /* the narrow copy of a hero exhibit; shown on phones only */
 @media screen and (max-width: 560px) {      /* wide exhibits scroll rather than shrink below readable sizes */
   .ex-wrap.min svg.ex { min-width: min(var(--w), 520px); }
   .ex-wrap.min::before { content: "Swipe to see the full chart \2192"; display: block; font-size: 11px;
                          color: var(--g-muted); margin-bottom: 4px; }
+  .ex-wrap.has-phone::before { content: none; }
+  .ex-wrap.has-phone svg.ex { display: none; }
+  .ex-wrap.has-phone svg.ex.phone { display: block; min-width: 0; }
 }
 
 /* ---------- anatomy: numbered callouts beside a card */
@@ -336,6 +340,14 @@ details.fold[open] > summary { border-bottom: 1px solid var(--g-rule); }
   .ladder > div:nth-child(2) { border-top: 0; }
   .ladder .k { padding-bottom: 0; border-top: 1px solid var(--g-rule); }
   .ladder .k + div { border-top: 0; padding-top: 2px; }
+}
+
+/* ---------- phones: slimmer padding so the phone copies of the exhibits (340 px) draw near 1:1 */
+@media screen and (max-width: 560px) {
+  .stage { padding: 16px 12px 48px; }
+  .card { padding: 18px 16px 14px; }
+  .card-head { font-size: 17px; }
+  .platform > * { min-width: 0; }                /* a long code line must not widen the build-page grid */
 }
 
 /* ---------- print: one spread per 16:9 page */

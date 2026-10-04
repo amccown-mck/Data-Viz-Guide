@@ -8,8 +8,9 @@ from matplotlib.patches import Ellipse, PathPatch, Polygon, Rectangle
 from matplotlib.path import Path as MPath
 
 import mckviz as mv
+import exhibits as _ex
 from exhibits import (ANNOT, ANTI, LABEL, MINI, SHORT, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px,
-                      marker)
+                      marker, ph)
 
 WORDS = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten"}
 
@@ -171,13 +172,13 @@ TEXT["flow_venn_subtitle"] = "Employees by verified skill area, U.S. regular emp
 def flow_sk_anatomy():
     fig = fig_px(640, 330)
     fig.set_layout_engine("none")
-    ax = fig.add_axes([0.25, 0.02, 0.49, 0.88])
+    ax = fig.add_axes(ph([0.25, 0.02, 0.49, 0.88], [0.34, 0.09, 0.34, 0.82]))     # phones: more room for names
     cols, flows = _mob_columns()
 
     def color(f):
         return (C.focus, 0.6) if f[3] == "focus" else (C.context_light, 0.85)
-    pos, bands = sankey(ax, cols, flows, color, size=LABEL - 0.5, headers=["From", "To"], header_size=TICK, gap=0.035,
-                        z_order=lambda f: f[3] == "focus")
+    pos, bands = sankey(ax, cols, flows, color, size=ph(LABEL - 0.5, LABEL - 3.5), headers=["From", "To"],
+                        header_size=ph(TICK, TICK - 2), gap=0.035, z_order=lambda f: f[3] == "focus")
     ax.set_xlim(0, 1.014)
     ax.set_ylim(0, 1)
     dcl = [f for f in flows if f[1] == (1, "DC Leadership")][0]
@@ -193,7 +194,7 @@ def flow_sk_anatomy():
     marker(ax, (x, (y0 + y1) / 2), 6, offset=(-70, -18))
     marker(ax, (0.007, 1.0 + 0.035 * 0.9), 7, offset=(-34, 8))
     x, y0, y1 = pos[cols[1][-1]]
-    marker(ax, (x, (y0 + y1) / 2), 8, offset=(150, 0))
+    marker(ax, (x, (y0 + y1) / 2), 8, offset=ph((150, 0), (0, -24)))
     return fig, (TEXT["flow_sk_headline"] + f", of {TEXT['flow_sk_total']} moves in all. The largest single path is "
                  f"Pharmacy Technician to Specialty Pharmacy Ops, {MOB.moves.max()} moves.")
 
@@ -328,26 +329,27 @@ def parcoords(ax, *, axes=PC_AXES, focus=PC_FOCUS, size=TICK, lw=(1.2, 2.4), end
 def flow_pc_anatomy():
     fig = fig_px(640, 330)
     fig.set_layout_engine("none")
-    ax = fig.add_axes([0.04, 0.22, 0.84, 0.68])
-    norm = parcoords(ax, size=TICK)
+    ax = fig.add_axes(ph([0.04, 0.22, 0.84, 0.68], [0.04, 0.24, 0.66, 0.66]))
+    norm = parcoords(ax, size=ph(TICK, TICK - 3.5))
     ax.set_xlim(-0.3, len(PC_AXES) - 0.75)
     ax.set_ylim(0, 1)
     j = len(PC_AXES) - 1
     fy = norm.loc[SC.median_days_to_fill.idxmin(), "median_days_to_fill"]
     ax.annotate("", xy=(j - 0.02, fy + 0.01), xytext=(j - 0.5, 0.16),
                 arrowprops=dict(arrowstyle="-", color=C.annotation, lw=0.75))
-    ax.text(j - 0.52, 0.2, "Fast to backfill", ha="right", va="bottom", fontsize=ANNOT, fontweight=600,
+    ax.text(j - 0.52, 0.2, "Fast to backfill", ha="right", va="bottom", fontsize=ph(ANNOT, ANNOT - 2), fontweight=600,
             color=C.annotation, path_effects=mv.halo(width=3))
     ax.text(j - 0.52, 0.19, f"DC roles fill in {_fast.median_days_to_fill} days,\nthe fastest of any family", ha="right",
-            va="top", fontsize=ANNOT - 0.5, color=C.annotation, path_effects=mv.halo(width=3), linespacing=1.2)
+            va="top", fontsize=ph(ANNOT - 0.5, ANNOT - 2.5), color=C.annotation, path_effects=mv.halo(width=3),
+            linespacing=1.2)
     pt = SC.index[SC.job_family == "Pharmacy Technician"][0]
     ctx = SC.index[SC.job_family == "Sales"][0]
-    marker(ax, (0, -0.13), 3, offset=(-52, -14))
+    marker(ax, (0, -0.13), 3, offset=ph((-52, -14), (-30, -36)))
     marker(ax, (0.5, 0.72), 4)
     marker(ax, (0.5, (norm.loc[ctx].iloc[0] + norm.loc[ctx].iloc[1]) / 2), 5, offset=(0, -12))
     marker(ax, (1, 1.03), 6, offset=(26, 9))
-    marker(ax, (2, -0.13), 7, offset=(64, -14))
-    marker(ax, (j - 0.52, 0.2), 8, offset=(-118, 10))
+    marker(ax, (2, -0.13), 7, offset=ph((64, -14), (0, -36)))
+    marker(ax, (j - 0.52, 0.2), 8, offset=(ph(-118, -170), 10))
     return fig, (TEXT["flow_pc_headline"] + f". Pharmacy Technician attrition {SC.vol_attrition_pct.max()}%, "
                  f"engagement of the two {SC.engagement_index.nsmallest(2).min()}–{SC.engagement_index.nsmallest(2).max()}; "
                  f"DC roles fill fastest at {_fast.median_days_to_fill} days.")
@@ -476,16 +478,24 @@ def flow_venn_anatomy():
     fig = fig_px(640, 330)
     fig.set_layout_engine("none")
     ax = fig.add_axes([0, 0, 1, 1])
-    venn(ax, size=LABEL)
-    note = dict(fontsize=ANNOT, color=C.annotation, va="top")
-    ax.plot([0.12, 1.6], [0.0, 0.0], color=C.annotation, lw=0.75)
-    ax.text(1.65, 0.1, "Clinical + data + supply chain", fontweight=600, **note)
-    ax.text(1.65, -0.06, "The hybrid profile behind\nautomated specialty-pharmacy\nfulfillment", linespacing=1.3, **note)
-    ax.plot([-1.6, -0.05], [1.0, 1.0], color=C.annotation, lw=0.75)
-    ax.text(-1.65, 1.1, "Clinical + data", fontweight=600, ha="right", **note)
-    ax.text(-1.65, 0.94, "Candidates for clinical\ninformatics roles", linespacing=1.3, ha="right", **note)
-    ax.set_xlim(-3.35, 3.45)
-    ax.set_ylim(-1.72, 1.42)
+    venn(ax, size=ph(LABEL, LABEL - 1.5))
+    note = dict(fontsize=ph(ANNOT, ANNOT - 1.5), color=C.annotation, va="top")
+    if _ex.PHONE:                                            # notes under the circles, no connector lines
+        ax.text(-3.3, -1.78, "Clinical + data", fontweight=600, **note)
+        ax.text(-3.3, -1.96, "Candidates for clinical\ninformatics roles", linespacing=1.3, **note)
+        ax.text(0.15, -1.78, "Clinical + data + supply chain", fontweight=600, **note)
+        ax.text(0.15, -1.96, "The hybrid profile behind\nautomated specialty-pharmacy\nfulfillment", linespacing=1.3, **note)
+        ax.set_xlim(-3.35, 3.45)
+        ax.set_ylim(-2.95, 1.42)
+    else:
+        ax.plot([0.12, 1.6], [0.0, 0.0], color=C.annotation, lw=0.75)
+        ax.text(1.65, 0.1, "Clinical + data + supply chain", fontweight=600, **note)
+        ax.text(1.65, -0.06, "The hybrid profile behind\nautomated specialty-pharmacy\nfulfillment", linespacing=1.3, **note)
+        ax.plot([-1.6, -0.05], [1.0, 1.0], color=C.annotation, lw=0.75)
+        ax.text(-1.65, 1.1, "Clinical + data", fontweight=600, ha="right", **note)
+        ax.text(-1.65, 0.94, "Candidates for clinical\ninformatics roles", linespacing=1.3, ha="right", **note)
+        ax.set_xlim(-3.35, 3.45)
+        ax.set_ylim(-1.72, 1.42)
     marker(ax, (-1.0, 0.62), 3, offset=(-46, 0))
     marker(ax, (0.64, -0.38), 4, offset=(30, -6))
     marker(ax, (0.0, 0.0), 5, offset=(0, -22))

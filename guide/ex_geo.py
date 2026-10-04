@@ -15,7 +15,7 @@ from matplotlib.patches import Circle, Rectangle
 
 import geo_shapes as gs
 import mckviz as mv
-from exhibits import ANTI, BAND, DATA, LABEL, MINI, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px, marker
+from exhibits import ANTI, BAND, DATA, LABEL, MINI, TICK, C, EXHIBITS, TEXT, _csv, _plain, exhibit, fig_px, marker, ph
 
 US, WORLD, COUNTIES = "states-albers-10m.json", "countries-110m.json", "counties-north-texas.json"
 BASE = C.surface_subtle                                    # quiet base map: light sand, white borders
@@ -216,17 +216,18 @@ NUDGE = {"NV": (-2, 6), "TX": (4, -6)}                                     # px 
 # ================================================================== CHOROPLETH
 @exhibit
 def geo_anatomy():
-    fig = fig_px(620, 320)
+    fig = fig_px(620, ph(320, 520))                          # phones: 340 x 385, the key moves under the map
     fig.set_layout_engine("none")
     ax = gs.canvas(fig)
-    m = us_map((0, 8, 478, 306))
+    m = us_map(ph((0, 8, 478, 306), (0, 158, 340, 218)))
     m.draw(ax, FILL26, ec="white", lw=0.6)
-    state_labels(ax, m, TIGHT, lambda s: f"{s}\n{R26[s]:.2f}", size=TICK - 2, nudge=NUDGE)
-    key_stack(ax, 494, 300, "Postings per\ncandidate", CLASS_LABELS, RAMP, size=TICK - 1)
+    state_labels(ax, m, TIGHT, lambda s: f"{s}\n{R26[s]:.2f}", size=ph(TICK - 2, TICK - 4), nudge=NUDGE)
+    kx, ky = ph((494, 300), (14, 138))
+    key_stack(ax, kx, ky, "Postings per\ncandidate", CLASS_LABELS, RAMP, size=ph(TICK - 1, TICK - 2))
     marker(ax, m.centre("MT"), 3)
     ak = m.centre("AK")
     marker(ax, (ak[0] + 30, ak[1] + 22), 4)
-    marker(ax, (494, 300), 5, offset=(-14, -8))
+    marker(ax, (kx, ky), 5, offset=ph((-14, -8), (165, -6)))
     nv = m.centre("NV")
     marker(ax, (nv[0] - 30, nv[1] + 10), 6)
     marker(ax, m.centre("IA"), 7)
@@ -251,10 +252,11 @@ def dc_bubbles(ax, m, *, rmax=DC_R, area=True, cols=None, lw=1.0):
 
 @exhibit
 def dc_anatomy():
-    fig = fig_px(620, 320)
+    fig = fig_px(620, ph(320, 520))
     fig.set_layout_engine("none")
     ax = gs.canvas(fig)
-    m = us_map((0, 8, 478, 306))
+    m = us_map(ph((0, 8, 478, 306), (0, 158, 340, 218)))
+    lab = ph(LABEL - 1, LABEL - 3)
     m.draw(ax, default=BASE, ec="white", lw=0.8)
     pos = dc_bubbles(ax, m)
     side = {"Memphis": 0, "Dallas": -1, "Phoenix": -1}
@@ -263,25 +265,26 @@ def dc_anatomy():
         d = side.get(site, 1)
         v = DCS.set_index("site").vacancy_pct[site]
         if d == 0:                                          # above the bubble
-            ax.text(x, y + r + 17, f"{v:.1f}%", ha="center", va="center", fontsize=LABEL - 1, color=C.headline,
+            ax.text(x, y + r + 17, f"{v:.1f}%", ha="center", va="center", fontsize=lab, color=C.headline,
                     fontweight=700, zorder=6)
-            ax.text(x, y + r + 5, site, ha="center", va="center", fontsize=LABEL - 1, color=C.headline, zorder=6)
+            ax.text(x, y + r + 5, site, ha="center", va="center", fontsize=lab, color=C.headline, zorder=6)
             continue
         ha = "left" if d > 0 else "right"
-        ax.text(x + d * (r + 4), y + 6, f"{v:.1f}%", ha=ha, va="center", fontsize=LABEL - 1, color=C.headline,
+        ax.text(x + d * (r + 4), y + 6, f"{v:.1f}%", ha=ha, va="center", fontsize=lab, color=C.headline,
                 fontweight=700, zorder=6)
-        ax.text(x + d * (r + 4), y - 7, site, ha=ha, va="center", fontsize=LABEL - 1, color=C.headline, zorder=6)
-    kx = 494
-    ax.text(kx, 300, "DC associates", fontsize=TICK - 1, color=C.text, fontweight=600, va="top")
+        ax.text(x + d * (r + 4), y - 7, site, ha=ha, va="center", fontsize=lab, color=C.headline, zorder=6)
+    kx, ky = ph((494, 300), (14, 150))                        # size key, then the color key below it
+    ax.text(kx, ky, "DC associates", fontsize=TICK - 1, color=C.text, fontweight=600, va="top")
     vmax = DCS.associates.max()
     for i, v in enumerate((1500, 500)):
         r = DC_R * np.sqrt(v / vmax)
-        cy = 258 - i * 44
+        cy = ky - 42 - i * ph(44, 40)
         ax.add_patch(Circle((kx + 23, cy), r, fc="none", ec=C.text_muted, lw=0.8))
         ax.text(kx + 52, cy, f"{v:,}", fontsize=TICK - 1.5, color=C.text_muted, va="center")
-    for i, (lab, col) in enumerate((("Vacancy 12%+", C.focus), ("Under 12%", C.context))):
-        ax.add_patch(Circle((kx + 6, 176 - i * 17), 5.5, fc=col, ec="none"))
-        ax.text(kx + 17, 176 - i * 17, lab, fontsize=TICK - 1.5, color=C.text, va="center")
+    for i, (name, col) in enumerate((("Vacancy 12%+", C.focus), ("Under 12%", C.context))):
+        yy = ky - ph(124, 118) - i * ph(17, 16)
+        ax.add_patch(Circle((kx + 6, yy), 5.5, fc=col, ec="none"))
+        ax.text(kx + 17, yy, name, fontsize=TICK - 1.5, color=C.text, va="center")
     (mx, my), mr = pos["Memphis"]
     marker(ax, (mx + mr, my - mr), 3, offset=(4, -2))
     (px, py), pr = pos["Phoenix"]
@@ -290,7 +293,7 @@ def dc_anatomy():
     marker(ax, (dx - dr - 52, dy), 5, offset=(-12, 0))
     (cx, cy), cr = pos["Columbus"]
     marker(ax, (cx, cy + cr), 6, offset=(0, 9))
-    marker(ax, (kx, 300), 7, offset=(-14, -8))
+    marker(ax, (kx, ky), 7, offset=ph((-14, -8), (150, -6)))
     marker(ax, m.centre("MT"), 8)
     return fig, (TEXT["dc_headline"] + ": " + ", ".join(f"{s.site} {s.vacancy_pct:.1f}%" for _, s in
                                                        DCS[DCS.site.isin(DC_FOCUS)].iterrows()) + ".")
@@ -299,26 +302,27 @@ def dc_anatomy():
 # ================================================================== WORLD
 @exhibit
 def geo_world_anatomy():
-    fig = fig_px(620, 300)
+    fig = fig_px(620, ph(300, 480))                          # phones: 340 x 355, key under the map
     fig.set_layout_engine("none")
     ax = gs.canvas(fig)
-    w = world_map((0, 6, 620, 290))
+    w = world_map(ph((0, 6, 620, 290), (0, 118, 340, 159)))
     w.draw(ax, W_FILL, default=BASE, ec="white", lw=0.45)
     for k, lab in ((W_TOP, f"{WD.country[W_TOP]}\n{W_RATE[W_TOP]:.1f}"), ("840", f"U.S.\n{W_US:.1f}")):
         x, y = w.centre(k)
         if k == "840":
             x, y = x + 6, y - 6
-        ax.text(x, y, lab, ha="center", va="center", fontsize=TICK - 2, fontweight=700, linespacing=1.05, zorder=5,
-                color=mv.text_on(W_FILL[k]))
-    key_stack(ax, 14, 118, "Candidates per role", W_LABELS, W_RAMP, size=TICK - 1.5, sq=10, step=14,
+        ax.text(x, y, lab, ha="center", va="center", fontsize=ph(TICK - 2, TICK - 4), fontweight=700, linespacing=1.05,
+                zorder=5, color=mv.text_on(W_FILL[k]))
+    ky = ph(118, 104)
+    key_stack(ax, 14, ky, "Candidates per role", W_LABELS, W_RAMP, size=TICK - 1.5, sq=10, step=14,
                        extra=[("Not assessed", BASE)])
     marker(ax, w.point(-170, 20, gs.equal_earth), 3)
     marker(ax, w.centre("156"), 4)
-    marker(ax, (14, 118), 5, offset=(116, -6))
+    marker(ax, (14, ky), 5, offset=(ph(116, 200), -6))
     ix, iy = w.centre(W_TOP)
     marker(ax, (ix + 26, iy - 16), 6)
     ux, uy = w.centre("840")
-    marker(ax, (ux - 34, uy - 4), 7)
+    marker(ax, (ux - ph(34, 22), uy - 4), 7)
     return fig, (TEXT["world_headline"] + ". " + ", ".join(f"{WD.country[k]} {v:.1f}" for k, v in
                                                           W_RATE.sort_values(ascending=False).head(4).items()) + ".")
 
@@ -326,16 +330,17 @@ def geo_world_anatomy():
 # ================================================================== ZOOM-IN
 @exhibit
 def geo_zoom_anatomy():
-    fig = fig_px(620, 320)
+    fig = fig_px(620, ph(320, 560))                          # phones: 340 x 415, locator and key under the zoom
     fig.set_layout_engine("none")
-    W = 372
-    zax = gs.canvas(fig, (0, 0, W / 620, 1))
-    z = zoom_map((0, 0, W, 320))
+    FW, FH = fig.get_size_inches() * 72
+    W, H, Y0 = ph((372, 320, 0), (340, 250, 165))
+    zax = gs.canvas(fig, (0, Y0 / FH, W / FW, H / FH))
+    z = zoom_map((0, Y0, W, H))
     draw_zoom(zax, z)
     for k in Z_CORE:
         x, y = z.centre(k)
         dx, dy = {"48113": (10, -9), "48439": (2, -8)}.get(k, (0, 0))
-        zax.text(x + dx, y + dy, f"{CT.county[k]}\n{Z_RATE[k]:.2f}", ha="center", va="center", fontsize=TICK - 2,
+        zax.text(x + dx, y + dy, f"{CT.county[k]}\n{Z_RATE[k]:.2f}", ha="center", va="center", fontsize=ph(TICK - 2, TICK - 3),
                  fontweight=700, linespacing=1.05, color=mv.text_on(Z_FILL[k]), zorder=5)
     ix, iy = z.point(*gs.CITY["Irving"])
     zax.add_patch(Circle((ix, iy), 4.5, fc="white", ec=C.accent, lw=1.8, zorder=6))
@@ -345,12 +350,13 @@ def geo_zoom_anatomy():
     zax.text(tx, ty + 7, "OKLAHOMA", fontsize=MINI - 3, color=C.text_muted, ha="left", va="bottom", zorder=5)
     zax.text(tx + 14, ty - 12, "TEXAS", fontsize=MINI - 3, color=C.text_muted, ha="left", va="top", zorder=5)
     ax = gs.canvas(fig)
-    loc, (lx, ly) = locator(ax, (392, 214, 190, 102))
-    ax.add_patch(Rectangle((0.6, 0.6), W - 1.2, 318.8, fc="none", ec=C.accent, lw=1.1, zorder=7))  # the frame
-    key_stack(ax, 392, 196, "Postings per candidate", CLASS_LABELS, RAMP, size=TICK - 1.5, sq=10, step=14,
+    loc, (lx, ly) = locator(ax, ph((392, 214, 190, 102), (150, 50, 190, 102)))
+    ax.add_patch(Rectangle((0.6, Y0 + 0.6), W - 1.2, H - 1.2, fc="none", ec=C.accent, lw=1.1, zorder=7))  # the frame
+    kx, ky = ph((392, 196), (10, 150))
+    key_stack(ax, kx, ky, "Postings per candidate", CLASS_LABELS, RAMP, size=TICK - 1.5, sq=10, step=14,
               extra=[("Under 10 candidates", NODATA), ("Outside study area", BASE)])
     marker(ax, (lx, ly), 3, offset=(10, 10))
-    marker(ax, (392, 196), 4, offset=(-12, -6))
+    marker(ax, (kx, ky), 4, offset=ph((-12, -6), (215, -4)))
     marker(ax, (ix, iy), 5, offset=(0, -15))
     sx, sy = z.centre(CT_SMALL.index[0])
     marker(ax, (sx, sy), 7, offset=(-14, 0))

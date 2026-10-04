@@ -1,6 +1,6 @@
 # Roadmap and status
 
-Last updated: 2026-10-04 (Mac build verified; bundled code font). Read this first when resuming work, whether you're a person or an agent.
+Last updated: 2026-10-04 (Mac build verified; bundled code font; phone versions of the hero exhibits). Read this first when resuming work, whether you're a person or an agent.
 
 ## Done
 
@@ -47,7 +47,7 @@ Third round (2026-10-01, v1.1.0), from a reader review (a consultant and a devel
 Open for the owner: tag `v1.1.0` on GitHub so the pip install line works; publish the release zip to SharePoint; Power BI checks (on hold); load the portable skill in Claude.ai and Copilot once to confirm.
 
 Open, for the owner:
-- Phone view: wide exhibits scroll sideways ("Swipe to see the full chart") rather than shrink. Phone-specific exhibits would help if the guide is read on phones a lot.
+- ~~Phone view~~ Done 2026-10-04: the 29 hero exhibits (anatomies, the fundamentals pair, the scenarios chart) are rendered a second time in phone mode (`exhibits.PHONE`, 340 px wide, taller, markers and labels re-placed with `ph(desktop, phone)`), marked `{{exhibit:name|phone}}` in the pages; `guide.css` shows that copy under 560 px. Only the four slide mock-ups (ghost deck, McKesson slide, two charts, roadmap) still scroll sideways with the swipe hint (`|min`). The standalone file grew to about 10 MB.
 - Power BI: the theme now names `Libre Franklin SemiBold` for visual titles and `Libre Franklin Bold` for card callouts (Segoe UI fallbacks). Check both render as intended in Desktop and the Service.
 - Excel's Filled Map offering Robinson for world maps is stated in the Geo build page but not verified in Excel.
 
@@ -56,7 +56,7 @@ Distribution and agents (v1.1.0, 2026-10-01), done: `mckviz` installs from a tag
 - If the repo is private, `pip install` from GitHub needs a token (see `docs/ci.md`); the wheel in the bundle is the offline fallback.
 - **Possible future: an MCP server** exposing the kit to any MCP-capable assistant (tools such as `lint_chart`, `get_color_roles`, `choose_chart(question_type)`, `get_cookbook(page)`), so agents get the current rules without copying files. Worth it only if many tools outside Claude Code and Copilot need the kit; the portable skill covers those two today.
 
-How to extend: add `guide/ex_<section>.py` (exhibits register on import) and `guide/pages/<section>.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{folio}}`), add the page to `PAGES` in `tools/build_guide.py`, build, then review contact sheets and the PDF pages by eye.
+How to extend: add `guide/ex_<section>.py` (exhibits register on import) and `guide/pages/<section>.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{folio}}`), add the page to `PAGES` in `tools/build_guide.py`, build, then review contact sheets and the PDF pages by eye. For a hero exhibit, mark it `{{exhibit:name|phone}}` and check it in phone mode too (render with `exhibits.PHONE = True`; branch on `ph(desktop, phone)` where markers or labels collide). Testing at phone width: headless Chrome will not open a window under 500 px, so load the page in a 390 px `<iframe>` and screenshot that.
 
 ## Toolkit steps (v0.1 plan, in priority order)
 
