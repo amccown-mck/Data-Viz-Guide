@@ -284,6 +284,8 @@ def main() -> None:
     for w in ("Light", "Regular", "Medium", "SemiBold", "Bold", "Italic"):
         shutil.copy2(ROOT / "fonts" / "LibreFranklin" / f"LibreFranklin-{w}.ttf", OUT / "fonts")
     shutil.copy2(ROOT / "fonts" / "LibreFranklin" / "OFL.txt", OUT / "fonts")
+    shutil.copy2(ROOT / "fonts" / "Inconsolata" / "Inconsolata-Regular.ttf", OUT / "fonts")   # code blocks
+    shutil.copy2(ROOT / "fonts" / "Inconsolata" / "OFL.txt", OUT / "fonts" / "OFL-Inconsolata.txt")
 
     unused = sorted(set(svgs) - used)
     if unused:

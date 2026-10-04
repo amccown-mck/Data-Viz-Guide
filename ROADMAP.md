@@ -1,6 +1,6 @@
 # Roadmap and status
 
-Last updated: 2026-10-01 (v1.1.0: distribution and agents). Read this first when resuming work, whether you're a person or an agent.
+Last updated: 2026-10-04 (Mac build verified; bundled code font). Read this first when resuming work, whether you're a person or an agent.
 
 ## Done
 
@@ -11,7 +11,7 @@ Last updated: 2026-10-01 (v1.1.0: distribution and agents). Read this first when
 | Design tokens | Single source of truth, including chart roles (focus, accent, context, total), categorical-6, sequential, and diverging (orange-blue, CVD-safe) | `tokens/tokens.json` |
 | Token build | `python tokens/build.py` generates CSS, Plotly, Vega-Lite, mplstyle, ggplot2, Power BI theme, Office theme XML, a palette report, and swatches | `dist/` |
 | Python package | `mckviz` 1.1.0: `use()`, `highlight()`, `titles()`, `source()`, `label_bars()`, `label_line_ends()`, `callout()`, `shade_period()`, `pl_finish()`, `fmt_num()`, `suppress_small()`, `lint()`, and `mckviz.geo` (real maps). Installable from a tag: `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"`; fonts and map data are package data | `python/mckviz/` |
-| Fonts | Static Libre Franklin TTFs (SIL OFL); synced into `python/mckviz/fonts/` by `tokens/build.py` | `fonts/LibreFranklin/` |
+| Fonts | Static Libre Franklin TTFs (SIL OFL); synced into `python/mckviz/fonts/` by `tokens/build.py`. Inconsolata Regular (SIL OFL) for code in the guide, so Windows and Mac builds lay out the same | `fonts/LibreFranklin/`, `fonts/Inconsolata/` |
 | Versioning | One `VERSION` file read by `pyproject.toml`, the guide cover, the agent rules, the skill and the bundle; `CHANGELOG.md` (Keep a Changelog). The owner tags `v<version>` | `VERSION`, `CHANGELOG.md` |
 | Release bundle | `tools/make_bundle.py` → `dist/release/McKesson-DataViz-Kit-v<version>.zip` (not committed) with `START-HERE.html` for non-technical readers: guide (standalone + PDF), one-pagers, Office, Power BI, fonts, web themes, `mckviz` wheel, agent rules and skill | `tools/make_bundle.py` |
 | Portable agent skill | `dist/skills/mck-chart/`: SKILL.md, rules, chooser, principles, QA, all cookbook pages, theme assets, `scripts/check_env.py`; works in `~/.claude/skills/`, `.claude/skills/`, `.github/skills/`, and zipped for Claude.ai. Generated with the in-repo `.github/skills/mck-chart/SKILL.md` from one template | `agents/skill/`, `tools/build_skill.py` |
@@ -90,10 +90,24 @@ python -m venv .venv; .\.venv\Scripts\python.exe -m pip install -e .\python[exam
 # R packages: ggplot2 dplyr readr tidyr stringr scales ragg systemfonts gt sf maps mapproj ggalluvial treemapify packcircles
 ```
 
+On a Mac (the owner also works from one), the same steps with `uv` (the system Python is 3.9; `mckviz` needs 3.10+):
+
+```bash
+cd ~/repos/Data-Viz-Guide
+uv venv --python 3.12 .venv
+uv pip install --python .venv/bin/python -e "./python[examples]" kaleido python-pptx openpyxl xlsxwriter pymupdf jsonschema pytest
+chflags -R nohidden .venv        # see Working notes: iCloud marks dot-folders hidden and Python then skips the venv's .pth files
+.venv/bin/python tokens/build.py
+.venv/bin/python tools/build_guide.py      # needs Google Chrome in /Applications
+.venv/bin/python tools/check_snippets.py
+.venv/bin/python -m pytest python/tests
+```
+
 ## Working notes
 
 - The source McKinsey images and brand PDFs stay **outside** the repo, in OneDrive `Desktop\McK-Data-Viz\`: `gif-frames\unique\` (61 stills), `hi-res-slides\` (4 spreads), `_work\mck-pages\` (page notes), `McK-Brand-reference\` (brand PDFs), `rebrand-site-images\` (rebrand case-study images). Never commit them.
 - The transcripts of the sessions that built v0.1 were lost; this file and `git log` are the record.
+- **Mac gotcha (2026-10-04):** if the repo sits in an iCloud-synced folder (Desktop or Documents), macOS keeps re-applying the `hidden` flag to dot-folders such as `.venv`, and Python 3.12+ silently skips hidden `.pth` files, so `import mckviz` fails until `chflags -R nohidden .venv` is run again. iCloud also leaves `name 2.ext` duplicates behind. Keep the clone outside iCloud (for example `~/repos/`), or re-run `chflags` before building.
 - Edit colors and type only in `tokens/tokens.json`, then rebuild. Never hand-edit `dist/`.
 - **How McKesson actually uses color (owner, 2026-09-30):** `#005A8C` is the primary and used all the time; navy `#143359` and light blue `#66C4FF` are common. Orange `#EF8200` is almost never used unless it carries meaning (executives read it as a warning), so it is `semantic.negative` only: below target, shrinking, a shortfall, the low end of the diverging scale. The highlight accent is navy. Amber `#FFB502` is never used internally. Categorical order: blue, navy, light blue, teal, deep teal, orange (last resort). Deep teals are common.
 - Examples use the Workforce Innovation lens (workforce analytics, intelligence and planning), not plain HR reporting. The team is called "Workforce Innovation" in audience and team wording. They mix internal and external signals at the individual, team, firm, and sector levels.

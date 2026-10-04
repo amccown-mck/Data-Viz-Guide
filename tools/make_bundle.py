@@ -104,7 +104,7 @@ h2 {{ color: var(--head); font-size: 20px; margin: 36px 0 8px; font-weight: 600;
 .first {{ background: var(--panel); padding: 18px 22px; border-left: 4px solid var(--focus); }}
 .first p {{ margin: 0 0 6px; }}
 a {{ color: var(--focus); }}
-code {{ font-family: Consolas, "Courier New", monospace; font-size: 14px; background: var(--panel); padding: 1px 4px;
+code {{ font-family: Consolas, Menlo, "Courier New", monospace; font-size: 14px; background: var(--panel); padding: 1px 4px;
         overflow-wrap: anywhere; }}
 ul {{ padding-left: 20px; }} li {{ margin: 4px 0; }}
 ol li {{ margin: 6px 0; }}

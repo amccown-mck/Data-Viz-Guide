@@ -8,6 +8,7 @@
 @font-face { font-family: "Libre Franklin"; font-weight: 600; src: url("fonts/LibreFranklin-SemiBold.ttf"); }
 @font-face { font-family: "Libre Franklin"; font-weight: 700; src: url("fonts/LibreFranklin-Bold.ttf"); }
 @font-face { font-family: "Libre Franklin"; font-weight: 400; font-style: italic; src: url("fonts/LibreFranklin-Italic.ttf"); }
+@font-face { font-family: "Inconsolata"; font-weight: 400; src: url("fonts/Inconsolata-Regular.ttf"); }  /* code; bundled so Windows and Mac builds match */
 
 :root {
   --g-ink: var(--mck-text-headline);
@@ -31,7 +32,7 @@ body {
   -webkit-font-smoothing: antialiased; -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
 a { color: var(--g-blue); text-decoration-thickness: 1px; text-underline-offset: 2px; }
-code { font: 13px/1.4 Consolas, "Cascadia Mono", monospace; color: var(--g-ink); }
+code { font: 14px/1.4 Inconsolata, Consolas, "Cascadia Mono", Menlo, monospace; color: var(--g-ink); }
 p { margin: 0 0 0.75em; }
 ul, ol { margin: 0 0 0.75em; padding-left: 1.15em; }
 li { margin-bottom: 0.3em; }
@@ -143,7 +144,7 @@ svg.ex { display: block; width: 100%; height: auto; max-width: var(--w); }
 .kit th { text-align: left; font-weight: 600; color: var(--g-ink); padding: 0 10px 6px 0; border-bottom: 1.5px solid var(--g-ink); }
 .kit td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--g-rule); vertical-align: top; }
 .kit td:first-child { font-weight: 600; color: var(--g-ink); }
-.kit td:last-child { font-family: Consolas, "Cascadia Mono", monospace; font-size: 11.5px; color: var(--g-muted); }
+.kit td:last-child { font-family: Inconsolata, Consolas, "Cascadia Mono", Menlo, monospace; font-size: 12.5px; color: var(--g-muted); }
 .itable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .itable th { text-align: left; font-weight: 600; color: var(--g-ink); padding: 0 10px 6px 0; border-bottom: 1.5px solid var(--g-ink); }
 .itable td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--g-rule); vertical-align: top; }
@@ -170,7 +171,7 @@ svg.ex { display: block; width: 100%; height: auto; max-width: var(--w); }
 .k.good { color: var(--g-blue); }
 .swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; margin: 4px 0 2px; }
 .swatches div { height: 20px; }
-.hexes { display: grid; grid-template-columns: repeat(6, 1fr); font: 11px/1.3 Consolas, monospace; color: var(--g-muted); }
+.hexes { display: grid; grid-template-columns: repeat(6, 1fr); font: 11px/1.3 Inconsolata, Consolas, Menlo, monospace; color: var(--g-muted); }
 .palette-row { display: grid; grid-template-columns: 190px 1fr; gap: 16px; align-items: center; padding: 8px 0;
                border-top: 1px solid var(--g-rule); }
 .palette-row:first-of-type { border-top: 0; }
@@ -192,7 +193,7 @@ svg.ex { display: block; width: 100%; height: auto; max-width: var(--w); }
 .platform:first-child { border-top: 0; }
 .platform h5 { margin: 0; font-size: 13px; font-weight: 600; color: var(--g-ink); }
 .platform p { margin: 0; }
-pre.snip { margin: 6px 0 0; background: var(--g-stage); padding: 10px 12px; overflow-x: auto; font: 12px/1.45 Consolas, "Cascadia Mono", monospace; color: var(--g-ink); }
+pre.snip { margin: 6px 0 0; background: var(--g-stage); padding: 10px 12px; overflow-x: auto; font: 13px/1.45 Inconsolata, Consolas, "Cascadia Mono", Menlo, monospace; color: var(--g-ink); }
 
 /* ---------- cover and contents */
 .cover { grid-template-columns: 1fr; background: var(--g-ink); color: #fff; }

@@ -4,6 +4,13 @@ All notable changes to the McKesson data-visualization kit (the guide, the theme
 
 The version lives in one place, the `VERSION` file at the repo root. `tokens/build.py` copies it into the Python package, and the guide cover, the agent rules, the portable skill and the release bundle read it from there. Releases are tagged `v<version>` (for example `v1.1.0`); `pip install` and the release bundle refer to those tags.
 
+## [Unreleased]
+
+### Changed
+- The guide's code font is now bundled: Inconsolata Regular (SIL OFL, `fonts/Inconsolata/`) replaces the Windows-only `Consolas, "Cascadia Mono"` stack in `guide/guide.css`, with Consolas, Cascadia Mono and Menlo as fallbacks. On a Mac the guide used to fall back to Courier, which is wider, so two spreads overflowed their 16:9 page when built there; now Windows and Mac builds lay out identically. Code sizes went up about 10% to keep the same visual size (Inconsolata is narrower).
+- `START-HERE.html` in the release bundle lists Menlo as a code-font fallback for Mac readers.
+- `ROADMAP.md` gains Mac resume commands and a note on iCloud-synced folders.
+
 ## [1.1.0] - 2026-10-01
 
 Second review round, plus packaging so the kit travels outside this repo.
