@@ -1,6 +1,6 @@
 # Checking charts in CI
 
-`mv.lint(fig, strict=True)` raises `mckviz.LintError` when a matplotlib or Plotly figure breaks a house rule at "error" level: a missing headline, subtitle or source, more than 6 colors, off-palette or red–green colors, bars not starting at zero. Dual axes, legends and text under the minimum size are reported at "warn" level, so they show in the log but don't fail the build. Any repo that builds charts in Python can run it on every push, so a broken chart fails the build instead of reaching a deck.
+`mv.lint(fig, strict=True)` raises `mckviz.LintError` when a matplotlib or Plotly figure breaks a house rule at "error" level: a missing headline, subtitle or source, more than 6 colors, red with green, the amber family, bars not starting at zero, a pie or donut over 5 segments, 3D, or (Plotly) three or more y axes. Off-palette colors, label-like or long headlines, a second y axis, legends, rotated labels and text under the minimum size are reported at "warn" level, so they show in the log but don't fail the build. Any repo that builds charts in Python can run it on every push, so a broken chart fails the build instead of reaching a deck.
 
 The lint checks the mechanics. It can't tell whether the headline is true or the chart type fits the question, so a person (or agent) still runs [qa-checklist.md](qa-checklist.md).
 
@@ -73,7 +73,7 @@ jobs:
         run: pytest tests/test_charts.py -q
 ```
 
-If the kit repo is private, give the job read access: create a fine-grained token with read access to the kit repo, store it as a secret (for example `KIT_TOKEN`), and install with `pip install "mckviz @ git+https://x-access-token:${{ secrets.KIT_TOKEN }}@github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"`. Without network access to GitHub, commit the wheel from the release bundle (`python/mckviz-<version>-py3-none-any.whl`) and `pip install` that file instead.
+The `@v1.1.0` tag must exist on GitHub (use the tag that matches the kit's `VERSION`). If the kit repo is private, give the job read access: create a fine-grained token with read access to the kit repo, store it as a secret (for example `KIT_TOKEN`), and install with `pip install "mckviz @ git+https://x-access-token:${{ secrets.KIT_TOKEN }}@github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"`. Without network access to GitHub, commit the wheel from the release bundle (`python/mckviz-<version>-py3-none-any.whl`) and `pip install` that file instead.
 
 ## Upgrading
 

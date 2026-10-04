@@ -48,6 +48,7 @@
 
 ### Python — matplotlib + `mckviz`
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -101,6 +102,7 @@ mv.save(fig, "out/small-multiples.png")
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 

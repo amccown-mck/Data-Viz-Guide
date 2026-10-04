@@ -7,13 +7,30 @@ name = "mckviz"
 # The version lives in mckviz/VERSION, a copy of the repo-level VERSION file synced by tokens/build.py.
 dynamic = ["version"]
 description = "McKesson data-visualization theme and helpers for matplotlib and Plotly"
+readme = "README.md"
 requires-python = ">=3.10"
+# Code license: owner to confirm. The bundled fonts are SIL OFL 1.1 (fonts/OFL.txt) and the map data ISC over
+# public-domain boundaries (geodata/README.md); see README.md.
+license = { text = "Proprietary - McKesson internal" }
+authors = [{ name = "McKesson Workforce Innovation" }]   # TODO(owner): add a maintainer name and email
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Framework :: Matplotlib",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
 dependencies = ["matplotlib>=3.8", "numpy>=1.26"]
 
 [project.optional-dependencies]
-plotly = ["plotly>=5.20"]
+# 5.24 ships plotly.js 2.35: layout.title.subtitle and numeric font.weight, both used by the "mck" template.
+plotly = ["plotly>=5.24"]
 pandas = ["pandas>=2.0"]
-examples = ["plotly>=5.20", "pandas>=2.0", "numpy>=1.26"]
+examples = ["plotly>=5.24", "pandas>=2.0"]
 dev = ["pytest>=8", "jsonschema>=4", "pandas>=2.0"]
 
 [project.urls]

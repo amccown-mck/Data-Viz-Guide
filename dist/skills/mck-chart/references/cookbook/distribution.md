@@ -45,7 +45,7 @@
 | Footnote what the box and whiskers mean | Assume the audience reads quartiles and 1.5 × IQR whiskers |
 
 ## Workforce examples
-- **Individual → job family, internal (strip + box):** *Headline:* "One in four pharmacy technicians is paid below 0.90 of range midpoint, about 4x the share in any other job family". *Subtitle:* "Compa-ratio (base pay ÷ salary-range midpoint) by job family, U.S. regular employees, Mar 2026". *Data:* [`examples/data/compa_ratio_individuals.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/compa_ratio_individuals.csv) (HRIS base pay ÷ range midpoint; 1,700 synthetic employees). Built below.
+- **Individual → job family, internal (strip + box):** *Headline:* "One in four pharmacy technicians is paid below 0.90 of range midpoint, about 4x the share in any other job family". *Subtitle:* "Compa-ratio (base pay ÷ salary-range midpoint) by job family, U.S. regular employees, Mar 2026". *Data:* [`assets/data/compa_ratio_individuals.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/compa_ratio_individuals.csv) (HRIS base pay ÷ range midpoint; 1,700 synthetic employees). Built below.
 - **Manager level, internal (threshold histogram):** *Headline:* "About 1 in 8 people managers runs a team wider than the 15-report design limit". *Subtitle:* "People managers by number of direct reports, U.S., Mar 2026 (number of managers)". *Data:* HRIS position hierarchy. One bin per span value, with the bins above 15 in focus blue (Plotly snippet below).
 - **Requisition level, internal + external (box plots, SWP):** *Headline:* "Specialty nursing requisitions take twice as long to fill as the market median, and the slowest quarter take over 100 days". *Subtitle:* "Days from requisition approval to accepted offer, by job family, H1 2026; dashed line = external market median". *Data:* ATS filled requisitions joined to an external time-to-fill benchmark. Use box plots for 12 job families, with specialty nursing in focus blue.
 
@@ -70,7 +70,7 @@ import mckviz as mv
 mv.use()
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/compa_ratio_individuals.csv"))
+df = pd.read_csv(Path("assets/data/compa_ratio_individuals.csv"))
 stats = df.groupby("job_family").compa_ratio.agg(n="size", median="median", low=lambda s: (s < 0.9).mean() * 100)
 stats = stats[stats.n >= 10]                                          # never plot groups under the minimum n
 order = stats.sort_values("median", ascending=False).index            # lowest median at the bottom
@@ -170,7 +170,7 @@ Pre-bin with `np.histogram` and draw `go.Bar`, as above, rather than `go.Histogr
 6. In PowerPoint, paste as a native chart, add the headline in the title placeholder and the subtitle at 14 pt `#505050`. Build-up: show the grey histogram first, then recolor the over-limit bins and add the annotation.
 
 ### Power BI
-- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json).
+- Apply [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json).
 - **Histogram:** create bins with **New group › Bin type: Size of bins** (1 for spans) on the measure column, then use a **Clustered column chart** with the bins on the X-axis. Set **Columns › Spacing › Inner padding = 0**. Color the bins with **fx › Rules** (bin > 15 → `#005A8C`, else `#B4B0A5`). Add the threshold through **Analytics › X-axis constant line**.
 - **Box / strip:** there is no native box plot. Use the certified **Box and Whisker chart by MAQ Software** visual, or a **Scatter chart** with the group on Y and a jitter column in Power Query. Turn tooltips off for the individual points.
 - Enforce the minimum n: drop groups with `COUNTROWS() < 10` with a visual-level filter on a measure, and never place an employee ID in the tooltip fields.
@@ -178,9 +178,9 @@ Pre-bin with `np.histogram` and draw `go.Bar`, as above, rather than `go.Histogr
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(readr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
-df <- read_csv("examples/data/compa_ratio_individuals.csv")
+df <- read_csv("assets/data/compa_ratio_individuals.csv")
 stats <- df |> group_by(job_family) |>
   summarise(n = n(), median = median(compa_ratio), low = mean(compa_ratio < 0.9) * 100) |>
   filter(n >= 10)

@@ -48,6 +48,7 @@
 
 ### Python — matplotlib + `mckviz`
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -100,6 +101,7 @@ For a **100% stacked area**, divide each column by `total` before `stackplot`, s
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import plotly.graph_objects as go
 
 import mckviz as mv

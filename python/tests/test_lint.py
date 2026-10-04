@@ -185,3 +185,109 @@ def test_status_colors_are_allowed_on_a_tracker_but_amber_is_not_a_series_color(
     ax.bar([0, 1], [3, 4], color=[s["at_risk"]["value"], C.focus])
     assert any(f.rule == "do-not-use" for f in mv.lint(fig, quiet=True))
     plt.close(fig)
+
+
+# ----------------------------------------------------------------------------------------------- colormaps and images
+def _titled(fig):
+    mv.titles(fig, "Three of five sites run more than 4 points above the benchmark", "Gap to benchmark by site, 2026 (pts)")
+    mv.source(fig, "Source: test")
+    return fig
+
+
+@pytest.mark.parametrize("cmap", [mv.sequential_cmap(), mv.sequential_cmap("teal"), mv.sequential_cmap("orange"),
+                                  mv.diverging_cmap()])
+def test_imshow_heatmap_with_token_cmap_is_one_on_palette_color(cmap):
+    import numpy as np
+
+    fig, ax = plt.subplots()
+    ax.imshow(np.arange(64, dtype=float).reshape(8, 8), cmap=cmap)
+    found = mv.lint(_titled(fig), quiet=True)
+    assert not {"max-6-colors", "palette"} & rules(found), found
+    plt.close(fig)
+
+
+def test_color_mapped_scatter_and_pcolormesh_with_token_cmaps_pass():
+    import numpy as np
+
+    fig, (a, b) = plt.subplots(1, 2)
+    x = np.linspace(-1, 1, 40)
+    a.scatter(x, x ** 2, c=x, cmap=mv.diverging_cmap())
+    b.pcolormesh(np.arange(30, dtype=float).reshape(5, 6), cmap=mv.sequential_cmap())
+    found = mv.lint(_titled(fig), quiet=True)
+    assert not {"max-6-colors", "palette"} & rules(found), found
+    plt.close(fig)
+
+
+def test_imshow_is_seen_and_an_off_palette_cmap_still_fails():
+    import numpy as np
+
+    fig, ax = plt.subplots()
+    ax.imshow(np.arange(64, dtype=float).reshape(8, 8), cmap="viridis")
+    found = mv.lint(_titled(fig), quiet=True)
+    assert "palette" in rules(found, "warn")
+    assert "max-6-colors" in rules(found, "error")
+    plt.close(fig)
+
+
+def test_single_off_palette_color_near_a_ramp_end_is_still_flagged():
+    fig, ax = plt.subplots()
+    ax.bar([0, 1], [1, 2], color=[C.focus, "#7A3FD1"])          # purple: on no ramp
+    found = mv.lint(_titled(fig), quiet=True)
+    assert "palette" in rules(found, "warn")
+    plt.close(fig)
+
+
+# ----------------------------------------------------------------------------------------------- Plotly gaps
+HEAD = dict(headline="Two frontline job families lose about 1 in 4 people a year",
+            subtitle="Voluntary attrition by job family, FY26 (%)", source="Source: test", quiet=True)
+
+
+@pytest.mark.parametrize("trace", [go.Scatter3d(x=[1, 2], y=[1, 2], z=[1, 2]), go.Surface(z=[[1, 2], [3, 4]]),
+                                   go.Mesh3d(x=[0, 1, 0], y=[0, 0, 1], z=[0, 1, 1])])
+def test_plotly_3d_traces_are_errors(trace):
+    assert "no-3d" in rules(mv.lint(go.Figure(trace), **HEAD), "error")
+
+
+def test_plotly_third_y_axis_is_an_error_and_subplots_are_not():
+    from plotly.subplots import make_subplots
+
+    fig = go.Figure([go.Scatter(y=[1, 2], line_color=C.focus), go.Scatter(y=[2, 1], yaxis="y2", line_color=C.accent),
+                     go.Scatter(y=[3, 4], yaxis="y3", line_color=C.context)])
+    fig.update_layout(yaxis2=dict(overlaying="y", side="right"), yaxis3=dict(overlaying="y", anchor="free"))
+    assert "no-dual-axis" in rules(mv.lint(fig, **HEAD), "error")
+    lone = go.Figure([go.Scatter(y=[1, 2]), go.Scatter(y=[3, 4], yaxis="y3")])
+    assert "no-dual-axis" in rules(mv.lint(lone, **HEAD), "warn")
+    panels = make_subplots(rows=3, cols=1)
+    for i in range(3):
+        panels.add_trace(go.Scatter(y=[1, 2], line_color=C.focus), row=i + 1, col=1)
+    assert "no-dual-axis" not in rules(mv.lint(panels, **HEAD))
+
+
+def test_plotly_texttemplate_counts_as_bar_labels():
+    fig = go.Figure(go.Bar(x=VALS, y=CATS, orientation="h", texttemplate="%{x:.1f}%",
+                           marker_color=mv.pl_highlight(CATS, focus=CATS[:2])))
+    assert "labels-or-axis" in rules(mv.lint(fig, **HEAD), "warn")
+    fig.update_xaxes(visible=False)
+    assert "labels-or-axis" not in rules(mv.lint(fig, **HEAD))
+
+
+def test_plotly_text_below_minimum_size_warns():
+    fig = go.Figure(go.Bar(x=VALS, y=CATS, orientation="h", text=VALS, textfont_size=8, marker_color=C.focus))
+    fig.update_xaxes(visible=False)
+    fig.add_annotation(text="note", font_size=7, x=1, y=1, showarrow=False)
+    found = mv.lint(fig, **HEAD)
+    assert "min-text-size" in rules(found, "warn")
+    assert "7" in next(f.message for f in found if f.rule == "min-text-size")
+    fig.update_traces(textfont_size=12)
+    fig.layout.annotations[0].font.size = 12
+    assert "min-text-size" not in rules(mv.lint(fig, **HEAD))
+
+
+def test_categorical_series_do_not_collapse_into_a_ramp():
+    fig, ax = plt.subplots()
+    colors = mv.CATEGORICAL + [mv.FILL_TINTS[0]]                     # 7 distinct non-grey fills
+    ax.bar(range(7), [1] * 7, color=colors)
+    found = mv.lint(_titled(fig), quiet=True)
+    assert "max-6-colors" in rules(found, "error")                  # blue + navy + orange are not "the diverging ramp"
+    assert "orange-semantic" in rules(found, "info")
+    plt.close(fig)

@@ -5,11 +5,11 @@
   Copy this file, replace the DATA and the text in each <figure>, and keep the pattern:
     - the headline, subtitle, footnote and source are HTML text, so they stay crisp, wrap and are readable by screen readers;
     - the chart library draws only the data (no in-chart title or legend);
-    - every color comes from a CSS variable in dist/web/mck-viz.css. Never type a hex value here.
+    - every color comes from a CSS variable in assets/web/mck-viz.css. Never type a hex value here.
 
-  Paths: the two dist/ files below are linked relative to this file (templates/html/). If you move the page,
-  copy dist/web/mck-viz.css and dist/web/mck-plotly-template.js next to it and update the two paths.
-  Rules: docs/principles.md · chart recipes: docs/cookbook/ · checklist: docs/qa-checklist.md
+  Paths: the two theme files below are linked relative to this file (assets/html/ in the skill). If you move the page,
+  copy assets/web/mck-viz.css and assets/web/mck-plotly-template.js next to it and update the two paths.
+  Rules: references/principles.md · chart recipes: references/cookbook/ · checklist: references/qa-checklist.md
 -->
 <html lang="en">
 <head>
@@ -20,34 +20,42 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../web/mck-viz.css">
 <script src="../web/mck-plotly-template.js"></script>
+<!-- Plotly loads from its CDN. Offline or locked-down intranet: download plotly-4.1.1.min.js once, put it next to
+     this page and change the src to "plotly.min.js" (vendoring). A fully self-contained single-file variant is a later task. -->
 <script src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8"></script>
 <style>
   body { margin: 0; background: var(--mck-surface-subtle); font-family: var(--mck-font); }
   main { display: grid; gap: 24px; padding: 32px 16px; max-width: 1008px; margin: 0 auto; }
   .mck-chart { box-sizing: border-box; width: 100%; margin: 0; }
-  .mck-plot { height: 420px; }
-  @media (max-width: 600px) { main { padding: 16px 0; } .mck-plot { height: 460px; } }
+  .mck-plot { aspect-ratio: var(--mck-aspect-web-inline); }      /* plot box from the chart.aspect tokens */
+  @media (max-width: 600px) { main { padding: 16px 0; } .mck-plot { aspect-ratio: var(--mck-aspect-mobile); } }
 </style>
 </head>
 <body>
 <main>
 
-  <!-- Card 1: sorted bars, grey context + blue focus, direct labels, labelled benchmark (docs/cookbook/bar.md) -->
+  <!-- Card 1: sorted bars, grey context + blue focus, direct labels, labelled benchmark (references/cookbook/bar.md) -->
   <figure class="mck-chart" aria-labelledby="bar-headline">
     <h2 class="mck-headline" id="bar-headline">Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate</h2>
     <p class="mck-subtitle">Voluntary attrition by job family, FY26 (%)</p>
     <div class="mck-plot" id="bar-chart" role="img"
          aria-label="Bar chart. Pharmacy Technician 27.4% and Distribution Center Associate 24.1% voluntary attrition, against an enterprise rate of 19.9%. The other eight job families range from 7.4% to 18.9%."></div>
+    <table class="sr-only" id="bar-table"></table>   <!-- the data for screen readers, filled from DATA below -->
+    <noscript><p class="mck-subtitle">Pharmacy Technician 27.4% and Distribution Center Associate 24.1% voluntary attrition,
+      against an enterprise rate of 19.9%; the other eight job families range from 7.4% to 18.9%.</p></noscript>
     <figcaption class="mck-footnote">Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months.<br>
       Source: Synthetic data for illustration only</figcaption>
   </figure>
 
-  <!-- Card 2: two lines, direct end labels instead of a legend, shaded gap (docs/cookbook/line.md) -->
+  <!-- Card 2: two lines, direct end labels instead of a legend, shaded gap (references/cookbook/line.md) -->
   <figure class="mck-chart" aria-labelledby="line-headline">
     <h2 class="mck-headline" id="line-headline">Without action, Data &amp; AI demand outruns internal supply by about 620 FTE by 2030</h2>
     <p class="mck-subtitle">Forecast Data &amp; AI roles, 2024–2030, base scenario (FTE)</p>
     <div class="mck-plot" id="line-chart" role="img"
          aria-label="Line chart. Demand grows from 850 FTE in 2024 to 1,590 in 2030; internal supply grows from 850 to 973, a gap of 617 FTE in 2030."></div>
+    <table class="sr-only" id="line-table"></table>
+    <noscript><p class="mck-subtitle">Demand grows from 850 FTE in 2024 to 1,590 in 2030; internal supply grows from 850 to 973,
+      a gap of 617 FTE in 2030.</p></noscript>
     <figcaption class="mck-footnote">Supply = current headcount − projected attrition + planned internal moves; excludes external hiring.
       Forecast, not actuals.<br>Source: Synthetic data for illustration only</figcaption>
   </figure>
@@ -67,6 +75,16 @@ const alpha = (hex, a) => {                                      // token hex ->
   const n = parseInt(hex.slice(1), 16);
   return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
 };
+const ANNOTATION = { color: C.annotation, size: parseFloat(tok("annotation-size")) };   // annotation role from the tokens
+const AXIS_LINE = { color: tok("chart-axis"), width: window.MCK_PLOTLY_TEMPLATE.layout.xaxis.linewidth };
+// Visually hidden data table (class sr-only), built from the same DATA as the chart.
+function srTable(id, caption, head, rows) {
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  document.getElementById(id).innerHTML = `<caption>${esc(caption)}</caption>`
+    + `<thead><tr>${head.map(h => `<th scope="col">${esc(h)}</th>`).join("")}</tr></thead><tbody>`
+    + rows.map(([k, ...vals]) => `<tr><th scope="row">${esc(k)}</th>${vals.map(x => `<td>${esc(x)}</td>`).join("")}</tr>`).join("")
+    + "</tbody>";
+}
 const PLOT_CONFIG = { displayModeBar: false, responsive: true };
 // Card layout: the HTML carries the titles, so the figure needs only a small margin.
 const base = { template: window.MCK_PLOTLY_TEMPLATE, margin: { t: 32, r: 16, b: 32, l: 8 }, autosize: true };
@@ -97,10 +115,11 @@ function drawBar() {
       ticktext: attrition.map(r => (isFocus(r) ? `<b>${r[0]}</b>` : r[0])),   // echo the highlight in the label
       tickfont: { color: C.text },
     },
-    shapes: [{ type: "line", x0: enterprise, x1: enterprise, y0: 0, y1: 1, yref: "paper", layer: "below",
+    shapes: [{ type: "line", x0: 0, x1: 0, y0: 0, y1: 1, yref: "paper", layer: "above", line: AXIS_LINE },  // zero baseline
+             { type: "line", x0: enterprise, x1: enterprise, y0: 0, y1: 1, yref: "paper", layer: "below",
                line: { color: C.total, width: 1, dash: "dot" } }],
     annotations: [{ x: enterprise, y: 1, yref: "paper", yanchor: "bottom", showarrow: false,
-                    text: `Enterprise ${enterprise.toFixed(1)}%`, font: { color: C.annotation, size: 12 } }],
+                    text: `Enterprise ${enterprise.toFixed(1)}%`, font: ANNOTATION }],
   }, PLOT_CONFIG);
 }
 
@@ -139,7 +158,7 @@ function drawLine() {
   }, PLOT_CONFIG);
 }
 
-/* Phones (docs/formats.md, mobile): end labels would squeeze the plot, so swap them for a compact key on top,
+/* Phones (references/formats.md, mobile): end labels would squeeze the plot, so swap them for a compact key on top,
    and give the bar labels more headroom. */
 const narrow = window.matchMedia("(max-width: 600px)");
 function fit() {
@@ -150,6 +169,10 @@ function fit() {
 narrow.addEventListener("change", fit);
 
 /* Draw after Libre Franklin has loaded, so Plotly measures label widths with the real font. */
+srTable("bar-table", "Voluntary attrition by job family, FY26", ["Job family", "Attrition (%)", "Headcount"],
+        [...attrition].reverse().map(([j, r, n]) => [j, r.toFixed(1), fmt(n)]));
+srTable("line-table", "Forecast Data & AI roles, FTE", ["Year", "Demand", "Internal supply"],
+        years.map((y, i) => [y, fmt(demand[i]), fmt(supply[i])]));
 document.fonts.ready.then(() => { drawBar(); drawLine(); fit(); });
 </script>
 </body>

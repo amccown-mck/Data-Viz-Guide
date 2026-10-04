@@ -1,5 +1,5 @@
 {
-  "font": "Libre Franklin",
+  "font": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
   "background": "#FFFFFF",
   "padding": 24,
   "view": {
@@ -7,6 +7,8 @@
   },
   "title": {
     "anchor": "start",
+    "font": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
+    "subtitleFont": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
     "fontSize": 20,
     "fontWeight": 600,
     "color": "#143359",
@@ -16,14 +18,18 @@
     "offset": 16
   },
   "axis": {
+    "labelFont": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
+    "titleFont": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
     "labelColor": "#737373",
     "labelFontSize": 12,
     "titleColor": "#737373",
     "titleFontSize": 12,
     "titleFontWeight": 400,
     "domainColor": "#8C8C8C",
+    "domainWidth": 1.0,
     "tickColor": "#8C8C8C",
     "gridColor": "#E6E4DE",
+    "gridWidth": 0.75,
     "ticks": false
   },
   "axisX": {
@@ -33,8 +39,22 @@
     "domain": false,
     "grid": true
   },
+  "header": {
+    "labelFont": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
+    "titleFont": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
+    "labelFontSize": 13,
+    "labelColor": "#505050",
+    "labelFontWeight": 600,
+    "labelAnchor": "start",
+    "labelOrient": "top",
+    "titleFontSize": 13,
+    "titleColor": "#737373",
+    "titleFontWeight": 400
+  },
   "legend": {
     "orient": "top",
+    "labelFont": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
+    "titleFont": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
     "labelFontSize": 13,
     "labelColor": "#505050",
     "title": null,
@@ -93,10 +113,28 @@
   },
   "point": {
     "filled": true,
-    "size": 40
+    "size": 40,
+    "fill": "#005A8C"
+  },
+  "area": {
+    "fill": "#005A8C",
+    "fillOpacity": 0.85,
+    "line": false
+  },
+  "rect": {
+    "fill": "#005A8C"
+  },
+  "arc": {
+    "fill": "#005A8C",
+    "stroke": "#FFFFFF",
+    "strokeWidth": 2
+  },
+  "rule": {
+    "stroke": "#8C8C8C",
+    "strokeWidth": 1.0
   },
   "text": {
-    "font": "Libre Franklin",
+    "font": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
     "fontSize": 13,
     "fill": "#505050"
   },

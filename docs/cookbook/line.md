@@ -52,6 +52,7 @@
 
 ### Python — matplotlib + `mckviz`
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -110,6 +111,7 @@ When every line is colored, `mv.label_line_ends(ax, fmt="{:,.0f}")` labels each 
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import plotly.graph_objects as go
 
 import mckviz as mv

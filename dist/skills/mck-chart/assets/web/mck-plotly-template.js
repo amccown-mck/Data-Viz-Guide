@@ -33,6 +33,7 @@ window.MCK_PLOTLY_TEMPLATE = {
       "#05CE90",
       "#EF8200"
     ],
+    "separators": ".,",
     "paper_bgcolor": "#FFFFFF",
     "plot_bgcolor": "#FFFFFF",
     "margin": {
@@ -45,7 +46,9 @@ window.MCK_PLOTLY_TEMPLATE = {
     "bargroupgap": 0.08,
     "xaxis": {
       "showgrid": false,
-      "zeroline": false,
+      "zeroline": true,
+      "zerolinecolor": "#8C8C8C",
+      "zerolinewidth": 1.0,
       "showline": true,
       "linecolor": "#8C8C8C",
       "linewidth": 1.0,
@@ -65,7 +68,9 @@ window.MCK_PLOTLY_TEMPLATE = {
     },
     "yaxis": {
       "showgrid": true,
-      "zeroline": false,
+      "zeroline": true,
+      "zerolinecolor": "#8C8C8C",
+      "zerolinewidth": 1.0,
       "showline": false,
       "linecolor": "#8C8C8C",
       "linewidth": 1.0,
@@ -103,7 +108,7 @@ window.MCK_PLOTLY_TEMPLATE = {
       "bgcolor": "#143359",
       "bordercolor": "#143359",
       "font": {
-        "family": "Libre Franklin",
+        "family": "Libre Franklin, Franklin Gothic Book, Arial, Helvetica, sans-serif",
         "color": "#FFFFFF",
         "size": 13
       }
@@ -215,6 +220,87 @@ window.MCK_PLOTLY_TEMPLATE = {
             "color": "#FFFFFF",
             "width": 2
           }
+        }
+      }
+    ],
+    "waterfall": [
+      {
+        "increasing": {
+          "marker": {
+            "color": "#B4B0A5"
+          }
+        },
+        "decreasing": {
+          "marker": {
+            "color": "#EF8200"
+          }
+        },
+        "totals": {
+          "marker": {
+            "color": "#143359"
+          }
+        },
+        "connector": {
+          "line": {
+            "color": "#8C8C8C",
+            "width": 1.0
+          }
+        },
+        "textfont": {
+          "size": 13
+        },
+        "cliponaxis": false
+      }
+    ],
+    "heatmap": [
+      {
+        "colorscale": [
+          [
+            0.0,
+            "#E6F3FB"
+          ],
+          [
+            0.2,
+            "#B6E2FA"
+          ],
+          [
+            0.4,
+            "#66C4FF"
+          ],
+          [
+            0.6,
+            "#009EFF"
+          ],
+          [
+            0.8,
+            "#0A5FBC"
+          ],
+          [
+            1.0,
+            "#143359"
+          ]
+        ],
+        "colorbar": {
+          "outlinewidth": 0,
+          "ticks": "",
+          "tickfont": {
+            "size": 12,
+            "color": "#737373"
+          }
+        }
+      }
+    ],
+    "sankey": [
+      {
+        "node": {
+          "color": "#143359",
+          "line": {
+            "width": 0
+          },
+          "thickness": 14
+        },
+        "link": {
+          "color": "rgba(0, 90, 140, 0.4)"
         }
       }
     ]

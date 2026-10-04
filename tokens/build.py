@@ -55,6 +55,8 @@ def build_css() -> None:
     for k, t in TOKENS["brand"]["core_2026"].items():
         lines.append(f"  --mck-{k.replace('_', '-')}: {t['value']};")
     for fam, t in EXT.items():
+        if "do not use in charts" in t.get("usage", "").lower():
+            continue                                                  # e.g. amber: status color only, see --mck-status-*
         for step in ("light", "mid", "base", "dark"):
             if t.get(step):
                 lines.append(f"  --mck-{fam}-{step}: {t[step]};")
@@ -80,12 +82,21 @@ def build_css() -> None:
         if name.startswith("$"):
             continue
         r = role(name)
+        css_name = name.replace("_", "-")
         lines += [
-            f"  --mck-{name}-size: {r['size_px']}px;",
-            f"  --mck-{name}-weight: {r['weight']};",
-            f"  --mck-{name}-color: {r['hex']};",
+            f"  --mck-{css_name}-size: {r['size_px']}px;",
+            f"  --mck-{css_name}-weight: {r['weight']};",
+            f"  --mck-{css_name}-color: {r['hex']};",
         ]
+        if css_name != name:                                          # deprecated underscore aliases, kept for one release
+            lines += [f"  --mck-{name}-{prop}: var(--mck-{css_name}-{prop});" for prop in ("size", "weight", "color")]
+    # Phone sizes: the tokens define none, so derive them from the desktop roles (headline -2 px, subtitle -1.5 px).
+    lines.append("  /* Phone sizes (max-width: 600px): no phone tokens exist, so headline - 2px and subtitle - 1.5px. */")
+    lines.append("  --mck-headline-size-phone: calc(var(--mck-headline-size) - 2px);")
+    lines.append("  --mck-subtitle-size-phone: calc(var(--mck-subtitle-size) - 1.5px);")
     lines.append(f"  --mck-pad: {K['spacing']['padding_px']}px;")
+    for k, ratio in K["aspect"].items():                               # plot boxes: aspect-ratio: var(--mck-aspect-web-inline)
+        lines.append(f"  --mck-aspect-{k.replace('_', '-')}: {ratio.replace(':', ' / ')};")
     lines.append("}")
 
     components = f"""
@@ -141,12 +152,17 @@ def build_css() -> None:
    Give the total row an empty <span class="bars"></span> so its number lines up. */
 .mck-table .bars {{ display: inline-block; width: 44px; margin-left: 8px; text-align: left; vertical-align: middle; line-height: 0; }}
 .mck-table .bars .bar {{ margin-right: 0; }}
+/* Visually hidden but read by screen readers: data tables and text summaries behind a chart. */
+.sr-only {{
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}}
 .mck-table tr.is-focus .bar {{ background: var(--mck-chart-focus); }}
 @media (max-width: 600px) {{
   .mck-chart {{ padding: 16px; }}
-  .mck-headline {{ font-size: 18px; }}
-  .mck-subtitle {{ font-size: 13px; }}
-  .mck-table {{ font-size: 12px; }}
+  .mck-headline {{ font-size: var(--mck-headline-size-phone); }}
+  .mck-subtitle {{ font-size: var(--mck-subtitle-size-phone); }}
+  .mck-table {{ font-size: var(--mck-tick-size); }}
   .mck-table th, .mck-table td {{ padding: 4px 6px; }}
   .mck-table th:first-child {{ position: sticky; left: 0; z-index: 1; background: var(--mck-surface-default); }}
 }}
@@ -157,9 +173,14 @@ def build_css() -> None:
 # ---------------------------------------------------------------- Plotly
 def plotly_template() -> dict:
     tick, lab, sub, head = role("tick"), role("label"), role("subtitle"), role("headline")
+    font_stack = T["family"]["fallback_web"].replace("'", "")
+    seq_scale = [[i / (len(C["sequential"]["blue"]) - 1), c] for i, c in enumerate(C["sequential"]["blue"])]
+    focus_rgb = ", ".join(str(int(v("chart.focus")[i:i + 2], 16)) for i in (1, 3, 5))
     axis_common = {
         "showgrid": False,
-        "zeroline": False,
+        "zeroline": True,                                 # baseline at 0 so negative bars have something to hang from
+        "zerolinecolor": v("chart.axis"),
+        "zerolinewidth": K["axis"]["width_px"],
         "showline": True,
         "linecolor": v("chart.axis"),
         "linewidth": K["axis"]["width_px"],
@@ -170,13 +191,14 @@ def plotly_template() -> dict:
     }
     return {
         "layout": {
-            "font": {"family": T["family"]["fallback_web"].replace("'", ""), "size": lab["size_px"], "color": v("text.primary")},
+            "font": {"family": font_stack, "size": lab["size_px"], "color": v("text.primary")},
             "title": {
                 "font": {"size": head["size_px"], "color": head["hex"], "weight": head["weight"]},
                 "x": 0, "xanchor": "left", "xref": "container", "pad": {"l": K["spacing"]["padding_px"]},
                 "subtitle": {"font": {"size": sub["size_px"], "color": sub["hex"]}},
             },
             "colorway": CAT,
+            "separators": ".,",                                   # decimal point, thousands comma (en-US)
             "paper_bgcolor": v("surface.default"),
             "plot_bgcolor": v("surface.default"),
             "margin": {"l": 64, "r": 32, "t": 96, "b": 72},
@@ -187,9 +209,9 @@ def plotly_template() -> dict:
             "legend": {"orientation": "h", "x": 0, "xanchor": "left", "y": 1.02, "yanchor": "bottom",
                        "font": {"size": lab["size_px"], "color": lab["hex"]}, "title": {"text": ""}},
             "hoverlabel": {"bgcolor": v("text.headline"), "bordercolor": v("text.headline"),
-                           "font": {"family": FONT, "color": "#FFFFFF", "size": lab["size_px"]}},
+                           "font": {"family": font_stack, "color": "#FFFFFF", "size": lab["size_px"]}},
             "colorscale": {
-                "sequential": [[i / (len(C["sequential"]["blue"]) - 1), c] for i, c in enumerate(C["sequential"]["blue"])],
+                "sequential": seq_scale,
                 "diverging": [[i / (len(C["diverging"]["orange_blue"]["values"]) - 1), c]
                               for i, c in enumerate(C["diverging"]["orange_blue"]["values"])],
             },
@@ -202,6 +224,15 @@ def plotly_template() -> dict:
             "bar": [{"marker": {"line": {"width": 0}}, "textfont": {"size": lab["size_px"]}, "cliponaxis": False}],
             "pie": [{"hole": K["donut"]["hole"], "sort": True, "direction": "clockwise",
                      "marker": {"line": {"color": "#FFFFFF", "width": 2}}}],
+            "waterfall": [{"increasing": {"marker": {"color": v("chart.context")}},
+                           "decreasing": {"marker": {"color": v("semantic.negative")}},
+                           "totals": {"marker": {"color": v("chart.total")}},
+                           "connector": {"line": {"color": v("chart.axis"), "width": K["axis"]["width_px"]}},
+                           "textfont": {"size": lab["size_px"]}, "cliponaxis": False}],
+            "heatmap": [{"colorscale": seq_scale, "colorbar": {"outlinewidth": 0, "ticks": "",
+                                                             "tickfont": {"size": tick["size_px"], "color": tick["hex"]}}}],
+            "sankey": [{"node": {"color": v("chart.total"), "line": {"width": 0}, "thickness": 14},
+                        "link": {"color": f"rgba({focus_rgb}, 0.4)"}}],
         },
     }
 
@@ -217,25 +248,37 @@ def build_plotly() -> None:
 # ---------------------------------------------------------------- Vega-Lite
 def build_vega() -> None:
     tick, lab, head, sub = role("tick"), role("label"), role("headline"), role("subtitle")
+    font = T["family"]["fallback_web"].replace("'", "")             # Libre Franklin first, then the fallbacks
+    mark_text = {"font": font, "fontSize": lab["size_px"], "fill": lab["hex"]}
     cfg = {
-        "font": FONT,
+        "font": font,
         "background": v("surface.default"),
         "padding": K["spacing"]["padding_px"],
         "view": {"stroke": None},
-        "title": {"anchor": "start", "fontSize": head["size_px"], "fontWeight": head["weight"], "color": head["hex"],
+        "title": {"anchor": "start", "font": font, "subtitleFont": font,
+                  "fontSize": head["size_px"], "fontWeight": head["weight"], "color": head["hex"],
                   "subtitleFontSize": sub["size_px"], "subtitleColor": sub["hex"], "subtitleFontWeight": 400, "offset": 16},
-        "axis": {"labelColor": tick["hex"], "labelFontSize": tick["size_px"], "titleColor": tick["hex"],
-                 "titleFontSize": tick["size_px"], "titleFontWeight": 400, "domainColor": v("chart.axis"),
-                 "tickColor": v("chart.axis"), "gridColor": v("chart.grid"), "ticks": False},
+        "axis": {"labelFont": font, "titleFont": font, "labelColor": tick["hex"], "labelFontSize": tick["size_px"],
+                 "titleColor": tick["hex"], "titleFontSize": tick["size_px"], "titleFontWeight": 400,
+                 "domainColor": v("chart.axis"), "domainWidth": K["axis"]["width_px"],
+                 "tickColor": v("chart.axis"), "gridColor": v("chart.grid"), "gridWidth": K["grid"]["width_px"], "ticks": False},
         "axisX": {"grid": False},
         "axisY": {"domain": False, "grid": True},
-        "legend": {"orient": "top", "labelFontSize": lab["size_px"], "labelColor": lab["hex"], "title": None, "symbolType": "square"},
+        "header": {"labelFont": font, "titleFont": font, "labelFontSize": lab["size_px"], "labelColor": lab["hex"],
+                   "labelFontWeight": 600, "labelAnchor": "start", "labelOrient": "top",
+                   "titleFontSize": lab["size_px"], "titleColor": tick["hex"], "titleFontWeight": 400},
+        "legend": {"orient": "top", "labelFont": font, "titleFont": font, "labelFontSize": lab["size_px"],
+                   "labelColor": lab["hex"], "title": None, "symbolType": "square"},
         "range": {"category": CAT, "ordinal": C["sequential"]["blue"], "ramp": C["sequential"]["blue"],
                   "diverging": C["diverging"]["orange_blue"]["values"], "heatmap": C["sequential"]["blue"]},
         "bar": {"fill": v("chart.focus"), "continuousBandSize": 16},
         "line": {"stroke": v("chart.focus"), "strokeWidth": K["line"]["width_px"]},
-        "point": {"filled": True, "size": 40},
-        "text": {"font": FONT, "fontSize": lab["size_px"], "fill": lab["hex"]},
+        "point": {"filled": True, "size": 40, "fill": v("chart.focus")},
+        "area": {"fill": v("chart.focus"), "fillOpacity": 0.85, "line": False},
+        "rect": {"fill": v("chart.focus")},
+        "arc": {"fill": v("chart.focus"), "stroke": v("surface.default"), "strokeWidth": 2},
+        "rule": {"stroke": v("chart.axis"), "strokeWidth": K["axis"]["width_px"]},
+        "text": mark_text,
         "scale": {"bandPaddingInner": round(1 - K["bar"]["band_fill"], 2)},
     }
     write("web/vega-lite-config.json", json.dumps(cfg, indent=2))

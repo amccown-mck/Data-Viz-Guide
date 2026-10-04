@@ -38,7 +38,7 @@
 | Merge flows under 10 people into "Other" | Show a 3-person move between two small teams. It identifies individuals |
 
 ## Workforce examples
-- **Headline:** "DC Associates made 440 internal moves in two years; 6 in 10 were promotions into DC leadership" — *Subtitle:* "Internal moves between job families, trailing 24 months (number of moves)" — data: Workday job-change events, `examples/data/mobility_flows.csv`. DC Associate flows are in focus blue and all others in grey (built in `examples/python/gallery_plotly.py`). Firm level, internal signal.
+- **Headline:** "DC Associates made 440 internal moves in two years; 6 in 10 were promotions into DC leadership" — *Subtitle:* "Internal moves between job families, trailing 24 months (number of moves)" — data: Workday job-change events, `assets/data/mobility_flows.csv`. DC Associate flows are in focus blue and all others in grey (built in `examples/python/gallery_plotly.py`). Firm level, internal signal.
 - **Headline:** "Referrals and internal moves fill 6 in 10 specialty-pharmacy roles but fewer than 1 in 5 Customer Care roles" — *Subtitle:* "Filled requisitions by hiring source and job family, FY26 (hires)" — data: ATS requisition source joined to Workday hires. Sources with fewer than 10 hires per family are merged into "Other". Team/function level, internal and external sourcing channels.
 - **Headline:** "Most pharmacy technicians who leave distribution move to retail pharmacy, not to direct competitors" — *Subtitle:* "Next employer type for pharmacy technicians leaving U.S. healthcare-distribution employers, 2024–2026 (% of transitions)" — data: external labor-market profile-transition data (aggregated by the provider; cells under the provider's minimum suppressed). Sector level, external signal.
 
@@ -51,6 +51,7 @@ Not recommended for Sankeys. `matplotlib.sankey` draws engineering-style single-
 Primary route. In this example the headline names the "not placed" leak, a loss, so it is the one flow in orange (`C.negative`). The `snap` arrangement lets Plotly place nodes. It may stack the exits at the top. That's fine as long as no bands cross needlessly.
 
 ```python
+# verified runnable (from the repo root)
 import tempfile
 from pathlib import Path
 
@@ -108,7 +109,7 @@ fig.update_layout(height=500, margin={"l": 16, "r": 16, "t": 120})
 fig.write_html(Path(tempfile.gettempdir()) / "sankey_reskilling.html", include_plotlyjs="cdn")
 ```
 
-- For web pages, use the chart-card pattern: headline, subtitle and source in HTML, and the figure via `fig.to_html(full_html=False)`. See `card()` in `examples/python/gallery_plotly.py` and the styles in [`dist/web/mck-viz.css`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/web/mck-viz.css).
+- For web pages, use the chart-card pattern: headline, subtitle and source in HTML, and the figure via `fig.to_html(full_html=False)`. See `card()` in `examples/python/gallery_plotly.py` and the styles in [`assets/web/mck-viz.css`](../../assets/web/mck-viz.css).
 - To pin columns, pass `node.x` / `node.y` (0–1) with `arrangement="fixed"`. Then check that bands don't cross, because Plotly may keep its original link order.
 
 ### Excel and PowerPoint
@@ -120,7 +121,7 @@ fig.write_html(Path(tempfile.gettempdir()) / "sankey_reskilling.html", include_p
 6. Put the exact flow table in the appendix or speaker notes.
 
 ### Power BI
-- Apply the theme: **View → Themes → Browse for themes →** `dist/powerbi/mckesson-dataviz-theme.json`.
+- Apply the theme: **View → Themes → Browse for themes →** `assets/powerbi/mckesson-dataviz-theme.json`.
 - There is no built-in Sankey. The AppSource **Sankey chart** custom visual works for exploration. Before you use it, check that it's on your tenant's approved/certified list (uncertified visuals can't be exported to PPT/PDF in some tenants). It has limited styling: set link colors by hand and expect it to ignore some theme settings.
 - Enforce minimum n before the visual. Group small flows into "Other" in Power Query, then blank anything left: `Moves (safe) = VAR n = SUM(Mobility[moves]) RETURN IF(n < 10, BLANK(), n)`. Blanking alone silently drops volume, so footnote it.
 - For linear pipelines, use the native **Funnel** visual with focus/context conditional colors.
@@ -129,7 +130,7 @@ fig.write_html(Path(tempfile.gettempdir()) / "sankey_reskilling.html", include_p
 ```r
 library(ggplot2)
 library(ggalluvial)   # optional package for alluvial/Sankey-style flows
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 paths <- data.frame(
   nominated = "Nominated",

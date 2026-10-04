@@ -48,6 +48,7 @@
 
 ### Python — matplotlib + `mckviz`
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -100,6 +101,7 @@ For a **100% stacked area**, divide each column by `total` before `stackplot`, s
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import plotly.graph_objects as go
 
 import mckviz as mv
@@ -134,7 +136,7 @@ fig.show()
 Plotly stacks traces in the order you add them, so add the focus trace first to put it on the baseline. Add `groupnorm="percent"` on the first trace for the 100% variant.
 
 ### Excel and PowerPoint
-1. **Theme:** copy the `dist/office` color and font XMLs into `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `...\Theme Fonts\`. Then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint. Install Libre Franklin.
+1. **Theme:** copy the `office` color and font XMLs into `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `...\Theme Fonts\`. Then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint. Install Libre Franklin.
 2. Put years in the first column and one column per segment, with the **focus segment first** and the most volatile last. Click **Insert → Insert Line or Area Chart → 2-D Area → Stacked Area** (or **100% Stacked Area**).
 3. If the order is wrong, use **Chart Design → Select Data → Legend Entries** and the ▲/▼ arrows so the focus series is first, which puts it on the bottom.
 4. Fill each series with **Ctrl+1 → Fill & Line → Fill → Solid fill**. The focus series gets **Accent 1 `#005A8C`**; the others get **More Colors → Hex** `B4B0A5`, `DEDBD1`, `EFEDE7`. For every series set **Border → Solid line, White, 0.75 pt**.
@@ -145,7 +147,7 @@ Plotly stacks traces in the order you add them, so add the focus trace first to 
 9. Paste with **Use Destination Theme & Embed Workbook**. Put the headline in the slide title, the subtitle at 14 pt `#505050` and the source at 9 pt `#737373`, bottom-left.
 
 ### Power BI
-- Apply the theme: **View → Themes → Browse for themes →** `dist/powerbi/mckesson-dataviz-theme.json`.
+- Apply the theme: **View → Themes → Browse for themes →** `assets/powerbi/mckesson-dataviz-theme.json`.
 - Build a **Stacked area chart** with X = year (continuous), Y = FTE measure and Legend = role family. Control the stack order with a sort column (**Column tools → Sort by column**) so the focus segment comes first.
 - In **Format → Colors**, set the focus segment to `#005A8C` and the rest to the greys `#B4B0A5`, `#DEDBD1`, `#EFEDE7`. Turn the legend off, turn **Series labels** on, and set **Total labels** to show the stack total. Use the **100% stacked area chart** visual for shares.
 - Use **Analytics → X-axis constant line → Shade area** for a period of interest, kept light.
@@ -154,7 +156,7 @@ Plotly stacks traces in the order you add them, so add the focus trace first to 
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 # Synthetic data for illustration (replace with yours): DC workforce by role family, thousand FTE
 total <- c(11.9, 12.1, 12.0, 12.2, 12.1, 11.9, 12.0, 12.1)                     # 2019-2026, held near 12K

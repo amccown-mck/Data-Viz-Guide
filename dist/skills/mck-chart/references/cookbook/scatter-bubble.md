@@ -45,7 +45,7 @@
 | Write "is associated with" and footnote the method | Claim causation from a scatter |
 
 ## Workforce examples
-- **Role level, internal + external taxonomy (SWP / gen AI):** *Headline:* "Four support roles carry the highest gen AI exposure – start redesign and reskilling there". *Subtitle:* "Share of task hours exposed to gen AI vs. median base pay, by role, 2026; bubble area = headcount". *Data:* [`examples/data/automation_exposure.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/automation_exposure.csv). Task inventory mapped to an external gen AI task taxonomy, plus HRIS pay and headcount. Zone = 50%+ exposure, with the headcount-weighted workforce average as a reference line (snippet below).
+- **Role level, internal + external taxonomy (SWP / gen AI):** *Headline:* "Four support roles carry the highest gen AI exposure – start redesign and reskilling there". *Subtitle:* "Share of task hours exposed to gen AI vs. median base pay, by role, 2026; bubble area = headcount". *Data:* [`assets/data/automation_exposure.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/automation_exposure.csv). Task inventory mapped to an external gen AI task taxonomy, plus HRIS pay and headcount. Zone = 50%+ exposure, with the headcount-weighted workforce average as a reference line (snippet below).
 - **Team level, internal (manager effectiveness):** *Headline:* "Nine of the 12 lowest-engagement distribution-center teams have managers with spans above 1:20". *Subtitle:* "Engagement index vs. manager span of control, distribution-center teams, 2026 engagement survey (index 0–100; direct reports); bubble area = team size". *Data:* survey results joined to the HRIS position hierarchy. Shade the "span > 20 and engagement < 65" quadrant, color its teams `#005A8C`, and suppress teams with fewer than 10 respondents.
 - **Metro / sector level, external + internal (talent markets):** *Headline:* "Where pharmacy-technician candidates are scarcest, our requisitions take twice as long to fill". *Subtitle:* "Days to fill vs. external job postings per available candidate (log scale), pharmacy technicians, top 25 McKesson hiring metros, H1 2026; bubble area = open requisitions". *Data:* external job-postings and candidate-profile feed for X, ATS for Y and size. Use a log X axis (0.4–6), a dashed navy line at 1.0 labelled "Balanced market", and the three slowest tight-market metros in focus blue.
 
@@ -68,7 +68,7 @@ import mckviz as mv
 mv.use()
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/automation_exposure.csv"))
+df = pd.read_csv(Path("assets/data/automation_exposure.csv"))
 df = df[df.headcount >= 10].sort_values("headcount", ascending=False)    # n >= 10; big bubbles drawn first
 focus = set(df.role[df.genai_exposure_pct >= 50])
 avg = (df.genai_exposure_pct * df.headcount).sum() / df.headcount.sum()  # headcount-weighted
@@ -130,7 +130,7 @@ import mckviz as mv
 mv.use()  # registers + activates the "mck" Plotly template
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/automation_exposure.csv"))
+df = pd.read_csv(Path("assets/data/automation_exposure.csv"))
 df = df[df.headcount >= 10].sort_values("headcount", ascending=False)
 focus = df.genai_exposure_pct >= 50
 avg = (df.genai_exposure_pct * df.headcount).sum() / df.headcount.sum()
@@ -172,7 +172,7 @@ fig.write_html(Path(tempfile.gettempdir()) / "ck_scatdual_scatter-bubble.html", 
 Tooltips carry the detail that labels leave out: entity, X, Y and size, each with its unit. Never put names of individuals or groups with n < 10 in a tooltip. For a log axis, use `fig.update_xaxes(type="log", tickvals=[0.5, 1, 2, 4])`. For HTML pages, use the chart-card pattern in [`gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py). Only add filters or a time slider when they answer a stated question. A play-axis animation is for a live, narrated demo, not a report.
 
 ### Excel and PowerPoint
-1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `dist/office/Theme Fonts/McKesson Data Viz.xml` to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
+1. Install the theme once. Copy `office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `office/Theme Fonts/McKesson Data Viz.xml` to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
 2. Lay out the data as Role | X (median pay) | Y (exposure %) | Size (headcount). Split it into **two series**, Focus and Context, by giving each its own X/Y/Size columns. Colors then survive a data refresh.
 3. Select the numeric columns and click **Insert › Charts › Insert Scatter (X, Y) or Bubble Chart › Bubble** (2-D, never 3-D). For a plain scatter, choose **Scatter** instead. Check **Chart Design › Select Data › Edit** for each series: *Series X values*, *Series Y values*, *Series bubble size*.
 4. Right-click a bubble › **Format Data Series › Series Options**: set **Size represents: Area of bubbles** and **Scale bubble size to** ~50 (the default 100 usually crowds the plot). Keep the same value on every chart you compare. Leave **Show negative bubbles** off.
@@ -186,7 +186,7 @@ Tooltips carry the detail that labels leave out: entity, X, Y and size, each wit
 12. In PowerPoint, paste with **Home › Paste › Use Destination Theme & Embed Workbook**. The headline goes in the title placeholder (26 pt Bold McKesson Blue `#005A8C`), the subtitle at 14 pt `#505050`, and the footnote and source at 9 pt Libre Franklin Light `#737373`, bottom-left. Build-up: grey bubbles first, then the zone, then the focus bubbles and their labels.
 
 ### Power BI
-- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
+- Apply [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
 - In a **Scatter chart**, put the entity (role, team, metro) in **Values** so there is one mark per entity, then fill **X axis**, **Y axis** and **Size**. Turn **Legend** off unless color encodes a real group.
 - Highlight with **Format › Markers › Colors › fx** (Field value) on a measure such as `Bubble color = IF([Exposure %] >= 0.5, "#005A8C", "#B4B0A5")`. **Category labels** label every point, so turn them on only for ≤ ~10 points. Otherwise rely on a **report-page tooltip** and name the focus entities in the headline.
 - **Analytics pane**: add an **X-axis / Y-axis constant line** (`#143359`, dashed, data label on) for thresholds and averages, and use its **Shade area** option, where available, for the highlight zone. **Symmetry shading** and **Ratio line** help when X and Y share a unit. For a log axis, use **Format › X axis › Scale type › Log**.
@@ -196,9 +196,9 @@ Tooltips carry the detail that labels leave out: entity, X, Y and size, each wit
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(readr); library(scales)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
-df <- read_csv("examples/data/automation_exposure.csv") |>
+df <- read_csv("assets/data/automation_exposure.csv") |>
   filter(headcount >= 10) |>
   arrange(desc(headcount)) |>                         # big bubbles drawn first
   mutate(focus = genai_exposure_pct >= 50)

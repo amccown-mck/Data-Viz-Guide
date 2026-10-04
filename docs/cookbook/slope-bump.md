@@ -50,6 +50,7 @@
 ### Python — matplotlib + `mckviz`
 A bump chart; for the two-point slope chart, see `slope()` in [`gallery_matplotlib.py`](../../examples/python/gallery_matplotlib.py).
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -99,6 +100,7 @@ mv.save(fig, "out/bump.png")
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import plotly.graph_objects as go
 
 import mckviz as mv

@@ -24,7 +24,7 @@ def attrition_by_job_family() -> pd.DataFrame:
     ]
     df = pd.DataFrame(rows, columns=["job_family", "headcount", "vol_attrition_pct"])
     df["enterprise_rate_pct"] = round(np.average(df.vol_attrition_pct, weights=df.headcount), 1)
-    return df.sort_values("vol_attrition_pct", ascending=False)
+    return df.sort_values("vol_attrition_pct", ascending=False, kind="stable")   # stable: ties keep row order
 
 
 def data_ai_supply_demand() -> pd.DataFrame:
@@ -90,7 +90,7 @@ def pay_vs_market() -> pd.DataFrame:
             ("Customer Care Rep", 48, 47), ("Account Executive", 96, 94)]
     df = pd.DataFrame(rows, columns=["role", "internal_median_k", "market_median_k"])
     df["gap_pct"] = ((df.internal_median_k / df.market_median_k - 1) * 100).round(1)
-    return df.sort_values("gap_pct")
+    return df.sort_values("gap_pct", kind="stable")    # stable: ties (2.1, 2.3) keep row order on every platform
 
 
 def skills_demand_rank() -> pd.DataFrame:
@@ -323,7 +323,7 @@ def remote_care_agents() -> pd.DataFrame:
             rows.append((st, hubs[st], True))
         else:
             rows.append((st, int(round(pop * 4.4 * rng.uniform(0.55, 1.45))), False))
-    return pd.DataFrame(rows, columns=["state", "agents", "hub_state"]).sort_values("state")
+    return pd.DataFrame(rows, columns=["state", "agents", "hub_state"]).sort_values("state", kind="stable")
 
 
 def succession_coverage_bu() -> pd.DataFrame:

@@ -45,9 +45,9 @@
 | Write a headline that says what the table shows | Title it "Workforce scorecard" and let the reader find the point |
 
 ## Workforce examples
-- **Firm level, internal (scorecard):** *Headline:* "The two largest frontline job families combine the highest attrition with the lowest engagement". *Subtitle:* "Workforce scorecard by job family, FY26; totals weighted by headcount". *Data:* [`examples/data/job_family_scorecard.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/job_family_scorecard.csv) (HRIS, ATS and engagement survey). Total row label: "All 8 job families". Attrition is shaded in 5-point blue classes, headcount gets inline bars, and the change column flags rises in orange text, because a rise is worse (built below).
+- **Firm level, internal (scorecard):** *Headline:* "The two largest frontline job families combine the highest attrition with the lowest engagement". *Subtitle:* "Workforce scorecard by job family, FY26; totals weighted by headcount". *Data:* [`assets/data/job_family_scorecard.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/job_family_scorecard.csv) (HRIS, ATS and engagement survey). Total row label: "All 8 job families". Attrition is shaded in 5-point blue classes, headcount gets inline bars, and the change column flags rises in orange text, because a rise is worse (built below).
 - **Team level, internal (manager pack):** *Headline:* "Three of nine DC teams have more than 1 in 5 roles open going into peak season". *Subtitle:* "Open roles, overtime and engagement by distribution-center team, Sep 2026". *Data:* HRIS positions, timekeeping and the pulse survey. The vacancy-rate column is shaded in `sequential.orange`, because darker means more open roles going into peak (worse); the key says so. Teams with fewer than 10 respondents show "n<10" in the engagement column.
-- **Sector level, external (benchmark annex):** *Headline:* "We pay below market for four of eight benchmark roles, most for specialty nurses (−6.9%)". *Subtitle:* "Median base pay vs. external market median, by role, 2026 ($K; gap %)". *Data:* [`examples/data/pay_vs_market.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/pay_vs_market.csv) and an external pay survey. Only the gap column carries the diverging scale, centered on 0.
+- **Sector level, external (benchmark annex):** *Headline:* "We pay below market for four of eight benchmark roles, most for specialty nurses (−6.9%)". *Subtitle:* "Median base pay vs. external market median, by role, 2026 ($K; gap %)". *Data:* [`assets/data/pay_vs_market.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/pay_vs_market.csv) and an external pay survey. Only the gap column carries the diverging scale, centered on 0.
 
 ## Build it
 
@@ -69,7 +69,7 @@ import mckviz as mv
 mv.use()
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/job_family_scorecard.csv")).sort_values("vol_attrition_pct", ascending=False)
+df = pd.read_csv(Path("assets/data/job_family_scorecard.csv")).sort_values("vol_attrition_pct", ascending=False)
 df = df.reset_index(drop=True)
 cols = [("headcount", "Headcount", "{:,.0f}"), ("vol_attrition_pct", "Voluntary\nattrition (%)", "{:.1f}"),
         ("attrition_change_pts", "Change vs.\nFY25 (pts)", None), ("median_days_to_fill", "Median\ndays to fill", "{:.0f}"),
@@ -137,7 +137,7 @@ import pandas as pd
 import mckviz as mv
 
 C = mv.colors
-df = pd.read_csv(Path("examples/data/job_family_scorecard.csv")).sort_values("vol_attrition_pct", ascending=False)
+df = pd.read_csv(Path("assets/data/job_family_scorecard.csv")).sort_values("vol_attrition_pct", ascending=False)
 focus = set(df.job_family[df.vol_attrition_pct > 20])
 ramp = mv.SEQUENTIAL["blue"]                                          # 6 even 5-pt classes: 0-5, 5-10, ... 25+
 bar_max = df.headcount.max()
@@ -171,7 +171,7 @@ heads = ["Job family", "Headcount", "Voluntary attrition (%)", "Change vs. FY25 
          "Internal fill rate (%)", "Engagement index"]
 thead = "".join(f'<th scope="col"{"" if i == 0 else " class=num"}>{h}</th>' for i, h in enumerate(heads))
 
-css = Path("dist/web/mck-viz.css").resolve().as_uri()                 # in production, link your hosted copy
+css = Path("assets/web/mck-viz.css").resolve().as_uri()                 # in production, link your hosted copy
 page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -189,7 +189,7 @@ page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 </figure></body></html>"""
 (Path(tempfile.gettempdir()) / "ck_table_scorecard.html").write_text(page, encoding="utf-8")
 ```
-The `.mck-table` classes in [`dist/web/mck-viz.css`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/web/mck-viz.css) do the typography: horizontal rules only, right-aligned tabular figures, `is-focus` rows, an `is-total` row with a navy rule, `is-muted` suppressed cells, and `.bar` inline bars. Put the bar **after** the number inside a `.bars` box (`6,200<span class="bars"><span class="bar" style="width:52%"></span></span>`), so every bar grows from one left edge; give the total row an empty `.bars` so its number lines up. On screens narrower than 600 px, the first column sticks while the numbers scroll sideways. Use real `<table>` markup with `<th scope>`, so screen readers can navigate it. Don't use a picture of a table on the web. If you have jinja2 installed, `df.style` (pandas Styler) can produce the same markup: set `.set_table_attributes('class="mck-table"')` and apply colors with `.map(...)` on the shaded column only. Plotly's `go.Table` works inside dashboards, but it can't do inline bars or sticky columns, so prefer HTML.
+The `.mck-table` classes in [`assets/web/mck-viz.css`](../../assets/web/mck-viz.css) do the typography: horizontal rules only, right-aligned tabular figures, `is-focus` rows, an `is-total` row with a navy rule, `is-muted` suppressed cells, and `.bar` inline bars. Put the bar **after** the number inside a `.bars` box (`6,200<span class="bars"><span class="bar" style="width:52%"></span></span>`), so every bar grows from one left edge; give the total row an empty `.bars` so its number lines up. On screens narrower than 600 px, the first column sticks while the numbers scroll sideways. Use real `<table>` markup with `<th scope>`, so screen readers can navigate it. Don't use a picture of a table on the web. If you have jinja2 installed, `df.style` (pandas Styler) can produce the same markup: set `.set_table_attributes('class="mck-table"')` and apply colors with `.map(...)` on the shaded column only. Plotly's `go.Table` works inside dashboards, but it can't do inline bars or sticky columns, so prefer HTML.
 
 ### Excel and PowerPoint
 1. Install the theme once (see [bar.md › Excel and PowerPoint](bar.md#excel-and-powerpoint), step 1). Use Libre Franklin 10–11 pt.
@@ -203,7 +203,7 @@ The `.mck-table` classes in [`dist/web/mck-viz.css`](https://github.com/amccown-
 9. **PowerPoint:** for ≤ 8 × 6 tables, build a native table (**Insert › Table**). Then go to **Table Design › Table Styles › Clear Table** and redo the borders (step 3) with **Table Design › Draw Borders**. Set **Layout › Cell Margins › Narrow** and right-align the number columns. For bigger tables, paste from Excel as **Picture (Enhanced Metafile)** for a fixed layout, or link it. The headline goes in the title placeholder. Build-up: the plain table first, then the shaded column, then the focus rows in bold.
 
 ### Power BI
-- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json). Use a **Table** visual (or a **Matrix** when there is a hierarchy).
+- Apply [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json). Use a **Table** visual (or a **Matrix** when there is a hierarchy).
 - **Format › Style presets › None.** **Grid:** vertical gridlines off, horizontal gridlines `#E6E4DE`, 1 px. **Column headers:** bold, `#143359`, word wrap on, header alignment right for numbers. **Values › Alternate background color** = white (no zebra).
 - **Cell elements › Background color › fx › Rules** on the shaded measure only, using the 6 blue classes and hex codes from the Excel steps. **Font color › fx › Rules:** ≥ 20 → `#FFFFFF`. Use **Data bars** for headcount with a positive bar `#B4B0A5` and **Show bar only** off.
 - **Totals:** turn them on and make sure each rate measure is a weighted DAX measure (`DIVIDE(SUM(Exits), SUM(AvgHeadcount))`), not an implicit average.
@@ -212,9 +212,9 @@ The `.mck-table` classes in [`dist/web/mck-viz.css`](https://github.com/amccown-
 ### R — gt (optional)
 ```r
 library(gt); library(dplyr); library(readr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
-df <- read_csv("examples/data/job_family_scorecard.csv") |> arrange(desc(vol_attrition_pct))
+df <- read_csv("assets/data/job_family_scorecard.csv") |> arrange(desc(vol_attrition_pct))
 focus <- df$job_family[df$vol_attrition_pct > 20]
 
 df |>

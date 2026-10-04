@@ -43,8 +43,8 @@
 | Size pies in a matrix by **area** and keep 2 segments each | Scale pie diameter by value (overstates the big ones) |
 
 ## Workforce examples
-- **Function, internal:** *Headline:* "Contingent workers make up 30% of Technology's workforce, more than 4x the rate in other functions". *Subtitle:* "Technology workforce by worker type, 2026 (% of workers)". *Data:* [`examples/data/workforce_mix.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/workforce_mix.csv), HRIS plus vendor-management (contingent) records. Contingent in blue, full-time and part-time in greys, and the 6.5% average for other functions stated beside the key.
-- **Individuals → functions, internal (dial row):** *Headline:* "Only Pharmacy Ops has enrolled more than half of its high-exposure employees in reskilling". *Subtitle:* "Employees in high gen-AI-exposure roles enrolled in a reskilling pathway, by function, Q2 FY26 (%)". *Data:* individual learning-system enrollments joined to role-level exposure scores from [`examples/data/automation_exposure.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/automation_exposure.csv), aggregated to function (n ≥ 10). One dial per function, a navy 50% target tick on each, and only the dial above target in blue.
+- **Function, internal:** *Headline:* "Contingent workers make up 30% of Technology's workforce, more than 4x the rate in other functions". *Subtitle:* "Technology workforce by worker type, 2026 (% of workers)". *Data:* [`assets/data/workforce_mix.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/workforce_mix.csv), HRIS plus vendor-management (contingent) records. Contingent in blue, full-time and part-time in greys, and the 6.5% average for other functions stated beside the key.
+- **Individuals → functions, internal (dial row):** *Headline:* "Only Pharmacy Ops has enrolled more than half of its high-exposure employees in reskilling". *Subtitle:* "Employees in high gen-AI-exposure roles enrolled in a reskilling pathway, by function, Q2 FY26 (%)". *Data:* individual learning-system enrollments joined to role-level exposure scores from [`assets/data/automation_exposure.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/automation_exposure.csv), aggregated to function (n ≥ 10). One dial per function, a navy 50% target tick on each, and only the dial above target in blue.
 - **Sector, external (pie matrix):** *Headline:* "In our three largest hiring metros, most pharmacy technician postings now require national certification". *Subtitle:* "Pharmacy technician job postings, top 8 McKesson hiring metros, Q2 2026 (pie area = postings; blue = % requiring certification)". *Data:* external job-postings data, metros ranked by McKesson hires. Use two-segment pies sized by area: the certification share in `#005A8C`, the rest in `#DEDBD1`, with the % under each pie and the three largest metros bolded.
 
 ## Build it
@@ -65,7 +65,7 @@ mv.use()
 C = mv.colors
 HOLE = mv.TOKENS["chart"]["donut"]["hole"]                     # hole = 62% of the diameter
 
-mix = pd.read_csv(Path("examples/data/workforce_mix.csv")).set_index("function")
+mix = pd.read_csv(Path("assets/data/workforce_mix.csv")).set_index("function")
 tech = mix.loc["Technology"]
 others = mix.drop("Technology").contingent_pct.mean()
 story = "Contingent workers"
@@ -151,7 +151,7 @@ mv.use()  # registers + activates the "mck" Plotly template
 C = mv.colors
 HOLE = mv.TOKENS["chart"]["donut"]["hole"]
 
-mix = pd.read_csv(Path("examples/data/workforce_mix.csv")).set_index("function")
+mix = pd.read_csv(Path("assets/data/workforce_mix.csv")).set_index("function")
 tech = mix.loc["Technology"]
 others = mix.drop("Technology").contingent_pct.mean()
 story = "Contingent workers"
@@ -179,7 +179,7 @@ fig.write_html("out/donut.html", include_plotlyjs="cdn")
 Plotly defaults to counter-clockwise and sorts by value, so always set `sort=False, direction="clockwise"`, and sort the data yourself (with "Other" last). For a dial row, use `make_subplots(rows=1, cols=n, specs=[[{"type": "domain"}] * n])` with one two-value `go.Pie` per cell, and the remainder colored `C.surface_subtle`. Hover may show headcounts, but only for groups with n ≥ 10.
 
 ### Excel and PowerPoint
-1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
+1. Install the theme once. Copy `office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
 2. Prepare the data: one column of names, one of values. Sort it **descending**, merge anything beyond 5 parts into "Other", and put "Other" in the last row. Excel draws the rows clockwise in sheet order.
 3. Select the data, then **Insert › Charts › Insert Pie or Doughnut Chart › Doughnut**.
 4. Right-click the ring › **Format Data Series › Series Options**. Set **Angle of first slice 0°** (start at 12 o'clock) and **Doughnut Hole Size 62%** (≈ 60%). Under **Fill & Line › Border**, set **Solid line, white, 1.5 pt**.
@@ -193,7 +193,7 @@ Plotly defaults to counter-clockwise and sorts by value, so always set `sort=Fal
 12. Build-up on a live slide: **Animations › Wheel › Effect Options › Sequence: By Category** reveals the slices clockwise. Alternatively, duplicate the slide: step 1, all grey with the center number hidden; step 2, the story slice in color plus the center number.
 
 ### Power BI
-- Import [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
+- Import [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
 - Use the native **Donut chart** (Legend = category, Values = measure). Use **⋯ › Sort by › [measure] › Sort descending**. Under **Format visual › Rotation**, set the start angle to **0**. Where your Desktop version offers **Slices › Spacing › Inner radius**, set it to ~62%.
 - Set each slice under **Slices › Colors**: story `#005A8C` (or `#143359` for a navy exception), the rest `#B4B0A5` / `#DEDBD1`. If **fx** (field-value color) isn't offered for slices in your version, drive the color with a measure on a bar chart instead.
 - **Detail labels:** Position *Outside*, Label contents *Category, percent of total*. Turn the **Legend** off. Put the story number in a **Card** layered over the hole.
@@ -203,9 +203,9 @@ Plotly defaults to counter-clockwise and sorts by value, so always set `sort=Fal
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(readr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
-tech <- read_csv("examples/data/workforce_mix.csv") |> filter(`function` == "Technology")
+tech <- read_csv("assets/data/workforce_mix.csv") |> filter(`function` == "Technology")
 parts <- tibble(type = c("Full-time employees", "Contingent workers", "Part-time employees"),
                 pct  = c(tech$employee_ft_pct, tech$contingent_pct, tech$employee_pt_pct)) |>
   arrange(desc(pct)) |>

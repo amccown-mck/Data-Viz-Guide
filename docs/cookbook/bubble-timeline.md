@@ -47,6 +47,7 @@
 
 ### Python — matplotlib + `mckviz`
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -112,6 +113,7 @@ For the plain single-color version (no focus row), replace `c=mv.highlight(...)`
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -154,7 +156,7 @@ fig.show()
 6. Horizontal axis: set yearly bounds and units with **Tick Marks: None** and **Line: No line**. Delete the legend and the chart title.
 7. **Size key:** add a third series with 3 points at round values in the top-left corner, filled `#B4B0A5`, and give it data labels showing the value.
 8. **Shaded period:** in PowerPoint, set the chart area and plot area to **No fill** and place a `#EFEDE7` rectangle behind the chart (**Arrange → Send to Back**), with a bold callout above it.
-9. Paste with **Use Destination Theme & Embed Workbook**. Put the headline in the title (Libre Franklin Bold 24 pt `#143359`) and the source at 9 pt `#737373`.
+9. Paste with **Use Destination Theme & Embed Workbook**. Put the headline in the title (Libre Franklin Bold 26 pt McKesson Blue `#005A8C`) and the source at 9 pt `#737373`.
 
 ### Power BI
 - Apply the theme `dist/powerbi/mckesson-dataviz-theme.json` (**View → Themes → Browse for themes**).

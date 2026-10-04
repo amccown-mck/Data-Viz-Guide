@@ -51,6 +51,7 @@ Not recommended for Sankeys. `matplotlib.sankey` draws engineering-style single-
 Primary route. In this example the headline names the "not placed" leak, a loss, so it is the one flow in orange (`C.negative`). The `snap` arrangement lets Plotly place nodes. It may stack the exits at the top. That's fine as long as no bands cross needlessly.
 
 ```python
+# verified runnable (from the repo root)
 import tempfile
 from pathlib import Path
 

@@ -47,7 +47,7 @@
 | Show the stepped key once, with readable end labels | Use a long continuous color bar with 10 tick labels |
 
 ## Workforce examples
-- **Business unit, internal survey + external benchmark (diverging):** *Headline:* "Workload trails the benchmark in five of six business units – Oncology most of all". *Subtitle:* "Engagement driver score vs. external healthcare benchmark, by business unit, 2026 (points)". *Data:* [`examples/data/engagement_vs_benchmark.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/engagement_vs_benchmark.csv), with the engagement survey scored against an external healthcare norm. The rows are ranked by average gap and the Workload column is outlined (snippet below).
+- **Business unit, internal survey + external benchmark (diverging):** *Headline:* "Workload trails the benchmark in five of six business units – Oncology most of all". *Subtitle:* "Engagement driver score vs. external healthcare benchmark, by business unit, 2026 (points)". *Data:* [`assets/data/engagement_vs_benchmark.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/engagement_vs_benchmark.csv), with the engagement survey scored against an external healthcare norm. The rows are ranked by average gap and the Workload column is outlined (snippet below).
 - **Job family × region, internal ATS (sequential heat table, SWP):** *Headline:* "Clinical roles take 71+ days to fill in every region, and the West is slowest for 5 of 8 job families". *Subtitle:* "Median days from requisition approval to accepted offer, by job family and region, H1 2026". *Data:* ATS filled requisitions, with cells of fewer than 10 requisitions suppressed. Six 15-day classes, rows ranked by average days and the clinical rows bolded (Plotly snippet below).
 - **Metro × role family, external labor market (diverging):** *Headline:* "Posted pay for pharmacy technicians is rising 4+ points faster than the national rate in 5 of our 12 largest hiring metros". *Subtitle:* "Year-over-year change in posted pay vs. the national rate, by role family and metro, top 12 McKesson hiring metros, Q2 2026 (percentage points)". *Data:* external job-postings feed, with the midpoint 0 = the national rate. Rank the rows by the pharmacy-technician column, outline that column, and footnote the postings threshold used for each cell.
 
@@ -74,7 +74,7 @@ mv.use()
 C = mv.colors
 
 drivers = ["Growth", "Manager support", "Recognition", "Workload", "Tools & tech", "Belonging", "Pay fairness"]
-df = pd.read_csv(Path("examples/data/engagement_vs_benchmark.csv"))
+df = pd.read_csv(Path("assets/data/engagement_vs_benchmark.csv"))
 m = df.pivot(index="business_unit", columns="driver", values="delta_vs_benchmark_pts")[drivers]
 m = m.loc[m.mean(axis=1).sort_values(ascending=False).index]         # rank rows, don't alphabetize
 focus = "Workload"
@@ -186,7 +186,7 @@ fig.write_html(Path(tempfile.gettempdir()) / "ck_heatdist_heatmap.html", include
 For a **diverging** Plotly heatmap, build the stepped scale from `mv.DIVERGING` and set `zmin=-10.5, zmax=10.5` (symmetric). For a continuous scale, use `colorscale=[[i / 6, c] for i, c in enumerate(mv.DIVERGING)], zmid=0`. Tooltips can carry the n-size ("142 respondents"), but suppressed cells must not show a value or an n in hover: blank `z` and keep `hoverinfo` off for those cells. In HTML pages, use the chart-card pattern in [`gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py), and on narrow screens transpose the matrix so the long dimension scrolls down.
 
 ### Excel and PowerPoint
-1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `dist/office/Theme Fonts/McKesson Data Viz.xml` to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors / Fonts › McKesson Data Viz**.
+1. Install the theme once. Copy `office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `office/Theme Fonts/McKesson Data Viz.xml` to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors / Fonts › McKesson Data Viz**.
 2. Lay the data out as a matrix: row labels in column A, column headers in row 1, numbers in the cells. Rank the rows: add a helper column `=AVERAGE(B2:H2)`, then **Data › Sort** by it (largest to smallest) and hide the helper.
 3. **Diverging color scale:** select the values, then **Home › Conditional Formatting › Color Scales › More Rules…**. Set **Format Style: 3-Color Scale**.
    - **Minimum:** Type **Number**, Value `-10.5`, Color › **More Colors › Custom › Hex** `A75B00` (or `EF8200` for a lighter low end).
@@ -203,7 +203,7 @@ For a **diverging** Plotly heatmap, build the stepped scale from `mv.DIVERGING` 
 11. **PowerPoint:** copy the range and use **Home › Paste › Paste Special › Microsoft Excel Worksheet Object** (stays editable) or **Picture (Enhanced Metafile)** (crisp and fixed). For small grids (≤ 6 × 8), you can also build a native table with **Insert › Table**, then **Table Design › Shading** (hex per cell) and **Borders** (white, 2¼ pt). The headline goes in the title placeholder (26 pt Bold McKesson Blue `#005A8C`), the subtitle at 14 pt `#505050`, and the footnote and source at 9 pt Libre Franklin Light `#737373`. Build-up: values on neutral cells first, then the color, then the focus outline and callout.
 
 ### Power BI
-- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
+- Apply [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
 - Use a **Matrix** visual: **Rows** = business unit, **Columns** = driver, **Values** = the measure. Turn row and column subtotals off.
 - **Format › Cell elements › Background color › fx.** For a smooth scale, choose **Format style: Gradient**, tick **Add a middle color**, and set **Minimum** (Custom, `-10.5`) `#A75B00`, **Center** (Custom, `0`) `#EFEDE7` and **Maximum** (Custom, `10.5`) `#005A8C`. For binned classes, choose **Format style: Rules** and add one range per class with the same hex values as in Excel. Sequential: Gradient from `#E6F3FB` to `#143359`, with a center of `#009EFF`.
 - **Font color › fx › Rules:** value ≤ −8 → `#FFFFFF`, value ≥ 5 → `#FFFFFF`, otherwise `#143359`. **Grid:** horizontal and vertical gridlines white, 2 px. **Values:** centered.
@@ -212,10 +212,10 @@ For a **diverging** Plotly heatmap, build the stepped scale from `mv.DIVERGING` 
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(readr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 drivers <- c("Growth", "Manager support", "Recognition", "Workload", "Tools & tech", "Belonging", "Pay fairness")
-df <- read_csv("examples/data/engagement_vs_benchmark.csv") |>
+df <- read_csv("assets/data/engagement_vs_benchmark.csv") |>
   mutate(driver = factor(driver, levels = drivers),
          business_unit = reorder(business_unit, delta_vs_benchmark_pts, mean),   # ranked: highest mean on top
          lab = ifelse(delta_vs_benchmark_pts == 0, "0",

@@ -37,9 +37,6 @@
   --mck-azure-mid: #66C4FF;
   --mck-azure-base: #009EFF;
   --mck-azure-dark: #0A5FBC;
-  --mck-amber-light: #FFE9B3;
-  --mck-amber-mid: #FFD366;
-  --mck-amber-base: #FFB500;
   --mck-text-title: #005A8C;
   --mck-text-headline: #143359;
   --mck-text-primary: #505050;
@@ -109,9 +106,12 @@
   --mck-div-6: #005A8C;
   --mck-div-7: #143359;
   --mck-font: 'Libre Franklin', 'Franklin Gothic Book', Arial, Helvetica, sans-serif;
-  --mck-slide_title-size: 30px;
-  --mck-slide_title-weight: 700;
-  --mck-slide_title-color: #005A8C;
+  --mck-slide-title-size: 30px;
+  --mck-slide-title-weight: 700;
+  --mck-slide-title-color: #005A8C;
+  --mck-slide_title-size: var(--mck-slide-title-size);
+  --mck-slide_title-weight: var(--mck-slide-title-weight);
+  --mck-slide_title-color: var(--mck-slide-title-color);
   --mck-headline-size: 20px;
   --mck-headline-weight: 600;
   --mck-headline-color: #143359;
@@ -133,7 +133,15 @@
   --mck-kpi-size: 56px;
   --mck-kpi-weight: 700;
   --mck-kpi-color: #143359;
+  /* Phone sizes (max-width: 600px): no phone tokens exist, so headline - 2px and subtitle - 1.5px. */
+  --mck-headline-size-phone: calc(var(--mck-headline-size) - 2px);
+  --mck-subtitle-size-phone: calc(var(--mck-subtitle-size) - 1.5px);
   --mck-pad: 24px;
+  --mck-aspect-slide-full: 16 / 9;
+  --mck-aspect-slide-half: 4 / 3;
+  --mck-aspect-web-inline: 16 / 10;
+  --mck-aspect-mobile: 4 / 5;
+  --mck-aspect-social-square: 1 / 1;
 }
 /* Libre Franklin: load from Google Fonts in your <head>, or @font-face from /fonts in this repo.
    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"> */
@@ -187,12 +195,17 @@
    Give the total row an empty <span class="bars"></span> so its number lines up. */
 .mck-table .bars { display: inline-block; width: 44px; margin-left: 8px; text-align: left; vertical-align: middle; line-height: 0; }
 .mck-table .bars .bar { margin-right: 0; }
+/* Visually hidden but read by screen readers: data tables and text summaries behind a chart. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
 .mck-table tr.is-focus .bar { background: var(--mck-chart-focus); }
 @media (max-width: 600px) {
   .mck-chart { padding: 16px; }
-  .mck-headline { font-size: 18px; }
-  .mck-subtitle { font-size: 13px; }
-  .mck-table { font-size: 12px; }
+  .mck-headline { font-size: var(--mck-headline-size-phone); }
+  .mck-subtitle { font-size: var(--mck-subtitle-size-phone); }
+  .mck-table { font-size: var(--mck-tick-size); }
   .mck-table th, .mck-table td { padding: 4px 6px; }
   .mck-table th:first-child { position: sticky; left: 0; z-index: 1; background: var(--mck-surface-default); }
 }
@@ -207172,12 +207185,15 @@ C = mv.colors     # C.focus, C.context, C.accent, C.negative ...</pre></div></di
 <pre class="snip">Question:    Where is attrition concentrated?
 Mode:        explanatory     Medium: slide
 Chart:       sorted bar (cookbook/bar.md)
+             Why: magnitude, first choice
 Focus:       2 families > enterprise rate
+             Accent: none    Context: grey
 Headline:    Two frontline job families lose
              about 1 in 4 people a year ...
 Subtitle:    Voluntary attrition by job
              family, FY26 (%)
-Source:      Workday HCM (synthetic), 31 Mar 2026
+Source:      Source: Workday HCM (synthetic),
+             as of 31 Mar 2026; employees
 Min n check: smallest group 700 (>= 10)
 QA:          pass</pre>
       </div>

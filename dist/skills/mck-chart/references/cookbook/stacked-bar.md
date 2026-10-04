@@ -43,7 +43,7 @@
 | On live slides, build up: totals first → story segment vs. grey "Other" → full breakdown, adding each key entry when its segment appears | Show the full 5-segment chart and legend on the first click |
 
 ## Workforce examples
-- **Firm, internal:** *Headline:* "Technology uses contingent labor at more than 4x the average rate of other functions". *Subtitle:* "Workforce composition by function, 2026 (% of workers)". *Data:* [`examples/data/workforce_mix.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/workforce_mix.csv), HRIS plus vendor-management (contingent) records.
+- **Firm, internal:** *Headline:* "Technology uses contingent labor at more than 4x the average rate of other functions". *Subtitle:* "Workforce composition by function, 2026 (% of workers)". *Data:* [`assets/data/workforce_mix.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/workforce_mix.csv), HRIS plus vendor-management (contingent) records.
 - **SWP plan, firm/team:** *Headline:* "Reskilling closes about 40% of the FY28 Data & AI gap; external hiring still has to cover nearly half". *Subtitle:* "Planned sources to close the Data & AI capability gap, FY26–FY28 (FTE)". *Data:* the strategic workforce plan scenario model. Absolute stacked columns: *Build (reskill)* on the baseline in `#005A8C`; *Buy*, *Borrow* and *Automate* in greys; navy totals on top.
 - **Sector, external:** *Headline:* "Technology and data roles make up 9% of our workforce, well below the 14% peer median". *Subtitle:* "Workforce mix by role family, McKesson vs. five healthcare-distribution and pharmacy peers, 2026 (% of employees)". *Data:* external workforce estimates from public professional profiles and job postings. The *Tech & data* segment goes first (left edge) in focus blue, and the McKesson row label is bold.
 
@@ -66,7 +66,7 @@ import mckviz as mv
 mv.use()
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/workforce_mix.csv")).sort_values("contingent_pct", ignore_index=True)
+df = pd.read_csv(Path("assets/data/workforce_mix.csv")).sort_values("contingent_pct", ignore_index=True)
 focus = "Technology"
 others = df.contingent_pct[df.function != focus].mean()
 ratio = df.contingent_pct[df.function == focus].iloc[0] / others
@@ -120,7 +120,7 @@ import mckviz as mv
 mv.use()  # registers + activates the "mck" Plotly template
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/workforce_mix.csv")).sort_values("contingent_pct", ignore_index=True)
+df = pd.read_csv(Path("assets/data/workforce_mix.csv")).sort_values("contingent_pct", ignore_index=True)
 parts = [("employee_ft_pct", "Full-time", C.context), ("employee_pt_pct", "Part-time", C.context_light),
          ("contingent_pct", "Contingent", C.focus)]
 fig = go.Figure()
@@ -142,7 +142,7 @@ fig.write_html("out/stacked-100.html", include_plotlyjs="cdn")
 If the data are counts rather than shares, use `barnorm="percent"` in `update_layout` and put the counts and n in `hovertemplate`. Suppress groups with n < 10 before plotting.
 
 ### Excel and PowerPoint
-1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin). Install them from `dist/office/` as described in [bar.md](bar.md#excel-and-powerpoint).
+1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin). Install them from `office/` as described in [bar.md](bar.md#excel-and-powerpoint).
 2. Select the data, then **Insert › Charts › Insert Column or Bar Chart › 100% Stacked Bar** (or **Stacked Column** for absolute values). For horizontal bars, set **Format Axis › Categories in reverse order** so the sheet order runs top-down.
 3. **Chart Design › Select Data › Legend Entries (Series)**: use the ▲▼ arrows so the story series is **first** (baseline/left) or **last** (right end). Never leave it in the middle.
 4. **Format Data Series › Series Options › Gap Width 50%**, Series Overlap 100%. For each series, set **Fill › Solid** (story `005A8C`, or `143359` for a navy exception; others `B4B0A5` and `DEDBD1`) and **Border › Solid line, White, 1.5 pt**.
@@ -153,7 +153,7 @@ If the data are counts rather than shares, use `barnorm="percent"` in `update_la
 9. PowerPoint build-up (2–5 slides; keep the headline, axis and bar order identical). Slide 1: totals only, one color, labelled. Slide 2: the story segment vs. one grey "Other" segment, with only the focus bar's segment colored. Slide 3: the full breakdown, with the key entries added. To **mask** rather than hide bars, set the other bars' fill **Transparency 60%** and keep the focus bar solid.
 
 ### Power BI
-- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
+- Apply [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
 - Use the **100% stacked bar chart** (or **Stacked column chart**). Set **Legend › Position: Top left**, **Data labels** on, **Gridlines** off, and the value axis off.
 - Set the series colors under **Format › Bars › Colors** (story series `#005A8C`, or `#143359` for a navy exception; others `#B4B0A5`/`#DEDBD1`). Set the segment order with the order of the legend field's sort column.
 - Absolute stacks: turn on **Total labels** (bold, `#143359`).
@@ -163,9 +163,9 @@ If the data are counts rather than shares, use `barnorm="percent"` in `update_la
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(tidyr); library(readr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
-mix <- read_csv("examples/data/workforce_mix.csv") |>
+mix <- read_csv("assets/data/workforce_mix.csv") |>
   mutate(fn = reorder(`function`, contingent_pct)) |>
   pivot_longer(ends_with("_pct"), names_to = "type", values_to = "pct") |>
   mutate(type = factor(type, levels = c("employee_ft_pct", "employee_pt_pct", "contingent_pct"),

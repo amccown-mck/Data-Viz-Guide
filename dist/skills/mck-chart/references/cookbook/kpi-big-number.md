@@ -146,11 +146,11 @@ fig.update_layout(height=380, margin={"l": 24, "r": 24, "t": 110})
 Path("out").mkdir(exist_ok=True)
 fig.write_html("out/kpi-row.html", include_plotlyjs="cdn")
 ```
-For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, direction="clockwise", rotation=0, marker_colors=[C.focus, C.context_light], textinfo="none")` with the numeral as a centered annotation. In HTML pages, plain HTML text is often the better choice for a big number: a `<p class="mck-kpi">` styled from [`dist/web/mck-viz.css`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/web/mck-viz.css) (`--mck-kpi-size: 56px`, `--mck-kpi-weight: 700`) is crisper, accessible and responsive.
+For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, direction="clockwise", rotation=0, marker_colors=[C.focus, C.context_light], textinfo="none")` with the numeral as a centered annotation. In HTML pages, plain HTML text is often the better choice for a big number: a `<p class="mck-kpi">` styled from [`assets/web/mck-viz.css`](../../assets/web/mck-viz.css) (`--mck-kpi-size: 56px`, `--mck-kpi-weight: 700`) is crisper, accessible and responsive.
 
 ### Excel and PowerPoint
 **Big number (text box)**
-1. Install Libre Franklin from `fonts/LibreFranklin`, and the McKesson Data Viz theme colors from `dist/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
+1. Install Libre Franklin from `fonts/LibreFranklin`, and the McKesson Data Viz theme colors from `office/` (see [bar.md](bar.md#excel-and-powerpoint)).
 2. **Insert › Text Box**, type the number (e.g., `62%`). Set **Home › Font** to **Libre Franklin, Bold, 54 pt**, with **Font Color › More Colors › Hex 143359** (Navy; *Text 2* in the theme is McKesson Blue, for slide titles). In **Format Shape › Text Options › Text Box**, set the left inset to 0 cm so the numeral aligns with the headline edge, and **Do not Autofit**.
 3. Add a second text box directly below: **one sentence**, Libre Franklin 14 pt, `#505050` ("254 of 410 critical roles now have at least one ready-now successor").
 4. Add the comparison: Libre Franklin Medium 12–14 pt, `#007A48` (favorable) or `#A75B00` (unfavorable), e.g., "+14 pts vs. Mar 2025". For a true minus, use **Insert › Symbol**, character code **2212**.
@@ -168,7 +168,7 @@ For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, directi
 13. In PowerPoint, paste the ring with **Home › Paste › Use Destination Theme & Embed Workbook** so the number stays editable, and keep **≤ 2 big numbers per live slide**.
 
 ### Power BI
-- Import [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**). Its **`callout` text class** (Libre Franklin 32, Navy `#143359`) styles Card values by default. Raise **Format › Callout value** to 40–54. The theme sets the callout face to Libre Franklin Bold, falling back to Segoe UI Bold where Libre Franklin isn't installed, so the numeral is bold everywhere.
+- Import [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**). Its **`callout` text class** (Libre Franklin 32, Navy `#143359`) styles Card values by default. Raise **Format › Callout value** to 40–54. The theme sets the callout face to Libre Franklin Bold, falling back to Segoe UI Bold where Libre Franklin isn't installed, so the numeral is bold everywhere.
 - **Card (new)** visual: callout value = the measure. Use the visual **title** for the metric name and **Reference labels** for the comparison (e.g., `Δ vs PY = [Fill rate] - [Fill rate PY]`, formatted `+0" pts";−0" pts"`). Add the context sentence as a dynamic subtitle measure, e.g., `FORMAT([Roles covered], "#,0") & " of " & FORMAT([Critical roles], "#,0") & " critical roles have a ready-now successor"`.
 - **KPI** visual (number + trend + target): **Indicator** = the measure, **Trend axis** = month, **Target** = the target or prior-year measure. Under **Format › Colors**, set Good `#00AF68`, Neutral `#B4B0A5`, Bad `#EF8200`, and set the direction (**High is good** / **Low is good**) per metric.
 - Ring: use a **Donut chart** with two measures (`Value`, `1 - Value`), **Slices › Inner radius** ≈ 80, colors `#005A8C` / `#DEDBD1`, labels and legend off, and a Card with a transparent background on top. Avoid the built-in half-circle **Gauge** unless min = 0, max = 100% and the target is shown.
@@ -177,7 +177,7 @@ For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, directi
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 value <- 62; prior <- 48; target <- 75
 dark <- "#0B3266"; focus_dark <- "#66C4FF"; context_dark <- "#5A7194"

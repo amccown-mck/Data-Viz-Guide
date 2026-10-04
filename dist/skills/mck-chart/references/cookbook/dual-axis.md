@@ -152,7 +152,7 @@ fig.write_html(Path(tempfile.gettempdir()) / "ck_scatdual_dual-axis-indexed.html
 For **aligned panels** in Plotly, use `make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.12)` with one trace per row, and put each measure and unit in a top-left annotation per panel. For the chart-card HTML pattern, see [`gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py). Avoid `secondary_y=True`. If you're forced to use it, set `rangemode="tozero"` on both y-axes and `showgrid=False`.
 
 ### Excel and PowerPoint
-1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `dist/office/Theme Fonts/McKesson Data Viz.xml` to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors / Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
+1. Install the theme once. Copy `office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `office/Theme Fonts/McKesson Data Viz.xml` to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors / Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
 2. **Indexed lines (preferred).** Next to each raw column, add a helper column `=B2/B$2*100` (lock the base row) and fill down. Select the period column plus the index columns, then **Insert › Insert Line or Area Chart › 2-D Line**.
 3. On the vertical axis, set **Format Axis › Axis Options › Horizontal axis crosses › Axis value: 100**. The category axis now sits on the 100 line and acts as the baseline (`#8C8C8C`, 0.75 pt). Format the lines (focus `#005A8C` 2.25 pt, comparison `#B4B0A5` 1 pt, no markers), delete the legend, and label the last points: **Format Data Labels › Value From Cells** pointing at a column like `134 · 552M lines`.
 4. **Aligned panels.** Build one line chart per measure from the same period column. Select both charts (Ctrl+click) › **Shape Format › Size**: identical **Width**, then **Align › Align Left**. Give both the same horizontal axis settings. On the top chart, set **Format Axis › Labels › Label Position: None**, keeping its axis line. Add the measure and unit as a bold, left-aligned text box above each chart, and in PowerPoint **Group** the two charts.
@@ -163,7 +163,7 @@ For **aligned panels** in Plotly, use `make_subplots(rows=2, cols=1, shared_xaxe
 9. In PowerPoint, paste with **Home › Paste › Use Destination Theme & Embed Workbook**. The headline goes in the title placeholder (26 pt Bold McKesson Blue `#005A8C`), the subtitle at 14 pt `#505050`, and the footnote (index base, definitions) and source at 9 pt Libre Franklin Light `#737373`, bottom-left.
 
 ### Power BI
-- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
+- Apply [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) (**View › Themes › Browse for themes**).
 - **Indexed lines:** write index measures and plot them in one **Line chart**: `Volume index = DIVIDE([Order lines], CALCULATE([Order lines], REMOVEFILTERS('Date'), 'Date'[Fiscal Year] = "FY22")) * 100`. Add an **Analytics pane › Y-axis constant line** at 100 (`#8C8C8C`), and put the raw measures in **Tooltips**.
 - **Aligned panels:** use two **Line charts** with the same X field and identical **Format › General › Properties › Size and position** width and X position, stacked vertically. Turn the X-axis **Values** off on the top visual.
 - **If unavoidable:** use the **Line and clustered column chart**. Set **Format › Y-axis › Range › Minimum 0** and **Secondary y-axis › Range › Minimum 0**, turn **Gridlines** off, and turn on **Secondary y-axis › Title**, colored to match the line. Never put three or more measures on it.
@@ -172,7 +172,7 @@ For **aligned panels** in Plotly, use `make_subplots(rows=2, cols=1, shared_xaxe
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(tidyr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 # Synthetic data for illustration (replace with yours): DC vacancy rate (%) and overtime (hours per FTE per week)
 df <- data.frame(

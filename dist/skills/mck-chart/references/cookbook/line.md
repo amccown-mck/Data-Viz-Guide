@@ -44,7 +44,7 @@
 | On live slides, highlight one series and build up in steps: context first, then the focus line, then the forecast | Show a multi-line chart with 7 colored series and dense text beside it |
 
 ## Workforce examples
-- **Headline:** "Without action, Data & AI demand outruns internal supply by ~620 FTE by 2030" — *Subtitle:* "Forecast Data & AI roles, FTE, 2024–2030 (base scenario)" — data: firm-level SWP model, `examples/data/data_ai_supply_demand.csv` (internal supply = headcount − projected attrition + planned moves).
+- **Headline:** "Without action, Data & AI demand outruns internal supply by ~620 FTE by 2030" — *Subtitle:* "Forecast Data & AI roles, FTE, 2024–2030 (base scenario)" — data: firm-level SWP model, `assets/data/data_ai_supply_demand.csv` (internal supply = headcount − projected attrition + planned moves).
 - **Headline:** "Pharmacy Technician attrition fell ~9 points after the pay and scheduling reset; base case nears 20% by end of 2027" — *Subtitle:* "Voluntary attrition by job family, annualized, Q1 2024–Q4 2026 actual, 2027 forecast (%)" — data: team/job-family level, Workday HCM terminations ÷ average headcount, plus the SWP attrition model's low/base/high scenarios (snippet below).
 - **Headline:** "Our share of postings asking for gen AI skills caught up with the healthcare sector in 2026 after lagging by a year" — *Subtitle:* "Share of job postings mentioning gen AI skills, McKesson vs. U.S. healthcare and life sciences, monthly, Jan 2024–Dec 2026 (%)" — data: sector-level external job-postings feed vs. McKesson requisitions (internal + external signal; McKesson line in focus blue, sector in navy `chart.total`).
 
@@ -52,6 +52,7 @@
 
 ### Python — matplotlib + `mckviz`
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -110,6 +111,7 @@ When every line is colored, `mv.label_line_ends(ax, fmt="{:,.0f}")` labels each 
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import plotly.graph_objects as go
 
 import mckviz as mv
@@ -155,7 +157,7 @@ fig.show()
 For pages, use the chart-card pattern in [`gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py): the headline, subtitle and source go in HTML and Plotly draws only the data. `hovermode="x unified"` gives cursor tracking across series. On mobile, swap the end-label annotations for a one-row key on top.
 
 ### Excel and PowerPoint
-1. **Theme (once per machine):** copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `dist/office/Theme Fonts/McKesson Data Viz.xml` to `...\Document Themes\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`.
+1. **Theme (once per machine):** copy `office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `office/Theme Fonts/McKesson Data Viz.xml` to `...\Document Themes\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`.
 2. Apply it in **Excel** with **Page Layout → Colors → McKesson Data Viz** and **Page Layout → Fonts → McKesson Data Viz**. In **PowerPoint**, use **Design → Variants ▾ → Colors / Fonts → McKesson Data Viz**. Accent 1 = `#005A8C`, Accent 2 = `#143359`, Accent 3 = `#009EFF`; light blue `#66C4FF` via **More Colors › Hex**.
 3. Put periods in the first column and one series per column, then select the range and click **Insert → Insert Line or Area Chart → 2-D Line → Line**.
 4. Delete the chart title (the headline goes in the slide title) and click the legend → **Delete**.
@@ -168,7 +170,7 @@ For pages, use the chart-card pattern in [`gallery_plotly.py`](https://github.co
 11. Paste into PowerPoint with **Home → Paste ▾ → Use Destination Theme & Embed Workbook** so the chart stays editable. Set the headline in the title placeholder (Libre Franklin Bold 26 pt McKesson Blue `#005A8C`), the subtitle at 14 pt `#505050`, and the footnote and source at 9 pt Libre Franklin Light `#737373`, bottom-left.
 
 ### Power BI
-- Apply the theme: **View → Themes → Browse for themes →** `dist/powerbi/mckesson-dataviz-theme.json`.
+- Apply the theme: **View → Themes → Browse for themes →** `assets/powerbi/mckesson-dataviz-theme.json`.
 - In a **line chart**, set X = Date (continuous), Y = measure and Legend = job family. In **Format → Lines**, use the series selector to set context series to `#B4B0A5` at width 1–2 and the focus series to `#005A8C` at width 3. Turn **Markers** off and **Legend** off, and turn on **Series labels** to label the line ends.
 - In the **Analytics pane**, add a **Constant line** (`#143359`, dashed) for targets or the enterprise rate. Use an **X-axis constant line → Shade area** to mark a period. The built-in **Forecast** only works with no Legend field and a continuous date axis. For SWP scenarios, model low/base/high as measures and show them as **Error bars → Shaded area** around the base line.
 - Use a dynamic DAX title as the insight headline and suppress small groups: `Attrition % (safe) = IF([Headcount] < 10, BLANK(), [Attrition %])`.
@@ -176,7 +178,7 @@ For pages, use the chart-card pattern in [`gallery_plotly.py`](https://github.co
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 # Synthetic data for illustration (replace with yours): annualized attrition by job family, Q1 2024 (1) to Q4 2026 (12)
 df <- expand.grid(quarter = 1:12, job_family = c("Pharmacy Technician", "Distribution Center Associate",

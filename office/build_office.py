@@ -13,14 +13,16 @@ Writes (all generated; never edit by hand):
 
 The theme colors and fonts come from dist/office/Theme Colors|Theme Fonts (built by tokens/build.py), and every chart
 color comes from mckviz, so a token change flows through after `python tokens/build.py` and this script.
-Requires: python-pptx, xlsxwriter, pandas.
+Requires: mckviz, python-pptx, xlsxwriter, lxml, pandas.
 """
 from __future__ import annotations
 
+import copy
 import io
 import shutil
 import textwrap
 import zipfile
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -55,6 +57,14 @@ LEFT, RIGHT = 0.39, 0.39
 TITLE_TOP, TITLE_H, TITLE_PT = 0.38, 0.93, 26              # typography.roles.slide_title: Bold, McKesson Blue, 24-28 pt
 SUB_TOP, CHART_TOP, CHART_H = 1.32, 1.8, 4.6
 FOOT_TOP = 6.45                                            # source / footnote block ends at 6.95 in, above the footer
+BODY_TOP, BODY_BOTTOM = 1.32, 6.95                         # content area: under the title box, above the source line
+# Footer (as in the Standard Template): page number | thin blue rule | confidentiality line | date, centred on 7.2 in.
+FOOTER_TOP, FOOTER_H, FOOTER_PT = 7.08, 0.24, 8
+FOOTER_TEXT = "McKesson Proprietary and Confidential"
+MASTER_NAME = "McKesson Data Viz"
+AUTHOR = "McKesson Workforce Innovation"
+TODAY = datetime.now()
+DATE_TEXT = f"{TODAY.month}/{TODAY.day}/{TODAY.year}"        # placeholder text; PowerPoint updates the date field
 OFFICIAL = ROOT / "reference" / "mckesson-branding" / "McKesson Standard Template.pptx"
 
 
@@ -63,14 +73,27 @@ def rgb(hex_color: str) -> RGBColor:
 
 
 # ====================================================================== theme
+_SOLID = '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>'
+_LINE = (f'<a:ln w="12700" cap="flat" cmpd="sng" algn="ctr">{_SOLID}<a:prstDash val="solid"/><a:miter lim="800000"/>'
+         '</a:ln>')
+# Flat, not rounded: every theme fill is solid, every line 1 pt, and no effect style carries a shadow, glow or bevel,
+# so Shape Styles and SmartArt in the template cannot bring back Office 2007's gradients and drop shadows.
+FLAT_FMT_SCHEME = (f'<a:fmtScheme xmlns:a="{A_NS}" name="McKesson Flat">'
+                   f'<a:fillStyleLst>{_SOLID * 3}</a:fillStyleLst>'
+                   f'<a:lnStyleLst>{_LINE * 3}</a:lnStyleLst>'
+                   f'<a:effectStyleLst>{"<a:effectStyle><a:effectLst/></a:effectStyle>" * 3}</a:effectStyleLst>'
+                   f'<a:bgFillStyleLst>{_SOLID * 3}</a:bgFillStyleLst></a:fmtScheme>')
+
+
 def themed_xml(theme_xml: bytes) -> bytes:
-    """Swap the McKesson color and font schemes into a theme part (pptx or xlsx)."""
+    """Swap the McKesson color and font schemes and a flat format scheme into a theme part (pptx or xlsx)."""
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.fromstring(theme_xml, parser)
     elements = root.find(f"{{{A_NS}}}themeElements")
     for path, tag in ((THEME_COLORS, "clrScheme"), (THEME_FONTS, "fontScheme")):
         new = etree.fromstring(path.read_bytes(), parser)
         elements.replace(elements.find(f"{{{A_NS}}}{tag}"), new)
+    elements.replace(elements.find(f"{{{A_NS}}}fmtScheme"), etree.fromstring(FLAT_FMT_SCHEME, parser))
     root.set("name", "McKesson Data Viz")
     # Excel silently ignores a theme whose XML declaration uses single quotes (lxml's default), so write it by hand.
     return b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + etree.tostring(root, encoding="UTF-8")
@@ -91,18 +114,204 @@ def widen_to_16x9(prs) -> None:
                 shp.left, shp.width = int(shp.left * factor), int(shp.width * factor)
 
 
-def style_master(prs) -> None:
-    """Title style: left-aligned, bold, 26 pt, theme text 2 (McKesson Blue, as in the McKesson Standard Template)."""
-    lvl1 = prs.slide_master._element.find(qn("p:txStyles")).find(qn("p:titleStyle")).find(qn("a:lvl1pPr"))
-    lvl1.set("algn", "l")
-    rpr = lvl1.find(qn("a:defRPr"))
-    rpr.set("sz", str(TITLE_PT * 100))
-    rpr.set("b", "1")
-    for fill in rpr.findall(qn("a:solidFill")):
-        rpr.remove(fill)
-    fill = etree.SubElement(rpr, qn("a:solidFill"))
-    etree.SubElement(fill, qn("a:schemeClr")).set("val", "tx2")
-    rpr.insert(0, fill)
+def _xfrm(sp, left, top, width, height) -> None:
+    """Give a master/layout shape its own position (replacing any inherited one)."""
+    sppr = sp.find(qn("p:spPr"))
+    old = sppr.find(qn("a:xfrm"))
+    if old is not None:
+        sppr.remove(old)
+    xfrm = etree.Element(qn("a:xfrm"))
+    etree.SubElement(xfrm, qn("a:off"), x=str(Inches(left)), y=str(Inches(top)))
+    etree.SubElement(xfrm, qn("a:ext"), cx=str(Inches(width)), cy=str(Inches(height)))
+    sppr.insert(0, xfrm)
+
+
+def _body_pr(sp, anchor="t", wrap=True) -> None:
+    """Zero insets so text starts exactly on the grid line."""
+    tx = sp.find(qn("p:txBody"))
+    old = tx.find(qn("a:bodyPr"))
+    bp = etree.Element(qn("a:bodyPr"), lIns="0", tIns="0", rIns="0", bIns="0", anchor=anchor,
+                       wrap="square" if wrap else "none")
+    etree.SubElement(bp, qn("a:normAutofit") if wrap else qn("a:noAutofit"))
+    tx.replace(old, bp)
+
+
+def _lvl(style, n, size_pt, color_scheme=None, color_hex=None, bold=False, marl_in=0.0, algn="l", font=None,
+         space_before_pt=0, line_pct=None):
+    """A flat a:lvlNpPr: no bullet, no hanging indent."""
+    old = style.find(qn(f"a:lvl{n}pPr"))
+    p = etree.Element(qn(f"a:lvl{n}pPr"), marL=str(Inches(marl_in)), indent="0", algn=algn, defTabSz="914400",
+                      rtl="0", eaLnBrk="1", latinLnBrk="0", hangingPunct="1")
+    if line_pct:
+        etree.SubElement(etree.SubElement(p, qn("a:lnSpc")), qn("a:spcPct"), val=str(line_pct * 1000))
+    etree.SubElement(etree.SubElement(p, qn("a:spcBef")), qn("a:spcPts"), val=str(space_before_pt * 100))
+    etree.SubElement(p, qn("a:buNone"))
+    r = etree.SubElement(p, qn("a:defRPr"), sz=str(int(size_pt * 100)), kern="1200")
+    if bold:
+        r.set("b", "1")
+    fill = etree.SubElement(r, qn("a:solidFill"))
+    if color_hex:
+        etree.SubElement(fill, qn("a:srgbClr"), val=color_hex.lstrip("#").upper())
+    else:
+        etree.SubElement(fill, qn("a:schemeClr"), val=color_scheme or "tx1")
+    major = font is None and style.tag == qn("p:titleStyle")
+    etree.SubElement(r, qn("a:latin"), typeface=font or ("+mj-lt" if major else "+mn-lt"))
+    etree.SubElement(r, qn("a:ea"), typeface="+mj-ea" if major else "+mn-ea")
+    etree.SubElement(r, qn("a:cs"), typeface="+mj-cs" if major else "+mn-cs")
+    if old is not None:
+        style.replace(old, p)
+    else:
+        style.append(p)
+
+
+def _footer_para(sp, text=None, field=None) -> None:
+    """Replace a footer placeholder's text with plain text or a live field (slidenum / datetime1)."""
+    tx = sp.find(qn("p:txBody"))
+    for p in tx.findall(qn("a:p")):
+        tx.remove(p)
+    p = etree.SubElement(tx, qn("a:p"))
+    if field:
+        fld = etree.SubElement(p, qn("a:fld"), type=field,
+                               id="{B6F15528-21DE-4FAA-801E-634DDDAF4B2B}" if field == "slidenum"
+                               else "{3A1B2C4D-5E6F-4A7B-8C9D-0E1F2A3B4C5D}")
+        etree.SubElement(fld, qn("a:rPr"), lang="en-US")
+        etree.SubElement(fld, qn("a:t")).text = "\u2039#\u203a" if field == "slidenum" else DATE_TEXT
+    elif text:
+        r = etree.SubElement(p, qn("a:r"))
+        etree.SubElement(r, qn("a:rPr"), lang="en-US")
+        etree.SubElement(r, qn("a:t")).text = text
+    etree.SubElement(p, qn("a:endParaRPr"), lang="en-US")
+
+
+def _footer_style(sp, algn="l") -> None:
+    """Footer text: Light 8 pt muted grey, vertically centred on the footer line."""
+    _body_pr(sp, anchor="ctr", wrap=False)
+    tx = sp.find(qn("p:txBody"))
+    lst = tx.find(qn("a:lstStyle"))
+    for child in list(lst):
+        lst.remove(child)
+    _lvl(lst, 1, FOOTER_PT, color_hex=C.text_muted, algn=algn, font=f"{FONT} Light")
+
+
+FOOTER_SLOTS = {                 # placeholder type -> (left, width, field, text); template order: page | rule | text | date
+    "sldNum": (LEFT, 0.2, "slidenum", None),
+    "ftr": (0.72, 2.15, None, FOOTER_TEXT),
+    "dt": (2.95, 1.4, "datetime1", None),
+}
+
+
+def grid_master(prs) -> None:
+    """Put the master and the layouts on the McKesson Standard Template's grid (python-pptx's default template has
+    a centred 44 pt title at 0.5 in, a 32 pt bulleted body and footers at 0.5 in): title Bold 26 pt McKesson Blue at
+    0.39 / 0.38 in, body 16/14 pt without bullets from 1.32 in, and the footer (page, confidentiality line, date)."""
+    master = prs.slide_master._element
+    master.find(qn("p:cSld")).set("name", MASTER_NAME)
+    content_w = W - LEFT - RIGHT
+    for sp in master.find(qn("p:cSld")).find(qn("p:spTree")).iterchildren(qn("p:sp")):
+        ph = sp.find(".//" + qn("p:ph"))
+        kind = ph.get("type", "body") if ph is not None else None
+        if kind == "title":
+            _xfrm(sp, LEFT, TITLE_TOP, content_w, TITLE_H)
+            _body_pr(sp)
+        elif kind == "body":
+            _xfrm(sp, LEFT, BODY_TOP, content_w, BODY_BOTTOM - BODY_TOP)
+            _body_pr(sp)
+        elif kind in FOOTER_SLOTS:
+            left, width, field, text = FOOTER_SLOTS[kind]
+            _xfrm(sp, left, FOOTER_TOP, width, FOOTER_H)
+            _footer_style(sp)
+            _footer_para(sp, text, field)
+    # The thin McKesson Blue rule between the page number and the confidentiality line.
+    tree = master.find(qn("p:cSld")).find(qn("p:spTree"))
+    next_id = max(int(e.get("id")) for e in tree.iter(qn("p:cNvPr"))) + 1
+    tree.append(etree.fromstring(
+        f'<p:cxnSp xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:a="{A_NS}">'
+        f'<p:nvCxnSpPr><p:cNvPr id="{next_id}" name="Footer rule"/><p:cNvCxnSpPr/><p:nvPr userDrawn="1"/></p:nvCxnSpPr>'
+        f'<p:spPr><a:xfrm><a:off x="{Inches(0.62)}" y="{Inches(7.13)}"/><a:ext cx="0" cy="{Inches(0.14)}"/></a:xfrm>'
+        f'<a:prstGeom prst="line"><a:avLst/></a:prstGeom>'
+        f'<a:ln w="9525"><a:solidFill><a:srgbClr val="{C.blue.lstrip("#").upper()}"/></a:solidFill></a:ln>'
+        f'</p:spPr></p:cxnSp>'))
+    # Show page number, footer and date on new slides; no header.
+    hf = master.find(qn("p:hf"))
+    if hf is None:
+        hf = etree.Element(qn("p:hf"))
+        master.find(qn("p:txStyles")).addprevious(hf)
+    hf.set("hdr", "0")
+    # Text styles: the title and a flat, bullet-free body.
+    styles = master.find(qn("p:txStyles"))
+    _lvl(styles.find(qn("p:titleStyle")), 1, TITLE_PT, color_scheme="tx2", bold=True, line_pct=90)
+    body = styles.find(qn("p:bodyStyle"))
+    for n in range(1, 10):
+        _lvl(body, n, 16 if n == 1 else 14, marl_in=0.25 * (n - 1), space_before_pt=6, line_pct=100)
+    # Layouts: footers say the confidentiality line; placeholders that carry their own position stay inside the
+    # margins; the default template's per-layout 20-40 pt sizes, all caps and centring give way to the master's.
+    half = (content_w - 0.3) / 2
+    for lay in prs.slide_layouts:
+        name = lay.name
+        for sp in lay._element.find(qn("p:cSld")).find(qn("p:spTree")).iterchildren(qn("p:sp")):
+            ph = sp.find(".//" + qn("p:ph"))
+            if ph is None:
+                continue
+            kind, idx = ph.get("type", "body"), int(ph.get("idx", "0"))
+            if kind == "ftr":
+                _footer_para(sp, FOOTER_TEXT)
+                continue
+            if kind in ("sldNum", "dt"):
+                _footer_para(sp, field=FOOTER_SLOTS[kind][2])
+                continue
+            for el in sp.iter(qn("a:defRPr")):
+                for attr in ("sz", "cap"):
+                    if attr in el.attrib and not (kind == "body" and el.get("b") == "1"):
+                        el.attrib.pop(attr)
+                if el.get("b") == "1" and kind == "body":
+                    el.set("sz", "1600")                        # the comparison layout's column heads
+            for el in sp.iter(*(qn(f"a:lvl{n}pPr") for n in range(1, 10))):
+                if el.get("algn") == "ctr":
+                    el.set("algn", "l")
+            if name in ("Two Content", "Comparison") and kind != "title":
+                col = (idx - 1) if name == "Two Content" else (0 if idx in (1, 2) else 1)
+                head = name == "Comparison" and idx in (1, 3)
+                top = BODY_TOP if head or name == "Two Content" else BODY_TOP + 0.5
+                height = 0.4 if head else BODY_BOTTOM - top
+                _xfrm(sp, LEFT + col * (half + 0.3), top, half, height)
+                _body_pr(sp)
+            else:
+                xfrm = sp.find(qn("p:spPr")).find(qn("a:xfrm"))
+                if xfrm is not None:                                # clamp to the side margins
+                    off, ext = xfrm.find(qn("a:off")), xfrm.find(qn("a:ext"))
+                    x = max(int(off.get("x")), Inches(LEFT))
+                    r = min(int(off.get("x")) + int(ext.get("cx")), Inches(W - RIGHT))
+                    off.set("x", str(x))
+                    ext.set("cx", str(r - x))
+
+
+def on_grid(prs_or_layout) -> bool:
+    """True for the kit's own master (already on the grid); False for the official template."""
+    master = prs_or_layout.slide_master._element
+    return master.find(qn("p:cSld")).get("name") == MASTER_NAME
+
+
+def set_properties(prs, title: str, description: str) -> None:
+    """Replace python-pptx's defaults (author 'Steve Canny', 2013 dates, its own description) and drop its
+    default thumbnail, which would otherwise show a generic picture in File Explorer and SharePoint."""
+    now = datetime.now(timezone.utc).replace(tzinfo=None, microsecond=0)
+    cp = prs.core_properties
+    cp.title, cp.subject, cp.author, cp.last_modified_by = title, "McKesson data-viz starter kit", AUTHOR, AUTHOR
+    cp.comments, cp.keywords, cp.category = description, "McKesson; data visualization; charts; template", ""
+    cp.created = cp.modified = now
+    cp.last_printed = now
+    cp.revision = 1
+    rels = prs.part.package._rels
+    for rid, rel in list(rels.items()):
+        if rel.reltype == RT.THUMBNAIL:
+            rels.pop(rid)
+
+
+def flat(shape) -> None:
+    """No theme effect (shadow, glow, bevel) on a drawn shape or connector: effectRef idx 0."""
+    ref = shape._element.find(".//" + qn("a:effectRef"))
+    if ref is not None:
+        ref.set("idx", "0")
 
 
 # ====================================================================== slide furniture
@@ -133,16 +342,22 @@ def layout(prs, name: str, fallback: int):
 def add_footer(slide, lay) -> None:
     """Copy the layout's slide-number and date placeholders onto the slide (python-pptx doesn't), with live fields,
     so the official template's footer reads: page | McKesson Proprietary and Confidential | date."""
+    kinds = (13, 15, 16) if on_grid(lay) else (13, 16)
     for ph in lay.placeholders:
         kind = ph.placeholder_format.type
-        if kind not in (13, 16):                               # SLIDE_NUMBER, DATE
+        if kind not in kinds:                                  # SLIDE_NUMBER, FOOTER (kit master only), DATE
             continue
         slide.shapes.clone_placeholder(ph)
         p = slide.placeholders[ph.placeholder_format.idx].text_frame.paragraphs[0]._p
+        if kind == 15:
+            r = etree.SubElement(p, qn("a:r"))
+            etree.SubElement(r, qn("a:rPr"), lang="en-US")
+            etree.SubElement(r, qn("a:t")).text = FOOTER_TEXT
+            continue
         fld = etree.SubElement(p, qn("a:fld"))
         fld.set("id", "{B6F15528-21DE-4FAA-801E-634DDDAF4B2B}" if kind == 13 else "{3A1B2C4D-5E6F-4A7B-8C9D-0E1F2A3B4C5D}")
         fld.set("type", "slidenum" if kind == 13 else "datetime1")
-        etree.SubElement(fld, qn("a:t")).text = "\u2039#\u203a" if kind == 13 else ""
+        etree.SubElement(fld, qn("a:t")).text = "\u2039#\u203a" if kind == 13 else DATE_TEXT
 
 
 def chart_slide(prs, headline, subtitle, footnote, notes, source=SRC):
@@ -150,16 +365,17 @@ def chart_slide(prs, headline, subtitle, footnote, notes, source=SRC):
     lay = layout(prs, "Title Only", 5)
     slide = prs.slides.add_slide(lay)
     title = slide.shapes.title
-    title.left, title.top = Inches(LEFT), Inches(TITLE_TOP)
-    title.width, title.height = Inches(W - LEFT - RIGHT), Inches(TITLE_H)
-    title.text = headline
-    tf = title.text_frame
-    tf.vertical_anchor = MSO_ANCHOR.TOP
-    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
-    tf.word_wrap = True
-    for r in tf.paragraphs[0].runs:                            # the official master says 34 pt; insight titles use 26
-        r.font.size = Pt(TITLE_PT)
-        r.font.bold = True
+    title.text = headline                                      # position, size, weight and color come from the master
+    if not on_grid(prs):                                       # the official template: place the title on its grid
+        title.left, title.top = Inches(LEFT), Inches(TITLE_TOP)
+        title.width, title.height = Inches(W - LEFT - RIGHT), Inches(TITLE_H)
+        tf = title.text_frame
+        tf.vertical_anchor = MSO_ANCHOR.TOP
+        tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
+        tf.word_wrap = True
+        for r in tf.paragraphs[0].runs:                        # the official master says 34 pt; insight titles use 26
+            r.font.size = Pt(TITLE_PT)
+            r.font.bold = True
     text_box(slide, LEFT, SUB_TOP, W - LEFT - RIGHT, 0.35, subtitle, 14, C.text)
     foot = "\n".join(x for x in (footnote, source) if x)
     if foot:
@@ -180,7 +396,22 @@ def add_chart(slide, chart_type, data, top=CHART_TOP, height=CHART_H, left=LEFT,
     chart.font.name = FONT
     chart.font.size = Pt(12)
     chart.font.color.rgb = rgb(C.text)
+    no_rounded_corners(chart._chartSpace)
     return frame, chart
+
+
+def no_rounded_corners(chart_space) -> None:
+    """Flat, not rounded: <c:roundedCorners val="0"/> (Office rounds the chart border when the element is missing)."""
+    old = chart_space.find(qn("c:roundedCorners"))
+    if old is None:
+        old = etree.Element(qn("c:roundedCorners"))
+        after = [chart_space.find(qn(t)) for t in ("c:date1904", "c:lang")]
+        after = [e for e in after if e is not None]
+        if after:
+            after[-1].addnext(old)
+        else:
+            chart_space.insert(0, old)
+    old.set("val", "0")
 
 
 def plot_layout(chart, x, y, w, h) -> None:
@@ -241,6 +472,7 @@ def point_label(point, text, color, bold=False, size=12, position=None):
     run = dl.text_frame.paragraphs[0].runs[0]
     run.font.size = Pt(size)
     run.font.bold = bold
+    run.font.name = FONT if bold else f"{FONT} Medium"         # typography.roles.label: Medium; emphasis: Bold
     run.font.color.rgb = rgb(color)
     if position is not None:
         dl.position = position
@@ -252,7 +484,22 @@ def line_shape(slide, x1, y1, x2, y2, color, width_pt=0.75, dash=True):
     ln.line.width = Pt(width_pt)
     if dash:
         ln.line.dash_style = 4          # MSO_LINE_DASH_STYLE.DASH
+    flat(ln)
     return ln
+
+
+# ====================================================================== headlines (computed from the data, shared by both files)
+def waterfall_headline(df) -> str:
+    focus = {"Automation savings", "Contractor conversion"}
+    growth = df.value_musd[(df.kind == "delta") & (df.value_musd > 0)].sum()
+    offset = -df.value_musd[df.step.isin(focus)].sum()
+    return f"Automation and contractor conversion offset ~{offset / growth * 100:.0f}% of FY26 labor cost growth"
+
+
+def stacked_headline(df) -> str:
+    others = df.contingent_pct[df.function != "Technology"].mean()
+    tech = float(df.contingent_pct[df.function == "Technology"].iloc[0])
+    return f"Technology uses contingent labor at more than {int(tech / others)}× the average rate of other functions"
 
 
 # ====================================================================== slides
@@ -296,6 +543,7 @@ def slide_rules(prs):
         bar = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(x), Inches(y), Inches(0.08), Inches(1.0))
         fill(bar, C.focus)
         bar.line.fill.background()
+        flat(bar)
         text_box(slide, x + 0.25, y, 5.6, 0.4, head, 16, C.headline, bold=True)
         text_box(slide, x + 0.25, y + 0.42, 5.6, 0.6, body, 13, C.text)
     return slide
@@ -396,10 +644,8 @@ def slide_line(prs):
 def slide_waterfall(prs):
     df = pd.read_csv(DATA / "labor_cost_bridge.csv")
     focus = {"Automation savings", "Contractor conversion"}
-    growth = df.value_musd[(df.kind == "delta") & (df.value_musd > 0)].sum()
-    offset = -df.value_musd[df.step.isin(focus)].sum()
     slide = chart_slide(
-        prs, f"Automation and contractor conversion offset ~{offset / growth * 100:.0f}% of FY26 labor cost growth",
+        prs, waterfall_headline(df),
         "Labor cost bridge, FY25 to FY26 ($M)",
         "Value axis starts at $3,900M (break marks on the totals) so the drivers are readable.",
         "Waterfall built as a stacked column: an invisible 'Base' series lifts each change to the running total. "
@@ -468,10 +714,8 @@ def slide_waterfall(prs):
 
 def slide_stacked(prs):
     df = pd.read_csv(DATA / "workforce_mix.csv").sort_values("contingent_pct")       # ascending: top = largest
-    others = df.contingent_pct[df.function != "Technology"].mean()
-    tech = float(df.contingent_pct[df.function == "Technology"].iloc[0])
     slide = chart_slide(
-        prs, f"Technology uses contingent labor at more than {int(tech / others)}× the average rate of other functions",
+        prs, stacked_headline(df),
         "Workforce composition by function, 2026 (% of workers)", None,
         "100% stacked bar. The segment the headline is about (contingent) sits on the baseline in blue, so every "
         "bar's value starts level; the rest are greys. The key is top-left in stack order; or delete it and type "
@@ -511,9 +755,13 @@ def build_pptx() -> Path:
     prs = Presentation()
     widen_to_16x9(prs)
     apply_theme(prs)
-    style_master(prs)
+    grid_master(prs)
     template = OUT / "McKesson-DataViz.potx"
+    set_properties(prs, "McKesson Data Viz template",
+                   "16:9 PowerPoint template with the McKesson data-viz theme on the Standard Template grid.")
     _save_as_template(prs, template)                       # theme + layouts only, before any slides are added
+    set_properties(prs, "McKesson data-viz chart starter",
+                   "Native, editable sample charts in the McKesson data-viz style, generated from tokens/tokens.json.")
     slide_cover(prs)
     slide_rules(prs)
     for build in (slide_bar, slide_line, slide_waterfall, slide_stacked):
@@ -549,6 +797,8 @@ def build_pptx_official() -> Path | None:
         return None
     prs = Presentation(str(OFFICIAL))
     clear_slides(prs)
+    set_properties(prs, "McKesson data-viz chart starter (Standard Template)",
+                   "Native, editable sample charts on the McKesson Standard Template. Internal use only.")
     official_cover(prs)
     slide_rules(prs)
     for build in (slide_bar, slide_line, slide_waterfall, slide_stacked):
@@ -578,10 +828,18 @@ def build_xlsx() -> Path:
     path = OUT / "McKesson-DataViz-Charts.xlsx"
     wb = xlsxwriter.Workbook(str(path), {"default_format_properties": {"font_name": FONT, "font_size": 10,
                                                                          "font_color": C.text}})
-    f = {
-        "head": wb.add_format({"bold": True, "font_size": 16, "font_color": C.headline}),
-        "sub": wb.add_format({"font_size": 11, "font_color": C.text}),
-        "note": wb.add_format({"font_size": 8, "font_color": C.text_muted, "font_name": f"{FONT} Light"}),
+    now = datetime.now(timezone.utc).replace(tzinfo=None, microsecond=0)
+    wb.set_properties({"title": "McKesson data-viz chart workbook", "subject": "McKesson data-viz starter kit",
+                       "author": AUTHOR, "manager": "", "company": "McKesson", "category": "",
+                       "keywords": "McKesson; data visualization; charts",
+                       "comments": "Palette sheet, native sample charts and a heat table in the McKesson data-viz "
+                                   "style, generated from tokens/tokens.json.", "created": now})
+    roles = mv.TOKENS["typography"]["roles"]
+    pt = {k: roles[k]["size_pt"] for k in ("headline", "subtitle", "label", "tick", "footnote")}
+    f = {   # typography.roles: headline SemiBold 18, subtitle 14, labels Medium 12, ticks 11, footnote/source Light 9
+        "head": wb.add_format({"font_size": pt["headline"], "font_color": C.headline, "font_name": f"{FONT} SemiBold"}),
+        "sub": wb.add_format({"font_size": pt["subtitle"], "font_color": C.text}),
+        "note": wb.add_format({"font_size": pt["footnote"], "font_color": C.text_muted, "font_name": f"{FONT} Light"}),
         "th": wb.add_format({"bold": True, "font_color": C.headline, "bottom": 1, "bottom_color": C.axis,
                              "text_wrap": True, "valign": "bottom"}),
         "th_num": wb.add_format({"bold": True, "font_color": C.headline, "bottom": 1, "bottom_color": C.axis,
@@ -597,6 +855,8 @@ def build_xlsx() -> Path:
 
     def frame(ws, headline, subtitle, footnote, last_row):
         ws.hide_gridlines(2)
+        ws.set_row(0, 26)
+        ws.set_row(1, 20)
         ws.write(0, 0, headline, f["head"])
         ws.write(1, 0, subtitle, f["sub"])
         if footnote:
@@ -612,12 +872,15 @@ def build_xlsx() -> Path:
         chart.set_size({"width": 860, "height": 430})
         return chart
 
-    axis_font = {"name": FONT, "size": 10, "color": C.text_muted}
-    label_font = {"name": FONT, "size": 10, "color": C.text}
+    axis_font = {"name": FONT, "size": pt["tick"], "color": C.text_muted}
+    label_font = {"name": f"{FONT} Medium", "size": pt["label"], "color": C.text}       # data labels: Medium
+    bold_label = {**label_font, "name": FONT, "bold": True}                             # emphasized labels: Bold
 
     # --- Read me
     ws = wb.add_worksheet("Read me")
     ws.hide_gridlines(2)
+    ws.set_row(0, 26)
+    ws.set_row(1, 20)
     ws.set_column(0, 0, 110)
     lines = [
         ("McKesson data-viz chart workbook", f["head"]),
@@ -677,11 +940,29 @@ def build_xlsx() -> Path:
         ws.write(row, 2, hx, f["hex"])
         ws.write(row, 3, ", ".join(str(int(hx[i:i + 2], 16)) for i in (1, 3, 5)), f["hex"])
         ws.write(row, 4, use, f["cell"])
+    # Status (RAG): its own block, with the rule beside it, so nobody picks these for data series.
+    row += 2
+    ws.write(row, 0, "Status colors: status only, with symbol and word", f["bold"])
+    row += 1
+    ws.write_row(row, 0, ["", "Status", "Hex", "Symbol", "Rule"], f["th"])
+    status_rule = ("Status only (trackers, roadmaps, scorecard status columns), never for data series. Always show the "
+                   "symbol and the word with the color, so it reads without color and in grayscale.")
+    for st in mv.STATUS.values():
+        row += 1
+        ws.write(row, 0, st["symbol"], wb.add_format({"bg_color": st["value"], "font_color": mv.text_on(st["value"]),
+                                                      "bold": True, "align": "center"}))
+        ws.write(row, 1, st["label"], f["cell"])
+        ws.write(row, 2, st["value"], f["hex"])
+        ws.write(row, 3, st["symbol"], f["cell"])
+    ws.merge_range(row - len(mv.STATUS) + 1, 4, row, 4, status_rule,
+                   wb.add_format({"text_wrap": True, "valign": "top", "bottom": 1, "bottom_color": C.grid}))
     row = 1
     for title, colors, note in (("Categorical (fixed order, max 6)", mv.CATEGORICAL[:6], "Series 1 → 6"),
                                 ("Sequential blue (light → dark)", mv.SEQUENTIAL["blue"], "Heatmaps, single measure"),
                                 ("Sequential orange (risk only)", mv.SEQUENTIAL["orange"], "Only when darker means worse, and say so"),
-                                ("Diverging orange–blue (midpoint = benchmark)", mv.DIVERGING, "Gaps to benchmark")):
+                                ("Diverging orange–blue (midpoint = benchmark)", mv.DIVERGING, "Gaps to benchmark"),
+                                ("Steps, blue → green (ordered stages)", mv.STEPS,
+                                 "Process stages and journeys only; not for data magnitude or unordered categories")):
         row += 2                                           # ramps sit in equal-width columns G:M
         ws.write(row, 6, f"{title}: {note.lower()}", f["bold"])
         row += 1
@@ -716,12 +997,12 @@ def build_xlsx() -> Path:
         "fill": {"color": C.context},
         "points": [{"fill": {"color": C.focus if j in focus else C.context}} for j in df.job_family],
         "data_labels": {"value": True, "position": "outside_end", "num_format": '0.0"%"', "font": label_font,
-                        "custom": [{"value": f"{v:.1f}%", "font": {**label_font, "bold": True, "color": C.headline}}
+                        "custom": [{"value": f"{v:.1f}%", "font": {**bold_label, "color": C.headline}}
                                    if j in focus else None for j, v in zip(df.job_family, df.vol_attrition_pct)]},
     })
     chart.set_x_axis({"visible": False, "min": 0, "max": 30, "major_gridlines": {"visible": False}})
-    chart.set_y_axis({"reverse": True, "num_font": label_font, "major_tick_mark": "none",
-                      "line": {"color": C.axis, "width": 0.75}})
+    chart.set_y_axis({"reverse": True, "num_font": {**axis_font, "size": pt["label"], "color": C.text},
+                      "major_tick_mark": "none", "line": {"color": C.axis, "width": 0.75}})
     ws.insert_chart(3, 4, chart)
     ws.write(26, 4, f"Enterprise rate {ent:.1f}%: add it as a labelled dashed line (Insert › Shapes › Line, "
                     f"{C.total}, 0.75 pt) or see the PowerPoint starter deck.", f["note"])
@@ -746,7 +1027,7 @@ def build_xlsx() -> Path:
         chart.add_series({
             "name": ["Line", 3, col], "categories": ["Line", 4, 0, 3 + n, 0], "values": ["Line", 4, col, 3 + n, col],
             "line": {"color": color, "width": 2.25}, "marker": {"type": "none"},
-            "data_labels": {"value": True, "position": "right", "font": {**label_font, "bold": True, "color": color},
+            "data_labels": {"value": True, "position": "right", "font": {**bold_label, "color": color},
                             "custom": [{"delete": True}] * (n - 1) + [{"value": f"{name} {df.iloc[-1, col]:,.0f}"}]},
         })
     chart.set_y_axis({"min": 800, "max": 1700, "major_unit": 200, "num_format": "#,##0", "num_font": axis_font,
@@ -760,7 +1041,7 @@ def build_xlsx() -> Path:
     df = pd.read_csv(DATA / "labor_cost_bridge.csv")
     wf_focus = {"Automation savings", "Contractor conversion"}
     ws = wb.add_worksheet("Waterfall")
-    frame(ws, "Automation and contractor conversion offset ~40% of FY26 labor cost growth",
+    frame(ws, waterfall_headline(df),
           "Labor cost bridge, FY25 to FY26 ($M)",
           "Value axis starts at $3,900M so the drivers are readable; say so wherever the chart is used.", 30)
     ws.set_column(0, 0, 28)
@@ -791,19 +1072,20 @@ def build_xlsx() -> Path:
     for st, v, k in zip(df.step, df.value_musd, df.kind):
         hot = st in wf_focus
         labels.append({"value": f"{v:,.0f}" if k == "total" else mv.signed(v),
-                       "font": {**label_font, "bold": k == "total" or hot,
+                       "font": {**(bold_label if k == "total" or hot else label_font),
                                 "color": C.headline if k == "total" or hot else C.text}})
     chart.add_series({"name": "Label", "categories": ["Waterfall", 4, 0, 3 + n, 0],
                       "values": ["Waterfall", 4, 5, 3 + n, 5], "fill": {"none": True}, "border": {"none": True},
                       "data_labels": {"value": True, "position": "inside_base", "custom": labels}})
     chart.set_y_axis({"min": 3900, "max": 4500, "visible": False, "major_gridlines": {"visible": False}})
-    chart.set_x_axis({"num_font": label_font, "major_tick_mark": "none", "line": {"color": C.axis, "width": 0.75}})
+    chart.set_x_axis({"num_font": {**axis_font, "color": C.text}, "major_tick_mark": "none",
+                      "line": {"color": C.axis, "width": 0.75}})
     ws.insert_chart(3, 7, chart)
 
     # --- Stacked 100%
     df = pd.read_csv(DATA / "workforce_mix.csv").sort_values("contingent_pct", ascending=False)
     ws = wb.add_worksheet("Stacked 100%")
-    frame(ws, "Technology uses contingent labor at more than 4× the average rate of other functions",
+    frame(ws, stacked_headline(df),
           "Workforce composition by function, 2026 (% of workers)", None, 30)
     ws.set_column(0, 3, 13)
     ws.write_row(3, 0, ["Function", "Contingent", "Full-time", "Part-time"], f["th"])   # story segment first
@@ -820,9 +1102,10 @@ def build_xlsx() -> Path:
             "data_labels": {"value": True, "position": "center", "num_format": '0"%"',
                             "font": {**label_font, "color": mv.text_on(color)}},
         })
-    chart.set_legend({"position": "top", "font": label_font, "layout": {"x": 0.0, "y": 0.0, "width": 0.45, "height": 0.08}})
+    chart.set_legend({"position": "top", "font": {**axis_font, "size": pt["label"], "color": C.text}, "layout": {"x": 0.0, "y": 0.0, "width": 0.45, "height": 0.08}})
     chart.set_x_axis({"visible": False, "major_gridlines": {"visible": False}})
-    chart.set_y_axis({"reverse": True, "num_font": label_font, "major_tick_mark": "none", "line": {"none": True}})
+    chart.set_y_axis({"reverse": True, "num_font": {**axis_font, "size": pt["label"], "color": C.text},
+                      "major_tick_mark": "none", "line": {"none": True}})
     ws.insert_chart(3, 5, chart)
 
     # --- Heat table (conditional formatting, the tables.md pattern)
@@ -853,13 +1136,15 @@ def build_xlsx() -> Path:
         ws.write_row(i, 5, [r.median_days_to_fill, r.internal_fill_pct, r.engagement_index], f["int"])
     tot = last + 1
     total = {"bold": True, "font_color": C.headline, "top": 2, "top_color": C.total}
-    ws.write(tot, 0, f"All {len(df)} job families", wb.add_format(total))
-    ws.write(tot, 1, "", wb.add_format(total))
-    ws.write_formula(tot, 2, f"=SUM(C{first + 1}:C{last + 1})", wb.add_format({**total, "num_format": "#,##0"}))
+    total_fmts = [wb.add_format(total), wb.add_format({**total, "num_format": "#,##0"})]
+    ws.write(tot, 0, f"All {len(df)} job families", total_fmts[0])
+    ws.write(tot, 1, "", total_fmts[0])
+    ws.write_formula(tot, 2, f"=SUM(C{first + 1}:C{last + 1})", total_fmts[1])
     weights = f"$C${first + 1}:$C${last + 1}"
     for j, (col, fmt) in enumerate((("D", "0.0"), ("E", '+0.0;"−"0.0;0.0'), ("F", "0"), ("G", "0"), ("H", "0")), start=3):
+        total_fmts.append(wb.add_format({**total, "num_format": fmt}))
         ws.write_formula(tot, j, f"=SUMPRODUCT({col}{first + 1}:{col}{last + 1},{weights})/SUM({weights})",
-                         wb.add_format({**total, "num_format": fmt}))     # weighted, not an average of rates
+                         total_fmts[-1])                                   # weighted, not an average of rates
     ramp = mv.SEQUENTIAL["blue"]
     rng = f"D{first + 1}:D{last + 1}"
     for k, color in enumerate(ramp):                                    # 6 even 5-pt classes, last one open-ended
@@ -873,12 +1158,42 @@ def build_xlsx() -> Path:
                                                         "bar_only": True, "min_type": "num", "min_value": 0,
                                                         "bar_no_border": True})
     wb.close()
-    _theme_xlsx(path)
+    # Named cell styles (Home › Cell Styles › Custom), so people can restyle their own sheets the same way.
+    named = {"Headline": [f["head"]], "Subtitle": [f["sub"]], "Source": [f["note"]], "Focus row": [f["focus_row"]],
+             "Total": total_fmts}
+    _theme_xlsx(path, {name: sorted({x._get_xf_index() for x in fmts}) for name, fmts in named.items()})
     return path
 
 
-def _theme_xlsx(path: Path) -> None:
-    """xlsxwriter writes the default Office theme; swap in the McKesson colors and fonts.
+def _name_styles(styles_xml: bytes, named: dict[str, list[int]]) -> bytes:
+    """xlsxwriter has no named cell styles: copy each format's xf into cellStyleXfs, add a <cellStyle> for it, and
+    point the cell xfs at it, so Excel lists Headline, Subtitle, Source, Focus row and Total under Cell Styles."""
+    ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+    q = lambda tag: f"{{{ns}}}{tag}"
+    root = etree.fromstring(styles_xml)
+    style_xfs, cell_xfs, styles = root.find(q("cellStyleXfs")), root.find(q("cellXfs")), root.find(q("cellStyles"))
+    for name, indices in named.items():
+        new = copy.deepcopy(cell_xfs[indices[0]])
+        new.attrib.pop("xfId", None)
+        style_xfs.append(new)
+        k = len(style_xfs) - 1
+        for i in indices:
+            cell_xfs[i].set("xfId", str(k))
+        etree.SubElement(styles, q("cellStyle"), name=name, xfId=str(k))
+    for el in (style_xfs, styles):
+        el.set("count", str(len(el)))
+    return b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + etree.tostring(root, encoding="UTF-8")
+
+
+def _rounded_off(chart_xml: bytes) -> bytes:
+    root = etree.fromstring(chart_xml)
+    no_rounded_corners(root)
+    return b'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n' + etree.tostring(root, encoding="UTF-8")
+
+
+def _theme_xlsx(path: Path, named: dict[str, list[int]]) -> None:
+    """xlsxwriter writes the default Office theme; swap in the McKesson colors, fonts and flat format scheme, add the
+    named cell styles and switch off rounded chart corners.
 
     xlsxwriter also writes <workbookPr defaultThemeVersion="124226"/>, which makes Excel load its built-in 2007 theme
     and ignore theme1.xml entirely, so that attribute has to go too.
@@ -891,6 +1206,10 @@ def _theme_xlsx(path: Path) -> None:
                 blob = themed_xml(blob)
             elif item.filename == "xl/workbook.xml":
                 blob = blob.replace(b' defaultThemeVersion="124226"', b"")
+            elif item.filename == "xl/styles.xml":
+                blob = _name_styles(blob, named)
+            elif item.filename.startswith("xl/charts/chart") and item.filename.endswith(".xml"):
+                blob = _rounded_off(blob)
             dst.writestr(item, blob)
     shutil.move(tmp, path)
 

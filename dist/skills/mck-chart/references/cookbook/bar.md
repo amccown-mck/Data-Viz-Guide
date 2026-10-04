@@ -46,7 +46,7 @@
 | On live slides, build up in 2–5 steps: all bars grey with labels first, then the highlight, then the benchmark and callout | Reveal the full, annotated chart in one click |
 
 ## Workforce examples
-- **Firm, internal:** *Headline:* "Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate". *Subtitle:* "Voluntary attrition by job family, FY26 (%)". *Data:* [`examples/data/attrition_by_job_family.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/attrition_by_job_family.csv), HRIS exits ÷ average headcount.
+- **Firm, internal:** *Headline:* "Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate". *Subtitle:* "Voluntary attrition by job family, FY26 (%)". *Data:* [`assets/data/attrition_by_job_family.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/attrition_by_job_family.csv), HRIS exits ÷ average headcount.
 - **Team, internal:** *Headline:* "Three distribution centers run spans above 1:25, well past the 1:18 design target". *Subtitle:* "Average span of control by distribution center, Mar 2026 (direct reports per supervisor)". *Data:* HRIS position hierarchy. Use horizontal bars sorted by span, the over-target sites in focus blue and the target as a navy dashed line.
 - **Sector, external:** *Headline:* "Pharmacy technician postings outnumber qualified candidates nearly 2 to 1 in our three largest hiring metros". *Subtitle:* "Job postings per available candidate, pharmacy technicians, top 10 McKesson hiring metros, Q2 2026 (ratio)". *Data:* external job-postings and candidate-profile data. Highlight the three largest hiring metros and add a 1.0 reference line labelled "Balanced market".
 
@@ -67,7 +67,7 @@ import mckviz as mv
 mv.use()
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/attrition_by_job_family.csv")).sort_values("vol_attrition_pct")
+df = pd.read_csv(Path("assets/data/attrition_by_job_family.csv")).sort_values("vol_attrition_pct")
 ent = df.enterprise_rate_pct.iloc[0]
 focus = set(df.job_family[df.vol_attrition_pct > 20])      # only what the headline names
 
@@ -106,7 +106,7 @@ import mckviz as mv
 mv.use()  # registers + activates the "mck" Plotly template
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/attrition_by_job_family.csv")).sort_values("vol_attrition_pct")
+df = pd.read_csv(Path("assets/data/attrition_by_job_family.csv")).sort_values("vol_attrition_pct")
 ent = df.enterprise_rate_pct.iloc[0]
 focus = df.job_family[df.vol_attrition_pct > 20]
 fig = go.Figure(go.Bar(
@@ -130,7 +130,7 @@ fig.write_html("out/bar-highlight.html", include_plotlyjs="cdn")
 For HTML pages, prefer the chart-card pattern in [`examples/python/gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py): the headline, subtitle and source go in HTML, and the figure carries only the data. Hover text may show headcount, but never for groups with n < 10.
 
 ### Excel and PowerPoint
-1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**). Accent 1 = `#005A8C` (focus), Accent 2 = `#143359` (navy accent), Accent 3 = `#009EFF` (bright blue); light blue `#66C4FF` and context grey `#B4B0A5` via **More Colors › Hex**.
+1. Install the theme once. Copy `office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**). Accent 1 = `#005A8C` (focus), Accent 2 = `#143359` (navy accent), Accent 3 = `#009EFF` (bright blue); light blue `#66C4FF` and context grey `#B4B0A5` via **More Colors › Hex**.
 2. Sort the data by value, select it, then **Insert › Charts › Insert Column or Bar Chart › 2-D Clustered Bar**. Excel draws the first row at the bottom, so either sort ascending or set **Format Axis › Axis Options › Categories in reverse order**.
 3. Right-click a bar › **Format Data Series › Series Options › Gap Width 50%**. This gives bar : gap ≈ 2 : 1. For grouped bars, also set **Series Overlap 0%**.
 4. **Fill › Solid fill › More Colors › Hex B4B0A5** for all bars. Then click the focus bar a second time to select only that point, and set **Fill › Hex 005A8C** (or `143359` for the single navy accent; for the uniform + accent pattern, make all bars `66C4FF` first).
@@ -142,7 +142,7 @@ For HTML pages, prefer the chart-card pattern in [`examples/python/gallery_plotl
 10. Build-up on a live slide: duplicate the slide. Step 1: all bars grey with labels. Step 2: the focus bars recolored. Step 3: add the benchmark line and callout. Alternatively, use **Animations › Wipe › Effect Options › From Left, By Category**.
 
 ### Power BI
-- Import [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
+- Import [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
 - Use the **Clustered bar chart** and sort by the measure (**⋯ › Sort axis › descending**). Turn **Data labels** on (Outside end), the **X-axis** off and the **Gridlines** off.
 - Highlight with **Format › Bars › Colors › fx** (Format style: *Field value*) on a measure such as `Bar Color = IF([Attrition %] > 0.20, "#005A8C", "#B4B0A5")`.
 - Benchmark: **Analytics pane › Constant line** (or X-axis constant line), `#143359`, dashed, with its data label on.
@@ -151,9 +151,9 @@ For HTML pages, prefer the chart-card pattern in [`examples/python/gallery_plotl
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(readr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
-df <- read_csv("examples/data/attrition_by_job_family.csv") |>
+df <- read_csv("assets/data/attrition_by_job_family.csv") |>
   mutate(job_family = reorder(job_family, vol_attrition_pct))
 focus <- as.character(df$job_family[df$vol_attrition_pct > 20])
 

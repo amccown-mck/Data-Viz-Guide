@@ -48,6 +48,7 @@
 
 ### Python — matplotlib + `mckviz`
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -101,6 +102,7 @@ mv.save(fig, "out/small-multiples.png")
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
@@ -144,7 +146,7 @@ fig.show()
 `px.line(..., facet_col="bu", facet_col_wrap=3)` is quicker for exploration, but it can't draw the grey context of the other groups in each panel. Use the loop above for explanatory charts. On mobile, re-flow the grid to one column.
 
 ### Excel and PowerPoint
-1. **Theme:** install the `dist/office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
+1. **Theme:** install the `office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
 2. Build **one** panel completely first: **Insert → Insert Line or Area Chart → 2-D Line → Line**, with all groups as series. Set every series to **Hex `DEDBD1`, 1 pt** and the panel's own group to **Accent 1 `#005A8C`, 2.25 pt**. Set **Marker: None**, delete the legend, and replace the chart title with the group name (Libre Franklin 11 pt, left-aligned).
 3. **Fix the scale:** **Vertical axis → Format Axis → Bounds Minimum / Maximum** to fixed values (e.g. 5 and 15) and **Major unit** to 5. Never leave the bounds on Auto. This is what makes the panels comparable.
 4. Add an end-value data label to the own series' **last point** (**Add Data Label → Value, Position: Right**, bold, in the series color).
@@ -154,7 +156,7 @@ fig.show()
 8. Put the headline in the slide title. Add one subtitle (metric, unit, period) and one source line for the whole grid.
 
 ### Power BI
-- Apply the theme `dist/powerbi/mckesson-dataviz-theme.json`.
+- Apply the theme `assets/powerbi/mckesson-dataviz-theme.json`.
 - In a line, column or area chart, drag the group to the **Small multiples** well. Set **Format → Small multiples → Layout** (rows × columns) and keep the **Y-axis shared**: leave "Independent" scale off.
 - Small multiples show only each panel's own data. To add context, add a measure that ignores the panel filter and format it grey (`#DEDBD1`) or as the navy benchmark: `Enterprise rate = CALCULATE([Regretted attrition %], REMOVEFILTERS(BU[BU]))`.
 - Color the exception panel with a field-value rule (**Format → Lines → Color → fx**) driven by an `IsFocus` measure.
@@ -163,7 +165,7 @@ fig.show()
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 # Synthetic data for illustration (replace with yours): regretted attrition by BU, Q1 2025 (1) to Q4 2026 (8)
 start <- c("Corporate" = 9, "Medical-Surgical" = 11, "Oncology & Multispecialty" = 8, "RxTS" = 10,

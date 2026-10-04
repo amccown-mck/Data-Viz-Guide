@@ -1,6 +1,7 @@
 """Build the portable agent skill (dist/skills/mck-chart/) and the repo's own copy (.github/skills/mck-chart/SKILL.md).
 
     python tools/build_skill.py            (tokens/build.py runs it too; tools/make_bundle.py zips it)
+    python tools/build_skill.py --zip      also writes dist/skills/mck-chart.zip (upload to Claude.ai as a custom skill)
 
 Source: agents/skill/SKILL.template.md and agents/skill/scripts/. Blocks between <!-- portable --> and
 <!-- /portable --> appear only in the portable skill, <!-- repo --> blocks only in the repo copy. Placeholders:
@@ -14,13 +15,17 @@ The portable skill is self-contained, so it works dropped into ~/.claude/skills/
     references/*.md             principles, chart chooser, QA checklist, color, type, formats, Office and Power BI setup
     references/cookbook/*.md    one page per chart type (spec, do/don't, code for each platform)
     assets/                     web themes and chart-card starter, R theme, Power BI theme
+    assets/data/                the sample CSVs the cookbook snippets read (synthetic)
     scripts/                    check_env.py (is mckviz installed and the font registered?) and a mckviz how-to
-Links between included docs keep working; links to other kit files point at GitHub.
+Links between included docs keep working; links to other kit files point at GitHub. In the copied cookbook pages,
+repo paths become skill paths (examples/data/ -> assets/data/, dist/web/ -> assets/web/, ...), so the snippets run
+with the skill folder as the working directory.
 """
 from __future__ import annotations
 
 import re
 import shutil
+import sys
 import zipfile
 from pathlib import Path
 
@@ -37,6 +42,11 @@ ASSETS = {"web/mck-viz.css": "dist/web/mck-viz.css", "web/mck-plotly-template.js
           "web/vega-lite-config.json": "dist/web/vega-lite-config.json", "r/theme_mck.R": "dist/r/theme_mck.R",
           "powerbi/mckesson-dataviz-theme.json": "dist/powerbi/mckesson-dataviz-theme.json",
           "html/chart-card.html": "templates/html/chart-card.html"}
+# Repo paths in the copied cookbook pages -> where the same file is in the skill (or in the release bundle, for
+# office/ and fonts/, which the skill doesn't ship). Not applied inside GitHub URLs (the lookbehind).
+COOKBOOK_PATHS = {"examples/data/": "assets/data/", "dist/web/": "assets/web/", "dist/r/": "assets/r/",
+                  "dist/powerbi/": "assets/powerbi/", "dist/office": "office"}
+ZIP = OUT.parent / "mck-chart.zip"
 
 MODES = {
     "portable": {"docs": "references/", "web_css": "`assets/web/mck-viz.css`",
@@ -76,6 +86,10 @@ def portable_links(md: str, src: Path, dest: Path) -> str:
         except ValueError:
             pass
         rel = resolved.relative_to(ROOT).as_posix()
+        shipped_asset = next((a for a, s in ASSETS.items() if s == rel), None)
+        if shipped_asset:                                   # a theme file that ships in assets/
+            up = Path(*[".."] * len(dest.parent.relative_to(OUT).parts))
+            return f"]({(up / 'assets' / shipped_asset).as_posix()}{anchor})"
         kind = "tree" if resolved.is_dir() else "raw" if resolved.suffix in (".png", ".svg", ".jpg") else "blob"
         return f"]({REPO_URL}/{kind}/main/{rel}{anchor})"
     return re.sub(r"\]\(([^)\s#]*)(#[^)\s]*)?\)", fix, md)
@@ -91,8 +105,17 @@ def build() -> Path:
               if not p.name.startswith("_")]
     for src, dest in pages:                                 # copy first, so link checks see every shipped page
         shutil.copyfile(src, dest)
+    data = set()
     for src, dest in pages:
-        dest.write_text(portable_links(src.read_text(encoding="utf-8"), src, dest), encoding="utf-8", newline="\n")
+        text = portable_links(src.read_text(encoding="utf-8"), src, dest)
+        if dest.parent.name == "cookbook":
+            data |= set(re.findall(r"(?<![\w/])examples/data/([\w.-]+\.csv)", text))
+            for old, new in COOKBOOK_PATHS.items():
+                text = re.sub(rf"(?<![\w/]){re.escape(old)}", new, text)
+        dest.write_text(text, encoding="utf-8", newline="\n")
+    (OUT / "assets" / "data").mkdir(parents=True)
+    for name in sorted(data):                               # only the CSVs a snippet reads
+        shutil.copyfile(ROOT / "examples" / "data" / name, OUT / "assets" / "data" / name)
     shutil.copyfile(ROOT / "dist" / "agents" / "mck-viz-rules.md", ref / "rules.md")
 
     for rel, src in ASSETS.items():
@@ -100,7 +123,10 @@ def build() -> Path:
         dest.parent.mkdir(parents=True, exist_ok=True)
         text = (ROOT / src).read_text(encoding="utf-8")
         if rel.startswith("html/"):                         # the starter links the themes next to it
-            text = text.replace("../../dist/web/", "../web/")
+            text = text.replace("../../dist/web/", "../web/").replace(
+                "the two dist/ files below are linked relative to this file (templates/html/)",
+                "the two theme files below are linked relative to this file (assets/html/ in the skill)")
+            text = text.replace("dist/web/", "assets/web/").replace("docs/", "references/")
         dest.write_text(text, encoding="utf-8", newline="\n")
 
     tpl = (SRC / "SKILL.template.md").read_text(encoding="utf-8")
@@ -120,7 +146,7 @@ def build() -> Path:
     return OUT
 
 
-def zip_skill(dest: Path) -> Path:
+def zip_skill(dest: Path = ZIP) -> Path:
     """A zip with the mck-chart/ folder at its root: the layout Claude.ai custom skills expect."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as z:
@@ -132,3 +158,5 @@ def zip_skill(dest: Path) -> Path:
 
 if __name__ == "__main__":
     build()
+    if "--zip" in sys.argv:
+        print(f"  wrote {zip_skill().relative_to(ROOT).as_posix()}")

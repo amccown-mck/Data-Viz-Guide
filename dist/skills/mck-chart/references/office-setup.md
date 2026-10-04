@@ -18,9 +18,9 @@ Afterwards, **Page Layout › Colors** (Excel) and **Design › Variants › Col
 | Libre Franklin fonts | The brand typeface, 9 weights (SIL Open Font License, free to install and embed) | [`fonts/LibreFranklin/`](https://github.com/amccown-mck/Data-Viz-Guide/tree/main/fonts/LibreFranklin) |
 | Theme colors | Accent 1–6 = the categorical palette, Text 2 = McKesson Blue (titles, as in the Standard Template), Background 2 = Light Sand | [`dist/office/Theme Colors/McKesson Data Viz.xml`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/office/Theme%20Colors/McKesson%20Data%20Viz.xml) |
 | Theme fonts | Libre Franklin for headings and body | [`dist/office/Theme Fonts/McKesson Data Viz.xml`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/office/Theme%20Fonts/McKesson%20Data%20Viz.xml) |
-| PowerPoint template | 16:9, theme applied, the Standard Template's grid, left-aligned Bold McKesson Blue titles, no slides | [`dist/office/McKesson-DataViz.potx`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/office/McKesson-DataViz.potx) |
+| PowerPoint template | 16:9, theme applied (flat: solid fills, 1 pt lines, no shadows or bevels), no slides. Master and layouts on the Standard Template's grid: title Bold 26 pt McKesson Blue at 0.39 in left / 0.38 in top, body 16/14 pt without bullets from 1.32 in, footer with page number, "McKesson Proprietary and Confidential" and date | [`dist/office/McKesson-DataViz.potx`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/office/McKesson-DataViz.potx) |
 | Starter deck | Native, editable sample charts: bar highlight, line, waterfall, 100% stacked bar. The internal release bundle also has a copy built on the McKesson Standard Template (`McKesson-DataViz-Starter-Official.pptx`) | [`dist/office/McKesson-DataViz-Starter.pptx`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/office/McKesson-DataViz-Starter.pptx) |
-| Chart workbook | Palette sheet, the same four charts in Excel, and a heat-table scorecard | [`dist/office/McKesson-DataViz-Charts.xlsx`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/office/McKesson-DataViz-Charts.xlsx) |
+| Chart workbook | Palette sheet (chart roles, status colors with symbols and words, ramps including the ordered steps), the same four charts in Excel, a heat-table scorecard, and named cell styles (**Home › Cell Styles**: Headline, Subtitle, Source, Focus row, Total) | [`dist/office/McKesson-DataViz-Charts.xlsx`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/office/McKesson-DataViz-Charts.xlsx) |
 | One-page PDFs | Cheat sheet (anatomy, colors, checklist) and chart chooser | [`dist/print/cheat-sheet.pdf`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/print/cheat-sheet.pdf), [`dist/print/chart-chooser.pdf`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/print/chart-chooser.pdf) |
 
 ## 1. Install the fonts
@@ -46,7 +46,7 @@ Or do it in File Explorer: paste `%APPDATA%\Microsoft\Templates\Document Themes`
 - **Word:** **Design › Colors / Fonts › McKesson Data Viz**.
 - To make it the default for new PowerPoint decks, open the `.potx`, go to **Design**, right-click the current theme thumbnail and choose **Set as Default Theme**.
 
-Once the theme is applied, the color picker's top rows are the McKesson palette. **Accent 1** is McKesson Blue `#005A8C` (focus), **Accent 2** is Navy `#143359` (the accent for the one exception), **Accent 3** is bright blue `#009EFF`, then teal and mint. **Accent 6** is Orange `#EF8200`: use it only for "worse" (negatives, below target), never as a highlight. The context grey `#B4B0A5` and the light blue `#66C4FF` (the series fill when one bar gets the navy accent) aren't theme slots: pick them with **More Colors › Hex**, or copy formatting from a sample chart with **Format Painter**.
+Once the theme is applied, the color picker's top rows are the McKesson palette, in the categorical order: **Accent 1** McKesson Blue `#005A8C` (focus), **Accent 2** Navy `#143359` (the accent for the one exception), **Accent 3** bright blue `#009EFF`, **Accent 4** teal `#00AF9D`, **Accent 5** mint `#05CE90`. **Accent 6** is Orange `#EF8200`: use it only for "worse" (negatives, below target), never as a highlight. The context grey `#B4B0A5` and the light blue `#66C4FF` (the series fill when one bar gets the navy accent) aren't theme slots: pick them with **More Colors › Hex**, or copy formatting from a sample chart with **Format Painter**.
 
 ## 4. Use the starter files
 - **New deck:** copy `McKesson-DataViz.potx` to `Documents\Custom Office Templates` (Mac: `~/Library/Group Containers/UBF8T346G9.Office/User Content/Templates`). It then shows up under **File › New › Personal** (or **Custom**).
@@ -69,10 +69,23 @@ Each chart type's click-by-click recipe is in its cookbook page under **Excel an
 | A chart pasted from Excel changed colors | You pasted with **Keep Source Formatting** into a deck with another theme. Paste with **Use Destination Theme**, or apply the McKesson theme to both files. |
 
 ## For maintainers
-All of these files are generated, so never edit them in `dist/` by hand. After changing `tokens/tokens.json`:
+All of these files are generated, so never edit them in `dist/` by hand. After changing `tokens/tokens.json`, run from the repo root:
+
+**Windows (PowerShell)**
 ```powershell
 .\.venv\Scripts\python.exe tokens\build.py           # theme XML, CSS, Plotly, ... (dist/)
 .\.venv\Scripts\python.exe office\build_office.py    # .pptx, .potx, .xlsx (dist/office/)
 .\.venv\Scripts\python.exe tools\build_guide.py       # the guide, plus the cheat sheet and chart chooser PDFs (dist/print/)
 ```
-`office/build_office.py` needs `python-pptx`, `xlsxwriter` and `pandas`. It swaps the McKesson theme into each package itself, and removes xlsxwriter's `defaultThemeVersion` attribute, without which Excel ignores the embedded theme.
+
+**Mac or Linux (bash/zsh)**
+```bash
+.venv/bin/python tokens/build.py
+.venv/bin/python office/build_office.py
+.venv/bin/python tools/build_guide.py
+```
+
+`office/build_office.py` needs `mckviz` (installed from `python/`), `python-pptx`, `xlsxwriter`, `lxml` and `pandas`, plus `openpyxl` to re-open the workbook when checking a build:
+`pip install -e ./python python-pptx openpyxl xlsxwriter lxml pandas`. It swaps the McKesson color and font schemes and a flat format scheme into each package, puts the template's master and layouts on the Standard Template grid, sets the file properties, adds named cell styles and `roundedCorners=0` to the workbook, and removes xlsxwriter's `defaultThemeVersion` attribute, without which Excel ignores the embedded theme.
+
+To check a build without Office, re-open the files with python-pptx and openpyxl and read the XML, then do a visual check in PowerPoint and Excel on Windows: the title and footer positions in **View › Slide Master**, no shadows on the drawn lines, square chart corners, and the cell styles under **Home › Cell Styles**.

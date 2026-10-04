@@ -15,6 +15,7 @@ Pick the chart from the **question**, not from habit. First name the question ty
 | **Relationships & flows** | How do things connect or move between states? | Internal mobility between job families; hiring source → role; skill overlaps |
 | **Geo-spatial** | Where? | Talent availability by metro; workforce by DC location; remote-work distribution |
 | **Single number** | Just the headline figure | "75% of roles have a successor ready" |
+| **Plans and status** | What happens when, who owns it, is it on track? | Reskilling program roadmap; initiative tracker for the steering committee; milestones by quarter |
 
 ## Step 2 — Choose from the short list
 
@@ -31,6 +32,7 @@ This table mirrors the chart chooser in the guide (`dist/guide/chooser.html`); k
 | Relationships & flows | [Sankey](cookbook/sankey.md) | [Parallel coordinates](cookbook/parallel-coordinates.md); [Venn](cookbook/venn.md), 3 sets max | A color per stage |
 | Geo-spatial | [Choropleth](cookbook/maps.md) for rates | Bubble map for counts; world map; zoom-in with a locator | Counts on a choropleth |
 | Single number | [Big number](cookbook/kpi-big-number.md) with a comparison | Progress bar or ring for a target | Speedometers |
+| Plans and status | Roadmap (Gantt bars by workstream, milestones as markers) | Initiative tracker (a table with a status column); status pills: color + symbol + word (`mv.STATUS`, [color.md §4](color.md#4-status-colors-red-amber-green)) | Red/amber/green by color alone, or on data series |
 
 ## Step 3 — Sanity checks
 

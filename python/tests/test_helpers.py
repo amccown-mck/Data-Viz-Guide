@@ -148,3 +148,84 @@ def test_geo_reads_the_packaged_maps():
     world = geo.Map("countries-110m.json", "countries", (0, 0, 432, 220), project=geo.equal_earth, min_area=2)
     assert len(world.rings) > 150
     plt.close(fig)
+
+
+# ----------------------------------------------------------------------------------------------- color helpers
+def test_categorical_order_and_limit():
+    assert len(mv.CATEGORICAL) == 6
+    assert mv.categorical(2) == [mv.colors.focus, mv.colors.accent] == ["#005A8C", "#143359"]
+    assert mv.categorical(6) == mv.CATEGORICAL
+    assert mv.categorical(6)[-1].upper() == "#EF8200"                 # orange is the last resort
+    with pytest.raises(ValueError):
+        mv.categorical(7)
+
+
+def test_fill_tints_are_two_light_colors_outside_the_series_order():
+    assert len(mv.FILL_TINTS) == 2
+    assert not set(map(str.upper, mv.FILL_TINTS)) & set(map(str.upper, mv.CATEGORICAL))
+    for h in mv.FILL_TINTS:
+        assert mv.text_on(h) == mv.colors.headline                   # light enough for navy text
+
+
+def test_highlight_focus_accent_and_base():
+    labs = ["A", "B", "C", "D"]
+    C = mv.colors
+    assert mv.highlight(labs) == [C.context] * 4
+    assert mv.highlight(labs, focus="B") == [C.context, C.focus, C.context, C.context]
+    assert mv.highlight(labs, focus=["A", "B"], accent="B") == [C.focus, C.accent, C.context, C.context]
+    assert mv.highlight(labs, accent="D", base=C.focus_light) == [C.focus_light] * 3 + [C.accent]
+    assert mv.highlight([2024, 2025], focus=2025) == [C.context, C.focus]          # numeric labels
+    assert mv.pl_highlight(labs, focus="C") == mv.highlight(labs, focus="C")
+
+
+@pytest.mark.parametrize("fill, expected", [
+    ("#005A8C", "#FFFFFF"), ("#143359", "#FFFFFF"), ("#000000", "#FFFFFF"),
+    ("#009EFF", "headline"), ("#EF8200", "headline"), ("#FFFFFF", "headline"),
+])
+def test_text_on_picks_the_higher_contrast_ink(fill, expected):
+    assert mv.text_on(fill) == (mv.colors.headline if expected == "headline" else expected)
+
+
+@pytest.mark.parametrize("args, expected", [
+    ((4,), "+4"), ((-11.46, 1, "%"), f"{MINUS}11.5%"), ((0,), "0"), ((0.04, 1), "0.0"), ((-0.04, 1), "0.0"),
+    ((1234,), "+1,234"), ((-2.5, 1, " pts"), f"{MINUS}2.5 pts"),
+])
+def test_signed(args, expected):
+    assert mv.signed(*args) == expected
+
+
+@pytest.mark.parametrize("args, expected", [
+    ((0,), "0"), ((-0.4,), "0"), ((9_999,), "9,999"), ((10_000,), "10K"), ((999_499,), "999K"),
+    ((9.96e9,), "10B"), ((1e12,), "1,000B"), ((1234, "k"), "1.2K"), ((-5, "plain"), f"{MINUS}5"),
+])
+def test_fmt_num_edges(args, expected):
+    assert mv.fmt_num(*args) == expected
+
+
+# ----------------------------------------------------------------------------------------------- synced theme files
+def _token_colorway() -> list[str]:
+    import json
+
+    tokens = REPO / "tokens" / "tokens.json"
+    if not tokens.exists():
+        pytest.skip("not running from the repo")
+    return [h.upper() for h in json.loads(tokens.read_text(encoding="utf-8"))["color"]["categorical"]["values"]]
+
+
+def test_package_tokens_match_repo_tokens():
+    assert [h.upper() for h in mv.CATEGORICAL] == _token_colorway()
+
+
+def test_plotly_template_colorway_matches_tokens():
+    import json
+
+    tpl = json.loads((Path(mv.__file__).parent / "plotly_template.json").read_text(encoding="utf-8"))
+    assert [h.upper() for h in tpl["layout"]["colorway"]] == _token_colorway()
+
+
+def test_mplstyle_color_cycle_matches_tokens():
+    import re
+
+    style = (Path(mv.__file__).parent / "mckviz.mplstyle").read_text(encoding="utf-8")
+    line = next(ln for ln in style.splitlines() if ln.startswith("axes.prop_cycle"))
+    assert ["#" + h.upper() for h in re.findall(r"'#?([0-9A-Fa-f]{6})'", line)] == _token_colorway()

@@ -42,7 +42,7 @@
 | Show exclusive counts and say so | Mix "total in set" and "only in set" numbers in one diagram |
 
 ## Workforce examples
-- **Firm level, internal (count Venn):** *Headline:* "Only 140 of 8,800 employees with a verified skill profile combine clinical, data and supply-chain expertise". *Subtitle:* "Employees by verified skill area, U.S. regular employees, skills inventory as of Mar 2026 (headcount)". *Data:* [`examples/data/skills_overlap.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/skills_overlap.csv), one row per skill combination with exclusive counts. Built below.
+- **Firm level, internal (count Venn):** *Headline:* "Only 140 of 8,800 employees with a verified skill profile combine clinical, data and supply-chain expertise". *Subtitle:* "Employees by verified skill area, U.S. regular employees, skills inventory as of Mar 2026 (headcount)". *Data:* [`assets/data/skills_overlap.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/skills_overlap.csv), one row per skill combination with exclusive counts. Built below.
 - **Program level, internal (two sets):** *Headline:* "Two-thirds of our mentors also lead an employee resource group, so the same 300 people carry both programs". *Subtitle:* "Active mentors and ERG leaders, U.S., FY26 (people)". *Data:* the learning system and the ERG roster, joined on employee ID and aggregated. Consider a 100% bar first.
 - **Operating model (concept Venn, no numbers):** *Headline:* "Workforce intelligence sits where people analytics, finance and strategy meet". *Subtitle:* "Capabilities of the SWP operating model". The overlaps name roles (workforce planner, people-data engineer, HR business partner), and the descriptions sit outside with leader lines.
 
@@ -95,7 +95,7 @@ def clip(subject, clipper):                                           # polygon 
     return out
 
 
-df = pd.read_csv(Path("examples/data/skills_overlap.csv"))        # one row per combination, exclusive counts
+df = pd.read_csv(Path("assets/data/skills_overlap.csv"))        # one row per combination, exclusive counts
 keys = ["clinical", "data_analytics", "supply_chain"]
 circ = dict(zip(keys, [circle(-0.55, 0.32), circle(0.55, 0.32), circle(0.0, -0.63)]))
 shade = mv.SEQUENTIAL["blue"]
@@ -193,7 +193,7 @@ def svg(poly):
     return "M " + " L ".join(f"{x:.4f},{y:.4f}" for x, y in poly) + " Z"
 
 
-df = pd.read_csv(Path("examples/data/skills_overlap.csv"))
+df = pd.read_csv(Path("assets/data/skills_overlap.csv"))
 keys = ["clinical", "data_analytics", "supply_chain"]
 circ = dict(zip(keys, [circle(-0.55, 0.32), circle(0.55, 0.32), circle(0.0, -0.63)]))
 shade = mv.SEQUENTIAL["blue"]
@@ -254,9 +254,9 @@ Excel has no Venn chart. Build it in PowerPoint with shapes (SmartArt's **Basic 
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(readr); library(sf)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
-df <- read_csv("examples/data/skills_overlap.csv")
+df <- read_csv("assets/data/skills_overlap.csv")
 circ <- function(x, y) st_buffer(st_point(c(x, y)), 1, nQuadSegs = 60)
 A <- circ(-0.55, 0.32); B <- circ(0.55, 0.32); S <- circ(0, -0.63)
 regions <- st_sf(level = c(1, 1, 1, 2, 2, 2, 3),

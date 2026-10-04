@@ -31,7 +31,7 @@ The same finding needs different treatment in a live meeting, a PDF, a phone or 
 
 ## Web and HTML (articles, microsites, internal tools)
 
-- Use the **chart-card pattern**: headline, subtitle and source in HTML text; the chart library draws only the data. Template: [`templates/html/chart-card.html`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/templates/html/chart-card.html) (copy it; it draws after the font loads and swaps end labels for a top key on phones); CSS: [`dist/web/mck-viz.css`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/web/mck-viz.css).
+- Use the **chart-card pattern**: headline, subtitle and source in HTML text; the chart library draws only the data. Template: [`templates/html/chart-card.html`](../assets/html/chart-card.html) (copy it; it draws after the font loads and swaps end labels for a top key on phones); CSS: [`dist/web/mck-viz.css`](../assets/web/mck-viz.css).
 - Charts must be **responsive**: fixed aspect on desktop, re-flowed on mobile.
 - **Tooltips** hold detail (exact values, n-size) — never the only place the key number lives.
 - Provide **alt text** or a visually hidden text summary (headline + 2–3 numbers).
@@ -67,7 +67,7 @@ Useful interactions, each must earn its place:
 
 Dashboards are **exploratory**, but the same visual rules apply.
 
-- Apply the theme [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) (View → Themes → Browse).
+- Apply the theme [`dist/powerbi/mckesson-dataviz-theme.json`](../assets/powerbi/mckesson-dataviz-theme.json) (View → Themes → Browse).
 - **Top-left = most important.** A row of 3–5 KPI cards, then the primary chart, then detail.
 - Each visual gets a **question-style or insight title** (dynamic titles via DAX measures where the insight changes with filters).
 - Use **conditional formatting** to apply highlight logic (focus vs. context) rather than rainbow categorical colors.

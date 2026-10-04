@@ -42,7 +42,7 @@
 | State the comparator in the subtitle or footnote (market definition, benchmark source, cohort n) | Leave "market" or "benchmark" undefined |
 
 ## Workforce examples
-- **Firm vs. external market:** *Headline:* "McKesson pay trails the market by 5% or more for three clinical and pharmacy roles". *Subtitle:* "Median base pay, McKesson vs. external market, 2026 ($K)". *Data:* [`examples/data/pay_vs_market.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/pay_vs_market.csv): internal compensation vs. external posted-pay medians for matched roles and metros.
+- **Firm vs. external market:** *Headline:* "McKesson pay trails the market by 5% or more for three clinical and pharmacy roles". *Subtitle:* "Median base pay, McKesson vs. external market, 2026 ($K)". *Data:* [`assets/data/pay_vs_market.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/pay_vs_market.csv): internal compensation vs. external posted-pay medians for matched roles and metros.
 - **Team, internal (dot plot):** *Headline:* "Two distribution-center teams score 8+ points below the company engagement index of 76". *Subtitle:* "Employee engagement index by DC team, Q2 2026 (0–100)". *Data:* engagement survey, teams with n ≥ 10 respondents. Range 60–90, with a company line in navy, dashed and labelled.
 - **Individual → cohort, internal (before/after):** *Headline:* "The first Data Academy cohort lifted SQL proficiency from 1.8 to 3.1, the largest gain of any skill". *Subtitle:* "Average assessed proficiency before vs. after the program, cohort 1 (n = 48), 1–5 scale". *Data:* pre- and post-program skill assessments (LMS). "Before" dots in grey, "after" dots in blue, SQL in navy.
 
@@ -64,7 +64,7 @@ import mckviz as mv
 mv.use()
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/pay_vs_market.csv")).sort_values("gap_pct", ignore_index=True)
+df = pd.read_csv(Path("assets/data/pay_vs_market.csv")).sort_values("gap_pct", ignore_index=True)
 lag = df.gap_pct <= -5                                   # the exception the headline calls out
 
 fig, ax = plt.subplots(figsize=(10, 5.6))
@@ -114,7 +114,7 @@ import mckviz as mv
 mv.use()  # registers + activates the "mck" Plotly template
 C = mv.colors
 
-df = pd.read_csv(Path("examples/data/pay_vs_market.csv")).sort_values("gap_pct", ascending=False, ignore_index=True)
+df = pd.read_csv(Path("assets/data/pay_vs_market.csv")).sort_values("gap_pct", ascending=False, ignore_index=True)
 lag = df.gap_pct <= -5
 xs, ys = [], []
 for r in df.itertuples():                                # one connector per row, separated by None
@@ -141,7 +141,7 @@ fig.write_html("out/dumbbell.html", include_plotlyjs="cdn")
 
 ### Excel and PowerPoint
 Excel has no native dumbbell; build it from an **XY scatter** once, then save it as a template.
-1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `dist/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
+1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `office/` (see [bar.md](bar.md#excel-and-powerpoint)).
 2. Set up the sheet with these columns: `Role`, `Market`, `McKesson`, `Row` (1…n), `Plus = MAX(0, Market − McKesson)`, `Minus = MAX(0, McKesson − Market)`, `LabelX = MAX(Market, McKesson) + 3`, `GapPct = (McKesson − Market) / Market`, `GapLabel = IF(GapPct<0,"−","+")&TEXT(ABS(GapPct),"0.0%")` and `AxisX` (the axis minimum, e.g. 35).
 3. **Insert › Charts › Scatter (markers only)**. In **Select Data**, add the series *Market* (X = Market, Y = Row) and *McKesson* (X = McKesson, Y = Row).
 4. Select *McKesson* › **Chart Elements (+) › Error Bars › More Options**. Delete the vertical error bars. For the horizontal ones, set **Direction: Both**, **End Style: No Cap**, **Error Amount › Custom › Specify Value** (Positive = `Plus`, Negative = `Minus`), and **Line: solid `DEDBD1`, 3 pt, Round cap**.
@@ -153,7 +153,7 @@ Excel has no native dumbbell; build it from an **XY scatter** once, then save it
 10. **Right-click › Save as Template** (`.crtx`). In PowerPoint, paste as an embedded native chart. The headline goes in the title placeholder; the footnote (market definition) and source go bottom-left at 9 pt Libre Franklin Light.
 
 ### Power BI
-- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json).
+- Apply [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json).
 - **Most faithful:** the certified **Deneb** visual with a Vega-Lite spec (`rule` mark for the connector, two `circle` layers, a `text` layer for gaps). Store the spec in the report so it's versioned.
 - **Native fallback (vertical dumbbells):** use a **Line chart** with role on the X-axis and *Market* and *McKesson* as values. Set **Lines › Stroke width 0** and turn **Markers** on. In the **Analytics pane › Error bars**, set Upper/Lower bound = `MAX`/`MIN` of the two measures, bar color `#DEDBD1`. Turn off the Y-axis gridlines except light vertical guides.
 - Highlight with marker conditional formatting (**fx** on a color measure returning `#EF8200` for below-market rows / `#005A8C` otherwise; `#143359` for an exception that isn't worse).
@@ -162,9 +162,9 @@ Excel has no native dumbbell; build it from an **XY scatter** once, then save it
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(readr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
-pay <- read_csv("examples/data/pay_vs_market.csv") |>
+pay <- read_csv("assets/data/pay_vs_market.csv") |>
   mutate(role = reorder(role, -gap_pct), lag = gap_pct <= -5,
          gap_lbl = sub("-", "\u2212", sprintf("%+.1f%%", gap_pct)))
 

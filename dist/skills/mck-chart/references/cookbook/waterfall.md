@@ -46,9 +46,9 @@
 | On live slides, build up: start total → drivers one group at a time → end total and callout | Reveal all drivers and the callout in one click |
 
 ## Workforce examples
-- **Firm, internal:** *Headline:* "Automation and contractor conversion offset ~40% of FY26 labor cost growth". *Subtitle:* "Labor cost bridge, FY25 to FY26 ($M)". *Data:* [`examples/data/labor_cost_bridge.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/labor_cost_bridge.csv), finance labor-cost actuals reconciled to HRIS movements. The two named drivers are blue, the other drivers grey and the totals navy, with the axis truncated at $3,900M and footnoted.
+- **Firm, internal:** *Headline:* "Automation and contractor conversion offset ~40% of FY26 labor cost growth". *Subtitle:* "Labor cost bridge, FY25 to FY26 ($M)". *Data:* [`assets/data/labor_cost_bridge.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/labor_cost_bridge.csv), finance labor-cost actuals reconciled to HRIS movements. The two named drivers are blue, the other drivers grey and the totals navy, with the axis truncated at $3,900M and footnoted.
 - **Team, internal:** *Headline:* "Voluntary exits cancelled out nearly all of FY26 hiring at our distribution centers". *Subtitle:* "Distribution Center Associate headcount bridge, Apr 2025 to Mar 2026 (employees)". *Data:* HRIS movement records (hires, rehires, transfers in/out, voluntary and involuntary exits). Use a horizontal waterfall with *Voluntary exits* in orange (a loss of headcount, so orange means worse), the other movements grey and the opening/closing headcount navy. Any movement under 10 people goes into "Other movements".
-- **SWP, internal + external:** *Headline:* "Reskilling and internal moves close about a third of the 2030 Data & AI gap; the rest must be hired or borrowed". *Subtitle:* "Data & AI capability gap by sourcing lever, 2030, base scenario (FTE)". *Data:* the 617-FTE gap (demand − internal supply) from [`examples/data/data_ai_supply_demand.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/data_ai_supply_demand.csv), the SWP scenario model for *Build* / *Move* / *Automate*, and external postings-per-candidate data for Data & AI roles in our hiring metros to size *Buy* / *Borrow*. Use a distribution waterfall: the gap total first, then the levers stepping down to zero, with *Build* and *Move* in blue. Footnote it as an estimate.
+- **SWP, internal + external:** *Headline:* "Reskilling and internal moves close about a third of the 2030 Data & AI gap; the rest must be hired or borrowed". *Subtitle:* "Data & AI capability gap by sourcing lever, 2030, base scenario (FTE)". *Data:* the 617-FTE gap (demand − internal supply) from [`assets/data/data_ai_supply_demand.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/data_ai_supply_demand.csv), the SWP scenario model for *Build* / *Move* / *Automate*, and external postings-per-candidate data for Data & AI roles in our hiring metros to size *Buy* / *Borrow*. Use a distribution waterfall: the gap total first, then the levers stepping down to zero, with *Build* and *Move* in blue. Footnote it as an estimate.
 
 ## Build it
 
@@ -71,7 +71,7 @@ C = mv.colors
 BAND = mv.TOKENS["chart"]["bar"]["band_fill"]                     # bar:gap ~ 2:1
 FLOOR = 3900                                                      # truncated start, marked with breaks + footnote
 
-df = pd.read_csv(Path("examples/data/labor_cost_bridge.csv"))
+df = pd.read_csv(Path("assets/data/labor_cost_bridge.csv"))
 focus = {"Automation savings", "Contractor conversion"}           # only the drivers the headline names
 
 running, bottoms, heights, fills = 0.0, [], [], []
@@ -135,7 +135,7 @@ mv.use()  # registers + activates the "mck" Plotly template
 C = mv.colors
 FLOOR = 3900
 
-df = pd.read_csv(Path("examples/data/labor_cost_bridge.csv"))
+df = pd.read_csv(Path("assets/data/labor_cost_bridge.csv"))
 measure = ["absolute"] + ["relative"] * (len(df) - 2) + ["total"]
 deltas = df.value_musd[df.kind == "delta"]
 saved, grew = -deltas[deltas < 0].sum(), deltas[deltas > 0].sum()
@@ -168,7 +168,7 @@ fig.write_html("out/waterfall.html", include_plotlyjs="cdn")
 `go.Waterfall` colors by type (increase / decrease / total), not by bar, so it suits the **semantic** pattern shown here. For the **highlight** pattern, use `go.Bar(x=steps, y=heights, base=bottoms, marker_color=fills)` with the `bottoms`/`heights`/`fills` computed as in the matplotlib snippet, and draw the connectors with `fig.add_shape(type="line", ...)`. Use `orientation="h"` for a horizontal waterfall.
 
 ### Excel and PowerPoint
-1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
+1. Install the theme once. Copy `office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
 2. Lay out two columns, *Step* | *Value*. The first row holds the start total, then the signed drivers (negatives as negative numbers), then the end total as a positive value. Check that start + Σ drivers = end.
 3. Select the data, then **Insert › Charts › Insert Waterfall, Funnel, Stock, Surface or Radar Chart › Waterfall**.
 4. Click the start bar once (selects the series), then again (selects only that point), and choose **Right-click › Set as Total**. Repeat for the end bar and any subtotal. Without this, Excel draws totals as floating increases.
@@ -182,7 +182,7 @@ fig.write_html("out/waterfall.html", include_plotlyjs="cdn")
 12. Build-up on a live slide: the Waterfall chart type only animates as one object. Duplicate the slide instead: step 1 shows the start total only (drivers set to **No fill**), step 2 adds the grey drivers, step 3 adds the highlight, end total and callout. **Transitions › Morph** smooths the steps.
 
 ### Power BI
-- Import [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
+- Import [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
 - Use the native **Waterfall chart**: Category = driver, Y-axis = value. Add a `Step order` column and set it via **Column tools › Sort by column**, so the drivers keep their logical order. The visual adds the **Total** bar automatically. For a year-over-year bridge, put the fiscal year in **Category** and the driver in **Breakdown**.
 - Under **Format visual › Columns › Sentiment colors**, set Increase / Decrease / Total. For a cost bridge, use `#EF8200` / `#00AF68` / `#143359` (semantic). For the highlight look, set Increase and Decrease both to `#B4B0A5`. Turn **Data labels** on, and the **Y-axis** and **Gridlines** off.
 - The native visual can't color single bars, start above zero with break marks, or hold mid-chart subtotals. When you need those, use a **stacked column** with a transparent `Spacer` measure and a `Driver` measure. Color the driver bars with **Columns › Colors › fx** (Field value) on a measure such as `Bar Color = IF(SELECTEDVALUE(Bridge[Step]) IN {"Automation savings", "Contractor conversion"}, "#005A8C", "#B4B0A5")`.
@@ -191,10 +191,10 @@ fig.write_html("out/waterfall.html", include_plotlyjs="cdn")
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(readr); library(stringr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 focus <- c("Automation savings", "Contractor conversion")
-df <- read_csv("examples/data/labor_cost_bridge.csv") |>
+df <- read_csv("assets/data/labor_cost_bridge.csv") |>
   mutate(id    = row_number(),
          delta = if_else(kind == "total", 0, value_musd),
          end   = if_else(kind == "total", value_musd, first(value_musd) + cumsum(delta)),

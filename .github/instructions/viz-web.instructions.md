@@ -35,6 +35,6 @@ The headline, subtitle and source are HTML text, and the chart library draws onl
 - **Tables** use `<table class="mck-table">` with `<th scope>`, right-aligned `.num` cells, `tr.is-focus` / `tr.is-total` rows and `td.is-muted` for suppressed cells. See `docs/cookbook/tables.md`.
 - **Responsive:** max width ~960 px. Check the page at 390 px wide: columns become horizontal bars, the key moves on top, and wide tables scroll inside `overflow-x: auto`.
 - **Tooltips** carry detail (exact values, n-size), never the only copy of the key number. Never show a group of fewer than 10 people or an individual's value in a tooltip, filter or drill-down.
-- **Accessibility:** give each chart `role="img"` with an `aria-label` (or a visually hidden text summary), keep text ≥ 11 px, and never hijack scrolling.
+- **Accessibility:** give each chart `role="img"` with an `aria-label` (or a visually hidden summary or data table: `class="sr-only"` in `mck-viz.css`), keep text ≥ 11 px, and never hijack scrolling.
 - **Draw after the font loads:** `document.fonts.ready.then(draw)`. Plotly caches label widths from its first render, so drawing with the fallback font leaves margins that clip long labels.
 - **Never edit `dist/web/*`**. It is generated from `tokens/tokens.json` by `python tokens/build.py`.

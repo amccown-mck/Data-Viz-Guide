@@ -137,7 +137,7 @@ mv.use()
 C = mv.colors
 
 # Synthetic: open pharmacy-technician postings per qualified candidate, by state (a normalized rate).
-ratio = pd.read_csv("examples/data/talent_market_by_state.csv").set_index("state")["postings_per_candidate_q2_2026"]
+ratio = pd.read_csv("assets/data/talent_market_by_state.csv").set_index("state")["postings_per_candidate_q2_2026"]
 edges = [-np.inf, 0.8, 1.1, 1.4, 1.7, np.inf]
 labels = ["Under 0.8", "0.8–1.1", "1.1–1.4", "1.4–1.7", "1.7+"]
 ramp = [mv.SEQUENTIAL["blue"][i] for i in (0, 1, 2, 4, 5)]  # skip #009EFF: no text color reaches 4.5:1 on it
@@ -306,7 +306,7 @@ fig.write_html(Path(tempfile.gettempdir()) / "map-bubbles.html", include_plotlyj
 9. **For print:** set the state outline (**Format Data Series › Border**) to `#8C8C8C`, 0.5 pt, because white boundaries can disappear on paper.
 
 ### Power BI
-- Apply the theme: **View › Themes › Browse for themes ›** [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json).
+- Apply the theme: **View › Themes › Browse for themes ›** [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json).
 - Use the **Azure Maps** visual (the older Map and Filled map visuals are being retired; your tenant admin must enable Azure Maps). For a choropleth, add a **Filled map** layer on the state field. For bubbles, use the **Bubble layer** with **Size** = a count measure and **Range scaling** = *Magnitude* (area-proportional).
 - Bin with a color measure, then set **Fill color › fx › Field value**: `State Fill = SWITCH(TRUE(), [Ratio] >= 1.7, "#143359", [Ratio] >= 1.4, "#0A5FBC", [Ratio] >= 1.1, "#009EFF", [Ratio] >= 0.8, "#66C4FF", "#B6E2FA")`. Do the same for focus/context bubbles (`"#005A8C"` / `"#B4B0A5"`).
 - **Privacy:** map visuals send location values to an Azure service for geocoding, so check this against your data-handling rules. Map only aggregated locations (state, metro, site); never latitude/longitude of employees' homes. Remove precise-location fields from tooltips, and apply row-level security before the map.
@@ -316,7 +316,7 @@ fig.write_html(Path(tempfile.gettempdir()) / "map-bubbles.html", include_plotlyj
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 # maps::map_data() needs {maps}; the Albers projection needs {mapproj}. Lower 48 only.
 # For AK/HI insets use {sf} + tigris::states(cb = TRUE) |> tigris::shift_geometry() and coord_sf(crs = 5070).
 

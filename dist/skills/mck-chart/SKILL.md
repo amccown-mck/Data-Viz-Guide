@@ -27,15 +27,18 @@ QA:           pass | exceptions: <list>
 - Look at the data: grain (individual, team, firm, sector), the n per group, units, time span, and whether a benchmark or target exists.
 
 ## 2. Chart type
-- Name the question type: magnitude, part-to-whole, change over time, ranking, distribution, correlation, relationships & flows, geo-spatial, or single number.
+- Name the question type: magnitude, part-to-whole, change over time, ranking, distribution, correlation, relationships & flows, geo-spatial, single number, or plans and status (roadmap / Gantt, initiative tracker, milestones; status pills always show color + symbol + word, e.g. "✓ On track").
 - Pick from `references/choosing-a-chart.md` (the first choice unless a sanity check rules it out), then **read** `references/principles.md` and `references/cookbook/<page>.md`. Note the page's spec table and "When not to use".
 - Common traps: clustered values far from zero → dot plot, not truncated bars. Two units over time → two aligned charts, not dual axes. More than 6 categories → highlight plus grey, or group into "Other". A spread across people → distribution, not an average.
 
 ## 3. Build
 - Start from the cookbook snippet for the platform the user needs:
-  - **Python:** `import mckviz as mv; mv.use(); C = mv.colors`. Use `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, `mv.label_bars` / `mv.label_line_ends` for labels, `mv.fmt_num` for numbers (K/M/B, %, true minus) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `references/cookbook/maps.md`).
+  - **Python:** `import mckviz as mv; mv.use(); C = mv.colors` (`mv.use()` styles matplotlib and activates the "mck" Plotly template). Use `mv.fmt_num` for numbers (K/M/B, %, true minus) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `references/cookbook/maps.md`).
+    - **matplotlib** for slides, PNG, PDF and print: `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, `mv.label_bars` / `mv.label_line_ends` for labels.
+    - **Plotly** when the output is interactive or HTML: `mv.pl_highlight` for colors, `mv.pl_finish(fig, headline, subtitle, source_text)` for the frame, then `fig.write_html(...)`.
   - **HTML:** the chart-card pattern with `assets/web/mck-viz.css` plus `assets/web/mck-plotly-template.js` or `assets/web/vega-lite-config.json` (starter: `assets/html/chart-card.html`).
-  - **Excel / PowerPoint, Power BI, R:** follow the cookbook page's section for that platform, using the theme files in `assets/` (Office files: see Setup below).
+  - **Excel / PowerPoint:** there is no Python-to-pptx path. Start from the starter deck (`McKesson-DataViz-Starter.pptx`, native charts on the template grid) and follow the cookbook page's Excel / PowerPoint section; or render a PNG with matplotlib and place it on the slide.
+  - **Power BI, R:** follow the cookbook page's section for that platform, using the theme files in `assets/` (Office files: see Setup below).
 - **No hex literals.** Use color roles only: context grey, focus blue, navy accent (the one exception), light blue for a uniform series, navy totals and benchmarks. Orange only when it means "worse" (below target, shrinking, a shortfall), green only when it means "better", both with ▲▼ or words. Red/amber/green only as status colors (`mv.STATUS`) with a symbol and word, never for data series.
 - Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.
 - Drop or merge any group with n < 10 **before** plotting (`df, note = mv.suppress_small(df, "headcount")`, then pass `note` as the footnote), and keep individual values out of tooltips.
@@ -60,4 +63,4 @@ Give the user the output (file path, or code plus the rendered image), the chart
 - **HTML / JS:** copy `assets/web/` next to the page; `assets/html/chart-card.html` is a working starter (bar and line cards).
 - **R:** `source("assets/r/theme_mck.R")`. **Power BI:** import `assets/powerbi/mckesson-dataviz-theme.json`.
 - **Excel / PowerPoint:** the template, starter deck, workbook and fonts are in the release bundle (`McKesson-DataViz-Kit-v1.1.0.zip`) or at https://github.com/amccown-mck/Data-Viz-Guide.
-- Cookbook snippets read sample CSVs from the kit repo's `examples/data/` (synthetic); swap in the user's data and keep the structure.
+- **Cookbook snippets run from this folder:** paths such as `assets/data/workforce_mix.csv` (synthetic sample data) and `assets/web/mck-viz.css` are relative to the skill folder, so `cd` here first, or replace the path with the user's file and keep the structure. `office/...` and `fonts/...` paths are folders in the release bundle. Outputs go to `out/`.

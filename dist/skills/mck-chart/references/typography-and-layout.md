@@ -22,7 +22,7 @@ Sizes are for a 16:9 slide (13.33 × 7.5 in) and a 1× screen. Don't go below th
 
 | Role | Weight | Slide (pt) | Screen (px) | Color | Content |
 |---|---|---|---|---|---|
-| Slide title | Bold 700 | 24 | 28 | McKesson Blue `#005A8C` | The slide's insight. Full sentence, ≤ 2 lines, sentence case, no final period. |
+| Slide title | Bold 700 | 26 | 30 | McKesson Blue `#005A8C` | The slide's insight. Full sentence, ≤ 2 lines, sentence case, no final period. |
 | Chart headline | SemiBold 600 | 18 | 20 | Navy `#143359` | One chart's insight, when it has its own title (two charts on a slide, reports, dashboards, chart images). Still a full sentence. |
 | Subtitle | Regular 400 | 14 | 15 | `#505050` | Metric, unit, scope, period. |
 | Data / series label | Medium 500 | 12 | 13 | `#505050` or series color | Direct labels. |

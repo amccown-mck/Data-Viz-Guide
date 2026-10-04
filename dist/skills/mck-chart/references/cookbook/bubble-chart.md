@@ -147,7 +147,7 @@ If you use `go.Scatter` markers instead of shapes, set `marker.sizemode="area"` 
 
 ### Excel and PowerPoint
 **PowerPoint shapes (most precise for ≤ 12 bubbles):**
-1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `dist/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
+1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `office/` (see [bar.md](bar.md#excel-and-powerpoint)).
 2. In Excel, compute each diameter from the **area** rule: `=ROUND(3 * SQRT(B2 / MAX($B$2:$B$8)), 2)`. That gives inches, with the largest bubble 3 in across. A 4× value gets a 2× diameter.
 3. In PowerPoint, **Insert › Shapes › Oval**. In **Format Shape › Size**, type the computed value into both **Height** and **Width**. Set **Fill: Solid** `B4B0A5` (headline bubble `005A8C`), **Line: No line**, and no shadow or 3D effects.
 4. Select all the bubbles, then use **Shape Format › Align › Align Bottom** (shared baseline) and **Distribute Horizontally**. Order them largest to smallest.
@@ -161,7 +161,7 @@ If you use `go.Scatter` markers instead of shapes, set `marker.sizemode="area"` 
 4. **Data Labels › Value From Cells** (names) + **Bubble Size**, **Position: Center** for big bubbles and **Below** for small ones.
 
 ### Power BI
-- Apply [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json).
+- Apply [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json).
 - There is no native packed-bubble visual. Use the certified **Deneb** visual: a Vega-Lite `circle` mark, where the `size` channel is area-scaled, laid out on a single row with `x` from a running-position calculation. Or use a Vega spec with the `pack` transform for a packed cluster.
 - If you use the native **Scatter chart** with a *Size* field, verify the area scaling with a known pair: a 4:1 value pair should show a 2:1 diameter. Hide both axes and gridlines, and turn on **Category labels**.
 - Highlight with conditional color (**fx**) on a color measure. Keep data labels on; there is no size legend.
@@ -169,7 +169,7 @@ If you use `go.Scatter` markers instead of shapes, set `marker.sizemode="area"` 
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(packcircles)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 df <- tibble(fn = c("Distribution", "Customer Care", "Pharmacy Ops", "Finance Ops", "HR Ops", "Sales", "Legal"),
              hours_k = c(9800, 2900, 2300, 640, 310, 120, 45)) |>

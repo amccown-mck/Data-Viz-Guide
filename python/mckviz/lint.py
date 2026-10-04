@@ -19,6 +19,9 @@ from typing import Iterable
 
 LEVELS = ("error", "warn", "info")
 MIN_FONT_PT = 7.0          # figures are drawn ~10 in wide and scaled up ~1.33x on a 13.33 in slide: 7 pt -> ~9 pt
+MIN_FONT_PX = 11.0         # Plotly sizes are CSS px: the house minimum is 9 pt / 11 px (template text starts at 12 px)
+RAMP_TOL = 10.0            # RGB distance from a ramp segment that still counts as "on the ramp" (8-bit LUT rounding)
+PLOTLY_3D = {"scatter3d", "surface", "mesh3d", "cone", "streamtube", "volume", "isosurface"}
 
 
 @dataclass(frozen=True)
@@ -104,6 +107,37 @@ def _near(h: str, pool: Iterable[str], tol: float = 8.0) -> bool:
     return any(((r - R) ** 2 + (g - G) ** 2 + (b - B) ** 2) ** 0.5 <= tol for R, G, B in map(_rgb, pool))
 
 
+def _ramps() -> dict[str, list[str]]:
+    """Every token ramp a colormap may interpolate along: sequential blue/teal/orange, diverging, process steps."""
+    from . import DIVERGING, SEQUENTIAL, STEPS
+
+    out = {f"sequential-{k}": [h.upper() for h in v] for k, v in SEQUENTIAL.items()}
+    out["diverging"] = [h.upper() for h in DIVERGING]
+    out["steps"] = [h.upper() for h in STEPS]
+    return out
+
+
+def _segment_distance(h: str, ramp: list[str]) -> float:
+    """RGB distance from `h` to the polyline through the ramp's stops (what mv.sequential_cmap() interpolates)."""
+    p = _rgb(h)
+    best = float("inf")
+    stops = [_rgb(x) for x in ramp]
+    for a, b in zip(stops, stops[1:]):
+        ab = [bb - aa for aa, bb in zip(a, b)]
+        ap = [pp - aa for aa, pp in zip(a, p)]
+        denom = sum(v * v for v in ab) or 1.0
+        t = max(0.0, min(1.0, sum(x * y for x, y in zip(ap, ab)) / denom))
+        best = min(best, sum((pp - (aa + t * v)) ** 2 for pp, aa, v in zip(p, a, ab)) ** 0.5)
+    return best
+
+
+def _ramp_of(h: str, ramps: dict[str, list[str]], tol: float = RAMP_TOL) -> str | None:
+    """Name of the closest token ramp `h` lies on (within tol), or None."""
+    dists = {name: _segment_distance(h, r) for name, r in ramps.items()}
+    name = min(dists, key=dists.get)
+    return name if dists[name] <= tol else None
+
+
 def _is_neutral(h: str, neutrals: set[str]) -> bool:
     if _near(h, neutrals, 6):
         return True
@@ -113,18 +147,28 @@ def _is_neutral(h: str, neutrals: set[str]) -> bool:
 
 def _color_findings(used: list[str]) -> list[Finding]:
     out: list[Finding] = []
-    palette, neutrals = _palette(), _neutrals()
-    off = sorted({h for h in used if not _near(h, palette)})
+    palette, neutrals, ramps = _palette(), _neutrals(), _ramps()
+    off = sorted({h for h in used if not _near(h, palette) and _ramp_of(h, ramps) is None})
     if off:
         out.append(Finding("warn", "palette", f"colors not in tokens/tokens.json: {', '.join(off[:6])}"
                                               f"{' ...' if len(off) > 6 else ''} (use mv.colors / mv.CATEGORICAL)"))
     hues = sorted({h for h in used if not _is_neutral(h, neutrals)})
-    # A sequential or diverging ramp is one encoding, not one category per step: count each ramp used once.
-    from . import DIVERGING, SEQUENTIAL
-    ramps = [set(map(str.upper, r)) for r in (*SEQUENTIAL.values(), DIVERGING)]
-    in_ramp = [i for i, r in enumerate(ramps) if len({h for h in hues if h in r}) >= 3]
-    ramp_colors = set().union(*(ramps[i] for i in in_ramp)) if in_ramp else set()
-    categories = len([h for h in hues if h not in ramp_colors]) + len(in_ramp)
+    # A sequential or diverging ramp is one encoding, not one category per step: count each ramp used once. A ramp is
+    # "used" when 3+ distinct hues lie on it (exact stops or colors a colormap interpolated between them) and at least
+    # one of them is not a categorical color, so plain blue + navy + orange series are still three categories.
+    from . import CATEGORICAL
+    cats = {h.upper() for h in CATEGORICAL}
+    members = {name: {h for h in hues if _segment_distance(h, r) <= RAMP_TOL} for name, r in ramps.items()}
+    used_ramps: list[str] = []
+    ramp_colors: set[str] = set()
+    while True:
+        left = {n: m - ramp_colors for n, m in members.items() if n not in used_ramps}
+        best = max(left, key=lambda n: len(left[n]), default=None)
+        if best is None or len(left[best]) < 3 or not (left[best] - cats):
+            break
+        used_ramps.append(best)
+        ramp_colors |= left[best]
+    categories = len([h for h in hues if h not in ramp_colors]) + len(used_ramps)
     if categories > 6:
         out.append(Finding("error", "max-6-colors", f"{categories} distinct colors; use at most 6 and grey the rest"))
     from . import STATUS
@@ -148,7 +192,7 @@ def _color_findings(used: list[str]) -> list[Finding]:
         out.append(Finding("error", "do-not-use", f"{', '.join(banned)} is not used internally (amber family); "
                                                   "pick from mv.CATEGORICAL"))
     from . import colors as c
-    if any(_near(h, {c.orange.upper()}, 6) for h in hues) and not any(i == len(ramps) - 1 for i in in_ramp):
+    if any(_near(h, {c.orange.upper()}, 6) and h not in ramp_colors for h in hues):
         out.append(Finding("info", "orange-semantic", "orange appears: keep it for negatives / below target only, "
                                                       "never as a plain highlight (use navy, chart.accent)"))
     return out
@@ -179,6 +223,32 @@ def _headline_findings(headline: str | None, subtitle: str | None, source: str |
 
 
 # ----------------------------------------------------------------------------------------------- matplotlib
+def _image_colors(im, samples: int = 9) -> list[str]:
+    """Colors an AxesImage shows: its colormap over the plotted value range, or the distinct pixels of an RGB image."""
+    import numpy as np
+
+    arr = im.get_array()
+    if arr is None:
+        return []
+    arr = np.ma.asarray(arr)
+    if arr.ndim == 2:
+        vals = arr.compressed() if np.ma.isMaskedArray(arr) else np.ravel(arr)
+        if not vals.size:
+            return []
+        lo, hi = im.norm.vmin, im.norm.vmax
+        if lo is None or hi is None:
+            lo, hi = float(np.nanmin(vals)), float(np.nanmax(vals))
+        dmin, dmax = max(float(np.nanmin(vals)), lo), min(float(np.nanmax(vals)), hi)
+        a, b = (float(im.norm(dmin)), float(im.norm(dmax))) if hi > lo else (0.0, 1.0)
+        rgba = im.cmap(np.linspace(a, b, samples))
+    else:
+        px = np.asarray(arr).reshape(-1, arr.shape[-1])
+        if px.dtype.kind in "ui":
+            px = px / 255.0
+        rgba = np.unique(np.round(px[:: max(1, len(px) // 2000)], 3), axis=0)[:64]
+    return [h for h in (_hex(tuple(c)) for c in rgba) if h]
+
+
 def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
     from matplotlib.container import BarContainer
     from matplotlib.patches import Wedge
@@ -209,6 +279,9 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
                 h = _hex(fc)
                 if h:
                     used.append(h)
+        for im in ax.images:                              # imshow: sample the colormap (or the RGB pixels)
+            if im.get_visible():
+                used.extend(_image_colors(im))
         for ln in ax.get_lines():
             if ln.get_visible() and ln.get_linestyle() not in ("None", "none", ""):
                 h = _hex(ln.get_color())
@@ -267,6 +340,49 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
 
 
 # ----------------------------------------------------------------------------------------------- Plotly
+def _overlaid(lay, axis_id: str) -> bool:
+    """True if a y axis like 'y2' / 'y3' shares the plot area of the main y axis (a dual axis) rather than being a
+    separate subplot panel (make_subplots gives each panel its own domain)."""
+    name = "yaxis" + axis_id[1:]
+    ax = lay[name] if name in lay else None
+    if ax is None or ax.overlaying:
+        return True
+    main = list(lay.yaxis.domain) if lay.yaxis and lay.yaxis.domain else [0, 1]
+    return ax.domain is None or list(ax.domain) == main and ax.anchor in (None, "x", "free")
+
+
+def _plotly_font_sizes(fig) -> list[float]:
+    """Every explicitly set font size in a Plotly figure: layout, titles, axes, legend, annotations, trace text."""
+    sizes: list = []
+
+    def add(font):
+        if font is not None and font.size is not None:
+            v = font.size
+            sizes.extend(v if isinstance(v, (list, tuple)) else (v.tolist() if hasattr(v, "tolist") else [v]))
+
+    lay = fig.layout
+    add(lay.font)
+    if lay.title:
+        add(lay.title.font)
+        if lay.title.subtitle:
+            add(lay.title.subtitle.font)
+    if lay.legend:
+        add(lay.legend.font)
+    for key in lay:
+        if re.fullmatch(r"[xy]axis\d*", key) and lay[key] is not None:
+            add(lay[key].tickfont)
+            if lay[key].title:
+                add(lay[key].title.font)
+    for a in lay.annotations or []:
+        if a.text:
+            add(a.font)
+    for tr in fig.data:
+        for attr in ("textfont", "insidetextfont", "outsidetextfont"):
+            if attr in tr:
+                add(getattr(tr, attr))
+    return [float(v) for v in sizes if isinstance(v, (int, float))]
+
+
 def _lint_plotly(fig, headline, subtitle, source) -> list[Finding]:
     lay = fig.layout
     head = headline or (lay.title.text if lay.title and lay.title.text else None)
@@ -312,12 +428,28 @@ def _lint_plotly(fig, headline, subtitle, source) -> list[Finding]:
         rng = axis.range if axis is not None else None
         if rng and rng[0] is not None and rng[0] > 0 and not tr.base:
             out.append(Finding("error", "bars-from-zero", f"bar axis range starts at {rng[0]}; start at zero"))
-    if bars and all(tr.text is not None for tr in bars):
+    def has_labels(tr):
+        return tr.text is not None or bool(getattr(tr, "texttemplate", None))
+
+    if bars and all(has_labels(tr) for tr in bars):
         axis = lay.xaxis if bars[0].orientation == "h" else lay.yaxis
         if axis is None or axis.visible is not False:
             out.append(Finding("warn", "labels-or-axis", "bars carry text labels and a visible value axis; hide the axis"))
-    if any(getattr(tr, "yaxis", None) == "y2" for tr in fig.data):
-        out.append(Finding("warn", "no-dual-axis", "a trace uses a second y axis; prefer two aligned charts"))
+    y_axes = {getattr(tr, "yaxis", None) or "y" for tr in fig.data if "yaxis" in tr}
+    extra = sorted(a for a in y_axes if a != "y" and _overlaid(lay, a))
+    if len(extra) >= 2:
+        out.append(Finding("error", "no-dual-axis", f"{len(extra) + 1} y axes share one plot; split into aligned "
+                                                    "charts or index to 100"))
+    elif extra:
+        out.append(Finding("warn", "no-dual-axis", f"a trace uses a second y axis ({extra[0]}); prefer two aligned "
+                                                   "charts"))
+    three_d = sorted({tr.type for tr in fig.data if tr.type in PLOTLY_3D})
+    if three_d:
+        out.append(Finding("error", "no-3d", f"3D trace ({', '.join(three_d)}) distorts values; use a 2D chart"))
+    small = sorted({round(float(v), 1) for v in _plotly_font_sizes(fig) if v < MIN_FONT_PX})
+    if small:
+        out.append(Finding("warn", "min-text-size", f"text at {', '.join(f'{v:g}' for v in small)} px; keep ≥ "
+                                                    f"{MIN_FONT_PX:g} px"))
     for tr in fig.data:
         if tr.type == "pie" and tr.labels is not None and len(tr.labels) > 5:
             out.append(Finding("error", "pie-max-5", f"{len(tr.labels)} pie/donut segments; use ≤ 5 or a sorted bar"))

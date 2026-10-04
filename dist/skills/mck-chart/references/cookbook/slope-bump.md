@@ -41,7 +41,7 @@
 | Size an inline print version to one text column, next to the paragraph it supports | Blow a 5-item slope chart up to a full page |
 
 ## Workforce examples
-- **Headline:** "Data analysis and gen AI are the fastest-rising skills in sector job postings" — *Subtitle:* "Rank of skills in U.S. healthcare-distribution job postings, 2023 vs. 2026" — data: sector-level external job-postings feed, `examples/data/skills_demand_rank.csv` (slope chart above, gallery `slope()`).
+- **Headline:** "Data analysis and gen AI are the fastest-rising skills in sector job postings" — *Subtitle:* "Rank of skills in U.S. healthcare-distribution job postings, 2023 vs. 2026" — data: sector-level external job-postings feed, `assets/data/skills_demand_rank.csv` (slope chart above, gallery `slope()`).
 - **Headline:** "Technology climbed from last to first in internal fill rate, while Oncology slid from third to last" — *Subtitle:* "Rank of business units by internal fill rate, FY22–FY26 (1 = highest share of open roles filled internally)" — data: firm/BU-level Workday Recruiting requisitions (bump chart, snippet below). It supports a talent-marketplace business case.
 - **Headline:** "After the onboarding redesign, new pharmacists reach full productivity 5 weeks sooner, the biggest gain of any role" — *Subtitle:* "Median weeks to full productivity for new hires, FY24 vs. FY26 cohort, by role" — data: individual-level productivity ramps aggregated to role cohorts (n ≥ 10 per cohort). Value slope chart on one shared scale, with pharmacists in focus blue.
 
@@ -50,6 +50,7 @@
 ### Python — matplotlib + `mckviz`
 A bump chart; for the two-point slope chart, see `slope()` in [`gallery_matplotlib.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_matplotlib.py).
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -99,6 +100,7 @@ mv.save(fig, "out/bump.png")
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import plotly.graph_objects as go
 
 import mckviz as mv
@@ -138,7 +140,7 @@ fig.show()
 Put the underlying rate in the hover text (`customdata`) so readers can see the gaps that ranks hide. For a 1:1 social card, set `width=height=1080`, use the Deep Navy background with `focus_on_dark`, and add the logo and source to the image itself.
 
 ### Excel and PowerPoint
-1. **Theme:** install the `dist/office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
+1. **Theme:** install the `office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
 2. Arrange the data with periods across the columns and one row per item (ranks or values). Select it and click **Insert → Insert Line or Area Chart → Line with Markers**. If items end up on the x-axis, click **Chart Design → Switch Row/Column**.
 3. For ranks: **Vertical axis → Format Axis → Values in reverse order**, Bounds 0.5 to n + 0.5, then **Labels: None** and **Line: No line**. Delete the gridlines, the legend and the chart title. For a value slope, keep one fixed min/max scale.
 4. Context series: **Ctrl+1 → Fill & Line → Line → Solid, Hex `B4B0A5`, 1 pt**. Under **Marker → Built-in, Circle, Size 14**, set **Fill `#B4B0A5`** and **Border White 1.5 pt**. Press **F4** to repeat on the next series.
@@ -148,7 +150,7 @@ Put the underlying rate in the hover text (`customdata`) so readers can see the 
 8. Paste into PowerPoint with **Use Destination Theme & Embed Workbook**. For inline print, set the chart width to one text column.
 
 ### Power BI
-- Apply the theme `dist/powerbi/mckesson-dataviz-theme.json`.
+- Apply the theme `assets/powerbi/mckesson-dataviz-theme.json`.
 - Build a **Line chart** with X = fiscal year (categorical), Y = a rank measure, e.g. `Rank = RANKX(ALLSELECTED(BU[BU]), [Internal fill %],, DESC, Dense)`, and Legend = BU. Set **Y-axis → Invert range** on, then turn the Y-axis title and values off.
 - In **Format → Lines** (per series), set context to `#B4B0A5` and the focus series to `#005A8C`, width 3. Turn **Markers** on (circle, size 8–10) and **Data labels** on, showing the rank. Turn **Series labels** on and the legend off.
 - Put the underlying rate in the tooltip. Exclude small groups from ranking with `Rank (safe) = IF([Headcount] < 10, BLANK(), [Rank])`.
@@ -156,7 +158,7 @@ Put the underlying rate in the hover text (`customdata`) so readers can see the 
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 # Synthetic data for illustration (replace with yours): rank of each business unit by internal fill rate
 bus <- c("Corporate", "Medical-Surgical", "Oncology & Multispecialty", "RxTS", "Technology", "U.S. Pharmaceutical")

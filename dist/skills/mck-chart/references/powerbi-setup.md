@@ -3,14 +3,14 @@
 Dashboards are exploratory, but they follow the same visual rules as slides: grey context, one blue focus, insight titles, minimum group sizes. The theme handles the defaults. Measures and conditional formatting handle the highlight logic, because a theme can't know which bar the headline is about.
 
 ## 1. Apply the theme
-1. Download [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json).
+1. Download [`dist/powerbi/mckesson-dataviz-theme.json`](../assets/powerbi/mckesson-dataviz-theme.json).
 2. In Power BI Desktop: **View › Themes › Browse for themes**, pick the file, and confirm.
 3. To reuse it, open the **Themes** gallery and use **Save current theme**, or keep the JSON on a shared drive. Org admins can publish it as an **organizational theme** so it appears in everyone's gallery.
 
 ### What the theme sets
 | Setting | Value | Why |
 |---|---|---|
-| Data colors 1–6 | `#005A8C` `#143359` `#009EFF` `#00AF9D` `#05CE90` `#EF8200` | The categorical palette in its fixed order: blue, navy, bright blue, teal, mint, then orange as a last resort. Prefer ≤ 5 series. Use more than 6 only for exploration; for a published page, group the tail into "Other". |
+| Data colors 1–6 | `#005A8C` `#143359` `#009EFF` `#00AF9D` `#05CE90` `#EF8200` | The categorical palette in its fixed order: blue, navy, bright blue, teal, mint, then orange as a last resort. Prefer ≤ 4 series. Use more than 6 only for exploration; for a published page, group the tail into "Other". |
 | Data colors 7–10 | Light blue and teal tints (`#B6E2FA` `#66CFC4` `#009EFF` `#B3E7E2`) | Only so 7+ series don't repeat a color. Every color is unique. |
 | Good / neutral / bad | Green `#00AF68` / grey `#B4B0A5` / orange `#EF8200` | KPI and conditional-formatting defaults. Orange means worse. Never red–green. |
 | Min / center / max | `#E6F3FB` / `#EFEDE7` / `#143359` | Default gradient for heat tables and maps. |

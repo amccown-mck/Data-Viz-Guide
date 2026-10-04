@@ -46,7 +46,7 @@
 | On live slides, build up: all-grey tiles with group labels first, then recolor the focus tiles and add the callout | Show a fully colored, fully labelled 25-tile treemap on the first click |
 
 ## Workforce examples
-- **Firm, internal + external:** *Headline:* "Two customer-facing roles hold 33% of our gen AI-exposed capacity with 15% of headcount". *Subtitle:* "Estimated gen AI-exposed capacity by function and role, FY26 (FTE-equivalent)". *Data:* [`examples/data/automation_exposure.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/automation_exposure.csv). Exposed capacity = headcount × share of task hours exposed to gen AI, from an external occupational task model mapped to internal roles. Customer Care and Claims & Billing are in focus blue, everything else grey.
+- **Firm, internal + external:** *Headline:* "Two customer-facing roles hold 33% of our gen AI-exposed capacity with 15% of headcount". *Subtitle:* "Estimated gen AI-exposed capacity by function and role, FY26 (FTE-equivalent)". *Data:* [`assets/data/automation_exposure.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/automation_exposure.csv). Exposed capacity = headcount × share of task hours exposed to gen AI, from an external occupational task model mapped to internal roles. Customer Care and Claims & Billing are in focus blue, everything else grey.
 - **Business unit, internal (SWP):** *Headline:* "Distribution and pharmacy roles hold 6 in 10 of the 2,900 employees eligible to retire by FY29". *Subtitle:* "Employees reaching retirement eligibility by FY29, by business unit and job family, as of Mar 2026 (headcount)". *Data:* HRIS age and service dates projected forward under the plan's eligibility rule (footnote it). Business units are the groups and job families are the tiles. The two largest families are in focus blue; families with < 10 eligible employees are merged into "Other".
 - **Sector, external:** *Headline:* "Hospitals and retail pharmacy chains post 7 in 10 US pharmacy-technician openings, so they set the market we hire in". *Subtitle:* "US pharmacy technician job postings by employer sector and sub-sector, H1 2026 (thousands of postings)". *Data:* an external job-postings aggregator. The two leading sectors are in focus blue, and our own sector (wholesale and specialty distribution) is the single navy `#143359` accent tile, so readers can find us.
 
@@ -76,7 +76,7 @@ GROUP = {"Distribution Center Associate": "Operations", "Supply Chain Planning":
          "Sales": "Customer & revenue", "Marketing": "Customer & revenue",
          "Software Engineering": "Technology", "Data & Analytics": "Technology",
          "Finance Operations": "Corporate", "HR Operations": "Corporate"}
-df = pd.read_csv(Path("examples/data/automation_exposure.csv"))
+df = pd.read_csv(Path("assets/data/automation_exposure.csv"))
 df["group"] = df.role.map(GROUP)
 df["exposed_fte"] = df.headcount * df.genai_exposure_pct / 100
 focus = {"Customer Care", "Claims & Billing Specialist"}
@@ -170,7 +170,7 @@ GROUP = {"Distribution Center Associate": "Operations", "Supply Chain Planning":
          "Sales": "Customer & revenue", "Marketing": "Customer & revenue",
          "Software Engineering": "Technology", "Data & Analytics": "Technology",
          "Finance Operations": "Corporate", "HR Operations": "Corporate"}
-df = pd.read_csv(Path("examples/data/automation_exposure.csv"))
+df = pd.read_csv(Path("assets/data/automation_exposure.csv"))
 df["group"] = df.role.map(GROUP)
 df["exposed_fte"] = (df.headcount * df.genai_exposure_pct / 100).round()
 focus = {"Customer Care", "Claims & Billing Specialist"}
@@ -215,7 +215,7 @@ The group names sit in a thin white header strip (`marker.pad.t`) above each gro
 9. Build-up: duplicate the slide. Step 1: all tiles grey with group labels. Step 2: the focus tiles recolored, with a short callout ("33% of exposed capacity").
 
 ### Power BI
-- Import [`dist/powerbi/mckesson-dataviz-theme.json`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/dist/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
+- Import [`assets/powerbi/mckesson-dataviz-theme.json`](../../assets/powerbi/mckesson-dataviz-theme.json) via **View › Themes › Browse for themes**.
 - Use the **Treemap** visual with **Category** = Function, **Details** = Role and **Values** = the measure. Power BI sorts the largest tiles to the top-left. Turn **Data labels** and **Category labels** on and the **Legend** off.
 - Focus pattern: conditional color (**Format › Colors › fx**, Format style *Field value*) is available only when **Details** is empty. For a role-level highlight, put Role in **Category**, move Function to **Tooltips**, and use a measure such as `Tile Color = IF(SELECTEDVALUE(Roles[Role]) IN {"Customer Care", "Claims & Billing Specialist"}, "#005A8C", "#B4B0A5")`. Keep the two-level layout only when you color by group.
 - Minimum n: `Exposed FTE (safe) = IF([Headcount] < 10, BLANK(), [Exposed FTE])`, so the tiles, tooltips and drill-through all inherit it.
@@ -224,7 +224,7 @@ The group names sit in a thin white header strip (`marker.pad.t`) above each gro
 ```r
 library(ggplot2); library(dplyr); library(readr)
 library(treemapify)                                   # install.packages("treemapify")
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 grp <- c("Distribution Center Associate" = "Operations", "Supply Chain Planning" = "Operations",
          "Pharmacy Technician" = "Pharmacy & clinical", "Specialty Nursing" = "Pharmacy & clinical",
@@ -234,7 +234,7 @@ grp <- c("Distribution Center Associate" = "Operations", "Supply Chain Planning"
          "Finance Operations" = "Corporate", "HR Operations" = "Corporate")
 focus <- c("Customer Care", "Claims & Billing Specialist")
 
-df <- read_csv("examples/data/automation_exposure.csv") |>
+df <- read_csv("assets/data/automation_exposure.csv") |>
   mutate(group = grp[role], exposed_fte = headcount * genai_exposure_pct / 100,
          fill = ifelse(role %in% focus, mck_colors$focus, mck_colors$context),
          ink  = ifelse(role %in% focus, "white", mck_colors$headline)) |>

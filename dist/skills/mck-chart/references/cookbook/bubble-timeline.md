@@ -40,13 +40,14 @@
 
 ## Workforce examples
 - **Headline:** "Pharma manufacturers have announced more job cuts since 2023 than any other healthcare sub-sector" — *Subtitle:* "Announced workforce reductions by healthcare sub-sector, 2020–2026; bubble area = roles affected" — data: sector-level external signal from public WARN notices and company announcements. Shows talent-market supply for SWP sourcing plans (snippet below).
-- **Headline:** "Half of FY26 reskilling seats went to Customer Care, the workforce most exposed to gen AI" — *Subtitle:* "Reskilling cohort launches by business unit, FY24–FY26; bubble area = participants" — data: firm-level LMS cohort records joined to `examples/data/automation_exposure.csv`. Each bubble is one cohort and the Customer Care row is in focus blue.
+- **Headline:** "Half of FY26 reskilling seats went to Customer Care, the workforce most exposed to gen AI" — *Subtitle:* "Reskilling cohort launches by business unit, FY24–FY26; bubble area = participants" — data: firm-level LMS cohort records joined to `assets/data/automation_exposure.csv`. Each bubble is one cohort and the Customer Care row is in focus blue.
 - **Headline:** "Peak-season hiring now starts in August at every DC, six weeks earlier than in FY25" — *Subtitle:* "Hiring events by distribution center, FY25–FY26; bubble area = hires per event" — data: team/site-level requisitions and onboarding dates from Workday Recruiting. One row per DC, with the band shading Aug–Sep FY26.
 
 ## Build it
 
 ### Python — matplotlib + `mckviz`
 ```python
+# verified runnable (from the repo root)
 import matplotlib
 
 matplotlib.use("Agg")
@@ -112,6 +113,7 @@ For the plain single-color version (no focus row), replace `c=mv.highlight(...)`
 
 ### Python — Plotly / HTML
 ```python
+# verified: builds without error
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -146,7 +148,7 @@ fig.show()
 `sizeref = 2 * max_value / max_diameter_px**2` with `sizemode="area"` keeps area proportional to the value. The tooltip carries the exact number and the employer name when that's appropriate to share.
 
 ### Excel and PowerPoint
-1. **Theme:** install the `dist/office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
+1. **Theme:** install the `office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
 2. Lay out the data as columns `Date` (Excel date or decimal year), `Row` (1 = top row, 2, 3, …) and `Size`, and **sort by Size, largest first**. Excel draws bubbles in data order, so the small ones end up on top.
 3. Click **Insert → Insert Scatter (X, Y) or Bubble Chart → Bubble**. Under **Chart Design → Select Data**, set X = Date, Y = Row and bubble size = Size. Use one series for context rows and a second series for the focus row.
 4. Press **Ctrl+1 → Series Options →** set **Size represents: Area of bubbles** (never Width) and **Scale bubble size to** ~50–80. Fill = **Accent 1 `#005A8C`** (context series: Hex `B4B0A5`) at **10% transparency**, **Border: Solid line, White, 0.75 pt**.
@@ -154,10 +156,10 @@ fig.show()
 6. Horizontal axis: set yearly bounds and units with **Tick Marks: None** and **Line: No line**. Delete the legend and the chart title.
 7. **Size key:** add a third series with 3 points at round values in the top-left corner, filled `#B4B0A5`, and give it data labels showing the value.
 8. **Shaded period:** in PowerPoint, set the chart area and plot area to **No fill** and place a `#EFEDE7` rectangle behind the chart (**Arrange → Send to Back**), with a bold callout above it.
-9. Paste with **Use Destination Theme & Embed Workbook**. Put the headline in the title (Libre Franklin Bold 24 pt `#143359`) and the source at 9 pt `#737373`.
+9. Paste with **Use Destination Theme & Embed Workbook**. Put the headline in the title (Libre Franklin Bold 26 pt McKesson Blue `#005A8C`) and the source at 9 pt `#737373`.
 
 ### Power BI
-- Apply the theme `dist/powerbi/mckesson-dataviz-theme.json` (**View → Themes → Browse for themes**).
+- Apply the theme `assets/powerbi/mckesson-dataviz-theme.json` (**View → Themes → Browse for themes**).
 - Build a **Scatter chart** with X = event date (continuous), Y = a numeric **row index** column, Size = roles and Values (Details) = event ID. Hide the Y-axis labels and name the rows in a narrow aligned table visual, or build the chart in **Deneb (Vega-Lite)** for exact control of rows, size key and draw order.
 - In **Format → Markers → Color → fx**, use rules on an `IsFocus` column (focus `#005A8C`, else `#B4B0A5`). Set **Bubble size** so the largest bubble is less than 1.5 rows tall.
 - Use **Analytics → X-axis constant line → Shade area** for the insight period. Put the exact value and source in the tooltip page.
@@ -166,7 +168,7 @@ fig.show()
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 rows  <- c("Health systems", "Payers", "Pharma manufacturers", "Distributors & PBMs", "Digital health")
 focus <- "Pharma manufacturers"

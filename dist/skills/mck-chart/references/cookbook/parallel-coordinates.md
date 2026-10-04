@@ -41,7 +41,7 @@
 
 ## Workforce examples
 - **Site, internal:** *Headline:* "Three distribution centers combine the most overtime with the highest attrition and slowest fills". *Subtitle:* "Workforce profile of 18 U.S. distribution centers, FY26 (each axis scaled min–max; up = worse)". *Data:* Workday HCM (attrition, span, tenure), timekeeping (overtime hours per FTE), ATS (time to fill) and engagement survey. All sites n ≥ 180. Built below.
-- **Job family, SWP / transformation:** *Headline:* "Claims and billing roles combine the highest Gen AI exposure with the thinnest adjacent-skill bench". *Subtitle:* "Profile of 14 job families on six transformation measures, FY26 (each axis scaled min–max)". *Data:* [`examples/data/automation_exposure.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/automation_exposure.csv) (exposure, headcount, pay), plus skills-inventory adjacency, internal-mobility rate and an external task-exposure benchmark. Axis order: exposure → reskilling readiness → mobility rate → pay → headcount. Claims & Billing in blue, Customer Care in navy as the counter-example. Firm level, internal and external signals.
+- **Job family, SWP / transformation:** *Headline:* "Claims and billing roles combine the highest Gen AI exposure with the thinnest adjacent-skill bench". *Subtitle:* "Profile of 14 job families on six transformation measures, FY26 (each axis scaled min–max)". *Data:* [`assets/data/automation_exposure.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/automation_exposure.csv) (exposure, headcount, pay), plus skills-inventory adjacency, internal-mobility rate and an external task-exposure benchmark. Axis order: exposure → reskilling readiness → mobility rate → pay → headcount. Claims & Billing in blue, Customer Care in navy as the counter-example. Firm level, internal and external signals.
 - **Sector, external:** *Headline:* "Our pharmacy-technician offer trails peers on pay but leads on schedule flexibility and promotion rate". *Subtitle:* "Employer value-proposition profile, pharmacy technicians, McKesson vs. 11 distribution and retail-pharmacy employers, 2026 (each axis scaled min–max)". *Data:* external pay benchmarks, job-postings data (shift patterns, benefits mentioned) and aggregated employer-review scores. McKesson in focus blue, peers grey and unnamed. Sector level, external signal.
 
 ## Build it
@@ -208,7 +208,7 @@ print("saved", out)
 - For web pages, use the chart-card pattern in [`examples/python/gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py), with the headline, subtitle and source in HTML.
 
 ### Excel and PowerPoint
-1. Install the theme once (see [bar.md](bar.md#excel-and-powerpoint)): **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (PowerPoint: **Design › Variants › Colors / Fonts**), from `dist/office/`. Fonts are Libre Franklin.
+1. Install the theme once (see [bar.md](bar.md#excel-and-powerpoint)): **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (PowerPoint: **Design › Variants › Colors / Fonts**), from `office/`. Fonts are Libre Franklin.
 2. **Normalize first.** Build a helper table with one row per site and one column per measure, **in your chosen axis order**. Use `=(B2-MIN(B$2:B$19))/(MAX(B$2:B$19)-MIN(B$2:B$19))`; for reversed axes, `=1-(…)`. Put each axis's real range in the header, e.g. `Overtime (hrs/FTE/mo)` + `Alt+Enter` + `4–18`.
 3. Select the helper table, then **Insert › Charts › Insert Line or Area Chart › 2-D Line › Line**. If the measures appear as series, use **Chart Design › Switch Row/Column** so the **measures are the categories** (x-axis) and each site is a series.
 4. Double-click the vertical axis: **Format Axis › Axis Options › Bounds › Minimum 0, Maximum 1**. Then select it and press **Delete**. Delete the horizontal gridlines, the legend and the chart title.
@@ -220,7 +220,7 @@ print("saved", out)
 10. In PowerPoint, **Home › Paste › Use Destination Theme & Embed Workbook**. Headline in the title placeholder (26 pt Bold McKesson Blue `#005A8C`), subtitle 14 pt `#505050`, source 9 pt Light `#737373`, bottom-left. Build up by duplicating the slide: all lines grey → focus lines blue → callout. Slides can't brush, so link to the HTML version for exploration.
 
 ### Power BI
-- Apply the theme: **View › Themes › Browse for themes ›** `dist/powerbi/mckesson-dataviz-theme.json`.
+- Apply the theme: **View › Themes › Browse for themes ›** `assets/powerbi/mckesson-dataviz-theme.json`.
 - **Native route (recommended):** unpivot in Power Query to `Site | Measure | AxisOrder | Value | Reverse`. Sort `Measure` by `AxisOrder` (**Column tools › Sort by column**). Use a **Line chart** with X-axis = `Measure` (categorical), Y-axis = a normalized measure, and Legend = `Site`. Turn off the Y-axis and the legend. Under **Format › Lines › Colors**, set every series to `#B4B0A5` and the focus series to `#005A8C`.
   ```DAX
   Norm value =
@@ -236,7 +236,7 @@ print("saved", out)
 ### R — ggplot2 (optional)
 ```r
 library(ggplot2); library(dplyr); library(tidyr)
-source("dist/r/theme_mck.R")
+source("assets/r/theme_mck.R")
 
 set.seed(7)
 sites <- data.frame(

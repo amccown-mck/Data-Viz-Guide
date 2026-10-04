@@ -232,4 +232,6 @@ reference/mckesson-branding/
 dist/guide/print.html
 # Release bundle (tools/make_bundle.py) and the locally built official-template deck (never committed)
 dist/release/
+# Zipped portable skill for Claude.ai (tools/build_skill.py --zip)
+dist/skills/*.zip
 dist/office/*-Official.pptx
