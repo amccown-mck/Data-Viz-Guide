@@ -32,7 +32,7 @@ This table mirrors the chart chooser in the guide (`dist/guide/chooser.html`); k
 | Relationships & flows | [Sankey](cookbook/sankey.md) | [Parallel coordinates](cookbook/parallel-coordinates.md); [Venn](cookbook/venn.md), 3 sets max | A color per stage |
 | Geo-spatial | [Choropleth](cookbook/maps.md) for rates | Bubble map for counts; world map; zoom-in with a locator | Counts on a choropleth |
 | Single number | [Big number](cookbook/kpi-big-number.md) with a comparison | Progress bar or ring for a target | Speedometers |
-| Plans and status | Roadmap (Gantt bars by workstream, milestones as markers) | Initiative tracker (a table with a status column); status pills: color + symbol + word (`mv.STATUS`, [color.md §4](color.md#4-status-colors-red-amber-green)) | Red/amber/green by color alone, or on data series |
+| Plans and status | [Roadmap](cookbook/plans-status.md) (Gantt bars by workstream, milestones as markers) | [Initiative tracker](cookbook/plans-status.md) (a table with a status column); status pills: color + symbol + word (`mv.STATUS`, [color.md §4](color.md#4-status-colors-red-amber-green)) | Red/amber/green by color alone, or on data series |
 
 ## Step 3 — Sanity checks
 

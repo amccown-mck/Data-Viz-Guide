@@ -50,59 +50,36 @@
 ## Build it
 
 ### Python — matplotlib + `mckviz`
-Dark ring card. For the light version, use a white background, `C.focus` / `C.context_light` for the ring, `C.headline` for the numeral, and drop `dark=True`.
+Dark ring card. For the light version, drop `dark=True` (and the facecolors): the ring turns blue on light grey and the numeral navy.
 ```python
 # verified runnable (from the repo root)
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.patches import Wedge
 
 import mckviz as mv
 
 mv.use()
 C = mv.colors
-KPI = mv.TOKENS["typography"]["roles"]["kpi"]                    # Bold 700, 54 pt
 
 value, prior, target, n_roles = 62, 48, 75, 410                  # % of critical roles with a ready-now successor
 delta = value - prior
 
-fig, (ax, txt) = plt.subplots(1, 2, figsize=(8, 4.5), width_ratios=[1, 1.1], facecolor=C.surface_dark)
-for a in (ax, txt):
-    a.set_facecolor(C.surface_dark)
-    a.axis("off")
-
-# Ring: starts at 12 o'clock, runs clockwise; thin stroke (~18% of radius), no gap, no rounded caps.
-R, W = 1.0, 0.18
-start = 90
-ax.add_patch(Wedge((0, 0), R, start - 360 * value / 100, start, width=W, color=C.focus_on_dark, lw=0))
-ax.add_patch(Wedge((0, 0), R, start, start + 360 - 360 * value / 100, width=W, color=C.context_on_dark, lw=0))
-t = np.deg2rad(start - 360 * target / 100)                       # target tick across the ring
-ax.plot([(R - W - 0.06) * np.cos(t), (R + 0.06) * np.cos(t)], [(R - W - 0.06) * np.sin(t), (R + 0.06) * np.sin(t)],
-        color="white", lw=2, solid_capstyle="butt")
-ax.text((R + 0.1) * np.cos(t), (R + 0.1) * np.sin(t), f"Target\n{target}%", ha="right", va="center",
-        fontsize=9, color="white", linespacing=1.1)
-ax.text(0, 0.02, f"{value}%", ha="center", va="center", fontsize=KPI["size_pt"] * 0.75,   # 54 pt on a 13.33 in slide
-        fontweight=KPI["weight"], color="white")
-ax.set_xlim(-1.4, 1.05)
-ax.set_ylim(-1.05, 1.05)
-ax.set_aspect("equal")
-
-txt.text(0, 0.80, f"{round(n_roles * value / 100)} of {n_roles} critical roles now have\nat least one ready-now successor",
-         transform=txt.transAxes, va="top", fontsize=14, color="white", linespacing=1.3)
-txt.text(0, 0.50, f"{mv.signed(delta)} pts vs. Mar 2025 ({prior}%)", transform=txt.transAxes, va="top",
-         fontsize=13, fontweight="semibold", color=C.positive)
-txt.text(0, 0.36, f"{target - value} pts short of the {target}% FY27 target", transform=txt.transAxes, va="top",
-         fontsize=11, color="white")
+fig, ax = plt.subplots(figsize=(8, 3.6), facecolor=C.surface_dark)
+# Ring from 12 o'clock, clockwise, thin, flat ends, target tick; the number Bold inside it; one sentence;
+# the change with ▲/▼ (green only because higher is better here); the gap to target in orange (a shortfall).
+mv.kpi_card(ax, value, f"{round(n_roles * value / 100)} of {n_roles} critical roles now have at least one "
+            "ready-now successor", change=delta, vs=f"vs. Mar 2025 ({prior}%)", target=target, ring_value=value,
+            dark=True)
 
 mv.titles(fig, f"Succession coverage rose {delta} points in a year but is still short of the {target}% target",
           f"Critical roles with at least one ready-now successor, Mar 2026 (% of {n_roles} roles)", dark=True)
 mv.source(fig, "Source: Synthetic data for illustration only",
           footnote="Ready-now = assessed in the FY26 talent review as able to step in within 12 months.", dark=True)
+mv.lint(fig, strict=True)
 mv.save(fig, "out/kpi-ring-dark.png", dpi=200, facecolor=C.surface_dark)
 ```
-For a big number without a ring (e.g., in a report margin), drop the `Wedge` patches and put the numeral in the text axes at `(0, 1)` with `va="top"`, `fontsize=KPI["size_pt"] * 0.75`, `fontweight=KPI["weight"]` and `color=C.headline`, with the sentence and delta below it.
+For a big number without a ring (e.g., in a report margin), leave out `ring_value`: the numeral goes top-left with the sentence, change and target under it. For a row of KPIs with identical anatomy, use `mv.kpi_row(ax, [dict(name=..., value=..., change=..., vs=..., better="up" | "down"), ...])`; `mv.delta_label(change, unit=" pts", vs=..., better=...)` returns the arrow text and its color for your own layouts, and `mv.ring`, `mv.big` and `mv.small` draw the parts separately.
 
 ### Python — Plotly / HTML
 KPI row on white with `go.Indicator`. Deltas are colored by favorability, not by direction.
@@ -208,6 +185,70 @@ ggplot(ring, aes(x = 2, y = pct, fill = part)) +
         plot.margin = margin(16, 16, 16, 16))
 ```
 For a plain big number on a light background, use `ggplot() + annotate("text", x = 0, y = 0, label = "41%", hjust = 0, size = 54 / .pt, fontface = "bold", family = "Libre Franklin", colour = mck_colors$headline) + theme_void()` and add the sentence and delta as further left-aligned `annotate()` calls below it.
+
+### HTML / JavaScript — `mck-viz.css` + `mck-viz.js`
+A KPI row: `.mck-kpi` tiles in a `.mck-grid` (1 column under 560 px, 2 to 980 px, 3 above). Name, Bold navy number (`kpi` role), comparison with ▲/▼ for direction and green/orange text for favorability, one sentence, and an optional meter with a target tick and a gap line. Copy `assets/web/mck-viz.css` and `assets/web/mck-viz.js` next to the page (offline or locked-down intranet: also `assets/web/vendor/plotly.min.js`, see [formats.md](../formats.md#web-and-html-articles-microsites-internal-tools)). `mck-viz.js` carries the tokens, the Plotly template and the helpers (`mck.tok`, `mck.fmtNum`, `mck.plotlyLayout`, ...), so no hex value is typed in the page.
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pharmacy Ops KPIs</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mck-viz.css">   <!-- assets/web/mck-viz.css, copied next to this page -->
+<script src="mck-viz.js"></script>           <!-- assets/web/mck-viz.js: fmtNum, suppressSmall -->
+<style>
+  body { margin: 0; padding: 24px 16px; background: var(--mck-surface-subtle); font-family: var(--mck-font); }
+  .kpi-row { max-width: 1008px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<section class="kpi-row" aria-labelledby="kpi-headline">
+  <h2 class="mck-headline" id="kpi-headline">Pharmacy Ops is filling more roles internally, and faster, but regrettable attrition is up</h2>
+  <p class="mck-subtitle">Pharmacy Operations talent KPIs, FY26 year to date vs. FY25</p>
+  <div class="mck-grid" id="kpis">
+    <noscript>Internal fill rate 41% (+6 pts vs. FY25); median time to fill 38 days (−5 days); regrettable attrition 6.8% (+0.9 pts).</noscript>
+  </div>
+  <p class="mck-footnote">Regrettable = voluntary exits of employees rated "exceeds" or above. Groups with fewer than 10 people suppressed.<br>
+    Source: Synthetic data for illustration only. As of Mar 2026.</p>
+</section>
+<script>
+const { fmtNum } = mck;
+const kpis = [   // DATA: name, value, prior, unit, higher is better, the one sentence of context, optional target, n
+  { name: "Internal fill rate", value: 41, prior: 35, unit: "pct", up: true, target: 45, n: 410,
+    text: "of open Pharmacy Ops roles were filled by internal candidates" },
+  { name: "Median time to fill", value: 38, prior: 43, unit: "days", up: false, n: 410,
+    text: "from requisition approval to accepted offer, all Pharmacy Ops roles" },
+  { name: "Regrettable attrition", value: 6.8, prior: 5.9, unit: "pct", up: false, n: 1250,
+    text: "of high performers left voluntarily, trailing 12 months" },
+];
+const [shown] = mck.suppressSmall(kpis, "n", { otherLabel: null });   // no KPI rests on fewer than 10 people
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function tile(k) {
+  const pct = k.unit === "pct", dec = Number.isInteger(k.value) ? 0 : 1;
+  const value = pct ? fmtNum(k.value, { kind: "pct", decimals: dec }) : `${fmtNum(k.value)}<small> days</small>`;
+  const d = k.value - k.prior;                                   // pts for a change in a %, never "%"
+  const delta = `${fmtNum(d, { kind: "plain", decimals: dec, sign: true })} ${pct ? "pts" : "days"} vs. FY25`;
+  const dir = d > 0 ? "is-up" : d < 0 ? "is-down" : "";
+  const fav = d === 0 ? "" : (d > 0) === k.up ? "is-good" : "is-bad";   // favorability, from the audience's view
+  const gap = k.target == null ? "" : `<span class="mck-kpi__meter" style="--value:${k.value}%;--target:${k.target}%"></span>
+      <p class="mck-kpi__gap">${fmtNum(k.target - k.value, { kind: "plain" })} pts short of the ${k.target}% target</p>`;
+  return `<div class="mck-kpi">
+      <p class="mck-kpi__name">${esc(k.name)}</p>
+      <p class="mck-kpi__value">${value}</p>
+      <p class="mck-kpi__delta ${dir} ${fav}">${delta}<span class="sr-only">, ${fav === "is-good" ? "better" : "worse"}</span></p>
+      <p class="mck-kpi__label">${esc(k.text)}</p>${gap}
+    </div>`;
+}
+document.getElementById("kpis").innerHTML = shown.map(tile).join("");
+</script>
+</body>
+</html>
+```
+The tiles are plain HTML, so they also work as static markup with no script. On dark surfaces add `mck-kpi--dark` (white number, `#66C4FF` meter, `semantic.positive`/`negative` deltas). A bare `<p class="mck-kpi">41%</p>` still styles just the number.
 
 ## QA specifics
 - [ ] The big number is set in the `kpi` role: Bold, large, Navy on white or white on `#0B3266`. It is the only big number on the card, and it is rounded sensibly.

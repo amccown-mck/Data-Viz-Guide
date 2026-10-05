@@ -57,8 +57,6 @@ import matplotlib.pyplot as plt
 import mckviz as mv
 
 mv.use()
-C = mv.colors
-CONTEXT_LW = mv.TOKENS["chart"]["line"]["context_width_px"]
 
 quarters = ["Q1 '25", "Q2", "Q3", "Q4", "Q1 '26", "Q2", "Q3", "Q4"]
 # Regretted attrition, trailing 12 months (%), by business unit
@@ -69,36 +67,20 @@ bu = {
     "Technology":                [11.8, 11.2, 10.9, 10.1, 9.8, 9.6, 9.2, 9.0],
     "Corporate":                 [8.2, 8.0, 7.9, 7.7, 7.6, 7.4, 7.3, 7.1],
     "RxTS":                      [7.5, 7.4, 7.6, 7.2, 7.0, 7.1, 6.8, 6.7],
-}                                                         # panel order = latest value, descending
-accent = "Oncology & Multispecialty"
-x = range(len(quarters))
-
-fig, axes = plt.subplots(2, 3, figsize=(10, 6), sharex=True, sharey=True)   # shared scale in every panel
-for ax, (name, y) in zip(axes.flat, bu.items()):
-    for other, oy in bu.items():                          # every other unit as grey context
-        if other != name:
-            ax.plot(x, oy, color=C.context_light, lw=CONTEXT_LW, zorder=1)
-    col = C.negative if name == accent else C.focus          # attrition rose: orange means worse
-    ax.plot(x, y, color=col, zorder=3)
-    for xi, v, ha in ((0, y[0], "right"), (len(y) - 1, y[-1], "left")):
-        ax.annotate(f"{v:.1f}", (xi, v), xytext=(-4 if ha == "right" else 4, 0), textcoords="offset points", ha=ha,
-                    va="center", fontsize=9, fontweight="bold" if ha == "left" else "normal",
-                    color=C.negative_text if name == accent else C.focus, path_effects=mv.halo())
-    ax.set_title(name, loc="left", fontsize=11, pad=6, fontweight="bold" if name == accent else "normal",
-                 color=C.headline if name == accent else C.text)
-    mv.clean_axes(ax)
-    ax.set_xticks([0, 4], [quarters[0], quarters[4]])
-ax.set_ylim(5, 15)
-ax.set_yticks([5, 10, 15])
-ax.set_xlim(-0.8, len(quarters) - 0.2)
-fig.subplots_adjust(hspace=0.45, wspace=0.18)
+}
+fig = plt.figure(figsize=(10, 6))
+# One shared scale; panels ordered by the latest value; every other unit as grey context behind each panel's own
+# blue line; start and end values labelled; attrition rose in Oncology, so its line is orange (worse).
+sm = mv.multiples(fig, bu, x=quarters, ncols=3, worse={"Oncology & Multispecialty"},
+                  ylim=(5, 15), yticks=[5, 10, 15], xticks=[0, 4])   # lines need no zero baseline
 mv.titles(fig, "Oncology is the only business unit where regretted attrition rose over the past two years, up 4 points",
           "Regretted attrition by business unit, trailing 12 months, Q1 2025\u2013Q4 2026 (%)")
 mv.source(fig, "Source: Workday HCM, as of 31 Dec 2026; U.S. regular employees. Synthetic data for illustration",
           footnote="Regretted = voluntary exits of high performers or critical-skill roles. Cuts with < 10 exits per quarter are suppressed.")
+mv.lint(fig, strict=True)
 mv.save(fig, "out/small-multiples.png")
 ```
-`mv.titles()` and `mv.save()` align the headline and source to the left edge of the leftmost panel's labels automatically.
+`mv.titles()` and `mv.save()` align the headline and source to the left edge of the leftmost panel's labels automatically. `mv.multiples` also takes a DataFrame (one column per panel, the index as x); `sm.axes` are the panels in order, for callouts.
 
 ### Python — Plotly / HTML
 ```python

@@ -52,60 +52,33 @@
 ### Python — matplotlib + `mckviz`
 ```python
 # verified runnable (from the repo root)
-from pathlib import Path
-
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from matplotlib.patches import Rectangle
 
 import mckviz as mv
 
 mv.use()
-C = mv.colors
-
-df = pd.read_csv(Path("assets/data/workforce_mix.csv")).sort_values("contingent_pct", ignore_index=True)
+df = pd.read_csv("assets/data/workforce_mix.csv").sort_values("contingent_pct", ascending=False)
 focus = "Technology"
-others = df.contingent_pct[df.function != focus].mean()
-ratio = df.contingent_pct[df.function == focus].iloc[0] / others
-# Story segment goes last (right end) in focus blue; the rest stay in context greys.
-parts = [("employee_ft_pct", "Full-time", C.context),
-         ("employee_pt_pct", "Part-time", C.context_light),
-         ("contingent_pct", "Contingent", C.focus)]
+ratio = df.contingent_pct[df.function == focus].iloc[0] / df.contingent_pct[df.function != focus].mean()
 
 fig, ax = plt.subplots(figsize=(10, 4.8))
-left = np.zeros(len(df))
-for col, name, color in parts:
-    ax.barh(df.function, df[col], left=left, color=color, height=0.62, edgecolor="white", linewidth=1.5)
-    for y, (x0, w) in enumerate(zip(left, df[col])):
-        if col == "contingent_pct":                       # focus values outside the bar end
-            hi = df.function[y] == focus
-            ax.text(101, y, f"{w:.0f}%", ha="left", va="center", fontsize=10 if hi else 9,
-                    color=C.headline, fontweight="bold" if hi else "medium")
-        elif w >= 4:                                      # skip labels that won't fit
-            ax.text(x0 + w / 2, y, f"{w:.0f}%", ha="center", va="center", fontsize=9, color=mv.text_on(color))
-    left += df[col].to_numpy()
-
-handles = [Rectangle((0, 0), 1, 1, color=c) for _, _, c in parts]
-ax.legend(handles, [n for _, n, _ in parts], loc="lower left", bbox_to_anchor=(0, 1.0), ncols=3,
-          fontsize=9, handlelength=1, handleheight=1, borderaxespad=0.2)   # key top-left, in stack order
-mv.clean_axes(ax, keep=(), grid=None)
-ax.set_xticks([])
-ax.set_xlim(0, 112)
-for lbl in ax.get_yticklabels():
-    if lbl.get_text() == focus:
-        lbl.set_fontweight("bold")
-        lbl.set_color(C.headline)
+# Story segment first: on the baseline in focus blue, the rest in context greys, white separators,
+# values inside segments >= label_min, segment names over the top bar (no legend), worker counts at the right.
+mv.hstack(ax, df.function, [("Contingent", df.contingent_pct), ("Full-time", df.employee_ft_pct),
+                            ("Part-time", df.employee_pt_pct)],
+          focus={focus}, label_min=5, base=df.workers, base_label="Workers")
 
 mv.titles(fig, f"Technology uses contingent labor at more than {int(ratio)}x the average rate of other functions",
           "Workforce composition by function, 2026 (% of workers)")
 mv.source(fig, "Source: Synthetic data for illustration only",
           footnote="Contingent = agency temps, independent contractors and SOW workers on assignment at period end.")
+mv.lint(fig, strict=True)
 mv.save(fig, "out/stacked-100.png", dpi=200)
 ```
-For **absolute** stacks, use the same loop with `ax.bar(..., bottom=running)`, put the story series first (on the baseline), and add totals with `ax.text(x, total, f"{total:,.0f}", ha="center", va="bottom", fontweight="bold", color=C.total)`.
+`mv.hstack` takes the parts in stack order; `story="Contingent"` moves a segment to the baseline if you list it elsewhere, and `colors=` overrides the greys (for example sequential steps for an ordered scale). For **absolute** stacks (columns), use `ax.bar(..., bottom=running, edgecolor="white", linewidth=1.5)` with the story series first (on the baseline), and add totals with `ax.text(x, total, f"{total:,.0f}", ha="center", va="bottom", fontweight="bold", color=C.total)`.
 
 ### Python — Plotly / HTML
 ```python
@@ -184,6 +157,81 @@ ggplot(mix, aes(pct, fn, fill = type)) +
   theme_mck() +   # legend top-left, in level (= stack) order
   theme(axis.text.x = element_blank(), panel.grid = element_blank(), axis.line.x = element_blank())
 ```
+
+### HTML / JavaScript — Plotly + `mck-viz.js`
+100% stacked bars with the story segment (Contingent) on the right edge in focus blue, the other segments grey, white separators, segment labels in `mck.textOn()` ink, and an HTML key top-left in stack order (`.mck-legend`). Copy `assets/web/mck-viz.css` and `assets/web/mck-viz.js` next to the page (offline or locked-down intranet: also `assets/web/vendor/plotly.min.js`, see [formats.md](../formats.md#web-and-html-articles-microsites-internal-tools)). `mck-viz.js` carries the tokens, the Plotly template and the helpers (`mck.tok`, `mck.fmtNum`, `mck.plotlyLayout`, ...), so no hex value is typed in the page.
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workforce mix</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mck-viz.css">   <!-- assets/web/mck-viz.css, copied next to this page -->
+<script src="mck-viz.js"></script>           <!-- assets/web/mck-viz.js: tokens, helpers and the Plotly template -->
+<script src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8"></script>   <!-- offline: vendor/plotly.min.js -->
+<style>
+  body { margin: 0; padding: 24px 16px; background: var(--mck-surface-subtle); }
+  .mck-chart { margin: 0 auto; }
+  .mck-plot { height: 300px; }
+  @media (max-width: 600px) { body { padding: 0; } }
+</style>
+</head>
+<body>
+<figure class="mck-chart" aria-labelledby="mix-headline">
+  <h2 class="mck-headline" id="mix-headline">Technology uses contingent labor at more than 4x the average rate of other functions</h2>
+  <p class="mck-subtitle">Workforce composition by function, 2026 (% of workers)</p>
+  <div class="mck-legend" id="mix-key" aria-hidden="true"></div>   <!-- key top-left, in stack order -->
+  <div class="mck-plot" id="mix-chart" role="img" aria-label="100% stacked bar chart. Contingent workers are 30% of
+       Technology and 5 to 8% of the other four functions; full-time employees are 58 to 88%."></div>
+  <table class="sr-only" id="mix-table"></table>
+  <noscript><p class="mck-subtitle">Contingent share: Technology 30%, Corporate 8%, Distribution 7%, Customer Care 6%,
+    Pharmacy Ops 5%.</p></noscript>
+  <figcaption class="mck-footnote" id="mix-note">Source: Synthetic data for illustration only</figcaption>
+</figure>
+<script>
+const { tok, fmtNum, textOn } = mck;
+const raw = [   // DATA: shares in % (each row sums to 100) and the head count behind them
+  { fn: "Distribution", ft: 71, pt: 22, cont: 7, n: 14200 }, { fn: "Pharmacy Ops", ft: 83, pt: 12, cont: 5, n: 9600 },
+  { fn: "Technology", ft: 58, pt: 12, cont: 30, n: 4100 }, { fn: "Customer Care", ft: 64, pt: 30, cont: 6, n: 3400 },
+  { fn: "Corporate", ft: 88, pt: 4, cont: 8, n: 5300 },
+];
+const [rows, note] = mck.suppressSmall(raw, "n", { otherLabel: null });   // no bar may rest on fewer than 10 people
+if (note) document.getElementById("mix-note").insertAdjacentText("afterbegin", note + " ");
+rows.sort((a, b) => b.cont - a.cont);                       // sorted by the story segment; "stacked" draws top to bottom
+const STORY = "Technology";
+const parts = [   // stack order = key order; the story segment sits on the common right edge, in focus blue
+  { key: "ft", name: "Full-time", color: tok("chart-context") },
+  { key: "pt", name: "Part-time", color: tok("chart-context-light") },
+  { key: "cont", name: "Contingent", color: tok("chart-focus"), story: true },
+];
+document.getElementById("mix-key").innerHTML =
+  parts.map(p => `<span style="--swatch:${p.color}">${p.name}</span>`).join("");
+
+const fns = rows.map(r => r.fn);
+const minLabel = window.matchMedia("(max-width: 600px)").matches ? 15 : 8;   // drop labels that would not fit
+const traces = parts.map(p => ({
+  type: "bar", orientation: "h", name: p.name, y: fns, x: rows.map(r => r[p.key]),
+  marker: { color: p.color, line: { color: tok("surface-default"), width: 1.5 } },     // white separators
+  text: rows.map(r => (p.story ? `<b>${fmtNum(r[p.key], { kind: "pct", decimals: 0 })}</b>`
+                               : r[p.key] >= minLabel ? fmtNum(r[p.key], { kind: "pct", decimals: 0 }) : "")),
+  textposition: p.story ? "outside" : "inside", insidetextanchor: "middle", textangle: 0, constraintext: "none",
+  textfont: { color: p.story ? tok("text-headline") : textOn(p.color) },             // white on dark, navy on light
+  hovertemplate: `%{y}: %{x:.0f}% ${p.name.toLowerCase()}<extra></extra>`,
+}));
+mck.ready(() => Plotly.newPlot("mix-chart", traces, mck.plotlyLayout("stacked", {   // after the font loads
+  margin: { r: 48 },                                          // room for the story values outside the bar end
+  yaxis: { tickvals: fns, ticktext: fns.map(f => (f === STORY ? `<b>${f}</b>` : f)), tickfont: { color: tok("text-primary") } },
+}), mck.plotConfig));
+mck.srTable("mix-table", "Workforce composition by function, 2026 (%)", ["Function", "Full-time", "Part-time", "Contingent", "Workers"],
+            rows.map(r => [r.fn, r.ft, r.pt, r.cont, fmtNum(r.n, { kind: "plain" })]));
+</script>
+</body>
+</html>
+```
+If the data are counts, add `barnorm: "percent"` to the layout and put the counts in `hovertemplate`. `mck.suppressSmall(rows, "n", {otherLabel: null})` drops any bar resting on fewer than 10 people and returns the footnote.
 
 ## QA specifics
 - [ ] ≤ 5 segments; the story segment sits on a common edge (baseline, first or last), never in the middle.

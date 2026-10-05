@@ -55,71 +55,35 @@
 ### Python — matplotlib + `mckviz`
 ```python
 # verified runnable (from the repo root)
-import textwrap
-from pathlib import Path
-
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 
 import mckviz as mv
 
 mv.use()
-C = mv.colors
-BAND = mv.TOKENS["chart"]["bar"]["band_fill"]                     # bar:gap ~ 2:1
-FLOOR = 3900                                                      # truncated start, marked with breaks + footnote
-
-df = pd.read_csv(Path("assets/data/labor_cost_bridge.csv"))
+df = pd.read_csv("assets/data/labor_cost_bridge.csv")
 focus = {"Automation savings", "Contractor conversion"}           # only the drivers the headline names
 
-running, bottoms, heights, fills = 0.0, [], [], []
-for r in df.itertuples():                                         # each delta floats on the running total
-    if r.kind == "total":
-        bottoms.append(0); heights.append(r.value_musd); fills.append(C.total); running = r.value_musd
-    else:
-        bottoms.append(running + min(r.value_musd, 0)); heights.append(abs(r.value_musd))
-        fills.append(C.focus if r.step in focus else C.context); running += r.value_musd
-tops = np.add(bottoms, heights)
-x = np.arange(len(df))
-
 fig, ax = plt.subplots(figsize=(10, 5.6))
-ax.bar(x, heights, bottom=bottoms, color=fills, width=BAND, zorder=2)
-for i in range(len(df) - 1):                                      # thin grey connectors at the running level
-    level = tops[i] if df.kind[i] == "total" or df.value_musd[i] >= 0 else bottoms[i]
-    ax.plot([i + BAND / 2, i + 1 - BAND / 2], [level, level], color=C.axis, lw=0.75, zorder=1)
-for i, r in df.iterrows():
-    total, hi = r.kind == "total", r.step in focus
-    ax.text(i, tops[i] + 8, f"{r.value_musd:,.0f}" if total else mv.signed(r.value_musd), ha="center", va="bottom",
-            fontsize=10, fontweight="bold" if total or hi else "medium",
-            color=C.headline if total or hi else C.text)
-for i in np.flatnonzero(df.kind == "total"):                      # break marks on the truncated totals
-    for dy in (0, 14):
-        ax.plot([i - BAND / 2 - 0.02, i + BAND / 2 + 0.02], [FLOOR + 25 + dy, FLOOR + 35 + dy], color="white",
-                lw=2.5, solid_capstyle="butt", zorder=3)
-
-ax.set_xticks(x, [textwrap.fill(s, 13) for s in df.step], fontsize=9)
-for lbl, kind in zip(ax.get_xticklabels(), df.kind):
-    if kind == "total":
-        lbl.set_fontweight("bold"); lbl.set_color(C.headline)
-ax.set_ylim(FLOOR, tops.max() + 45)
-mv.clean_axes(ax, keep=("bottom",), grid=None)
-ax.set_yticks([])
+wf = mv.waterfall(ax, df.step, df.value_musd, df.kind, focus=focus, floor=3900)   # totals navy, deltas grey, focus blue
+# floor= truncates the value axis: break marks on the totals, and wf.note says so for the footnote
 
 growth = df.value_musd[(df.kind == "delta") & (df.value_musd > 0)].sum()
 offset = -df.value_musd[df.step.isin(focus)].sum()
 mv.titles(fig, f"Automation and contractor conversion offset ~{offset / growth:.0%} of FY26 labor cost growth",
           "Labor cost bridge, FY25 to FY26 ($M)")
-mv.source(fig, "Source: Synthetic data for illustration only",
-          footnote=f"Value axis starts at ${FLOOR:,}M (break marks on totals) to make the drivers readable.")
+mv.source(fig, "Source: Synthetic data for illustration only", footnote=wf.note)
+mv.lint(fig, strict=True)
 mv.save(fig, "out/waterfall.png", dpi=200)
 ```
-The same logic covers the variants:
+`mv.waterfall` covers the variants:
 - **Subtotal:** add a row with `kind == "total"` whose value is the running total at that point.
-- **Horizontal:** swap to `ax.barh(x, heights, left=bottoms, height=BAND)` and `ax.invert_yaxis()`, and draw the connectors vertically.
-- **Distribution waterfall:** start from the total and let every component be a negative step down to zero.
-- **Semantic coloring:** replace the `fills` rule with `C.positive if favorable else C.negative`, and the label colors with `C.positive_text` / `C.negative_text`.
+- **Horizontal:** `horizontal=True` (steps read top to bottom, connectors vertical).
+- **Distribution waterfall:** pass the components as deltas and the whole as the last total, with `fmt=lambda v, k: f"{v:,.0f}"` (contributions to a total carry no +/− signs).
+- **Semantic coloring:** `semantic="down"` when an increase is unfavorable (cost), `"up"` when it is favorable (headcount, revenue): green for better, orange for worse, each label with ▲/▼. Say "green = cost reduction" in the subtitle.
+- Everything else (`ax`, the returned `wf.bars`, `wf.tops`, `wf.labels`) stays open for markers and callouts.
 
 ### Python — Plotly / HTML
 ```python
@@ -226,6 +190,95 @@ ggplot(df) +
   theme_mck() +
   theme(axis.text.y = element_blank(), panel.grid = element_blank())
 ```
+
+### HTML / JavaScript — Plotly + `mck-viz.js`
+The **highlight** pattern from the Workforce examples: a headcount bridge from zero, totals navy, the one named driver orange (a loss), the rest grey, thin connectors at the running total. Plain bars with `base` give per-bar colors; on phones the same data redraws as a horizontal waterfall. Copy `assets/web/mck-viz.css` and `assets/web/mck-viz.js` next to the page (offline or locked-down intranet: also `assets/web/vendor/plotly.min.js`, see [formats.md](../formats.md#web-and-html-articles-microsites-internal-tools)). `mck-viz.js` carries the tokens, the Plotly template and the helpers (`mck.tok`, `mck.fmtNum`, `mck.plotlyLayout`, ...), so no hex value is typed in the page.
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Headcount bridge</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mck-viz.css">   <!-- assets/web/mck-viz.css, copied next to this page -->
+<script src="mck-viz.js"></script>           <!-- assets/web/mck-viz.js: tokens, helpers and the Plotly template -->
+<script src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8"></script>   <!-- offline: vendor/plotly.min.js -->
+<style>
+  body { margin: 0; padding: 24px 16px; background: var(--mck-surface-subtle); }
+  .mck-chart { margin: 0 auto; }
+  .mck-plot { aspect-ratio: var(--mck-aspect-web-inline); }
+  @media (max-width: 600px) { body { padding: 0; } .mck-plot { aspect-ratio: var(--mck-aspect-mobile); } }
+</style>
+</head>
+<body>
+<figure class="mck-chart" aria-labelledby="wf-headline">
+  <h2 class="mck-headline" id="wf-headline">Voluntary exits cancelled out nearly all of FY26 hiring at our distribution centers</h2>
+  <p class="mck-subtitle">Distribution Center Associate headcount bridge, Apr 2025 to Mar 2026 (employees)</p>
+  <div class="mck-plot" id="wf-chart" role="img" aria-label="Waterfall chart. Headcount went from 11,800 to 11,660.
+       4,350 hires were offset by 4,080 voluntary exits; transfers in added 420, rehires and other 160;
+       involuntary exits removed 610 and transfers out 380."></div>
+  <table class="sr-only" id="wf-table"></table>
+  <noscript><p class="mck-subtitle">Headcount 11,800 to 11,660: hires +4,350, transfers in +420, rehires and other +160,
+    voluntary exits −4,080, involuntary exits −610, transfers out −380.</p></noscript>
+  <figcaption class="mck-footnote">Movements under 10 people are merged into "Rehires &amp; other".<br>
+    Source: Synthetic data for illustration only</figcaption>
+</figure>
+<script>
+const { tok, fmtNum } = mck;
+const steps = [   // DATA: label, value; the first and last rows are totals, the rest are movements
+  ["Opening<br>Apr 2025", 11800], ["Hires", 4350], ["Transfers<br>in", 420], ["Rehires<br>& other", 160],
+  ["Voluntary<br>exits", -4080], ["Involuntary<br>exits", -610], ["Transfers<br>out", -380], ["Closing<br>Mar 2026", null],
+];
+const STORY = "Voluntary<br>exits";                            // the one driver the headline names: orange = a loss
+let run = 0;
+const bars = steps.map(([label, v], i) => {                   // base + height for each bar; the closing total is computed
+  const total = i === 0 || v === null;
+  if (total) { run = i === 0 ? v : run; return { label, total, base: 0, h: run, v: run }; }
+  const b = { label, total, base: v < 0 ? run + v : run, h: Math.abs(v), v };
+  run += v;
+  return b;
+});
+const color = b => b.total ? tok("chart-total") : b.label === STORY ? tok("semantic-negative") : tok("chart-context");
+const ink = b => b.total ? tok("chart-total") : b.label === STORY ? tok("semantic-negative-text") : tok("text-primary");
+const text = b => b.total ? `<b>${fmtNum(b.v, { kind: "plain" })}</b>`
+                          : b.label === STORY ? `<b>${fmtNum(b.v, { kind: "plain", sign: true })}</b>`
+                          : fmtNum(b.v, { kind: "plain", sign: true });           // explicit + and a true minus
+const peak = Math.max(...bars.map(b => b.base + b.h));        // headroom above the tallest bar for its label
+const narrow = window.matchMedia("(max-width: 600px)");
+
+function draw() {
+  const h = narrow.matches;                                   // phones: a horizontal waterfall, top to bottom
+  const cat = bars.map(b => (h ? b.label.replace("<br>", " ") : b.label));
+  const pos = (c, val) => (h ? { y: c, x: val } : { x: c, y: val });
+  const half = (1 - mck.plotlyLayout("waterfall").bargap) / 2;
+  const connectors = bars.slice(0, -1).map((b, i) => {        // thin grey line at the running total
+    const level = b.total ? b.h : b.v < 0 ? b.base : b.base + b.h;
+    const a = i + half, z = i + 1 - half;
+    return h ? { type: "line", y0: a, y1: z, x0: level, x1: level, line: { color: tok("chart-axis"), width: 0.75 } }
+             : { type: "line", x0: a, x1: z, y0: level, y1: level, line: { color: tok("chart-axis"), width: 0.75 } };
+  });
+  const trace = { type: "bar", orientation: h ? "h" : "v", ...pos(cat, bars.map(b => b.h)), base: bars.map(b => b.base),
+    marker: { color: bars.map(color) }, text: bars.map(text), textposition: "outside",
+    textfont: { color: bars.map(ink) }, hoverinfo: "skip" };
+  const ticks = cat.map((c, i) => (bars[i].total ? `<b>${c}</b>` : c));
+  const layout = h
+    ? mck.plotlyLayout("bar", { xaxis: { range: [0, peak * 1.25] }, yaxis: { tickvals: cat, ticktext: ticks },
+                                margin: { r: 24 }, shapes: [mck.zeroLine("x"), ...connectors] })
+    : mck.plotlyLayout("waterfall", { xaxis: { tickvals: cat, ticktext: ticks }, yaxis: { range: [0, peak * 1.08] },
+                                      shapes: [mck.zeroLine("y"), ...connectors] });
+  Plotly.react("wf-chart", [trace], layout, mck.plotConfig);
+}
+narrow.addEventListener("change", draw);
+mck.srTable("wf-table", "Distribution Center Associate headcount bridge, FY26", ["Step", "Employees"],
+            bars.map(b => [b.label.replace("<br>", " "), b.total ? fmtNum(b.v, { kind: "plain" }) : fmtNum(b.v, { kind: "plain", sign: true })]));
+mck.ready(draw);
+</script>
+</body>
+</html>
+```
+For the **semantic** pattern, `{type: "waterfall", measure: ["absolute", "relative", ..., "total"]}` is enough: the template already colors increases, decreases and totals. Labels come from `mck.fmtNum(v, {kind: "plain", sign: true})`, so drivers get an explicit + and a true minus.
 
 ## QA specifics
 - [ ] The drivers reconcile: start + Σ drivers = end (and every subtotal) to the rounding shown. Label totals are recomputed, not typed.

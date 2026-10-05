@@ -64,14 +64,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib.colors import BoundaryNorm, ListedColormap, to_hex
-from matplotlib.patches import Rectangle
-from matplotlib.ticker import FuncFormatter
 
 import mckviz as mv
 
 mv.use()
-C = mv.colors
 
 drivers = ["Growth", "Manager support", "Recognition", "Workload", "Tools & tech", "Belonging", "Pay fairness"]
 df = pd.read_csv(Path("examples/data/engagement_vs_benchmark.csv"))
@@ -81,49 +77,23 @@ focus = "Workload"
 below = int((m[focus] < 0).sum())
 worst = m[focus].idxmin()
 
-bounds = np.arange(-10.5, 10.6, 3)                                   # 7 even 3-pt classes, symmetric; middle = 0 ±1
-cmap = ListedColormap(mv.DIVERGING)
-norm = BoundaryNorm(bounds, cmap.N, clip=True)
-
 fig, ax = plt.subplots(figsize=(10, 5.4))
-im = ax.imshow(m.values, cmap=cmap, norm=norm, aspect="auto")
-for (i, j), val in np.ndenumerate(m.values):
-    fill = to_hex(cmap(norm(val)))
-    ax.text(j, i, mv.signed(val), ha="center", va="center", fontsize=9, color=mv.text_on(fill),
-            fontweight="bold" if drivers[j] == focus else "medium")
-
-ax.set_xticks(range(len(drivers)), [d.replace(" ", "\n", 1) for d in drivers])
-ax.set_yticks(range(len(m)), m.index)
-ax.xaxis.tick_top()
-ax.set_xticks(np.arange(-0.5, m.shape[1]), minor=True)              # white gutters between cells
-ax.set_yticks(np.arange(-0.5, m.shape[0]), minor=True)
-ax.grid(which="minor", color="white", lw=2)
-ax.grid(which="major", visible=False)
-ax.tick_params(which="both", length=0)
-for s in ax.spines.values():
-    s.set_visible(False)
-w = drivers.index(focus)
-ax.add_patch(Rectangle((w - 0.5, -0.5), 1, m.shape[0], fill=False, ec=C.headline, lw=1.5, zorder=3))
-ax.get_xticklabels()[w].set_fontweight("bold")
-ax.get_xticklabels()[w].set_color(C.headline)
-
-cb = fig.colorbar(im, ax=ax, orientation="horizontal", fraction=0.035, pad=0.03, aspect=45, ticks=np.arange(-9, 10, 3))
-cb.outline.set_visible(False)
-cb.ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: mv.signed(v)))
-cb.ax.tick_params(labelsize=8, length=0, colors=C.text_muted)
-cb.ax.text(-0.01, 0.5, "Below benchmark", transform=cb.ax.transAxes, ha="right", va="center", fontsize=8,
-           color=C.negative_text)
-cb.ax.text(1.01, 0.5, "Above benchmark", transform=cb.ax.transAxes, ha="left", va="center", fontsize=8, color=C.focus)
+# Diverging classes on mv.DIVERGING, signed values in every cell (text color per fill), white gutters,
+# headers on top, the focus column outlined in navy with bold values, and a stepped key under the table.
+mv.heat(ax, m, bounds=np.arange(-10.5, 10.6, 3),                     # 7 even 3-pt classes, symmetric; middle = 0 ±1
+        focus_cols={focus}, key_ends=("Below benchmark", "Above benchmark"))
 
 mv.titles(fig, f"Workload trails the benchmark in {below} of {len(m)} business units \u2013 {worst.split(' &')[0]} most of all",
           "Engagement driver score vs. external healthcare benchmark, by business unit, 2026 (points)")
 mv.source(fig, "Source: Synthetic data for illustration only",
           footnote="Rows ranked by average gap across drivers. Cells with fewer than 10 respondents are suppressed.")
+mv.lint(fig, strict=True)
 mv.save(fig, Path(tempfile.gettempdir()) / "ck_heatdist_heatmap.png", dpi=200)
 ```
-- **Sequential:** use `cmap = ListedColormap(mv.SEQUENTIAL["blue"])` with even breaks such as `bounds = np.arange(15, 106, 15)` (6 classes for 6 colors).
-- **Continuous** (interactive or exploratory work): use `cmap=mv.diverging_cmap(), vmin=-lim, vmax=lim` or `cmap=mv.sequential_cmap("blue")`. Compute the text color with `mv.text_on(to_hex(cmap((val + lim) / (2 * lim))))`.
-- **Suppressed cells:** pass `np.ma.masked_where(n < 10, values)` and build the colormap with `.with_extremes(bad=C.context_light)`. Then write "n<10" in `C.text_muted` on top.
+- **Sequential:** `mv.heat(ax, m, kind="sequential")` uses `mv.SEQUENTIAL["blue"]` with even breaks (pass `bounds=np.arange(15, 106, 15)` for 6 classes of your choosing).
+- **Suppressed cells (minimum n):** `mv.heat(ax, m, n=counts)` greys every cell with fewer than 10 respondents and writes "n<10" in it instead of a value.
+- **Continuous** (interactive or exploratory work, drawn with `ax.imshow`): use `cmap=mv.diverging_cmap(), vmin=-lim, vmax=lim` or `cmap=mv.sequential_cmap("blue")`. Compute the text color with `mv.text_on(to_hex(cmap((val + lim) / (2 * lim))))`; for suppressed cells pass `np.ma.masked_where(n < 10, values)` and build the colormap with `.with_extremes(bad=C.context_light)`, then write "n<10" in `C.text_muted` on top.
+- `mv.key_strip(ax, ramp, labels, xy=..., width=..., ends=...)` draws the same stepped key anywhere (`heat(..., key=False)` to place it yourself).
 
 ### Python — Plotly / HTML
 ```python
@@ -243,6 +213,97 @@ ggplot(df, aes(driver, business_unit, fill = delta_vs_benchmark_pts)) +
   theme(panel.grid = element_blank(), axis.line.x = element_blank(),
         legend.position = "bottom", legend.justification = "right", legend.key.height = unit(6, "pt"))
 ```
+
+### HTML / JavaScript — Plotly + `mck-viz.js`
+Sequential heatmap in six even 15-day classes (a stepped scale built from the `seq-blue-*` tokens), 2 px white gutters, every value printed in `mck.textOn()` ink, the suppressed cell grey with "n<10", and the key as HTML using the same classes as the CSS heat table. Copy `dist/web/mck-viz.css` and `dist/web/mck-viz.js` next to the page (offline or locked-down intranet: also `dist/web/vendor/plotly.min.js`, see [formats.md](../formats.md#web-and-html-articles-microsites-internal-tools)). `mck-viz.js` carries the tokens, the Plotly template and the helpers (`mck.tok`, `mck.fmtNum`, `mck.plotlyLayout`, ...), so no hex value is typed in the page.
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Days to fill</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mck-viz.css">   <!-- dist/web/mck-viz.css, copied next to this page -->
+<script src="mck-viz.js"></script>           <!-- dist/web/mck-viz.js: tokens, helpers and the Plotly template -->
+<script src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8"></script>   <!-- offline: vendor/plotly.min.js -->
+<style>
+  body { margin: 0; padding: 24px 16px; background: var(--mck-surface-subtle); }
+  .mck-chart { margin: 0 auto; }
+  .mck-plot { height: 420px; }
+  .heat-key { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; font-size: var(--mck-tick-size);
+              color: var(--mck-text-muted); margin: 0 0 8px; }
+  .heat-key span { padding: 3px 8px; font-variant-numeric: tabular-nums; }
+  .heat-key .is-suppressed { background: var(--mck-chart-context-light); margin-left: 10px; }
+  @media (max-width: 600px) { body { padding: 0; } }
+</style>
+</head>
+<body>
+<figure class="mck-chart" aria-labelledby="ttf-headline">
+  <h2 class="mck-headline" id="ttf-headline">Clinical roles take 71+ days to fill in every region, and the West is slowest for 6 of 8 job families</h2>
+  <p class="mck-subtitle">Median days from requisition approval to accepted offer, by job family and region, H1 2026</p>
+  <div class="heat-key" id="ttf-key" aria-hidden="true"></div>   <!-- stepped key, the same classes as the heat table -->
+  <div class="mck-plot" id="ttf-chart" role="img" aria-label="Heatmap of median days to fill, 8 job families by 5 regions.
+       Pharmacist 78 to 93 days and RN, Specialty 71 to 85 days in every region; Warehouse Associate 18 to 31 days.
+       The West is slowest for 6 of the 8 job families."></div>
+  <table class="sr-only" id="ttf-table"></table>
+  <noscript><p class="mck-subtitle">Pharmacist 78–93 days and RN, Specialty 71–85 days in every region; Warehouse Associate
+    18–31 days. The West is slowest for 6 of 8 job families.</p></noscript>
+  <figcaption class="mck-footnote">Cells with fewer than 10 filled requisitions are suppressed (n&lt;10). Rows ranked by average days.<br>
+    Source: Synthetic data for illustration only</figcaption>
+</figure>
+<script>
+const { tok, textOn } = mck;
+const regions = ["Northeast", "Southeast", "Central", "Mountain", "West"];
+const data = [   // DATA: job family, median days per region; null = fewer than 10 requisitions (suppressed)
+  ["Pharmacist", 88, 81, 78, 93, 92], ["RN, Specialty", 82, 75, 71, 80, 85], ["Software Engineer", 64, 58, 55, null, 69],
+  ["Pharmacy Technician", 57, 51, 48, 56, 62], ["Supply Chain Planner", 52, 47, 43, 50, 55],
+  ["Account Executive", 52, 42, 40, 47, 51], ["Customer Care Rep", 35, 28, 25, 33, 38], ["Warehouse Associate", 27, 22, 18, 26, 31],
+];
+const avg = r => { const v = r.slice(1).filter(x => x != null); return v.reduce((a, b) => a + b, 0) / v.length; };
+data.sort((a, b) => avg(b) - avg(a));                          // rank the rows: slowest on top
+const CLINICAL = ["Pharmacist", "RN, Specialty"];
+const LO = 15, STEP = 15, K = 6;                               // 6 even 15-day classes: 15-30 ... 90-105
+const ramp = Array.from({ length: K }, (_, i) => tok(`seq-blue-${i + 1}`));
+const cls = v => Math.min(K - 1, Math.max(0, Math.floor((v - LO) / STEP)));
+const scale = ramp.flatMap((c, i) => [[i / K, c], [(i + 1) / K, c]]);   // stepped, not smooth
+
+document.getElementById("ttf-key").innerHTML = "<span>Days</span>" + ramp.map((c, i) =>
+  `<span class="mck-heat-blue-${i + 1}">${LO + i * STEP}–${LO + (i + 1) * STEP}</span>`).join("")
+  + '<span class="is-suppressed">n&lt;10</span>';
+
+const fams = data.map(r => r[0]);
+const z = data.map(r => r.slice(1));
+const labels = [], shapes = [];
+data.forEach((r, i) => r.slice(1).forEach((v, j) => {
+  if (v == null) {                                            // suppressed: grey cell, no value, no hover
+    shapes.push({ type: "rect", x0: j - 0.5, x1: j + 0.5, y0: i - 0.5, y1: i + 0.5, layer: "below",
+                  fillcolor: tok("chart-context-light"), line: { color: tok("surface-default"), width: 2 } });
+    labels.push({ x: regions[j], y: r[0], text: "n<10", font: { size: 11, color: tok("text-muted") } });
+  } else {
+    labels.push({ x: regions[j], y: r[0], text: CLINICAL.includes(r[0]) ? `<b>${v}</b>` : String(v),
+                  font: { color: textOn(ramp[cls(v)]) } });  // white on dark cells, navy on light ones
+  }
+}));
+
+mck.ready(() => Plotly.newPlot("ttf-chart", [{
+  type: "heatmap", x: regions, y: fams, z, zmin: LO, zmax: LO + K * STEP, colorscale: scale, showscale: false,
+  xgap: 2, ygap: 2, hoverongaps: false, hovertemplate: "%{y} · %{x}<br>%{z} median days to fill<extra></extra>",
+}], mck.plotlyLayout("heatmap", {
+  margin: { t: 28 },
+  yaxis: { tickvals: fams, ticktext: fams.map(f => (CLINICAL.includes(f) ? `<b>${f}</b>` : f)), tickfont: { color: tok("text-primary") } },
+  xaxis: { tickfont: { color: tok("text-primary") }, tickvals: regions,                 // short names on phones, never rotated
+           ticktext: window.matchMedia("(max-width: 600px)").matches ? ["NE", "SE", "Central", "Mtn.", "West"] : regions },
+  annotations: labels.map(a => ({ showarrow: false, ...a })), shapes,
+}), mck.plotConfig));
+mck.srTable("ttf-table", "Median days to fill by job family and region, H1 2026", ["Job family", ...regions],
+            data.map(r => [r[0], ...r.slice(1).map(v => (v == null ? "n<10" : v))]));
+</script>
+</body>
+</html>
+```
+No chart library needed for a heat **table**: `<table class="mck-table mck-table--heat">` with `<td class="mck-heat mck-heat-blue-4">61</td>` (also `mck-heat-orange-N`, `mck-heat-teal-N`, the diverging `mck-heat-div-1`…`-7`, `is-suppressed` and `is-focus-col`) gets the fill and the readable text color from `mck-viz.css`. For a diverging Plotly heatmap, build the stepped scale from `mck.tok("div-1")`…`("div-7")` and keep `zmin`/`zmax` symmetric.
 
 ## QA specifics
 - [ ] The scale type matches the data: sequential when the reference value is at one end, diverging when there's a meaningful midpoint. A diverging midpoint is the real reference (0, the benchmark, the target), is shown in `#EFEDE7`, and the range is symmetric.

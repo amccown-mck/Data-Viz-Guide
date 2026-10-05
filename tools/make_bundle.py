@@ -14,7 +14,8 @@ dist/ now and says so if something is missing. Layout inside the zip:
       office/                  PowerPoint template, starter deck(s), chart workbook, theme colors and fonts XML, set-up
       powerbi/                 report theme JSON and set-up
       fonts/LibreFranklin/     the TTFs and the SIL Open Font License
-      web/                     CSS variables, Plotly template, Vega-Lite config, chart-card starter, R theme
+      web/                     CSS variables and components, mck-viz.js helper, Plotly template, Vega-Lite config,
+                               chart-card starters (online and offline, with vendor/plotly.min.js), R theme
       python/                  the mckviz wheel (pip install it offline) and how to install from GitHub
       agents/                  the one-file rules, the portable mck-chart skill (folder and Claude.ai zip)
 
@@ -59,6 +60,9 @@ FILES = {
     "powerbi/powerbi-setup.md": "docs/powerbi-setup.md",
     "web/mck-viz.css": "dist/web/mck-viz.css",
     "web/mck-plotly-template.js": "dist/web/mck-plotly-template.js",
+    "web/mck-viz.js": "dist/web/mck-viz.js",
+    "web/vendor/plotly.min.js": "dist/web/vendor/plotly.min.js",
+    "web/vendor/LICENSE-plotly.txt": "dist/web/vendor/LICENSE-plotly.txt",
     "web/vega-lite-config.json": "dist/web/vega-lite-config.json",
     "web/theme_mck.R": "dist/r/theme_mck.R",
     "agents/mck-viz-rules.md": "dist/agents/mck-viz-rules.md",
@@ -162,8 +166,9 @@ people is in <code>powerbi/powerbi-setup.md</code>.</p>
 <ul>
 <li><b>Python:</b> <code>pip install "mckviz @ git+{REPO_URL}@v{v}#subdirectory=python"</code>, then
 <code>import mckviz as mv; mv.use()</code>. {wheel}</li>
-<li><b>Web:</b> <code>web/mck-viz.css</code> (CSS variables and the chart-card layout), <code>web/mck-plotly-template.js</code>,
-<code>web/vega-lite-config.json</code>. <b>R:</b> <code>source("web/theme_mck.R")</code>.</li>
+<li><b>Web:</b> <code>web/mck-viz.css</code> (CSS variables, chart card, KPI tile, status pill, grid and tables), <code>web/mck-viz.js</code>
+(number formats, highlight, minimum n, status, Plotly layouts), <code>web/mck-plotly-template.js</code>, <code>web/vega-lite-config.json</code>;
+<code>web/chart-card-offline.html</code> works with no internet (Plotly is in <code>web/vendor/</code>). <b>R:</b> <code>source("web/theme_mck.R")</code>.</li>
 <li>Code examples for every chart type, and the source of everything here: <a href="{REPO_URL}">{REPO_URL}</a>.</li>
 </ul>
 
@@ -217,8 +222,10 @@ def main() -> None:
             shutil.copy2(s, stage / rel)
         if missing:
             sys.exit(f"missing (run the builds first): {', '.join(missing)}")
-        card = (ROOT / "templates" / "html" / "chart-card.html").read_text(encoding="utf-8")
-        (stage / "web" / "chart-card.html").write_text(card.replace("../../dist/web/", ""), encoding="utf-8")
+        for name in ("chart-card.html", "chart-card-offline.html"):     # offline card: fonts/ and vendor/ sit beside it
+            card = (ROOT / "templates" / "html" / name).read_text(encoding="utf-8")
+            card = card.replace("../../dist/web/", "").replace("../../fonts/LibreFranklin/", "../fonts/LibreFranklin/")
+            (stage / "web" / name).write_text(card, encoding="utf-8")
         fonts = stage / "fonts" / "LibreFranklin"
         fonts.mkdir(parents=True)
         for f in (ROOT / "fonts" / "LibreFranklin").iterdir():

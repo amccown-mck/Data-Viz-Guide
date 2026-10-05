@@ -3,9 +3,11 @@
     python office/build_office.py
 
 Writes (all generated; never edit by hand):
-    dist/office/McKesson-DataViz-Starter.pptx   16:9 deck, McKesson theme, native editable sample charts
+    dist/office/McKesson-DataViz-Starter.pptx   16:9 deck, McKesson theme, native editable sample charts, plus a KPI
+                                                card, roadmap (Gantt), initiative tracker and two-charts slide
     dist/office/McKesson-DataViz.potx           the same theme and layouts as a template, with no slides
-    dist/office/McKesson-DataViz-Charts.xlsx    palette sheet + native sample charts + a heat table
+    dist/office/McKesson-DataViz-Charts.xlsx    palette sheet + native sample charts + a heat table + KPI, roadmap and
+                                                tracker sheets driven by formulas
     dist/office/McKesson-DataViz-Starter-Official.pptx   the same slides on the McKesson Standard Template, only when
                                                 the template is present locally (reference/mckesson-branding/); it
                                                 contains internal brand assets, so it is gitignored and goes only into
@@ -24,15 +26,17 @@ import textwrap
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
 from lxml import etree
 from pptx import Presentation
-from pptx.chart.data import CategoryChartData
+from pptx.chart.data import BubbleChartData, CategoryChartData, XyChartData
 from pptx.dml.color import RGBColor
-from pptx.enum.chart import XL_CHART_TYPE, XL_LABEL_POSITION, XL_LEGEND_POSITION, XL_MARKER_STYLE, XL_TICK_MARK
+from pptx.enum.chart import (XL_CHART_TYPE, XL_LABEL_POSITION, XL_LEGEND_POSITION, XL_MARKER_STYLE,
+                            XL_TICK_LABEL_POSITION, XL_TICK_MARK)
 from pptx.enum.shapes import MSO_CONNECTOR, MSO_SHAPE
-from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
+from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from pptx.oxml.ns import qn
 from pptx.util import Emu, Inches, Pt
@@ -315,11 +319,19 @@ def flat(shape) -> None:
 
 
 # ====================================================================== slide furniture
+def _shapes(target):
+    """A slide or a group shape -> its shape collection (so helpers can draw into a group)."""
+    return target.shapes if hasattr(target, "shapes") else target
+
+
 def text_box(slide, left, top, width, height, text, size, color, bold=False, light=False, anchor=MSO_ANCHOR.TOP,
-             align=PP_ALIGN.LEFT):
-    box = slide.shapes.add_textbox(Inches(left), Inches(top), Inches(width), Inches(height))
+             align=PP_ALIGN.LEFT, font=None, name=None, wrap=True):
+    """Text box with zero insets. `font` names a weight explicitly (e.g. "Libre Franklin SemiBold")."""
+    box = _shapes(slide).add_textbox(Inches(left), Inches(top), Inches(width), Inches(height))
+    if name:
+        box.name = name
     tf = box.text_frame
-    tf.word_wrap = True
+    tf.word_wrap = wrap
     tf.vertical_anchor = anchor
     tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
     for i, line in enumerate(text.split("\n")):
@@ -330,7 +342,7 @@ def text_box(slide, left, top, width, height, text, size, color, bold=False, lig
         run.font.size = Pt(size)
         run.font.bold = bold
         run.font.color.rgb = rgb(color)
-        run.font.name = f"{FONT} Light" if light else FONT
+        run.font.name = font or (f"{FONT} Light" if light else FONT)
     return box
 
 
@@ -376,7 +388,8 @@ def chart_slide(prs, headline, subtitle, footnote, notes, source=SRC):
         for r in tf.paragraphs[0].runs:                        # the official master says 34 pt; insight titles use 26
             r.font.size = Pt(TITLE_PT)
             r.font.bold = True
-    text_box(slide, LEFT, SUB_TOP, W - LEFT - RIGHT, 0.35, subtitle, 14, C.text)
+    if subtitle:
+        text_box(slide, LEFT, SUB_TOP, W - LEFT - RIGHT, 0.35, subtitle, 14, C.text)
     foot = "\n".join(x for x in (footnote, source) if x)
     if foot:
         text_box(slide, LEFT, FOOT_TOP, W - LEFT - RIGHT, 0.5, foot, 9, C.text_muted, light=True,
@@ -478,12 +491,16 @@ def point_label(point, text, color, bold=False, size=12, position=None):
         dl.position = position
 
 
-def line_shape(slide, x1, y1, x2, y2, color, width_pt=0.75, dash=True):
-    ln = slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(x1), Inches(y1), Inches(x2), Inches(y2))
+def line_shape(slide, x1, y1, x2, y2, color, width_pt=0.75, dash=True, arrow=False, name=None):
+    ln = _shapes(slide).add_connector(MSO_CONNECTOR.STRAIGHT, Inches(x1), Inches(y1), Inches(x2), Inches(y2))
     ln.line.color.rgb = rgb(color)
     ln.line.width = Pt(width_pt)
     if dash:
         ln.line.dash_style = 4          # MSO_LINE_DASH_STYLE.DASH
+    if arrow:                           # arrowhead at the end point
+        etree.SubElement(ln.line._get_or_add_ln(), qn("a:tailEnd"), type="triangle", w="med", len="med")
+    if name:
+        ln.name = name
     flat(ln)
     return ln
 
@@ -751,6 +768,867 @@ def slide_stacked(prs):
     return slide
 
 
+# ====================================================================== data for the new slides (shared by both files)
+STATUS = mv.STATUS                                        # key -> {"value", "symbol", "label"}
+STATUS_ORDER = ["off_track", "at_risk", "on_track", "not_started", "done"]       # exceptions first
+WORDS = {0: "no", 1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine"}
+MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+PLAN_SPAN = 24                                            # months: FY26 Q1 (Apr 2025) .. FY27 Q4 (Mar 2027)
+PHASES = [("Foundations", 0, 9), ("Pilot", 9, 18), ("Scale", 18, 24)]
+AS_OF, AS_OF_M = "31 Mar 2026", "2026-03"
+PLAN_SRC = "Source: Workforce Innovation program office (synthetic data for illustration), as of 31 Mar 2026"
+STATUS_DEF = ("Off track = a milestone missed with no recovery date; at risk = a milestone moved, with a recovery date; "
+              "complete = every milestone met.")
+SHORTW = {"Skills inventory rollout": "Skills inventory", "Pharmacy technician career path": "Pharmacy tech career path"}
+SHORT_JF = {"Pharmacy Technician": "Pharmacy Tech", "Distribution Center Associate": "DC Associate",
+            "Software Engineering": "Software Eng.", "Supply Chain Planning": "Supply Chain"}
+SEMI, MEDIUM = f"{FONT} SemiBold", f"{FONT} Medium"
+UP, DOWN = "▲", "▼"
+
+
+def mi(s: str) -> int:
+    """Month index from Apr 2025 (= 0), McKesson FY26 Q1."""
+    y, m = map(int, s.split("-"))
+    return (y - 2025) * 12 + m - 4
+
+
+def mon(s: str, year: bool = False) -> str:
+    return MON[int(s[5:]) - 1] + (f" {s[:4]}" if year else "")
+
+
+def plan_data() -> SimpleNamespace:
+    """Roadmap and tracker numbers, computed as in guide/ex_plans.py."""
+    plan = pd.read_csv(DATA / "initiative_plan.csv").fillna("")
+    ms = pd.read_csv(DATA / "initiative_milestones.csv").fillna("")
+    n = len(plan)
+    off = plan[plan.status == "off_track"]
+    dep = off.depends_on.iloc[0]
+    assert len(off) == 2 and set(off.depends_on) == {dep}            # headline: "two ... both waiting on"
+    exc = plan[plan.status.isin(["off_track", "at_risk"])]
+    moved = ms[(ms.workstream == dep) & (ms.state == "moved")].iloc[0]
+    slip = mi(moved.forecast) - mi(moved.due)
+    nxt = {}
+    for w, g in ms.groupby("workstream", sort=False):
+        left = g[g.state != "met"]
+        nxt[w] = left.iloc[0] if len(left) else None
+    # The paused workstream restarts when the integration lands, so its end moves by the same months (a forecast).
+    paused = plan.what_changed.str.contains("paused")
+    plan = plan.assign(offset=plan.start.map(mi), duration=[mi(e) - mi(s) + 1 for s, e in zip(plan.start, plan.end)],
+                       slip=[slip if p else 0 for p in paused], short=[SHORTW.get(w, w) for w in plan.workstream])
+    count = plan.status.value_counts().to_dict()
+    rollup = [(k, count.get(k, 0)) for k in STATUS_ORDER if count.get(k, 0)]
+    sorted_plan = plan.assign(o=plan.status.map(STATUS_ORDER.index)).sort_values(["o", "start"], kind="stable")
+    return SimpleNamespace(
+        plan=plan, ms=ms, n=n, off=off, exc=exc, dep=dep, moved=moved, slip=slip, next=nxt, rollup=rollup,
+        sorted=sorted_plan, paused=plan.workstream[paused].iloc[0], today=mi(AS_OF_M) + 1,
+        headline=(f"{WORDS[len(off)].capitalize()} of {WORDS[n]} workstreams are off track, both waiting on the "
+                  f"skills inventory's Workday integration"),
+        subtitle=f"Workforce Innovation roadmap by workstream, FY26–FY27, with status as of {AS_OF}",
+        tr_headline=(f"{WORDS[len(exc)].capitalize()} of {WORDS[n]} workstreams need a decision, all because the "
+                     f"Workday integration slipped {WORDS[slip]} months"),
+        tr_subtitle=f"Status, owner, dates, next milestone and change since February, as of {AS_OF}")
+
+
+def next_milestone(P, w) -> tuple[str, str, bool]:
+    """(milestone, when, flagged): the first milestone not yet met, as in the guide's tracker."""
+    m = P.next[w]
+    if m is None:
+        return "All milestones met", "", False
+    if m.state == "missed":
+        return m.milestone, f"Missed {mon(m.due)}; no new date", True
+    if m.state == "moved":
+        return m.milestone, f"{mon(m.forecast, True)} (was {mon(m.due)})", True
+    return m.milestone, mon(m.due, True), False
+
+
+def kpi_data() -> SimpleNamespace:
+    """Succession coverage KPI card, as in guide/ex_single_number.py."""
+    sc = pd.read_csv(DATA / "succession_coverage_bu.csv")
+    roles, now, prior = int(sc.critical_roles.sum()), int(sc.ready_now_mar26.sum()), int(sc.ready_now_mar25.sum())
+    pct, pct0, tgt = round(now / roles * 100), round(prior / roles * 100), int(sc.target_pct.iloc[0])
+    d, gap = pct - pct0, tgt - pct
+    return SimpleNamespace(
+        df=sc, roles=roles, now=now, prior=prior, pct=pct, pct0=pct0, tgt=tgt, d=d, gap=gap,
+        headline=(f"Succession coverage rose {d} points in a year but is still {gap} short of the {tgt}% target"
+                  if gap > 0 else f"Succession coverage rose {d} points in a year and meets the {tgt}% target"),
+        subtitle=f"Critical roles with at least one ready-now successor, Mar 2026 (% of {roles} roles)",
+        sentence=f"{now} of {roles} critical roles have at least one ready-now successor",
+        delta=f"{UP if d >= 0 else DOWN} {mv.signed(d)} pts vs. Mar 2025 ({pct0}%)",
+        gap_text=f"{gap} pts short of the {tgt}% FY27 target" if gap > 0 else f"At or above the {tgt}% FY27 target",
+        footnote="Ready-now = assessed in the FY26 talent review as able to step in within 12 months.",
+        source="Source: Workday talent review and succession records (synthetic data for illustration), as of 31 Mar 2026")
+
+
+def two_charts_data() -> SimpleNamespace:
+    """Attrition and engagement by job family, as in guide/ex_formats.py's two-charts spread."""
+    sc = pd.read_csv(DATA / "job_family_scorecard.csv").set_index("job_family")
+    top = list(sc.vol_attrition_pct.nlargest(2).index)
+    assert set(sc.engagement_index.nsmallest(2).index) == set(top)
+    others = sc.drop(top)
+    eng_others = float((others.engagement_index * others.headcount).sum() / others.headcount.sum())
+    a = [float(sc.vol_attrition_pct[f]) for f in top]
+    e = sorted(int(sc.engagement_index[f]) for f in top)
+    return SimpleNamespace(
+        df=sc.sort_values("vol_attrition_pct"), top=top,              # ascending: the largest sits at the top
+        title="The two job families that lose the most people also report the lowest engagement",
+        left=f"Pharmacy Techs and DC Associates lose about 1 in {round(100 / (sum(a) / 2))} people a year",
+        right=f"They score {e[0]} and {e[1]} on engagement, against {eng_others:.0f} for everyone else",
+        left_sub="Voluntary attrition by job family, FY26 (%)",
+        right_sub="Engagement index by job family, FY26 (0–100)",
+        left_src=("Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months.\n"
+                  "Source: Workday HCM (synthetic data for illustration), FY26; U.S. regular employees"),
+        right_src=("Engagement index = mean of the survey's engagement items, rescaled to 0–100.\n"
+                   "Source: Engagement survey (synthetic data for illustration), FY26; U.S. regular employees"))
+
+
+def column_data() -> SimpleNamespace:
+    df = pd.read_csv(DATA / "internal_fill_by_fy.csv")
+    now, prior = int(df.internal_fill_pct.iloc[-1]), int(df.internal_fill_pct.iloc[-2])
+    assert now == df.internal_fill_pct.max()
+    return SimpleNamespace(
+        df=df, headline=(f"Internal candidates filled {now}% of roles in FY26, up {now - prior} points and the "
+                         f"highest in {WORDS[len(df)]} years"),
+        subtitle=f"Share of open roles filled by internal candidates, {df.fiscal_year.iloc[0]}–{df.fiscal_year.iloc[-1]} (%)",
+        footnote="Internal fill rate = roles filled by internal candidates ÷ all roles filled.")
+
+
+def dumbbell_data() -> SimpleNamespace:
+    df = pd.read_csv(DATA / "pay_vs_market.csv").sort_values("gap_pct")      # widest gap below market at the top
+    low = df.nsmallest(2, "gap_pct")
+    names = {"RN, Specialty": "Specialty nurses", "Pharmacy Technician": "pharmacy technicians"}
+    a, b = (names.get(r, r) for r in low.role)
+    return SimpleNamespace(
+        df=df, focus=set(low.role),
+        headline=(f"{a[0].upper() + a[1:]} and {b} are paid about {abs(low.gap_pct.mean()):.0f}% below market, "
+                  f"the widest gaps of {len(df)} benchmarked roles"),
+        subtitle="Median base pay, McKesson vs. market, by role, 2026 ($K)",
+        footnote="External market = posted-pay median for comparable roles and metros.")
+
+
+def slope_data() -> SimpleNamespace:
+    df = pd.read_csv(DATA / "internal_fill_by_bu.csv")
+    w = df[df.fiscal_year.isin(["FY25", "FY26"])].pivot(index="business_unit", columns="fiscal_year",
+                                                       values="internal_fill_pct")
+    w["d"] = w.FY26 - w.FY25
+    w = w.sort_values("FY26", ascending=False)
+    top, second = w.d.nlargest(2)
+    focus = w.d.idxmax()
+    ratio = top / second
+    times = "twice" if abs(ratio - 2) < 0.25 else f"{ratio:.0f}×"
+    return SimpleNamespace(
+        df=w, focus=focus,
+        headline=f"{focus}'s internal fill rate rose {top:.0f} points in FY26, {times} the next-largest gain",
+        subtitle="Internal fill rate by business unit, FY25 and FY26 (% of roles filled internally)",
+        footnote="Internal fill rate = roles filled by internal candidates ÷ all roles filled.")
+
+
+def bubble_data() -> SimpleNamespace:
+    df = pd.read_csv(DATA / "automation_exposure.csv")
+    top = df.nlargest(2, "genai_exposure_pct")
+    short = {"Claims & Billing Specialist": "Claims & Billing", "Customer Care": "Customer Care"}
+    a, b = (short.get(r, r) for r in top.role)
+    return SimpleNamespace(
+        df=df, focus=set(top.role), short=short,
+        headline=(f"The two roles most exposed to Gen AI, {a} and {b}, employ {int(top.headcount.sum()):,} people"),
+        subtitle="Share of tasks exposed to Gen AI vs. median pay, by role, 2026 (bubble area = headcount)",
+        footnote="Exposure = share of task hours matched to gen-AI-capable activities in an external task taxonomy.")
+
+
+# ====================================================================== drawn-shape helpers
+def shape(target, kind, left, top, width, height, color=None, line=None, line_w=0.75, dash=False, name=None):
+    """A flat autoshape: solid fill (or none), optional outline, effectRef 0."""
+    s = _shapes(target).add_shape(kind, Inches(left), Inches(top), Inches(width), Inches(height))
+    if color:
+        fill(s, color)
+    else:
+        s.fill.background()
+    if line:
+        s.line.color.rgb = rgb(line)
+        s.line.width = Pt(line_w)
+        if dash:
+            s.line.dash_style = 4
+    else:
+        s.line.fill.background()
+    flat(s)
+    if name:
+        s.name = name
+    return s
+
+
+def shape_text(s, text, size, color, font=FONT, align=PP_ALIGN.CENTER, bold=False):
+    tf = s.text_frame
+    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
+    tf.word_wrap = False
+    tf.auto_size = MSO_AUTO_SIZE.NONE
+    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+    p = tf.paragraphs[0]
+    p.alignment = align
+    r = p.add_run()
+    r.text = text
+    r.font.size, r.font.bold, r.font.name = Pt(size), bold, font
+    r.font.color.rgb = rgb(color)
+
+
+def status_dot(target, cx, cy, key, d=0.2):
+    """Status: a small flat circle in the status color with its symbol inside (white or navy ink)."""
+    st = STATUS[key]
+    s = shape(target, MSO_SHAPE.OVAL, cx - d / 2, cy - d / 2, d, d, st["value"], name=f"Status dot: {st['label']}")
+    shape_text(s, st["symbol"], round(d * 72 * 0.62), mv.text_on(st["value"]), bold=True)
+    return s
+
+
+def status_label(target, x, cy, key, size=11, d=0.2, bold=None, width=1.1):
+    """Dot (color + symbol) and the word; off track and at risk in SemiBold navy."""
+    status_dot(target, x + d / 2, cy, key, d)
+    b = key in ("off_track", "at_risk") if bold is None else bold
+    text_box(target, x + d + 0.07, cy - 0.13, width, 0.26, STATUS[key]["label"], size, C.headline if b else C.text,
+             font=SEMI if b else FONT, anchor=MSO_ANCHOR.MIDDLE, wrap=False, name=f"Status word: {STATUS[key]['label']}")
+
+
+def milestone(target, cx, cy, kind, s=0.17, name=""):
+    """Milestone marks (as in the guide): met = navy filled diamond; due = hollow navy; was = hollow grey (the original
+    date of a moved milestone); missed = an off-track cross."""
+    label = {"met": "met", "upcoming": "due", "moved": "due (moved)", "was": "original date", "missed": "missed"}[kind]
+    nm = f"Milestone {label}" + (f": {name}" if name else "")
+    if kind == "missed":
+        k = s * 1.3
+        return shape(target, MSO_SHAPE.MATH_MULTIPLY, cx - k / 2, cy - k / 2, k, k, STATUS["off_track"]["value"],
+                     line="#FFFFFF", line_w=0.5, name=nm)
+    if kind == "met":
+        return shape(target, MSO_SHAPE.DIAMOND, cx - s / 2, cy - s / 2, s, s, C.total, line="#FFFFFF", name=nm)
+    edge = C.text_muted if kind == "was" else C.total
+    return shape(target, MSO_SHAPE.DIAMOND, cx - s / 2, cy - s / 2, s, s, "#FFFFFF", line=edge,
+                 line_w=1.0 if kind == "was" else 1.25, name=nm)
+
+
+def frame_in(frame):
+    return tuple(Emu(v).inches for v in (frame.left, frame.top, frame.width, frame.height))
+
+
+# ====================================================================== chart helpers for the new charts
+def dlbl(point, *, val=False, cat=False, ser=False, pos=None, num_fmt=None, size=12, color=C.text, bold=False,
+         sep=" ", text=None, dx=0.0, dy=0.0):
+    """One data label: which fields it shows (for XY charts 'cat' is the X value, 'val' the Y value), position, number
+    format, font (Medium; Bold when emphasized), or fixed `text`; dx/dy nudge it (fractions of the chart frame)."""
+    if text is not None:
+        point_label(point, text, color, bold=bold, size=size, position=pos)
+        d = point.data_label._dLbl
+    else:
+        dl = point.data_label
+        f = dl.font
+        f.size, f.bold, f.name = Pt(size), bold, FONT if bold else MEDIUM
+        f.color.rgb = rgb(color)
+        if pos is not None:
+            dl.position = pos
+        d = dl._dLbl
+        for tag, on in (("showLegendKey", 0), ("showVal", val), ("showCatName", cat), ("showSerName", ser),
+                        ("showPercent", 0), ("showBubbleSize", 0)):
+            el = d.find(qn(f"c:{tag}"))
+            if el is None:
+                el = etree.SubElement(d, qn(f"c:{tag}"))
+            el.set("val", "1" if on else "0")
+        if sum(map(bool, (val, cat, ser))) > 1:
+            etree.SubElement(d, qn("c:separator")).text = sep
+        if num_fmt:
+            nf = etree.Element(qn("c:numFmt"), formatCode=num_fmt, sourceLinked="0")
+            anchor = next(e for e in (d.find(qn(t)) for t in ("c:spPr", "c:txPr", "c:dLblPos", "c:showLegendKey"))
+                          if e is not None)
+            anchor.addprevious(nf)
+    if dx or dy:
+        lay = etree.Element(qn("c:layout"))
+        man = etree.SubElement(lay, qn("c:manualLayout"))
+        etree.SubElement(man, qn("c:x"), val=f"{dx:.4f}")
+        etree.SubElement(man, qn("c:y"), val=f"{dy:.4f}")
+        d.find(qn("c:idx")).addnext(lay)
+
+
+def point_line(point, color=None, width_pt=None):
+    """The line segment that leads into an XY or line point (Office draws segment k with point k's format)."""
+    if color is None:
+        point.format.line.fill.background()
+    else:
+        point.format.line.color.rgb = rgb(color)
+        point.format.line.width = Pt(width_pt)
+
+
+def point_marker(point, color, size, style=XL_MARKER_STYLE.CIRCLE, edge="#FFFFFF"):
+    m = point.marker
+    m.style = style
+    m.size = size
+    m.format.fill.solid()
+    m.format.fill.fore_color.rgb = rgb(color)
+    if edge:
+        m.format.line.color.rgb = rgb(edge)
+        m.format.line.width = Pt(0.75)
+    else:
+        m.format.line.fill.background()
+
+
+def axis_ticks(axis, size=11, color=C.text_muted, fmt=None):
+    axis.tick_labels.font.size = Pt(size)
+    axis.tick_labels.font.color.rgb = rgb(color)
+    if fmt:
+        axis.tick_labels.number_format = fmt
+        axis.tick_labels.number_format_is_linked = False
+
+
+def gridlines(axis, color=C.grid):
+    axis.has_major_gridlines = True
+    axis.major_gridlines.format.line.color.rgb = rgb(color)
+    axis.major_gridlines.format.line.width = Pt(0.75)
+
+
+def row_series_chart(slide, rows, left, top, width, height, x_min, *, layout):
+    """Dot plot / dumbbell on a category axis: an XY chart with one series per row (y = row position, top row first).
+    Point 0 sits at the axis minimum and carries the row name (label: Series Name, Left); later points are the dots,
+    joined by the series line. Returns the chart frame and chart."""
+    data = XyChartData()
+    n = len(rows)
+    for i, (name, xs) in enumerate(rows):
+        s = data.add_series(name)
+        s.add_data_point(x_min, n - i)
+        for x in xs:
+            s.add_data_point(x, n - i)
+    frame, chart = add_chart(slide, XL_CHART_TYPE.XY_SCATTER_LINES_NO_MARKERS, data, top=top, height=height, left=left,
+                             width=width)
+    plot_layout(chart, *layout)
+    return frame, chart
+
+
+def xy_axes(chart, n, x_min, x_max, major, fmt):
+    va, xa = chart.value_axis, chart.category_axis          # XY: value_axis = Y, category_axis = X (a value axis too)
+    va.minimum_scale, va.maximum_scale = 0.5, n + 0.5
+    va.visible = False
+    va.has_major_gridlines = False
+    xa.minimum_scale, xa.maximum_scale, xa.major_unit = x_min, x_max, major
+    gridlines(xa)
+    baseline(xa, visible=False)
+    axis_ticks(xa, fmt=fmt)
+
+
+# ====================================================================== new slides
+def slide_kpi(prs):
+    K = kpi_data()
+    slide = chart_slide(
+        prs, K.headline, K.subtitle, K.footnote,
+        f"KPI card. Everything here is a text box or a flat rectangle, so edit the text directly. The number is Libre "
+        f"Franklin Bold 54 pt navy {C.headline}; the comparison line is green {C.positive_text} with ▲ when it is good "
+        f"news (orange {C.negative_text} with ▼ when it is worse); the gap to target is orange text, said in words.\n"
+        f"Progress bar (group 'Progress bar'): the track is {BAR_W:.2f} in wide, so the blue fill's width = "
+        f"{BAR_W:.2f} in × value (now {K.pct}% = {BAR_W * K.pct / 100:.2f} in), and the target tick's left edge = "
+        f"{LEFT:.2f} in + {BAR_W:.2f} in × target − 0.02 in (Shape Format › Size and Position). Numbers: {K.now} of "
+        f"{K.roles} ready-now = {K.pct}%; Mar 2025 {K.prior} = {K.pct0}%; target {K.tgt}%.", source=K.source)
+    top = 2.05
+    text_box(slide, LEFT, top, 2.6, 1.15, f"{K.pct}%", 54, C.headline, bold=True, anchor=MSO_ANCHOR.MIDDLE,
+             name="KPI number")
+    x = LEFT + 2.75
+    text_box(slide, x, top + 0.02, 6.4, 0.32, K.sentence, 16, C.text, name="KPI sentence")
+    text_box(slide, x, top + 0.47, 6.4, 0.28, K.delta, 14, C.positive_text if K.d >= 0 else C.negative_text,
+             font=SEMI, name="KPI comparison")
+    if K.gap > 0:
+        text_box(slide, x, top + 0.82, 6.4, 0.28, K.gap_text, 14, C.negative_text, font=SEMI, name="KPI gap to target")
+    grp = slide.shapes.add_group_shape()
+    grp.name = "Progress bar"
+    y = 4.05
+    shape(grp, MSO_SHAPE.RECTANGLE, LEFT, y, BAR_W, 0.16, C.context_light, name="Track (0-100%)")
+    shape(grp, MSO_SHAPE.RECTANGLE, LEFT, y, BAR_W * K.pct / 100, 0.16, C.focus, name=f"Fill ({K.pct}%)")
+    tx = LEFT + BAR_W * K.tgt / 100
+    shape(grp, MSO_SHAPE.RECTANGLE, tx - 0.02, y - 0.1, 0.04, 0.36, C.total, name=f"Target tick ({K.tgt}%)")
+    text_box(grp, tx - 1.0, y - 0.38, 2.0, 0.24, f"Target {K.tgt}%", 11, C.annotation, align=PP_ALIGN.CENTER,
+             name="Target label")
+    text_box(grp, LEFT, y + 0.24, 1.0, 0.22, "0%", 11, C.text_muted, name="Scale 0%")
+    text_box(grp, LEFT + BAR_W - 1.0, y + 0.24, 1.0, 0.22, "100%", 11, C.text_muted, align=PP_ALIGN.RIGHT,
+             name="Scale 100%")
+    return slide
+
+
+BAR_W = 8.6                                                    # KPI progress-bar track width (in)
+
+
+def slide_roadmap(prs):
+    P = plan_data()
+    plan, n = P.plan, P.n
+    fl, ft, fw, fh = LEFT, 2.42, W - LEFT - RIGHT, 3.45
+    px, py, pw, ph = 2.55 / fw, 0.0, 8.6 / fw, 1.0
+    month = fw * pw / PLAN_SPAN
+    X = lambda m: fl + fw * px + month * m                                                # noqa: E731
+    plot_top, row_h = ft + fh * py, fh * ph / n
+    Y = lambda i: plot_top + row_h * (i + 0.5)                                            # noqa: E731
+    slide = chart_slide(
+        prs, P.headline, P.subtitle,
+        STATUS_DEF + "\n" + f"Light grey = forecast: the paused {P.paused} restarts when the integration goes live, {P.slip} months late.",
+        "Roadmap (Gantt) built as a native Stacked Bar. Right-click › Edit Data: 'Start' = months after 1 Apr 2025 "
+        "(FY26 Q1 = 0), 'Duration' = months including the last one, 'Slip' = forecast months beyond the plan (0 if on "
+        "plan). The Start series has no fill, so each bar floats at its start. Bar colors: click a bar twice › Fill: "
+        f"grey {C.context} on plan, blue {C.focus} off track, light {C.context_light} not started; the slip segment is "
+        f"light grey with a dashed outline. The value axis (0-24 months) is deleted but its gridlines mark the quarters.\n"
+        f"Move the Today line: select the group 'Today line' and set Shape Format › Size and Position › Horizontal "
+        f"position = {X(0):.2f} in + months × {month:.3f} in, minus half the group's width (one month = {month:.3f} in; "
+        f"today, the end of Mar 2026, is month {P.today}). Or select it and nudge with the arrow keys.\n"
+        "Add a row: in Edit Data, insert a row inside the table so the chart range grows, then type the name, Start, "
+        f"Duration and Slip 0. Rows get shorter (the plot height ÷ the number of rows), so drag each row's group "
+        "('Row 3: SWP model refresh' holds its milestones and status) back onto its bar; for the new row, copy a "
+        "group and change the dot color, symbol and word.\nMilestones are shapes: ◆ navy filled = met, ◇ hollow navy "
+        "= due, ✕ = missed, grey ◇ = a moved milestone's original date with an arrow to the new one. A milestone in "
+        f"month m sits at {X(0):.2f} in + (m + 0.5) × {month:.3f} in.", source=PLAN_SRC)
+    # Header: phase band, fiscal years, quarters (drawn; they line up with the pinned plot area).
+    hdr = slide.shapes.add_group_shape()
+    hdr.name = "Timeline header"
+    for i, (name, a, b) in enumerate(PHASES):
+        s = shape(hdr, MSO_SHAPE.RECTANGLE, X(a) + (0.01 if a else 0), 1.8, (b - a) * month - (0.01 if a else 0), 0.2,
+                  C.context_light if i % 2 == 0 else C.grid, name=f"Phase: {name}")
+        shape_text(s, name, 10, C.headline, align=PP_ALIGN.LEFT)
+        s.text_frame.margin_left = Inches(0.06)
+    for k, name in enumerate(("FY26", "FY27")):
+        text_box(hdr, X(k * 12), 2.03, 12 * month, 0.18, name, 11, C.headline, font=SEMI, align=PP_ALIGN.CENTER)
+    for q in range(PLAN_SPAN // 3):
+        text_box(hdr, X(q * 3), 2.21, 3 * month, 0.18, f"Q{q % 4 + 1}", 11, C.text_muted, align=PP_ALIGN.CENTER)
+    text_box(hdr, LEFT, 2.21, 2.0, 0.18, "Workstream", 10, C.text_muted)
+    text_box(hdr, X(PLAN_SPAN) + 0.18, 2.21, 1.0, 0.18, "Status", 10, C.text_muted)
+    line_shape(hdr, LEFT, 2.41, W - RIGHT, 2.41, C.axis, dash=False, name="Header rule")
+    # The chart: invisible start + duration + slip.
+    data = CategoryChartData()
+    data.categories = list(plan.short)
+    data.add_series("Start (months after 1 Apr 2025)", list(plan.offset))
+    data.add_series("Duration (months)", list(plan.duration))
+    data.add_series("Slip (months)", list(plan.slip))
+    frame, chart = add_chart(slide, XL_CHART_TYPE.BAR_STACKED, data, top=ft, height=fh)
+    frame.name = "Roadmap chart"
+    plot_layout(chart, px, py, pw, ph)
+    plot = chart.plots[0]
+    plot.gap_width = 80
+    plot.overlap = 100
+    s_start, s_dur, s_slip = plot.series
+    no_fill(s_start)
+    fill(s_dur, C.context)
+    s_dur.format.line.fill.background()
+    no_fill(s_slip)
+    for i, r in plan.reset_index(drop=True).iterrows():
+        if r.status == "off_track":
+            fill(s_dur.points[i], C.focus)
+        elif r.status == "not_started":
+            fill(s_dur.points[i], C.context_light)
+        if r.slip:
+            pt = s_slip.points[i]
+            fill(pt, C.context_light)
+            pt.format.line.color.rgb = rgb(C.context)
+            pt.format.line.width = Pt(0.75)
+            pt.format.line.dash_style = 4
+    va = chart.value_axis
+    va.minimum_scale, va.maximum_scale, va.major_unit = 0, PLAN_SPAN, 3
+    gridlines(va)
+    va.visible = False
+    ca = chart.category_axis
+    ca.reverse_order = True                                   # first workstream on top
+    baseline(ca, visible=False)
+    axis_ticks(ca, 12, C.text)
+    bar_h = row_h / (1 + 0.8)
+    # Per row: milestones, slip arrow and status, grouped so a row's marks move together.
+    for i, r in plan.reset_index(drop=True).iterrows():
+        g = slide.shapes.add_group_shape()
+        g.name = f"Row {i + 1}: {r.workstream}"
+        y = Y(i)
+        for _, m in P.ms[P.ms.workstream == r.workstream].iterrows():
+            if m.state == "moved":
+                xa, xb = X(mi(m.due) + 0.5), X(mi(m.forecast) + 0.5)
+                milestone(g, xa, y, "was", name=m.milestone)
+                line_shape(g, xa + 0.1, y, xb - 0.11, y, C.annotation, width_pt=1.0, dash=False, arrow=True,
+                           name="Moved: arrow")
+                milestone(g, xb, y, "moved", name=m.milestone)
+                text_box(g, (xa + xb) / 2 - 0.9, y - bar_h / 2 - 0.2, 1.8, 0.17, f"Moved {mon(m.due)} to "
+                         f"{mon(m.forecast)}", 9, C.annotation, font=SEMI, align=PP_ALIGN.CENTER, name="Moved: label")
+            else:
+                milestone(g, X(mi(m.due) + 0.5), y, m.state, name=m.milestone)
+        if r.slip:
+            end = r.offset + r.duration
+            line_shape(g, X(end) + 0.04, y, X(end + r.slip) - 0.06, y, C.annotation, width_pt=1.0, dash=False,
+                       arrow=True, name="Slip: arrow")
+            text_box(g, X(end + r.slip) + 0.06, y - 0.12, 1.2, 0.24, f"+{r.slip} months", 10, C.annotation, font=SEMI,
+                     anchor=MSO_ANCHOR.MIDDLE, wrap=False, name="Slip: label")
+        status_label(g, X(PLAN_SPAN) + 0.18, y, r.status)
+    # Today line.
+    bottom = ft + fh
+    g = slide.shapes.add_group_shape()
+    g.name = "Today line"
+    line_shape(g, X(P.today), 2.41, X(P.today), bottom + 0.04, C.total, width_pt=1.0, name="Today")
+    text_box(g, X(P.today) - 1.0, bottom + 0.06, 2.0, 0.2, f"Today, {AS_OF}", 10, C.annotation, font=SEMI,
+             align=PP_ALIGN.CENTER, name="Today label")
+    # Milestone key, bottom left.
+    g = slide.shapes.add_group_shape()
+    g.name = "Milestone key"
+    kx, ky = LEFT + 0.09, bottom + 0.16
+    for kind, lab in (("met", "Met"), ("upcoming", "Due"), ("missed", "Missed"), ("was", "Original date")):
+        milestone(g, kx, ky, kind, s=0.15)
+        text_box(g, kx + 0.14, ky - 0.11, 1.2, 0.22, lab, 10, C.text, anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        kx += 0.32 + len(lab) * 0.075
+    shape(g, MSO_SHAPE.RECTANGLE, kx - 0.07, ky - 0.06, 0.3, 0.12, C.context_light, line=C.context, dash=True,
+          name="Key: slip")
+    text_box(g, kx + 0.3, ky - 0.11, 1.4, 0.22, "Forecast slip", 10, C.text, anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    return slide
+
+
+def _cell_borders(cell, bottom_color, bottom_w=9525):
+    """Flat cell: no fill, no side or top border, a hairline bottom border."""
+    tc = cell._tc
+    tcPr = tc.get_or_add_tcPr()
+    for child in list(tcPr):
+        tcPr.remove(child)
+    for tag in ("lnL", "lnR", "lnT"):
+        ln = etree.SubElement(tcPr, qn(f"a:{tag}"), w="0")
+        etree.SubElement(ln, qn("a:noFill"))
+    ln = etree.SubElement(tcPr, qn("a:lnB"), w=str(bottom_w), cap="flat", cmpd="sng", algn="ctr")
+    etree.SubElement(etree.SubElement(ln, qn("a:solidFill")), qn("a:srgbClr"), val=bottom_color.lstrip("#").upper())
+    etree.SubElement(ln, qn("a:prstDash"), val="solid")
+    etree.SubElement(tcPr, qn("a:noFill"))
+
+
+def _cell_text(cell, lines, anchor=MSO_ANCHOR.MIDDLE, margin_left=0.05):
+    """lines -> [(text, size, color, font)], one paragraph each."""
+    cell.margin_left, cell.margin_right = Inches(margin_left), Inches(0.08)
+    cell.margin_top = cell.margin_bottom = Inches(0.03)
+    cell.vertical_anchor = anchor
+    tf = cell.text_frame
+    tf.word_wrap = True
+    for i, (text, size, color, font) in enumerate(lines):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        r = p.add_run()
+        r.text = text
+        r.font.size, r.font.name = Pt(size), font
+        r.font.color.rgb = rgb(color)
+
+
+TRACKER_COLS = [("Status", 1.35), ("Workstream, owner", 2.85), ("Plan dates", 1.8), ("Next milestone", 2.9),
+                ("What changed", None)]
+
+
+def slide_tracker(prs):
+    P = plan_data()
+    slide = chart_slide(
+        prs, P.tr_headline, P.tr_subtitle, STATUS_DEF,
+        "Initiative tracker: a native table (Insert › Table) with the 'No Style, No Grid' style, no fills, a 1 pt rule "
+        f"under the header ({C.axis}) and hairlines between rows ({C.grid}). Rows: off track, then at risk, then the "
+        "rest; exception names in SemiBold navy. The status dots are shapes in the group 'Status dots', one per row, "
+        "on top of the table: to change a status, edit the word in the cell and the dot's fill and symbol "
+        "(on track ✓ " + STATUS["on_track"]["value"] + ", at risk ! " + STATUS["at_risk"]["value"] + ", off track ✕ "
+        + STATUS["off_track"]["value"] + ", not started – " + STATUS["not_started"]["value"] + ", complete ✓ "
+        + STATUS["done"]["value"] + "). Rows are 0.54 in tall and hold two lines; keep text to two lines so the dots "
+        "stay aligned, or move the group after resizing. Update the roll-up counts above the table by hand. Never "
+        "color a whole row by status.", source=PLAN_SRC)
+    # Roll-up: a count per status, exceptions first.
+    g = slide.shapes.add_group_shape()
+    g.name = "Roll-up"
+    y = 1.9
+    text_box(g, LEFT, y - 0.13, 1.5, 0.26, f"{P.n} workstreams", 12, C.headline, font=SEMI, anchor=MSO_ANCHOR.MIDDLE,
+             wrap=False)
+    x = LEFT + 1.55
+    for k, cnt in P.rollup:
+        status_dot(g, x + 0.1, y, k)
+        text_box(g, x + 0.27, y - 0.13, 1.2, 0.26, f"{cnt} {STATUS[k]['label'].lower()}", 12, C.text,
+                 anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        x += 0.5 + len(f"{cnt} {STATUS[k]['label']}") * 0.085
+    # Table.
+    d = P.sorted.reset_index(drop=True)
+    cw = [w or (W - LEFT - RIGHT - sum(c[1] for c in TRACKER_COLS[:-1])) for _, w in TRACKER_COLS]
+    top, head_h, row_h = 2.2, 0.32, 0.54
+    gf = slide.shapes.add_table(len(d) + 1, len(cw), Inches(LEFT), Inches(top), Inches(sum(cw)),
+                                Inches(head_h + row_h * len(d)))
+    gf.name = "Tracker table"
+    tbl = gf.table
+    tblPr = tbl._tbl.tblPr
+    tblPr.set("firstRow", "1")
+    tblPr.set("bandRow", "0")
+    sid = tblPr.find(qn("a:tableStyleId"))
+    if sid is None:
+        sid = etree.SubElement(tblPr, qn("a:tableStyleId"))
+    sid.text = "{2D5ABB26-0587-4C30-8999-92F81FD0307C}"                   # No Style, No Grid
+    for j, w in enumerate(cw):
+        tbl.columns[j].width = Inches(w)
+    tbl.rows[0].height = Inches(head_h)
+    for j, (head, _) in enumerate(TRACKER_COLS):
+        c = tbl.cell(0, j)
+        _cell_text(c, [(head, 11, C.headline, SEMI)], anchor=MSO_ANCHOR.BOTTOM)
+        _cell_borders(c, C.axis, 12700)
+    dots = slide.shapes.add_group_shape()
+    dots.name = "Status dots"
+    for i, r in d.iterrows():
+        tbl.rows[i + 1].height = Inches(row_h)
+        exc = r.status in ("off_track", "at_risk")
+        ms_name, when, flagged = next_milestone(P, r.workstream)
+        cells = [
+            [(STATUS[r.status]["label"], 11, C.headline if exc else C.text, SEMI if exc else FONT)],
+            [(r.workstream, 11, C.headline if exc else C.text, SEMI if exc else FONT), (r.owner, 10, C.text_muted, FONT)],
+            [(f"{mon(r.start, True)} – {mon(r.end, True)}", 11, C.text, FONT)],
+            [(ms_name, 11, C.text, FONT)] + ([(when, 10, C.headline if flagged else C.text_muted, SEMI if flagged
+                                               else FONT)] if when else []),
+            [(r.what_changed, 11, C.text, FONT)],
+        ]
+        for j, lines in enumerate(cells):
+            c = tbl.cell(i + 1, j)
+            _cell_text(c, lines, margin_left=0.33 if j == 0 else 0.05)
+            _cell_borders(c, C.grid)
+        status_dot(dots, LEFT + 0.05 + 0.1, top + head_h + row_h * (i + 0.5), r.status)
+    return slide
+
+
+def slide_two_charts(prs):
+    T = two_charts_data()
+    slide = chart_slide(
+        prs, T.title, None, None,
+        "Two charts on one slide: the slide title (Bold, McKesson Blue) is the one message both charts support; each "
+        f"chart has its own SemiBold 18 pt navy headline ({C.headline}), a 14 pt subtitle and its own footnote and source, "
+        "so either card can be copied to another slide. Same rows, same order and the same highlight in both charts, "
+        "read left to right. Left: a bar chart (Edit Data). Right: a dot plot built as an XY scatter, one series per "
+        "row (the series name is the row label): point 1 sits at the axis minimum (60) and carries the name, point 2 is "
+        "the dot (X = engagement, Y = row number, 1 at the bottom); the grey line between them is the stem. Two charts "
+        "is the limit; a third means a second slide.", source=None)
+    df, n = T.df, len(T.df)
+    gut = 0.5
+    colw = (W - LEFT - RIGHT - gut) / 2
+    lay = (0.31, 0.02, 0.6, 0.96)
+    names = [SHORT_JF.get(f, f) for f in df.index]
+    for k, (head, sub, src) in enumerate(((T.left, T.left_sub, T.left_src), (T.right, T.right_sub, T.right_src))):
+        x0 = LEFT + k * (colw + gut)
+        text_box(slide, x0, 1.45, colw, 0.6, head, 18, C.headline, font=SEMI, name=f"Chart {k + 1} headline")
+        text_box(slide, x0, 2.1, colw, 0.3, sub, 14, C.text, name=f"Chart {k + 1} subtitle")
+        text_box(slide, x0, FOOT_TOP, colw, 0.5, src, 9, C.text_muted, light=True, anchor=MSO_ANCHOR.BOTTOM,
+                 name=f"Chart {k + 1} source")
+    # Left: bar.
+    data = CategoryChartData()
+    data.categories = names
+    data.add_series("Voluntary attrition (%)", list(df.vol_attrition_pct))
+    frame, chart = add_chart(slide, XL_CHART_TYPE.BAR_CLUSTERED, data, top=2.5, height=3.8, left=LEFT, width=colw)
+    plot_layout(chart, *lay)
+    plot = chart.plots[0]
+    plot.gap_width = BAND_GAP
+    plot.vary_by_categories = False
+    s = plot.series[0]
+    fill(s, C.context)
+    for i, (f, v) in enumerate(df.vol_attrition_pct.items()):
+        hi = f in T.top
+        if hi:
+            fill(s.points[i], C.focus)
+        point_label(s.points[i], f"{v:.1f}%", C.headline if hi else C.text, bold=hi, position=XL_LABEL_POSITION.OUTSIDE_END)
+    va = chart.value_axis
+    va.minimum_scale, va.maximum_scale = 0, 34
+    va.visible = False
+    va.has_major_gridlines = False
+    baseline(chart.category_axis)
+    axis_ticks(chart.category_axis, 11, C.text)
+    # Right: dot plot (XY), same rows in the same order (the bar chart's first category is at the bottom = y 1).
+    x_min, x_max = 60, 82
+    rows = [(names[i], [float(df.engagement_index.iloc[i])]) for i in range(n - 1, -1, -1)]     # top row first
+    frame, chart = row_series_chart(slide, rows, LEFT + colw + gut, 2.5, colw, 3.8, x_min, layout=lay)
+    xy_axes(chart, n, x_min, x_max, 10, "0")
+    focus_names = {SHORT_JF.get(f, f) for f in T.top}
+    for ser, (name, xs) in zip(chart.plots[0].series, rows):
+        hi = name in focus_names
+        ser.smooth = False
+        ser.marker.style = XL_MARKER_STYLE.NONE
+        ser.format.line.color.rgb = rgb(C.grid)
+        ser.format.line.width = Pt(1.0)
+        dlbl(ser.points[0], ser=True, pos=XL_LABEL_POSITION.LEFT, size=11, color=C.headline if hi else C.text,
+             bold=False)
+        point_marker(ser.points[1], C.focus if hi else C.context, 9)
+        dlbl(ser.points[1], cat=True, pos=XL_LABEL_POSITION.RIGHT, num_fmt="0", color=C.headline if hi else C.text,
+             bold=hi)
+    return slide
+
+
+def slide_column(prs):
+    D = column_data()
+    df = D.df
+    slide = chart_slide(
+        prs, D.headline, D.subtitle, D.footnote,
+        "Column highlight: one blue column (the one the headline names), the rest grey; labels on top, value axis and "
+        "gridlines deleted, columns from zero. Edit Data to change the numbers; to move the highlight, click a column "
+        f"twice › Fill › {C.focus}, and set the others to {C.context}.")
+    data = CategoryChartData()
+    data.categories = list(df.fiscal_year)
+    data.add_series("Internal fill rate (%)", list(df.internal_fill_pct))
+    frame, chart = add_chart(slide, XL_CHART_TYPE.COLUMN_CLUSTERED, data, width=8.0)
+    plot_layout(chart, 0.02, 0.08, 0.96, 0.84)
+    plot = chart.plots[0]
+    plot.gap_width = BAND_GAP
+    plot.vary_by_categories = False
+    s = plot.series[0]
+    fill(s, C.context)
+    last = len(df) - 1
+    for i, v in enumerate(df.internal_fill_pct):
+        hi = i == last
+        if hi:
+            fill(s.points[i], C.focus)
+        point_label(s.points[i], f"{v:.0f}%", C.headline if hi else C.text, bold=hi,
+                    position=XL_LABEL_POSITION.OUTSIDE_END)
+    va = chart.value_axis
+    va.minimum_scale, va.maximum_scale = 0, 35
+    va.visible = False
+    va.has_major_gridlines = False
+    baseline(chart.category_axis)
+    axis_ticks(chart.category_axis, 12, C.text)
+    return slide
+
+
+def slide_dumbbell(prs):
+    D = dumbbell_data()
+    df, n = D.df, len(D.df)
+    x_min, x_max = 30, 160
+    slide = chart_slide(
+        prs, D.headline, D.subtitle, D.footnote,
+        "Dumbbell built as an XY scatter with one series per role (the series name is the row label). Each series has "
+        f"three points: (1) X = the axis minimum {x_min}, the label anchor, no marker, no line; (2) X = market, grey dot; "
+        "(3) X = McKesson, blue dot (orange when below market is the story), joined to (2) by a light 3 pt line. Y = row "
+        f"number, {n} at the top. Edit Data: change the market and McKesson X values; the gap labels on the right are "
+        "typed text (Format Data Label › Text), so update them too. Key: the two dots above the top row are shapes.")
+    rows = [(r.role, [float(r.market_median_k), float(r.internal_median_k)]) for r in df.itertuples()]
+    lay = (0.2, 0.06, 0.62, 0.92)
+    frame, chart = row_series_chart(slide, rows, LEFT, CHART_TOP, W - LEFT - RIGHT, CHART_H, x_min, layout=lay)
+    xy_axes(chart, n, x_min, x_max, 25, '"$"#,##0"K"')
+    for ser, r in zip(chart.plots[0].series, df.itertuples()):
+        hi = r.role in D.focus
+        ser.smooth = False
+        ser.marker.style = XL_MARKER_STYLE.NONE
+        ser.format.line.color.rgb = rgb(C.context_light)
+        ser.format.line.width = Pt(3)
+        point_line(ser.points[1], None)                       # no segment from the label anchor to the first dot
+        dlbl(ser.points[0], ser=True, pos=XL_LABEL_POSITION.LEFT, size=11, color=C.headline if hi else C.text)
+        point_marker(ser.points[1], C.context, 7, edge=None)
+        point_marker(ser.points[2], C.negative if hi else C.focus, 9, edge=None)
+        right = 1 if r.market_median_k >= r.internal_median_k else 2
+        dlbl(ser.points[right], text=mv.signed(r.gap_pct, 1, "%"), pos=XL_LABEL_POSITION.RIGHT,
+             color=C.negative_text if hi else C.text, bold=hi)
+    fl, ft, fw, fh = frame_in(frame)
+    ky = ft + fh * lay[1] - 0.08
+    g = slide.shapes.add_group_shape()
+    g.name = "Key"
+    kx = fl + fw * lay[0]
+    for color, lab, d in ((C.context, "Market", 0.1), (C.focus, "McKesson", 0.125)):
+        shape(g, MSO_SHAPE.OVAL, kx, ky - d / 2, d, d, color, name=f"Key: {lab}")
+        text_box(g, kx + 0.18, ky - 0.12, 1.2, 0.24, lab, 11, C.text, anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        kx += 1.15
+    return slide
+
+
+def slide_slope(prs):
+    D = slope_data()
+    w = D.df
+    lo, hi = 10, 45
+    slide = chart_slide(
+        prs, D.headline, D.subtitle, D.footnote,
+        "Slope chart: a native Line with Markers chart with two categories (FY25, FY26) and one series per business "
+        "unit. The focus line is blue 2.25 pt, the rest grey 1.25 pt; labels sit on the end points (left: value; right: "
+        "series name + value), so Edit Data updates them. Labels that would touch are nudged apart (drag a label to "
+        "move it). One fixed scale, value axis deleted.")
+    data = CategoryChartData()
+    data.categories = ["FY25", "FY26"]
+    order = [b for b in w.index if b != D.focus] + [D.focus]               # focus series last: drawn on top
+    for b in order:
+        data.add_series(b, [float(w.FY25[b]), float(w.FY26[b])])
+    frame, chart = add_chart(slide, XL_CHART_TYPE.LINE_MARKERS, data, width=8.4)
+    lay = (0.2, 0.06, 0.5, 0.84)
+    plot_layout(chart, *lay)
+    fl, ft, fw, fh = frame_in(frame)
+    ypos = lambda v: ft + fh * (lay[1] + lay[3] * (1 - (v - lo) / (hi - lo)))           # noqa: E731
+
+    def spread(vals, gap=0.2):
+        """Label centres (in) at least `gap` apart, each colliding cluster centred on its points -> nudges (fraction
+        of the frame height); labels that don't collide stay put."""
+        items = sorted((ypos(v), k) for k, v in vals.items())
+        clusters = []
+        for y, k in items:
+            if clusters and y - (clusters[-1][-1][0]) < gap:
+                clusters[-1].append((y, k))
+            else:
+                clusters.append([(y, k)])
+        out = {}
+        for cl in clusters:
+            mid = sum(y for y, _ in cl) / len(cl)
+            for j, (y, k) in enumerate(cl):
+                out[k] = (mid + (j - (len(cl) - 1) / 2) * gap - y) / fh
+        return out
+
+    nudge0, nudge1 = spread({b: w.FY25[b] for b in order}), spread({b: w.FY26[b] for b in order})
+    for ser, b in zip(chart.plots[0].series, order):
+        f = b == D.focus
+        color = C.focus if f else C.context
+        ser.smooth = False
+        ser.format.line.color.rgb = rgb(color)
+        ser.format.line.width = Pt(2.25 if f else 1.25)
+        for k in (0, 1):
+            point_marker(ser.points[k], color, 7, edge=None)
+        txt = C.headline if f else C.text
+        dlbl(ser.points[0], val=True, pos=XL_LABEL_POSITION.LEFT, num_fmt='0"%"', color=txt, bold=f,
+             dy=nudge0[b] if abs(nudge0[b]) > 0.002 else 0.0)
+        dlbl(ser.points[1], val=True, ser=True, pos=XL_LABEL_POSITION.RIGHT, num_fmt='0"%"', color=txt, bold=f,
+             dy=nudge1[b] if abs(nudge1[b]) > 0.002 else 0.0)
+    va = chart.value_axis
+    va.minimum_scale, va.maximum_scale = lo, hi
+    va.visible = False
+    va.has_major_gridlines = False
+    ca = chart.category_axis
+    baseline(ca, visible=False)
+    axis_ticks(ca, 12, C.headline)
+    ca.tick_label_position = XL_TICK_LABEL_POSITION.HIGH                 # period headers on top
+    return slide
+
+
+def slide_bubble(prs):
+    D = bubble_data()
+    df = D.df
+    slide = chart_slide(
+        prs, D.headline, D.subtitle, D.footnote,
+        "Bubble chart (native): X = share of tasks exposed to Gen AI (%), Y = median pay ($K), bubble size = headcount, "
+        "with size representing area (honest scale) and the bubble scale at 50% so the largest roles don't cover the "
+        "rest. One series; the two roles the headline names are blue and labelled (typed labels: update them if the "
+        "roles change), the rest grey with a white outline. Edit Data: columns X, Y, Size. For a plain scatter, Change "
+        "Chart Type › XY Scatter.")
+    data = BubbleChartData()
+    s = data.add_series("Roles")
+    for r in df.itertuples():
+        s.add_data_point(r.genai_exposure_pct, r.median_pay_k, r.headcount)
+    frame, chart = add_chart(slide, XL_CHART_TYPE.BUBBLE, data, width=10.5)
+    plot_layout(chart, 0.08, 0.04, 0.84, 0.84)
+    plot = chart.plots[0]
+    plot.bubble_scale = 50
+    bp = chart._chartSpace.find(".//" + qn("c:bubbleChart"))
+    sr = bp.find(qn("c:sizeRepresents"))
+    if sr is None:
+        sr = etree.SubElement(bp, qn("c:sizeRepresents"))
+        bp.find(qn("c:axId")).addprevious(sr)
+    sr.set("val", "area")
+    ser = plot.series[0]
+    fill(ser, C.context)
+    ser.format.line.color.rgb = rgb("#FFFFFF")
+    ser.format.line.width = Pt(1)
+    lowest = min(D.focus, key=lambda role: float(df.genai_exposure_pct[df.role == role].iloc[0]))
+    for i, r in enumerate(df.itertuples()):
+        if r.role in D.focus:
+            fill(ser.points[i], C.focus)
+            ser.points[i].format.line.color.rgb = rgb("#FFFFFF")
+            ser.points[i].format.line.width = Pt(1)
+            dlbl(ser.points[i], text=D.short.get(r.role, r.role), color=C.headline, bold=True,      # labels apart
+                 pos=XL_LABEL_POSITION.LEFT if r.role == lowest else XL_LABEL_POSITION.RIGHT)
+    xa, ya = chart.category_axis, chart.value_axis
+    xa.minimum_scale, xa.maximum_scale, xa.major_unit = 0, 70, 10
+    ya.minimum_scale, ya.maximum_scale, ya.major_unit = 0, 160, 40
+    gridlines(ya)
+    baseline(xa)
+    baseline(ya, visible=False)
+    axis_ticks(xa, fmt='0"%"')
+    axis_ticks(ya, fmt='"$"0"K"')
+    for ax, title in ((xa, "Tasks exposed to Gen AI (%)"), (ya, "Median pay ($K)")):
+        ax.has_title = True
+        tf = ax.axis_title.text_frame
+        tf.text = title
+        r = tf.paragraphs[0].runs[0]
+        r.font.size, r.font.bold, r.font.name = Pt(11), False, FONT
+        r.font.color.rgb = rgb(C.text_muted)
+    return slide
+
+
+NEW_SLIDES = (slide_kpi, slide_roadmap, slide_tracker, slide_two_charts, slide_column, slide_dumbbell, slide_slope,
+              slide_bubble)
+
+
 def build_pptx() -> Path:
     prs = Presentation()
     widen_to_16x9(prs)
@@ -764,7 +1642,7 @@ def build_pptx() -> Path:
                    "Native, editable sample charts in the McKesson data-viz style, generated from tokens/tokens.json.")
     slide_cover(prs)
     slide_rules(prs)
-    for build in (slide_bar, slide_line, slide_waterfall, slide_stacked):
+    for build in (slide_bar, slide_line, slide_waterfall, slide_stacked, *NEW_SLIDES):
         build(prs)
     path = OUT / "McKesson-DataViz-Starter.pptx"
     prs.save(path)
@@ -801,7 +1679,7 @@ def build_pptx_official() -> Path | None:
                    "Native, editable sample charts on the McKesson Standard Template. Internal use only.")
     official_cover(prs)
     slide_rules(prs)
-    for build in (slide_bar, slide_line, slide_waterfall, slide_stacked):
+    for build in (slide_bar, slide_line, slide_waterfall, slide_stacked, *NEW_SLIDES):
         build(prs)
     path = OUT / "McKesson-DataViz-Starter-Official.pptx"
     prs.save(path)
@@ -886,6 +1764,10 @@ def build_xlsx() -> Path:
         ("McKesson data-viz chart workbook", f["head"]),
         ("Native Excel charts styled to the McKesson data-viz rules. Copy a chart into your workbook or PowerPoint "
          "(Paste › Use Destination Theme & Embed Workbook), then point it at your data.", f["sub"]),
+        ("", None),
+        ("Sheets: Palette · Bar, Line, Waterfall, Stacked 100% · Heat table · KPI (big-number card with a progress bar) · "
+         "Roadmap (Gantt as a stacked bar, with a Today line driven by the as-of date) · Tracker (status with dot, symbol "
+         "and word) · Column, Dumbbell, Slope, Scatter. Inputs are in the tables; charts and text follow.", None),
         ("", None),
         ("How to reuse a chart", f["bold"]),
         ("1. Right-click the chart › Select Data to point it at your range, or overwrite the numbers in the table "
@@ -1157,12 +2039,477 @@ def build_xlsx() -> Path:
     ws.conditional_format(f"B{first + 1}:B{last + 1}", {"type": "data_bar", "bar_color": C.context, "bar_solid": True,
                                                         "bar_only": True, "min_type": "num", "min_value": 0,
                                                         "bar_no_border": True})
+    _xlsx_more(wb, f, base_chart, axis_font, label_font, bold_label, pt)
     wb.close()
     # Named cell styles (Home › Cell Styles › Custom), so people can restyle their own sheets the same way.
     named = {"Headline": [f["head"]], "Subtitle": [f["sub"]], "Source": [f["note"]], "Focus row": [f["focus_row"]],
              "Total": total_fmts}
     _theme_xlsx(path, {name: sorted({x._get_xf_index() for x in fmts}) for name, fmts in named.items()})
     return path
+
+
+def _xlsx_more(wb, f, base_chart, axis_font, label_font, bold_label, pt) -> None:
+    """KPI, Roadmap, Tracker and the extra chart sheets (same computed numbers as the starter deck)."""
+    from xlsxwriter.utility import xl_col_to_name, xl_rowcol_to_cell
+
+    fmt = lambda **kw: wb.add_format(kw)                                               # noqa: E731
+    big = fmt(bold=True, font_size=54, font_color=C.headline, num_format="0%", valign="vcenter")
+    semi = lambda color: fmt(font_name=SEMI, font_size=14, font_color=color)           # noqa: E731
+    muted = fmt(font_color=C.text_muted, font_size=pt["tick"])
+    date = fmt(num_format="mmm yyyy", bottom=1, bottom_color=C.grid, align="left")
+    pct0 = fmt(num_format="0%", bottom=1, bottom_color=C.grid)
+    calc = fmt(num_format="0", bottom=1, bottom_color=C.grid, font_color=C.text_muted)
+    input_hint = fmt(italic=True, font_color=C.text_muted, font_size=pt["footnote"], font_name=f"{FONT} Light")
+    words = [STATUS[k]["label"] for k in ("on_track", "at_risk", "off_track", "not_started", "done")]
+    syms = [STATUS[k]["symbol"] for k in ("on_track", "at_risk", "off_track", "not_started", "done")]
+    match = "{" + ",".join(f'"{w}"' for w in words) + "}"
+    sym_formula = lambda cell: (f'=IFERROR(CHOOSE(MATCH({cell},{match},0),' +              # noqa: E731
+                                ",".join(f'"{s}"' for s in syms) + '),"")')
+
+    def head(ws, headline, subtitle):
+        ws.hide_gridlines(2)
+        ws.set_row(0, 26)
+        ws.set_row(1, 20)
+        ws.write(0, 0, headline, f["head"])
+        ws.write(1, 0, subtitle, f["sub"])
+
+    def foot(ws, row, footnote, source):
+        if footnote:
+            ws.write(row, 0, footnote, f["note"])
+        ws.write(row + 1, 0, source, f["note"])
+
+    def status_cf(ws, rng, word_cell):
+        """Status color on a ● (font) keyed on the status word: status colors only with symbol and word."""
+        for k in STATUS_ORDER:
+            st = STATUS[k]
+            ws.conditional_format(rng, {"type": "formula", "criteria": f'={word_cell}="{st["label"]}"',
+                                        "format": fmt(font_color=st["value"], bold=True)})
+
+    # ---------------------------------------------------------------- KPI
+    K = kpi_data()
+    ws = wb.add_worksheet("KPI")
+    head(ws, K.headline, K.subtitle)
+    ws.set_column(0, 0, 16)
+    ws.set_column(1, 20, 3.3)                     # 20 cells x 5% = the progress bar
+    ws.set_column(21, 21, 3)
+    ws.set_column(22, 22, 26)
+    ws.set_column(23, 25, 14)
+    # Inputs (W:Z) and calculations.
+    ws.write(2, 22, "Inputs: edit these", f["bold"])
+    ws.write_row(3, 22, ["Business unit", "Critical roles", "Ready now Mar 2025", "Ready now Mar 2026"], f["th"])
+    r0 = 4
+    for i, r in enumerate(K.df.itertuples(), start=r0):
+        ws.write(i, 22, r.business_unit, f["cell"])
+        ws.write_row(i, 23, [r.critical_roles, r.ready_now_mar25, r.ready_now_mar26], f["int"])
+    r1 = r0 + len(K.df) - 1
+    tot = r1 + 1
+    tf = fmt(bold=True, font_color=C.headline, top=2, top_color=C.total, num_format="#,##0")
+    ws.write(tot, 22, "Total", tf)
+    for j, v in zip((23, 24, 25), (K.roles, K.prior, K.now)):
+        col = xl_col_to_name(j)
+        ws.write_formula(tot, j, f"=SUM({col}{r0 + 1}:{col}{r1 + 1})", tf, v)
+    c = lambda r, j: xl_rowcol_to_cell(r, j, row_abs=True, col_abs=True)                # noqa: E731
+    T, NOW, PRI, TGT = c(tot, 23), c(tot, 25), c(tot, 24), c(tot + 2, 23)
+    ws.write(tot + 2, 22, "FY27 target", f["cell"])
+    ws.write(tot + 2, 23, K.tgt / 100, pct0)
+    ws.write(tot + 4, 22, "Calculated (don't edit)", f["bold"])
+    CUR, OLD, D, GAP = c(tot + 5, 23), c(tot + 6, 23), c(tot + 7, 23), c(tot + 8, 23)
+    for k, (lab, formula, val, cf) in enumerate((
+            ("Coverage now", f"=ROUND({NOW}/{T},2)", K.pct / 100, pct0),
+            ("Coverage Mar 2025", f"=ROUND({PRI}/{T},2)", K.pct0 / 100, pct0),
+            ("Change (pts)", f"=ROUND(({CUR}-{OLD})*100,0)", K.d, calc),
+            ("Gap to target (pts)", f"=ROUND(({TGT}-{CUR})*100,0)", K.gap, calc))):
+        ws.write(tot + 5 + k, 22, lab, f["cell"])
+        ws.write_formula(tot + 5 + k, 23, formula, cf, val)
+    # The card: big number, sentence, comparison, gap, progress bar.
+    for r in (3, 4, 5):
+        ws.set_row(r, 26)
+    ws.merge_range(3, 0, 5, 0, "", big)
+    ws.write_formula(3, 0, f"={CUR}", big, K.pct / 100)
+    ws.write_formula(3, 1, f'=TEXT({NOW},"#,##0")&" of "&TEXT({T},"#,##0")&" critical roles have at least one '
+                           f'ready-now successor"', fmt(font_size=16, font_color=C.text), K.sentence)
+    ws.write_formula(4, 1, f'=IF({D}>=0,"{UP} +","{DOWN} −")&ABS({D})&" pts vs. Mar 2025 ("&TEXT({OLD},"0%")&")"',
+                     semi(C.positive_text), K.delta)
+    ws.conditional_format(4, 1, 4, 1, {"type": "formula", "criteria": f"={D}<0",
+                                       "format": fmt(font_color=C.negative_text)})
+    ws.write_formula(5, 1, f'=IF({GAP}>0,{GAP}&" pts short of the "&TEXT({TGT},"0%")&" FY27 target",'
+                           f'"At or above the "&TEXT({TGT},"0%")&" FY27 target")', semi(C.negative_text), K.gap_text)
+    ws.conditional_format(5, 1, 5, 1, {"type": "formula", "criteria": f"={GAP}<=0",
+                                       "format": fmt(font_color=C.positive_text)})
+    ws.set_row(7, 16)
+    ws.set_row(8, 12)
+    ws.write(7, 0, f"Target {K.tgt}%", fmt(font_color=C.annotation, font_size=pt["tick"], align="right"))
+    tick = fmt(font_color=C.total, bold=True, font_size=10, align="left", valign="bottom")
+    for k in range(20):
+        lo = k * 0.05
+        ws.write_formula(7, 1 + k, f'=IF(AND({TGT}>={lo:.2f},{TGT}<{lo + 0.05:.2f}),"▼","")', tick,
+                         "▼" if lo <= K.tgt / 100 < lo + 0.05 else "")
+    for k in range(20):
+        ws.write_blank(8, 1 + k, None, fmt(bg_color=C.context_light))
+    ws.conditional_format(8, 1, 8, 20, {"type": "formula", "criteria": f"={CUR}>=(COLUMN(B9)-COLUMN($B$9))*0.05+0.025",
+                                        "format": fmt(bg_color=C.focus)})
+    ws.write(9, 1, "0%", muted)
+    ws.write(9, 20, "100%", fmt(font_color=C.text_muted, font_size=pt["tick"], align="right"))
+    ws.write(11, 0, "Each bar cell = 5 points (filled to the nearest 5); ▼ marks the target. Edit the inputs on the "
+                    "right; the number, sentences, colors and bar follow.", input_hint)
+    foot(ws, 13, K.footnote, K.source)
+
+    # ---------------------------------------------------------------- Roadmap (Gantt as a stacked bar)
+    P = plan_data()
+    ws = wb.add_worksheet("Roadmap")
+    head(ws, P.headline, P.subtitle)
+    widths = [30, 26, 11, 11, 2.5, 2.5, 12, 10, 10, 9]
+    for j, w in enumerate(widths):
+        ws.set_column(j, j, w)
+    heads = ["Workstream", "Owner", "Start", "End", "", "", "Status", "Start (month)", "Duration (months)",
+             "Slip (months)"]
+    ws.set_row(3, 30)
+    ws.write_row(3, 0, heads, f["th"])
+    r0, n = 4, P.n
+    r1 = r0 + n - 1
+    srow, arow = r1 + 3, r1 + 4                                     # timeline start and as-of cells
+    START, ASOF, TODAYC = c(srow, 2), c(arow, 2), c(arow + 1, 2)
+    dv = {"validate": "list", "source": words}
+    for i, r in enumerate(P.plan.itertuples(), start=r0):
+        ws.write(i, 0, r.workstream, f["cell"])
+        ws.write(i, 1, r.owner, f["cell"])
+        y, m = map(int, r.start.split("-"))
+        ws.write_datetime(i, 2, datetime(y, m, 1), date)
+        y, m = map(int, r.end.split("-"))
+        ws.write_datetime(i, 3, datetime(y, m, 1), date)
+        ws.write_formula(i, 4, f'=IF(G{i + 1}="","","●")', f["cell"], "●")
+        ws.write_formula(i, 5, sym_formula(f"G{i + 1}"), fmt(bold=True, bottom=1, bottom_color=C.grid, align="center"),
+                         STATUS[r.status]["symbol"])
+        ws.write(i, 6, STATUS[r.status]["label"], f["cell"])
+        ws.data_validation(i, 6, i, 6, dv)
+        ws.write_formula(i, 7, f"=(YEAR(C{i + 1})-YEAR({START}))*12+MONTH(C{i + 1})-MONTH({START})", calc, r.offset)
+        ws.write_formula(i, 8, f"=(YEAR(D{i + 1})-YEAR(C{i + 1}))*12+MONTH(D{i + 1})-MONTH(C{i + 1})+1", calc,
+                         r.duration)
+        ws.write(i, 9, r.slip, f["int"])
+    status_cf(ws, f"E{r0 + 1}:E{r1 + 1}", f"$G{r0 + 1}")
+    ws.conditional_format(f"G{r0 + 1}:G{r1 + 1}", {"type": "formula",
+                                                   "criteria": f'=OR($G{r0 + 1}="Off track",$G{r0 + 1}="At risk")',
+                                                   "format": fmt(bold=True, font_color=C.headline)})
+    ws.write(srow, 0, "Timeline starts (FY26 Q1)", f["cell"])
+    ws.write_datetime(srow, 2, datetime(2025, 4, 1), fmt(num_format="d mmm yyyy", bottom=1, bottom_color=C.grid))
+    ws.write(arow, 0, "Status as of (moves the Today line)", f["cell"])
+    ws.write_datetime(arow, 2, datetime(2026, 3, 31), fmt(num_format="d mmm yyyy", bottom=1, bottom_color=C.grid))
+    ws.write(arow + 1, 0, "Today (months from start)", f["cell"])
+    ws.write_formula(arow + 1, 2, f"=(YEAR({ASOF})-YEAR({START}))*12+MONTH({ASOF})-MONTH({START})"
+                                  f"+DAY({ASOF})/DAY(EOMONTH({ASOF},0))", fmt(num_format="0.0", bottom=1,
+                                                                             bottom_color=C.grid), P.today)
+    ws.write(arow + 2, 0, "Start and End are the first day of the first and last month. Slip = forecast months beyond "
+                          "the plan (light grey in the chart). Status: pick from the list; the dot and symbol follow.",
+             input_hint)
+    # Chart data (formulas): two header rows (phases, quarters) above the workstreams, plus the Today line.
+    hc = 12                                                        # column M
+    ws.write(2, hc, "Chart data (formulas; don't edit)", f["bold"])
+    qn_ = [f"Q{q % 4 + 1} FY{26 + q // 4}" for q in range(PLAN_SPAN // 3)]
+    cols = ["Row", "Start", "Duration", "Slip"] + [p[0] for p in PHASES] + qn_ + ["Today offset", "Today line"]
+    ws.write_row(3, hc, cols, f["th"])
+    ws.set_column(hc, hc, 24)
+    ws.set_column(hc + 1, hc + len(cols) - 1, 8)
+    rows = 2 + n
+    for k in range(rows):
+        rr = 4 + k
+        if k < 2:
+            ws.write(rr, hc, " ", f["cell"])
+            ws.write_row(rr, hc + 1, [0, 0, 0], f["int"])
+            for j, (_, a, b) in enumerate(PHASES):
+                ws.write(rr, hc + 4 + j, (b - a) if k == 0 else 0, f["int"])
+            for j in range(len(qn_)):
+                ws.write(rr, hc + 7 + j, 3 if k == 1 else 0, f["int"])
+            ws.write_row(rr, hc + 7 + len(qn_), [0, 0], f["int"])
+        else:
+            src = r0 + k - 2 + 1                                   # 1-based row of the workstream
+            rp = P.plan.iloc[k - 2]
+            ws.write_formula(rr, hc, f"=A{src}", f["cell"], rp.workstream)
+            ws.write_formula(rr, hc + 1, f"=H{src}", f["int"], rp.offset)
+            ws.write_formula(rr, hc + 2, f"=I{src}", f["int"], rp.duration)
+            ws.write_formula(rr, hc + 3, f"=J{src}", f["int"], rp.slip)
+            ws.write_row(rr, hc + 4, [0] * (3 + len(qn_)), f["int"])
+            ws.write_formula(rr, hc + 7 + len(qn_), f"={TODAYC}-0.04", f["dec"], P.today - 0.04)
+            ws.write(rr, hc + 8 + len(qn_), 0.08, f["dec"])
+    last = 4 + rows - 1
+    cats = ["Roadmap", 4, hc, last, hc]
+    vals = lambda j: ["Roadmap", 4, hc + j, last, hc + j]                                # noqa: E731
+    only = lambda k: [None if i == k else {"delete": True} for i in range(rows)]         # noqa: E731
+    chart = base_chart("bar", "stacked")
+    chart.set_size({"width": 980, "height": 430})
+    chart.add_series({"name": "Start", "categories": cats, "values": vals(1), "fill": {"none": True},
+                      "border": {"none": True}, "gap": 80, "overlap": 100})
+    colors = {"off_track": C.focus, "not_started": C.context_light}
+    chart.add_series({"name": "Duration", "categories": cats, "values": vals(2), "fill": {"color": C.context},
+                      "points": [None, None] + [{"fill": {"color": colors.get(s, C.context)}} for s in P.plan.status]})
+    chart.add_series({"name": "Slip", "categories": cats, "values": vals(3), "fill": {"none": True},
+                      "border": {"none": True},
+                      "points": [None, None] + [{"fill": {"color": C.context_light},
+                                                 "border": {"color": C.context, "width": 0.75, "dash_type": "dash"}}
+                                                if s else None for s in P.plan.slip]})
+    for j, (name, _, _) in enumerate(PHASES):
+        chart.add_series({"name": ["Roadmap", 3, hc + 4 + j], "categories": cats, "values": vals(4 + j),
+                          "fill": {"color": C.context_light if j % 2 == 0 else C.grid},
+                          "data_labels": {"series_name": True, "position": "inside_base", "custom": only(0),
+                                          "font": {"name": FONT, "size": 9, "color": C.headline}}})
+    for j in range(len(qn_)):
+        chart.add_series({"name": ["Roadmap", 3, hc + 7 + j], "categories": cats, "values": vals(7 + j),
+                          "fill": {"none": True}, "border": {"none": True},
+                          "data_labels": {"series_name": True, "position": "center", "custom": only(1),
+                                          "font": {"name": FONT, "size": 9, "color": C.text_muted}}})
+    chart.set_x_axis({"min": 0, "max": PLAN_SPAN, "major_unit": 3, "visible": False,
+                      "major_gridlines": {"visible": True, "line": {"color": C.grid, "width": 0.75}}})
+    chart.set_y_axis({"reverse": True, "num_font": {**axis_font, "size": pt["label"], "color": C.text},
+                      "major_tick_mark": "none", "line": {"none": True}})
+    chart.set_plotarea({"layout": {"x": 0.25, "y": 0.02, "width": 0.72, "height": 0.96},
+                        "border": {"none": True}, "fill": {"none": True}})
+    today = wb.add_chart({"type": "bar", "subtype": "stacked"})
+    today.add_series({"name": "Today offset", "categories": cats, "values": vals(7 + len(qn_)), "y2_axis": True,
+                      "fill": {"none": True}, "border": {"none": True}, "gap": 0, "overlap": 100})
+    today.add_series({"name": "Today", "categories": cats, "values": vals(8 + len(qn_)), "y2_axis": True,
+                      "fill": {"color": C.total}, "border": {"none": True}})
+    # xlsxwriter maps a secondary bar chart's axes the other way round: y2 is the value axis, x2 the categories.
+    today.set_y2_axis({"min": 0, "max": PLAN_SPAN, "visible": False, "major_gridlines": {"visible": False}})
+    today.set_x2_axis({"reverse": True, "visible": False})
+    chart.combine(today)
+    ws.insert_chart(r1 + 9, 0, chart)
+    mrow = r1 + 32
+    ws.write(mrow - 1, 0, f"Milestones (◆ met, ◇ due, ✕ missed; a moved milestone keeps its original date). Today line: "
+                          f"change the as-of date above. Milestone diamonds aren't drawn in this chart: see the "
+                          f"starter deck, or add them as shapes.", input_hint)
+    ws.write_row(mrow, 0, ["Workstream", "Milestone", "Due", "Forecast", "", "Mark", "State"], f["th"])
+    state_word = {"met": "Met", "upcoming": "Due", "moved": "Moved", "missed": "Missed"}
+    mark = {"Met": "◆", "Due": "◇", "Moved": "◇", "Missed": "✕"}
+    for i, m in enumerate(P.ms.itertuples(), start=mrow + 1):
+        ws.write(i, 0, m.workstream, f["cell"])
+        ws.write(i, 1, m.milestone, f["cell"])
+        y, mm = map(int, m.due.split("-"))
+        ws.write_datetime(i, 2, datetime(y, mm, 1), date)
+        if m.forecast and m.forecast != m.due:
+            y, mm = map(int, m.forecast.split("-"))
+            ws.write_datetime(i, 3, datetime(y, mm, 1), date)
+        else:
+            ws.write(i, 3, "", f["cell"])
+        ws.write(i, 4, "", f["cell"])
+        w = state_word[m.state]
+        ws.write_formula(i, 5, f'=IFERROR(CHOOSE(MATCH(G{i + 1},{{"Met","Due","Moved","Missed"}},0),"◆","◇","◇","✕"),"")',
+                         fmt(bold=True, font_color=C.total, bottom=1, bottom_color=C.grid, align="center"), mark[w])
+        ws.write(i, 6, w, f["cell"])
+        ws.data_validation(i, 6, i, 6, {"validate": "list", "source": ["Met", "Due", "Moved", "Missed"]})
+    mlast = mrow + len(P.ms)
+    ws.conditional_format(f"F{mrow + 2}:F{mlast + 1}", {"type": "formula", "criteria": f'=$G{mrow + 2}="Missed"',
+                                                         "format": fmt(font_color=STATUS["off_track"]["value"])})
+    foot(ws, mlast + 2, STATUS_DEF + f" Light grey = forecast: the paused {P.paused} restarts when the integration "
+                                     f"goes live, {P.slip} months late.", PLAN_SRC)
+
+    # ---------------------------------------------------------------- Tracker
+    ws = wb.add_worksheet("Tracker")
+    head(ws, P.tr_headline, P.tr_subtitle)
+    for j, w in enumerate([2.5, 2.5, 12, 30, 26, 11, 11, 28, 24, 60]):
+        ws.set_column(j, j, w)
+    r0 = 6
+    r1 = r0 + n - 1
+    WORD = f"$C${r0 + 1}:$C${r1 + 1}"
+    parts = '&" · "&'.join(f'"{STATUS[k]["symbol"]} "&COUNTIF({WORD},"{STATUS[k]["label"]}")&" {STATUS[k]["label"].lower()}"'
+                             for k, _ in P.rollup)
+    ws.write_formula(3, 0, f'="{n} workstreams · "&{parts}', fmt(bold=True, font_color=C.headline, font_size=12),
+                     f"{n} workstreams · " + " · ".join(f"{STATUS[k]['symbol']} {c_} {STATUS[k]['label'].lower()}"
+                                                       for k, c_ in P.rollup))
+    ws.set_row(5, 20)
+    ws.write_row(5, 0, ["", "", "Status", "Workstream", "Owner", "Start", "End", "Next milestone", "When",
+                        "What changed"], f["th"])
+    wrap = fmt(text_wrap=True, valign="top", bottom=1, bottom_color=C.grid)
+    for i, r in enumerate(P.sorted.itertuples(), start=r0):
+        ws.set_row(i, 30)
+        ws.write_formula(i, 0, f'=IF(C{i + 1}="","","●")', fmt(valign="top", bottom=1, bottom_color=C.grid), "●")
+        ws.write_formula(i, 1, sym_formula(f"C{i + 1}"), fmt(bold=True, valign="top", align="center", bottom=1,
+                                                             bottom_color=C.grid), STATUS[r.status]["symbol"])
+        ws.write(i, 2, STATUS[r.status]["label"], wrap)
+        ws.data_validation(i, 2, i, 2, dv)
+        ws.write(i, 3, r.workstream, wrap)
+        ws.write(i, 4, r.owner, wrap)
+        for j, s in ((5, r.start), (6, r.end)):
+            y, m = map(int, s.split("-"))
+            ws.write_datetime(i, j, datetime(y, m, 1), fmt(num_format="mmm yyyy", valign="top", align="left",
+                                                           bottom=1, bottom_color=C.grid))
+        name, when, flagged = next_milestone(P, r.workstream)
+        ws.write(i, 7, name, wrap)
+        ws.write(i, 8, when, fmt(text_wrap=True, valign="top", bottom=1, bottom_color=C.grid, bold=flagged,
+                                 font_color=C.headline if flagged else C.text))
+        ws.write(i, 9, r.what_changed, wrap)
+    status_cf(ws, f"A{r0 + 1}:A{r1 + 1}", f"$C{r0 + 1}")
+    ws.conditional_format(f"C{r0 + 1}:D{r1 + 1}", {"type": "formula",
+                                                   "criteria": f'=OR($C{r0 + 1}="Off track",$C{r0 + 1}="At risk")',
+                                                   "format": fmt(bold=True, font_color=C.headline)})
+    ws.write(r1 + 2, 0, "Pick the status from the list: the ● color, the symbol, the bold for exceptions and the "
+                        "roll-up counts follow. Keep off track and at risk at the top (Data › Sort by a helper "
+                        "column if needed). No row fills: the dot, symbol and word carry the status.", input_hint)
+    foot(ws, r1 + 4, STATUS_DEF, PLAN_SRC)
+
+    # ---------------------------------------------------------------- Column (highlight)
+    D = column_data()
+    ws = wb.add_worksheet("Column")
+    head(ws, D.headline, D.subtitle)
+    ws.set_column(0, 1, 14)
+    ws.write_row(3, 0, ["Fiscal year", "Internal fill rate (%)"], f["th"])
+    for i, r in enumerate(D.df.itertuples(), start=4):
+        ws.write(i, 0, r.fiscal_year, f["focus_row"] if i == 3 + len(D.df) else f["cell"])
+        ws.write(i, 1, r.internal_fill_pct, f["int"])
+    n_ = len(D.df)
+    chart = base_chart("column")
+    chart.set_size({"width": 620, "height": 400})
+    chart.add_series({
+        "categories": ["Column", 4, 0, 3 + n_, 0], "values": ["Column", 4, 1, 3 + n_, 1], "gap": BAND_GAP,
+        "fill": {"color": C.context}, "points": [None] * (n_ - 1) + [{"fill": {"color": C.focus}}],
+        "data_labels": {"value": True, "position": "outside_end", "num_format": '0"%"', "font": label_font,
+                        "custom": [None] * (n_ - 1) + [{"value": f"{D.df.internal_fill_pct.iloc[-1]}%",
+                                                        "font": {**bold_label, "color": C.headline}}]}})
+    chart.set_y_axis({"visible": False, "min": 0, "max": 35, "major_gridlines": {"visible": False}})
+    chart.set_x_axis({"num_font": {**axis_font, "size": pt["label"], "color": C.text}, "major_tick_mark": "none",
+                      "line": {"color": C.axis, "width": 0.75}})
+    ws.insert_chart(3, 3, chart)
+    foot(ws, 25, D.footnote, SRC)
+
+    # ---------------------------------------------------------------- Dumbbell (XY scatter + custom error bars)
+    D = dumbbell_data()
+    ws = wb.add_worksheet("Dumbbell")
+    head(ws, D.headline, D.subtitle)
+    hd = ["Role", "Market ($K)", "McKesson ($K)", "Row", "Plus", "Minus", "Axis X", "Label X", "Gap", "Below market?",
+          "McKesson (flagged)"]
+    ws.set_column(0, 0, 22)
+    ws.set_column(1, len(hd) - 1, 11)
+    ws.set_row(3, 30)
+    ws.write_row(3, 0, hd, f["th"])
+    n_ = len(D.df)
+    x_min, x_max = 30, 160
+    for k, r in enumerate(D.df.itertuples()):
+        i = 4 + k
+        R = i + 1
+        hi = r.role in D.focus
+        ws.write(i, 0, r.role, f["focus_row"] if hi else f["cell"])
+        ws.write_row(i, 1, [r.market_median_k, r.internal_median_k], f["int"])
+        ws.write(i, 3, n_ - k, f["int"])
+        ws.write_formula(i, 4, f"=MAX(0,B{R}-C{R})", calc, max(0, r.market_median_k - r.internal_median_k))
+        ws.write_formula(i, 5, f"=MAX(0,C{R}-B{R})", calc, max(0, r.internal_median_k - r.market_median_k))
+        ws.write(i, 6, x_min, f["int"])
+        ws.write_formula(i, 7, f"=MAX(B{R},C{R})+3", calc, max(r.market_median_k, r.internal_median_k) + 3)
+        ws.write_formula(i, 8, f'=IF(C{R}<B{R},"−","+")&TEXT(ABS(C{R}-B{R})/B{R},"0.0%")', f["cell"],
+                         mv.signed(r.gap_pct, 1, "%"))
+        ws.write(i, 9, "Yes" if hi else "No", f["cell"])
+        ws.write_formula(i, 10, f'=IF(J{R}="Yes",C{R},NA())', calc, r.internal_median_k if hi else "#N/A")
+    a, b = 4, 3 + n_
+    S = "Dumbbell"
+    chart = base_chart("scatter")
+    chart.set_size({"width": 860, "height": 430})
+    chart.add_series({"name": "Market", "categories": [S, a, 1, b, 1], "values": [S, a, 3, b, 3],
+                      "marker": {"type": "circle", "size": 7, "fill": {"color": C.context}, "border": {"none": True}}})
+    chart.add_series({"name": "McKesson", "categories": [S, a, 2, b, 2], "values": [S, a, 3, b, 3],
+                      "marker": {"type": "circle", "size": 9, "fill": {"color": C.focus}, "border": {"none": True}},
+                      "x_error_bars": {"type": "custom", "plus_values": f"={S}!$E${a + 1}:$E${b + 1}",
+                                       "minus_values": f"={S}!$F${a + 1}:$F${b + 1}", "end_style": 0,
+                                       "line": {"color": C.context_light, "width": 3}}})
+    chart.add_series({"name": "McKesson, below market (the headline)", "categories": [S, a, 10, b, 10],
+                      "values": [S, a, 3, b, 3],
+                      "marker": {"type": "circle", "size": 9, "fill": {"color": C.negative}, "border": {"none": True}}})
+    chart.add_series({"name": "Role labels", "categories": [S, a, 6, b, 6], "values": [S, a, 3, b, 3],
+                      "marker": {"type": "none"},
+                      "data_labels": {"value": False, "position": "left", "font": {**label_font, "size": pt["tick"]},
+                                      "custom": [{"value": f"={S}!$A${a + 1 + k}"} for k in range(n_)]}})
+    chart.add_series({"name": "Gap labels", "categories": [S, a, 7, b, 7], "values": [S, a, 3, b, 3],
+                      "marker": {"type": "none"},
+                      "data_labels": {"value": False, "position": "right", "font": label_font,
+                                      "custom": [{"value": f"={S}!$I${a + 1 + k}",
+                                                  **({"font": {**bold_label, "color": C.negative_text}}
+                                                     if r.role in D.focus else {})}
+                                                 for k, r in enumerate(D.df.itertuples())]}})
+    chart.set_x_axis({"min": x_min, "max": x_max, "major_unit": 25, "num_format": '"$"#,##0"K"', "num_font": axis_font,
+                      "line": {"none": True}, "major_tick_mark": "none",
+                      "major_gridlines": {"visible": True, "line": {"color": C.grid, "width": 0.75}}})
+    chart.set_y_axis({"min": 0.5, "max": n_ + 0.5, "visible": False, "major_gridlines": {"visible": False}})
+    chart.set_plotarea({"layout": {"x": 0.2, "y": 0.04, "width": 0.65, "height": 0.86},
+                        "border": {"none": True}, "fill": {"none": True}})
+    ws.insert_chart(4 + n_ + 2, 0, chart)
+    foot(ws, 4 + n_ + 25, D.footnote, SRC)
+
+    # ---------------------------------------------------------------- Slope (line, two points per business unit)
+    D = slope_data()
+    ws = wb.add_worksheet("Slope")
+    head(ws, D.headline, D.subtitle)
+    ws.set_column(0, 0, 26)
+    ws.set_column(1, 4, 11)
+    ws.write_row(3, 0, ["Business unit", "FY25", "FY26", "Change (pts)", "End label"], f["th"])
+    order = [x for x in D.df.index if x != D.focus] + [D.focus]
+    for k, bu in enumerate(order):
+        i, R = 4 + k, 5 + k
+        hi = bu == D.focus
+        ws.write(i, 0, bu, f["focus_row"] if hi else f["cell"])
+        ws.write_row(i, 1, [int(D.df.FY25[bu]), int(D.df.FY26[bu])], f["int"])
+        ws.write_formula(i, 3, f"=C{R}-B{R}", f["delta"], int(D.df.d[bu]))
+        ws.write_formula(i, 4, f'=A{R}&" "&C{R}&"%"', f["cell"], f"{bu} {int(D.df.FY26[bu])}%")
+    chart = base_chart("line")
+    chart.set_size({"width": 760, "height": 460})
+    for k, bu in enumerate(order):
+        i = 4 + k
+        hi = bu == D.focus
+        color = C.focus if hi else C.context
+        font = {**(bold_label if hi else label_font), "color": C.headline if hi else C.text}
+        chart.add_series({"name": ["Slope", i, 0], "categories": ["Slope", 3, 1, 3, 2], "values": ["Slope", i, 1, i, 2],
+                          "line": {"color": color, "width": 2.25 if hi else 1.25},
+                          "marker": {"type": "circle", "size": 6, "fill": {"color": color}, "border": {"none": True}},
+                          "data_labels": {"value": True, "position": "left", "num_format": '0"%"', "font": font,
+                                          "custom": [None, {"delete": True}]}})
+        chart.add_series({"name": ["Slope", i, 0], "categories": ["Slope", 3, 1, 3, 2], "values": ["Slope", i, 1, i, 2],
+                          "line": {"none": True}, "marker": {"type": "none"},
+                          "data_labels": {"value": True, "position": "right", "font": font,
+                                          "custom": [{"delete": True}, {"value": f"=Slope!$E${i + 1}"}]}})
+    chart.set_y_axis({"min": 10, "max": 45, "visible": False, "major_gridlines": {"visible": False}})
+    chart.set_x_axis({"num_font": {**axis_font, "size": pt["label"], "color": C.headline, "bold": True},
+                      "major_tick_mark": "none", "line": {"none": True}, "label_position": "high"})
+    chart.set_plotarea({"layout": {"x": 0.18, "y": 0.08, "width": 0.45, "height": 0.84},
+                        "border": {"none": True}, "fill": {"none": True}})
+    ws.insert_chart(3, 6, chart)
+    ws.write(12, 0, "Labels next to each other can touch: drag a label to nudge it.", input_hint)
+    foot(ws, 26, D.footnote, SRC)
+
+    # ---------------------------------------------------------------- Scatter (Excel: bubble via Change Chart Type)
+    D = bubble_data()
+    ws = wb.add_worksheet("Scatter")
+    head(ws, D.headline, D.subtitle)
+    ws.set_column(0, 0, 28)
+    ws.set_column(1, 5, 12)
+    ws.set_row(3, 30)
+    ws.write_row(3, 0, ["Role", "Gen AI exposure (%)", "Median pay ($K)", "Headcount", "Flagged?",
+                        "Pay (flagged)"], f["th"])
+    n_ = len(D.df)
+    for k, r in enumerate(D.df.itertuples()):
+        i, R = 4 + k, 5 + k
+        hi = r.role in D.focus
+        ws.write(i, 0, r.role, f["focus_row"] if hi else f["cell"])
+        ws.write_row(i, 1, [r.genai_exposure_pct, r.median_pay_k, r.headcount], f["int"])
+        ws.write(i, 4, "Yes" if hi else "No", f["cell"])
+        ws.write_formula(i, 5, f'=IF(E{R}="Yes",C{R},NA())', calc, r.median_pay_k if hi else "#N/A")
+    a, b = 4, 3 + n_
+    chart = base_chart("scatter")
+    chart.add_series({"name": "Roles", "categories": ["Scatter", a, 1, b, 1], "values": ["Scatter", a, 2, b, 2],
+                      "marker": {"type": "circle", "size": 9, "fill": {"color": C.context},
+                                 "border": {"color": "#FFFFFF", "width": 0.75}}})
+    chart.add_series({"name": "Flagged roles", "categories": ["Scatter", a, 1, b, 1], "values": ["Scatter", a, 5, b, 5],
+                      "marker": {"type": "circle", "size": 10, "fill": {"color": C.focus},
+                                 "border": {"color": "#FFFFFF", "width": 0.75}},
+                      "data_labels": {"value": False, "position": "right", "font": {**bold_label, "color": C.headline},
+                                      "custom": [{"value": f"=Scatter!$A${a + 1 + k}"} if r.role in D.focus
+                                                 else {"delete": True} for k, r in enumerate(D.df.itertuples())]}})
+    chart.set_x_axis({"min": 0, "max": 70, "major_unit": 10, "num_format": '0"%"', "num_font": axis_font,
+                      "line": {"color": C.axis, "width": 0.75}, "major_tick_mark": "none",
+                      "name": "Tasks exposed to Gen AI (%)", "name_font": {**axis_font, "bold": False}})
+    chart.set_y_axis({"min": 0, "max": 160, "major_unit": 40, "num_format": '"$"0"K"', "num_font": axis_font,
+                      "line": {"none": True}, "major_tick_mark": "none",
+                      "major_gridlines": {"visible": True, "line": {"color": C.grid, "width": 0.75}},
+                      "name": "Median pay ($K)", "name_font": {**axis_font, "bold": False}})
+    ws.insert_chart(3, 7, chart)
+    ws.write(4 + n_ + 1, 0, "Bubble version: select the chart › Change Chart Type › Bubble, then Select Data › each "
+                            "series › Series bubble size = Headcount (Format Data Series › Size represents: Area).",
+             input_hint)
+    foot(ws, 28, D.footnote, SRC)
 
 
 def _name_styles(styles_xml: bytes, named: dict[str, list[int]]) -> bytes:

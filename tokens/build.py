@@ -97,6 +97,8 @@ def build_css() -> None:
     lines.append(f"  --mck-pad: {K['spacing']['padding_px']}px;")
     for k, ratio in K["aspect"].items():                               # plot boxes: aspect-ratio: var(--mck-aspect-web-inline)
         lines.append(f"  --mck-aspect-{k.replace('_', '-')}: {ratio.replace(':', ' / ')};")
+    lines.append("  /* Dashboard gutter between cards (no token; the footnote gap, 16px). */")
+    lines.append(f"  --mck-gutter: {K['spacing']['footnote_gap_px']}px;")
     lines.append("}")
 
     components = f"""
@@ -167,7 +169,366 @@ def build_css() -> None:
   .mck-table th:first-child {{ position: sticky; left: 0; z-index: 1; background: var(--mck-surface-default); }}
 }}
 """
-    write("web/mck-viz.css", "/* GENERATED from tokens/tokens.json - do not edit by hand. */\n" + "\n".join(lines) + components)
+    css = "/* GENERATED from tokens/tokens.json - do not edit by hand. */\n" + "\n".join(lines) + components + _css_dashboard()
+    write("web/mck-viz.css", css)
+    build_js(css)
+
+
+def _ink(fill: str) -> str:
+    """CSS variable for readable text on `fill`: white or headline navy, whichever contrasts more (= mv.text_on)."""
+    return "var(--mck-text-inverse)" if contrast(fill, "#FFFFFF") >= contrast(fill, v("text.headline")) \
+        else "var(--mck-text-headline)"
+
+
+def _css_dashboard() -> str:
+    """Dashboard components: KPI tile, status pill, card grid, heat-table cells, tracker table. Flat: no shadows,
+    gradients or rounded cards. Every color is a token variable."""
+    st = {k: t for k, t in C["status"].items() if not k.startswith("$")}
+    def esc(sym: str) -> str:                                         # CSS escapes: safe whatever the page encoding
+        return "".join(c if ord(c) < 128 else f"\\{ord(c):04X} " for c in sym).rstrip()
+    status_rules = "\n".join(
+        f'.mck-status--{k.replace("_", "-")}::before {{ content: "{esc(t["symbol"])}"; content: "{esc(t["symbol"])}" / ""; '
+        f'background: var(--mck-status-{k.replace("_", "-")}); color: {_ink(t["value"])}; }}'
+        for k, t in st.items())
+    heat = []
+    for name, ramp in C["sequential"].items():
+        heat += [f".mck-heat-{name}-{i} {{ background: var(--mck-seq-{name}-{i}); color: {_ink(hx)}; }}"
+                 for i, hx in enumerate(ramp, 1)]
+    heat += [f".mck-heat-div-{i} {{ background: var(--mck-div-{i}); color: {_ink(hx)}; }}"
+             for i, hx in enumerate(C["diverging"]["orange_blue"]["values"], 1)]
+    heat_rules = "\n".join(heat)
+    return f"""
+/* ================================================================ Dashboard components
+   KPI tile:  <div class="mck-kpi"> <p class="mck-kpi__name">Internal fill rate</p> <p class="mck-kpi__value">41%</p>
+              <p class="mck-kpi__delta is-up is-good">+6 pts vs. FY25</p> <p class="mck-kpi__label">One sentence: what is counted.</p>
+              <p class="mck-kpi__gap">4 pts short of the 45% target</p> <p class="mck-kpi__source">Source: ...</p> </div>
+     A bare <p class="mck-kpi">41%</p> still styles just the number (as before). is-up / is-down set the arrow (direction);
+     is-good / is-bad set the color (favorability, from the audience's view). Dark: add mck-kpi--dark.
+   Status:    <span class="mck-status mck-status--at-risk">At risk</span>  (color + symbol + word; never color alone)
+   Grid:      <div class="mck-grid"> cards </div>  1 column under 560px, 2 to 980px, 3 above; mck-grid__wide spans the row.
+   Heat cell: <td class="mck-heat mck-heat-blue-4">61</td> inside <table class="mck-table mck-table--heat">
+   Tracker:   <table class="mck-tracker"> with mck-status cells; wrap wide tables in <div class="mck-scroll">. */
+
+.mck-grid {{ display: grid; gap: var(--mck-gutter); grid-template-columns: minmax(0, 1fr); align-items: stretch; }}
+.mck-grid > * {{ min-width: 0; margin: 0; max-width: none; box-sizing: border-box; }}
+.mck-grid__wide {{ grid-column: 1 / -1; }}
+@media (min-width: 560px) {{ .mck-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }} }}
+@media (min-width: 981px) {{ .mck-grid {{ grid-template-columns: repeat(3, minmax(0, 1fr)); }} .mck-grid__span-2 {{ grid-column: span 2; }} }}
+.mck-scroll {{ overflow-x: auto; -webkit-overflow-scrolling: touch; }}
+
+.mck-kpi:has(> .mck-kpi__value), .mck-kpi--tile {{
+  display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; padding: var(--mck-pad);
+  background: var(--mck-surface-default); font-family: var(--mck-font);
+  font-size: var(--mck-subtitle-size); font-weight: 400; color: var(--mck-text-primary); line-height: 1.35;
+}}
+.mck-kpi > * {{ margin: 0; }}
+.mck-kpi__name {{ font-size: var(--mck-subtitle-size); font-weight: 600; color: var(--mck-text-headline); }}
+.mck-kpi__value {{
+  font-size: var(--mck-kpi-size); font-weight: var(--mck-kpi-weight); color: var(--mck-kpi-color); line-height: 1;
+  font-variant-numeric: lining-nums; letter-spacing: -0.01em; margin-top: 4px;
+}}
+.mck-kpi__value small {{ font-size: 0.45em; font-weight: 600; letter-spacing: 0; }}
+.mck-kpi__delta {{ font-size: var(--mck-subtitle-size); font-weight: 600; color: var(--mck-text-primary); }}
+.mck-kpi__delta.is-up::before {{ content: "\\25B2\\00A0"; content: "\\25B2\\00A0" / ""; font-size: 0.8em; }}
+.mck-kpi__delta.is-down::before {{ content: "\\25BC\\00A0"; content: "\\25BC\\00A0" / ""; font-size: 0.8em; }}
+.mck-kpi__delta.is-good {{ color: var(--mck-semantic-positive-text); }}
+.mck-kpi__delta.is-bad {{ color: var(--mck-semantic-negative-text); }}
+.mck-kpi__label {{ max-width: 36ch; }}
+.mck-kpi__gap {{ font-size: var(--mck-label-size); color: var(--mck-text-primary); }}
+.mck-kpi__meter {{
+  position: relative; display: block; height: 8px; margin: 4px 0 2px; background: var(--mck-chart-context-light);
+  background-image: linear-gradient(var(--mck-chart-focus), var(--mck-chart-focus));
+  background-size: var(--value, 0%) 100%; background-repeat: no-repeat;
+}}
+.mck-kpi__meter::after {{                                  /* target tick: style="--value: 62%; --target: 75%" */
+  content: ""; position: absolute; left: var(--target, -10px); top: -4px; bottom: -4px; width: 2px;
+  background: var(--mck-chart-total);
+}}
+.mck-kpi__source {{ font-size: var(--mck-footnote-size); font-weight: var(--mck-footnote-weight); color: var(--mck-text-muted); margin-top: auto; padding-top: 6px; }}
+.mck-kpi.mck-kpi--dark, .mck-chart--dark .mck-kpi {{ background: var(--mck-surface-dark); color: var(--mck-text-inverse); }}
+.mck-kpi--dark :is(.mck-kpi__name, .mck-kpi__value, .mck-kpi__delta, .mck-kpi__gap, .mck-kpi__source),
+.mck-chart--dark .mck-kpi :is(.mck-kpi__name, .mck-kpi__value, .mck-kpi__delta, .mck-kpi__gap, .mck-kpi__source) {{ color: var(--mck-text-inverse); }}
+.mck-kpi--dark .mck-kpi__delta.is-good, .mck-chart--dark .mck-kpi__delta.is-good {{ color: var(--mck-semantic-positive); }}
+.mck-kpi--dark .mck-kpi__delta.is-bad, .mck-chart--dark .mck-kpi__delta.is-bad {{ color: var(--mck-semantic-negative); }}
+.mck-kpi--dark .mck-kpi__meter, .mck-chart--dark .mck-kpi__meter {{
+  background-color: var(--mck-chart-context-on-dark);
+  background-image: linear-gradient(var(--mck-chart-focus-on-dark), var(--mck-chart-focus-on-dark));
+}}
+.mck-kpi--dark .mck-kpi__meter::after, .mck-chart--dark .mck-kpi__meter::after {{ background: var(--mck-text-inverse); }}
+
+.mck-status {{
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; vertical-align: middle;
+  font-family: var(--mck-font); color: var(--mck-text-primary);
+}}
+.mck-status::before {{
+  display: inline-grid; place-items: center; flex: none; width: 16px; height: 16px; border-radius: 50%;
+  font-size: 10px; font-weight: 700; line-height: 1;
+}}
+{status_rules}
+.mck-status--off-track, .mck-status--at-risk {{ font-weight: 600; color: var(--mck-text-headline); }}
+.mck-status--pill {{ padding: 2px 10px 2px 3px; border: 1px solid var(--mck-chart-grid); border-radius: 999px; background: var(--mck-surface-default); }}
+.mck-chart--dark .mck-status, .mck-status--dark {{ color: var(--mck-text-inverse); }}
+.mck-chart--dark .mck-status--pill, .mck-status--dark.mck-status--pill {{ background: transparent; border-color: var(--mck-chart-context-on-dark); }}
+
+.mck-table--heat {{ border-collapse: separate; border-spacing: 2px; }}
+.mck-table--heat th, .mck-table--heat td, .mck-table--heat tbody th {{ border-bottom: none; }}
+.mck-table--heat thead th {{ text-align: center; font-weight: 600; }}
+.mck-table td.mck-heat {{ text-align: center; font-weight: 500; min-width: 3em; height: 28px; padding: 4px 8px; font-variant-numeric: tabular-nums; }}
+{heat_rules}
+.mck-table td.is-suppressed {{ background: var(--mck-chart-context-light); color: var(--mck-text-muted); font-size: var(--mck-tick-size); font-weight: 400; }}
+.mck-table .is-focus-col {{ font-weight: 700; box-shadow: inset 1.5px 0 0 var(--mck-chart-accent), inset -1.5px 0 0 var(--mck-chart-accent); }}
+.mck-table thead .is-focus-col {{ box-shadow: none; color: var(--mck-text-headline); }}
+
+.mck-tracker {{
+  border-collapse: collapse; width: 100%; font-family: var(--mck-font); font-size: var(--mck-label-size);
+  line-height: 1.35; color: var(--mck-text-primary);
+}}
+.mck-tracker thead th {{
+  font-weight: 600; color: var(--mck-text-headline); text-align: left; vertical-align: bottom;
+  padding: 6px 12px 6px 0; border-bottom: 1px solid var(--mck-chart-axis);
+}}
+.mck-tracker td, .mck-tracker tbody th {{
+  padding: 8px 12px 8px 0; text-align: left; vertical-align: top; font-weight: 400; border-bottom: 1px solid var(--mck-chart-grid);
+}}
+.mck-tracker tbody th {{ color: var(--mck-text-primary); }}
+.mck-tracker tr.is-exception th {{ font-weight: 600; color: var(--mck-text-headline); }}
+.mck-tracker .owner, .mck-tracker .due {{ display: block; font-size: var(--mck-tick-size); font-weight: 400; color: var(--mck-text-muted); }}
+.mck-tracker .slip {{ display: block; font-weight: 600; color: var(--mck-text-headline); }}
+.mck-tracker .num {{ text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }}
+.mck-tracker .progress {{ display: block; width: 100%; min-width: 64px; height: 6px; margin-top: 6px; background: var(--mck-chart-context-light);
+  background-image: linear-gradient(var(--mck-chart-focus), var(--mck-chart-focus)); background-size: var(--value, 0%) 100%; background-repeat: no-repeat; }}
+.mck-chart--dark .mck-tracker, .mck-chart--dark .mck-tracker tbody th, .mck-chart--dark .mck-tracker thead th,
+.mck-chart--dark .mck-tracker :is(.owner, .due, .slip) {{ color: var(--mck-text-inverse); }}
+.mck-chart--dark .mck-tracker thead th {{ border-bottom-color: var(--mck-text-inverse); }}
+.mck-chart--dark .mck-tracker td, .mck-chart--dark .mck-tracker tbody th {{ border-bottom-color: var(--mck-chart-context-on-dark); }}
+@media (max-width: 600px) {{
+  .mck-kpi__value {{ font-size: calc(var(--mck-kpi-size) * 0.8); }}
+  .mck-kpi:has(> .mck-kpi__value), .mck-kpi--tile {{ padding: 16px; }}
+  .mck-tracker {{ font-size: var(--mck-tick-size); }}
+  .mck-tracker td, .mck-tracker tbody th {{ padding: 6px 8px 6px 0; }}
+}}
+"""
+
+
+# ---------------------------------------------------------------- JS helper (dist/web/mck-viz.js)
+_JS = r"""/* GENERATED from tokens/tokens.json by tokens/build.py - do not edit by hand.
+ * mck-viz.js: small helpers for McKesson charts in plain HTML pages. A plain script (no modules): it defines window.mck.
+ *   <link rel="stylesheet" href="mck-viz.css"> <script src="mck-viz.js"></script> <script src="plotly.min.js"></script>
+ * It also defines window.MCK_PLOTLY_TEMPLATE, so mck-plotly-template.js is optional when this file is loaded.
+ *
+ *   mck.tok("chart-focus")                -> "#005A8C"  CSS variable --mck-<name> (page overrides win), else the token
+ *   mck.highlight(labels, {focus, accent, base})  -> colors: grey context, blue focus, navy accent (= mv.highlight)
+ *   mck.fmtNum(v, {kind, decimals, sign, prefix, suffix}) -> "$4.3B", "12K", "19.9%", "+2.5%", "−7" (= mv.fmt_num)
+ *   mck.suppressSmall(rows, nKey, {minN: 10, otherLabel: "Other", groupKeys, by, sumKeys, unit})
+ *                                         -> [rows, footnote]  merges or drops groups under minN (= mv.suppress_small)
+ *   mck.textOn(hex)                       -> "#FFFFFF" or headline navy, whichever reads better on hex (= mv.text_on)
+ *   mck.status("at_risk")                 -> {color, symbol, word, ink}; never show the color without symbol + word
+ *   mck.plotlyLayout(kind, extra)         -> Plotly layout for "bar" | "line" | "waterfall" | "stacked" | "heatmap" |
+ *                                            "sankey" | "roadmap", on the McKesson template; extra is deep-merged in
+ *   mck.alpha(hex, a), mck.zeroLine("x"|"y"), mck.srTable(id, caption, head, rows), mck.ready(fn), mck.plotConfig
+ */
+(function () {
+  "use strict";
+  var TOKENS = __TOKENS__;
+  var STATUS = __STATUS__;
+  window.MCK_PLOTLY_TEMPLATE = window.MCK_PLOTLY_TEMPLATE || __TEMPLATE__;
+  var MINUS = "−", SCALES = { K: 1e3, M: 1e6, B: 1e9 };
+  var css = null;
+
+  function tok(name) {
+    name = String(name).replace(/^--mck-/, "").replace(/_/g, "-");
+    try {
+      css = css || getComputedStyle(document.documentElement);
+      var val = css.getPropertyValue("--mck-" + name).trim();
+      if (val) return val;
+    } catch (e) { /* no DOM: fall back to the tokens */ }
+    if (!(name in TOKENS)) throw new Error("mck.tok: no token --mck-" + name);
+    return TOKENS[name];
+  }
+
+  function asSet(x) { return x == null ? [] : Array.isArray(x) ? x : [x]; }
+  function highlight(labels, o) {
+    o = o || {};
+    var f = asSet(o.focus), a = asSet(o.accent), base = o.base || tok("chart-context");
+    return labels.map(function (l) {
+      return a.indexOf(l) >= 0 ? tok("chart-accent") : f.indexOf(l) >= 0 ? tok("chart-focus") : base;
+    });
+  }
+
+  function round(x, d) { return Number(Math.abs(x).toFixed(d)); }
+  function fmtNum(value, o) {
+    o = o || {};
+    var kind = o.kind || "auto", dec = o.decimals == null ? null : o.decimals;
+    var sign = !!o.sign, prefix = o.prefix || "", suffix = o.suffix || "";
+    if (value == null || Number.isNaN(Number(value))) return "–";
+    var v = Number(value), unit = "", d;
+    kind = ["auto", "plain", "pct"].indexOf(kind) >= 0 ? kind : String(kind).toUpperCase();
+    if (["auto", "plain", "pct", "K", "M", "B"].indexOf(kind) < 0)
+      throw new Error("mck.fmtNum: kind must be 'auto', 'plain', 'pct', 'K', 'M' or 'B', not " + kind);
+    if (kind === "pct") { d = dec == null ? 1 : dec; unit = "%"; }
+    else if (kind === "plain" || (kind === "auto" && Math.abs(v) < 1e4)) { d = dec == null ? 0 : dec; }
+    else {
+      var order = ["K", "M", "B"], abs = Math.abs(v), scaled;
+      var k = kind !== "auto" ? order.indexOf(kind) : abs >= 1e9 ? 2 : abs >= 1e6 ? 1 : 0;
+      for (;;) {
+        scaled = v / SCALES[order[k]];
+        d = dec == null ? (Math.abs(scaled) < 9.95 ? 1 : 0) : dec;
+        if (kind === "auto" && k < 2 && round(scaled, d) >= 1000) { k += 1; continue; }   // 999,960 -> "1.0M"
+        break;
+      }
+      v = scaled; unit = order[k];
+    }
+    var body = Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+    if (parseFloat(body.replace(/,/g, "")) === 0) return prefix + body + unit + suffix;
+    return (v > 0 && sign ? "+" : v < 0 ? MINUS : "") + prefix + body + unit + suffix;
+  }
+
+  function suppressSmall(rows, nKey, o) {
+    o = o || {};
+    var minN = o.minN == null ? 10 : o.minN, other = o.otherLabel === undefined ? "Other" : o.otherLabel;
+    var unit = o.unit || "people", by = asSet(o.by), sums = [nKey].concat(asSet(o.sumKeys));
+    if (!rows.length) return [[], ""];
+    if (!(nKey in rows[0])) throw new Error("mck.suppressSmall: no key " + nKey);
+    var keys = Object.keys(rows[0]);
+    var numeric = keys.filter(function (c) {
+      return by.indexOf(c) < 0 && rows.every(function (r) { return typeof r[c] === "number"; });
+    });
+    var groups = o.groupKeys ? asSet(o.groupKeys) : keys.filter(function (c) { return numeric.indexOf(c) < 0 && by.indexOf(c) < 0; });
+    var small = function (r) { return r[nKey] < minN; };
+    var isOther = function (r) { return groups.length > 0 && other != null && r[groups[0]] === other; };
+    if (!rows.some(small)) return [rows.slice(), ""];
+    var keep = rows.filter(function (r) { return !small(r) && !isOther(r); });
+    var dropped = 0, merged = 0, out = [];
+    if (other != null) {
+      var parts = new Map();
+      rows.filter(function (r) { return small(r) || isOther(r); }).forEach(function (r) {
+        var key = JSON.stringify(by.map(function (b) { return r[b]; }));
+        if (!parts.has(key)) parts.set(key, []);
+        parts.get(key).push(r);
+      });
+      parts.forEach(function (part) {
+        var n = part.reduce(function (s, r) { return s + r[nKey]; }, 0);
+        var k = part.filter(function (r) { return small(r) && !isOther(r); }).length;
+        if (n < minN) { dropped += k; return; }
+        merged += k;
+        var row = Object.assign({}, part[0]);
+        groups.forEach(function (g) { row[g] = other; });
+        numeric.forEach(function (c) {
+          row[c] = sums.indexOf(c) >= 0 ? part.reduce(function (s, r) { return s + r[c]; }, 0)
+            : part.reduce(function (s, r) { return s + r[c] * r[nKey]; }, 0) / n;           // n-weighted mean
+        });
+        out.push(row);
+      });
+    } else {
+      dropped = rows.filter(function (r) { return small(r) && !isOther(r); }).length;
+    }
+    var g = function (k) { return k + " group" + (k !== 1 ? "s" : ""); }, notes = [];
+    if (merged) notes.push(g(merged) + " with fewer than " + minN + " " + unit + " merged into \"" + other + "\"");
+    if (dropped) notes.push(g(dropped) + " with fewer than " + minN + " " + unit + " not shown");
+    var note = notes.join("; ");
+    return [keep.concat(out), note.charAt(0).toUpperCase() + note.slice(1) + "."];
+  }
+
+  function lum(hex) {
+    var n = parseInt(String(hex).replace("#", ""), 16);
+    return [n >> 16, (n >> 8) & 255, n & 255].reduce(function (s, c, i) {
+      c /= 255;
+      return s + [0.2126, 0.7152, 0.0722][i] * (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+    }, 0);
+  }
+  function textOn(hex) {
+    var f = lum(hex), navy = tok("text-headline");
+    return 1.05 / (f + 0.05) >= (f + 0.05) / (lum(navy) + 0.05) ? "#FFFFFF" : navy;
+  }
+  function alpha(hex, a) {
+    var n = parseInt(String(hex).replace("#", ""), 16);
+    return "rgba(" + (n >> 16) + ", " + ((n >> 8) & 255) + ", " + (n & 255) + ", " + a + ")";
+  }
+
+  function status(key) {
+    var s = STATUS[String(key).replace(/-/g, "_")];
+    if (!s) throw new Error("mck.status: unknown status " + key + " (use " + Object.keys(STATUS).join(", ") + ")");
+    return { color: tok(s.css), symbol: s.symbol, word: s.word, ink: s.ink };
+  }
+
+  function isObj(x) { return x && typeof x === "object" && !Array.isArray(x); }
+  function merge(a, b) {
+    var out = Object.assign({}, a);
+    Object.keys(b || {}).forEach(function (k) { out[k] = isObj(out[k]) && isObj(b[k]) ? merge(out[k], b[k]) : b[k]; });
+    return out;
+  }
+  function zeroLine(axis) {                                    // a thin baseline at 0, for charts with a hidden value axis
+    var line = { color: tok("chart-axis"), width: window.MCK_PLOTLY_TEMPLATE.layout.xaxis.linewidth };
+    return axis === "y"
+      ? { type: "line", y0: 0, y1: 0, x0: 0, x1: 1, xref: "paper", layer: "above", line: line }
+      : { type: "line", x0: 0, x1: 0, y0: 0, y1: 1, yref: "paper", layer: "above", line: line };
+  }
+  var BAR_GAP = window.MCK_PLOTLY_TEMPLATE.layout.bargap;      // bar : gap = 2 : 1
+  var LAYOUTS = {
+    bar: function () {                                         // horizontal, labelled bars; rows top to bottom in data order
+      return { bargap: BAR_GAP, xaxis: { visible: false, rangemode: "tozero" },
+               yaxis: { showgrid: false, autorange: "reversed", ticklabelstandoff: 8, automargin: true }, shapes: [zeroLine("x")] };
+    },
+    line: function () {
+      return { hovermode: "x unified", margin: { r: 150 }, xaxis: { showgrid: false, tickangle: 0 },   // never rotate
+               yaxis: { gridcolor: tok("chart-grid"), tickformat: "," } };
+    },
+    waterfall: function () {                                   // labelled bars: no value axis, baseline at 0
+      return { bargap: BAR_GAP, xaxis: { showgrid: false, showline: false, zeroline: false, automargin: true },
+               yaxis: { visible: false, rangemode: "tozero" }, shapes: [zeroLine("y")] };
+    },
+    stacked: function () {                                     // horizontal 100% stacked bars
+      return { barmode: "stack", bargap: BAR_GAP, xaxis: { visible: false, range: [0, 100] },
+               yaxis: { showgrid: false, autorange: "reversed", ticklabelstandoff: 8, automargin: true }, shapes: [zeroLine("x")] };
+    },
+    heatmap: function () {
+      var off = { showgrid: false, showline: false, zeroline: false, ticks: "", tickangle: 0 };
+      return { plot_bgcolor: tok("surface-default"), xaxis: merge(off, { side: "top" }),
+               yaxis: merge(off, { autorange: "reversed", ticklabelstandoff: 8 }) };
+    },
+    sankey: function () { return { margin: { t: 8, r: 8, b: 8, l: 8 } }; },
+    roadmap: function () {                                     // Gantt as horizontal stacked bars (offset + segments)
+      return { barmode: "stack", bargap: 0.45, xaxis: { showgrid: false, zeroline: false, side: "top" },
+               yaxis: { showgrid: false, zeroline: false, autorange: "reversed", ticklabelstandoff: 8 } };
+    }
+  };
+  function plotlyLayout(kind, extra) {
+    if (!LAYOUTS[kind]) throw new Error("mck.plotlyLayout: kind must be one of " + Object.keys(LAYOUTS).join(", "));
+    var base = { template: window.MCK_PLOTLY_TEMPLATE, autosize: true, showlegend: false,
+                 margin: { t: 24, r: 16, b: 32, l: 8 } };      // the HTML carries the titles, so a small margin
+    return merge(merge(base, LAYOUTS[kind]()), extra);
+  }
+
+  function srTable(id, caption, head, rows) {                  // visually hidden data table (class sr-only)
+    var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); };
+    document.getElementById(id).innerHTML = "<caption>" + esc(caption) + "</caption><thead><tr>"
+      + head.map(function (h) { return '<th scope="col">' + esc(h) + "</th>"; }).join("") + "</tr></thead><tbody>"
+      + rows.map(function (r) {
+        return '<tr><th scope="row">' + esc(r[0]) + "</th>"
+          + r.slice(1).map(function (x) { return "<td>" + esc(x) + "</td>"; }).join("") + "</tr>";
+      }).join("") + "</tbody>";
+  }
+  function ready(fn) {                                         // draw after Libre Franklin loads (Plotly measures text once)
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fn); else window.addEventListener("load", fn);
+  }
+
+  window.mck = { tok: tok, highlight: highlight, fmtNum: fmtNum, suppressSmall: suppressSmall, textOn: textOn,
+                 status: status, plotlyLayout: plotlyLayout, alpha: alpha, zeroLine: zeroLine, srTable: srTable,
+                 ready: ready, MINUS: MINUS, plotConfig: { displayModeBar: false, responsive: true } };
+})();
+"""
+
+
+def build_js(css: str) -> None:
+    """dist/web/mck-viz.js: the JS helper. Colors come from the generated CSS variables, so the two never drift."""
+    tokens = dict(re.findall(r"--mck-([a-z0-9-]+): (#[0-9A-Fa-f]{6});", css))
+    status = {k: {"css": f"status-{k.replace('_', '-')}", "symbol": t["symbol"], "word": t["label"],
+                  "ink": "#FFFFFF" if _ink(t["value"]).endswith("inverse)") else v("text.headline")}
+              for k, t in C["status"].items() if not k.startswith("$")}
+    js = (_JS.replace("__TOKENS__", json.dumps(tokens, separators=(",", ":")))
+             .replace("__STATUS__", json.dumps(status, ensure_ascii=False, separators=(",", ":")))
+             .replace("__TEMPLATE__", json.dumps(plotly_template(), separators=(",", ":"))))
+    write("web/mck-viz.js", js)
 
 
 # ---------------------------------------------------------------- Plotly

@@ -47,10 +47,21 @@ mv.lint(fig); mv.save(fig, "attrition.png")
 | Minimum n (people data) | `df, note = mv.suppress_small(df, "headcount", min_n=10, other_label="Other")`, then `mv.source(..., footnote=note)` |
 | Real maps | `from mckviz import geo`: `geo.canvas(fig)`, `geo.Map(...)`, `geo.equal_earth`; US states, world countries and a county subset ship with the package |
 | Translucent fills (Plotly) | `mv.rgba(C.negative, 0.12)`, `mv.rgba(C.focus, 0.4)` |
+| Waterfall | `mv.waterfall(ax, steps, values, kinds, focus=..., semantic=None \| "up" \| "down", floor=None, horizontal=False)` |
+| 100% stacked bar | `mv.hstack(ax, categories, [(name, values), ...], story=..., focus=..., base=counts, base_label="n")` |
+| Dumbbell, rank slope | `mv.dumbbell(ax, labels, compare, value, flag_below=-5, tick_fmt="{:,.0f}")`, `mv.rank_slope(ax, names, before, after, focus=..., worse=...)` |
+| Heat table | `mv.heat(ax, matrix, kind="diverging", bounds=None, focus_cols=..., n=None, key_ends=...)`, `mv.key_strip(ax, ramp, labels, xy=..., width=...)` |
+| KPI | `mv.kpi_card(ax, value, sentence, change=..., vs=..., better="up", target=..., ring_value=..., dark=False)`, `mv.kpi_row(ax, cards)`, `mv.delta_label(change, unit=, vs=, better=)`, `mv.ring`, `mv.big`, `mv.small` |
+| Plans and status | `mv.roadmap(ax, plan, milestones, today=...)`, `mv.tracker(ax, plan, milestones=...)`, `mv.status_column(ax, statuses)`, `mv.status(ax, x, y, key)`, `mv.sdot(...)`, `mv.status_key(name)` |
+| Small multiples | `mv.multiples(fig, data, x=..., worse=..., ncols=3, ylim=None)` |
 | Save | `mv.save(fig, path, dpi=200)`, which also lays out the titles and source |
 | Check | `mv.lint(fig)` (matplotlib or Plotly; pass `headline=`, `subtitle=`, `source=` when they live in HTML); `strict=True` raises on errors |
 | Plotly titles | `mv.pl_finish(fig, headline, subtitle, source_text, footnote)` |
 | Color roles / all tokens | `mv.colors` (`focus`, `focus_light`, `context`, `accent`, `negative`, ...), `mv.TOKENS` |
+
+The chart builders (`mckviz/charts.py`) draw into a matplotlib Axes (`multiples` into a Figure) with the house rules
+built in, take plain lists or a pandas DataFrame (pandas stays optional), and return a namespace with the artists and
+positions for further annotation. Add `mv.titles` and `mv.source`, and the figure passes `mv.lint(fig, strict=True)`.
 
 `mv.lint` checks headline, subtitle and source, at most 6 colors (a colormap or ramp counts once), off-palette and
 red-green colors, bars from zero, labels plus a value axis, legends, dual axes, pies over 5, rotated or tiny text and

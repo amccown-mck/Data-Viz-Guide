@@ -51,55 +51,31 @@
 ### Python — matplotlib + `mckviz`
 ```python
 # verified runnable (from the repo root)
-from pathlib import Path
-
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.ticker import StrMethodFormatter
 
 import mckviz as mv
 
 mv.use()
-C = mv.colors
-
-df = pd.read_csv(Path("examples/data/pay_vs_market.csv")).sort_values("gap_pct", ignore_index=True)
-lag = df.gap_pct <= -5                                   # the exception the headline calls out
+df = pd.read_csv("examples/data/pay_vs_market.csv").sort_values("gap_pct", ignore_index=True)   # largest shortfall first
 
 fig, ax = plt.subplots(figsize=(10, 5.6))
-for i, r in df.iterrows():
-    ax.plot([r.market_median_k, r.internal_median_k], [i, i], color=C.context_light, lw=3,
-            solid_capstyle="round", zorder=1)            # connector = the gap
-    ax.scatter(r.market_median_k, i, s=55, color=C.context, zorder=2)                     # comparator
-    ax.scatter(r.internal_median_k, i, s=70, color=C.negative if lag[i] else C.focus, zorder=3)   # below market: orange = worse
-    ax.text(max(r.market_median_k, r.internal_median_k) + 3, i, mv.signed(r.gap_pct, 1, "%"), va="center",
-            fontsize=9, color=C.negative_text if lag[i] else C.text, fontweight="bold" if lag[i] else "normal")
-
-# Label the two dot types once, on the top row, instead of a legend.
-top = df.iloc[0]
-ax.annotate("Market", (top.market_median_k, 0), xytext=(0, 9), textcoords="offset points", ha="center",
-            fontsize=8, color=C.text_muted)
-ax.annotate("McKesson", (top.internal_median_k, 0), xytext=(0, 9), textcoords="offset points", ha="center",
-            fontsize=8, color=C.negative_text, fontweight="bold")
-
-ax.set_yticks(range(len(df)), df.role)
-ax.invert_yaxis()
-for lbl, hi in zip(ax.get_yticklabels(), lag):
-    if hi:
-        lbl.set_fontweight("bold")
-        lbl.set_color(C.headline)
-ax.set_xlim(35, 160)                                     # non-zero range is fine: position, not length
-ax.xaxis.set_major_formatter(StrMethodFormatter("${x:,.0f}K"))
-mv.clean_axes(ax, keep=(), grid="x")
+# Market grey, McKesson blue, orange where McKesson is 5%+ below (worse); gap labels with a true minus;
+# bold navy names for the flagged rows; a key naming each dot type once, top left.
+db = mv.dumbbell(ax, df.role, df.market_median_k, df.internal_median_k, flag_below=-5, tick_fmt="${:,.0f}K",
+                 xlim=(35, 160))                  # non-zero range is fine: position, not length
+lag = db.flagged                                  # the exception the headline calls out
 
 mv.titles(fig, f"McKesson pay trails the market by 5% or more for {lag.sum()} clinical and pharmacy roles",
           "Median base pay, McKesson vs. external market, 2026 ($K)")
 mv.source(fig, "Source: Synthetic data for illustration only",
           footnote="External market = posted-pay median for comparable roles and metros.")
+mv.lint(fig, strict=True)
 mv.save(fig, "out/dumbbell.png", dpi=200)
 ```
-**Dot plot variant:** use a single `ax.scatter(values, rows)` colored with `mv.highlight(rows, focus=...)`, then `ax.axvline(benchmark, color=C.total, lw=0.75, ls=(0, (3, 3)))` with an in-place label. Keep `mv.clean_axes(ax, keep=(), grid="x")`.
+`gap="abs"` labels the difference in units instead of percent; `compare_name=` / `value_name=` rename the dots (for example "FY25" / "FY26" for a before-and-after dumbbell). **Dot plot variant:** use a single `ax.scatter(values, rows)` colored with `mv.highlight(rows, focus=...)`, then `ax.axvline(benchmark, color=C.total, lw=0.75, ls=(0, (3, 3)))` with an in-place label. Keep `mv.clean_axes(ax, keep=(), grid="x")`.
 
 ### Python — Plotly / HTML
 ```python

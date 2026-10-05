@@ -1,0 +1,163 @@
+<!doctype html>
+<!--
+  McKesson chart-card starter, OFFLINE variant (HTML + Plotly, no internet needed).
+
+  Same pattern as chart-card.html (headline, subtitle and source are HTML text; Plotly draws only the data; every color
+  comes from the tokens), but nothing loads from the web:
+    - Libre Franklin loads with @font-face from a fonts/ folder next to the page. Copy the five TTFs used below
+      (Light, Regular, Medium, SemiBold, Bold) from fonts/LibreFranklin/ in this repo, with OFL.txt (the SIL Open Font
+      License asks you to keep it with the fonts). Each src also lists the repo path, so this file works in place.
+    - Plotly loads from vendor/plotly.min.js: dist/web/vendor/plotly.min.js in this repo (Plotly.js 4.1.1, MIT,
+      licence in dist/web/vendor/LICENSE-plotly.txt; about 4.8 MB, the same version chart-card.html loads from the CDN).
+    - mck-viz.css and mck-viz.js (helpers: mck.tok, mck.fmtNum, mck.plotlyLayout, ...) come from dist/web/.
+
+  To deploy, make one folder:
+      my-page.html          (this file)
+      mck-viz.css, mck-viz.js                  <- dist/web/
+      vendor/plotly.min.js, vendor/LICENSE-plotly.txt   <- dist/web/vendor/
+      fonts/LibreFranklin-*.ttf, fonts/OFL.txt <- fonts/LibreFranklin/
+  then replace "../../dist/web/" with "" in the three tags below. SharePoint pages strip inline <script>: host the folder
+  as files (a document library link, or an Embed web part pointing at the .html) instead. See docs/formats.md.
+  Rules: docs/principles.md · chart recipes: docs/cookbook/ · checklist: docs/qa-checklist.md
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chart card starter (offline)</title>
+<style>
+  /* Libre Franklin from local files: first fonts/ next to the page, then the repo copy (for previewing in place). */
+  @font-face { font-family: "Libre Franklin"; font-weight: 300; font-display: swap;
+    src: url("fonts/LibreFranklin-Light.ttf") format("truetype"), url("../../fonts/LibreFranklin/LibreFranklin-Light.ttf") format("truetype"); }
+  @font-face { font-family: "Libre Franklin"; font-weight: 400; font-display: swap;
+    src: url("fonts/LibreFranklin-Regular.ttf") format("truetype"), url("../../fonts/LibreFranklin/LibreFranklin-Regular.ttf") format("truetype"); }
+  @font-face { font-family: "Libre Franklin"; font-weight: 500; font-display: swap;
+    src: url("fonts/LibreFranklin-Medium.ttf") format("truetype"), url("../../fonts/LibreFranklin/LibreFranklin-Medium.ttf") format("truetype"); }
+  @font-face { font-family: "Libre Franklin"; font-weight: 600; font-display: swap;
+    src: url("fonts/LibreFranklin-SemiBold.ttf") format("truetype"), url("../../fonts/LibreFranklin/LibreFranklin-SemiBold.ttf") format("truetype"); }
+  @font-face { font-family: "Libre Franklin"; font-weight: 700; font-display: swap;
+    src: url("fonts/LibreFranklin-Bold.ttf") format("truetype"), url("../../fonts/LibreFranklin/LibreFranklin-Bold.ttf") format("truetype"); }
+</style>
+<link rel="stylesheet" href="../../dist/web/mck-viz.css">
+<script src="../../dist/web/mck-viz.js"></script>
+<script src="../../dist/web/vendor/plotly.min.js" charset="utf-8"></script>
+<style>
+  body { margin: 0; background: var(--mck-surface-subtle); font-family: var(--mck-font); }
+  main { display: grid; gap: 24px; padding: 32px 16px; max-width: 1008px; margin: 0 auto; }
+  .mck-chart { box-sizing: border-box; width: 100%; margin: 0; }
+  .mck-plot { aspect-ratio: var(--mck-aspect-web-inline); }      /* plot box from the chart.aspect tokens */
+  @media (max-width: 600px) { main { padding: 16px 0; } .mck-plot { aspect-ratio: var(--mck-aspect-mobile); } }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- Card 1: sorted bars, grey context + blue focus, direct labels, labelled benchmark (docs/cookbook/bar.md) -->
+  <figure class="mck-chart" aria-labelledby="bar-headline">
+    <h2 class="mck-headline" id="bar-headline">Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate</h2>
+    <p class="mck-subtitle">Voluntary attrition by job family, FY26 (%)</p>
+    <div class="mck-plot" id="bar-chart" role="img"
+         aria-label="Bar chart. Pharmacy Technician 27.4% and Distribution Center Associate 24.1% voluntary attrition, against an enterprise rate of 19.9%. The other eight job families range from 7.4% to 18.9%."></div>
+    <table class="sr-only" id="bar-table"></table>
+    <noscript><p class="mck-subtitle">Pharmacy Technician 27.4% and Distribution Center Associate 24.1% voluntary attrition,
+      against an enterprise rate of 19.9%; the other eight job families range from 7.4% to 18.9%.</p></noscript>
+    <figcaption class="mck-footnote" id="bar-note">Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months.<br>
+      Source: Synthetic data for illustration only</figcaption>
+  </figure>
+
+  <!-- Card 2: two lines, direct end labels instead of a legend, shaded gap (docs/cookbook/line.md) -->
+  <figure class="mck-chart" aria-labelledby="line-headline">
+    <h2 class="mck-headline" id="line-headline">Without action, Data &amp; AI demand outruns internal supply by about 620 FTE by 2030</h2>
+    <p class="mck-subtitle">Forecast Data &amp; AI roles, 2024–2030, base scenario (FTE)</p>
+    <div class="mck-plot" id="line-chart" role="img"
+         aria-label="Line chart. Demand grows from 850 FTE in 2024 to 1,590 in 2030; internal supply grows from 850 to 973, a gap of 617 FTE in 2030."></div>
+    <table class="sr-only" id="line-table"></table>
+    <noscript><p class="mck-subtitle">Demand grows from 850 FTE in 2024 to 1,590 in 2030; internal supply grows from 850 to 973,
+      a gap of 617 FTE in 2030.</p></noscript>
+    <figcaption class="mck-footnote">Supply = current headcount − projected attrition + planned internal moves; excludes external hiring.
+      Forecast, not actuals.<br>Source: Synthetic data for illustration only</figcaption>
+  </figure>
+
+</main>
+
+<script>
+/* Colors, number formats and layouts all come from mck-viz.js (generated from the tokens). Never type a hex value. */
+const { tok, fmtNum, plotlyLayout, highlight, alpha, srTable, plotConfig } = window.mck;
+const ANNOTATION = { color: tok("chart-annotation"), size: parseFloat(tok("annotation-size")) };
+const narrow = window.matchMedia("(max-width: 600px)");
+
+/* ---------- Card 1: bar chart with highlight ---------- */
+const raw = [   // DATA: job family, rate %, headcount
+  { family: "Pharmacy Technician", rate: 27.4, n: 6200 }, { family: "Distribution Center Associate", rate: 24.1, n: 11800 },
+  { family: "Customer Care", rate: 18.9, n: 3100 }, { family: "Specialty Nursing", rate: 14.2, n: 1400 },
+  { family: "Data & Analytics", rate: 12.9, n: 850 }, { family: "Supply Chain Planning", rate: 11.8, n: 900 },
+  { family: "Sales", rate: 10.6, n: 2300 }, { family: "Software Engineering", rate: 9.8, n: 2600 },
+  { family: "HR", rate: 8.1, n: 700 }, { family: "Finance", rate: 7.4, n: 1200 },
+];
+const [rows, note] = mck.suppressSmall(raw, "n");                 // never show a group under 10 people
+if (note) document.getElementById("bar-note").insertAdjacentText("afterbegin", note + " ");
+rows.sort((a, b) => b.rate - a.rate);                             // largest first; "bar" layout draws top to bottom
+const enterprise = 19.9;
+const focus = rows.filter(r => r.rate > 20).map(r => r.family);   // only what the headline names
+const head = () => Math.max(...rows.map(r => r.rate)) * (narrow.matches ? 1.3 : 1.15);   // room for the labels
+
+function drawBar() {
+  Plotly.newPlot("bar-chart", [{
+    type: "bar", orientation: "h", y: rows.map(r => r.family), x: rows.map(r => r.rate), customdata: rows.map(r => r.n),
+    marker: { color: highlight(rows.map(r => r.family), { focus }) },
+    text: rows.map(r => " " + fmtNum(r.rate, { kind: "pct" })), textposition: "outside", textfont: { color: tok("text-primary") },
+    hovertemplate: "%{y}<br>%{x:.1f}% attrition<br>%{customdata:,} employees<extra></extra>",
+  }], plotlyLayout("bar", {
+    xaxis: { range: [0, head()] },
+    yaxis: { tickvals: rows.map(r => r.family), tickfont: { color: tok("text-primary") },
+             ticktext: rows.map(r => (focus.includes(r.family) ? `<b>${r.family}</b>` : r.family)) },
+    shapes: [mck.zeroLine("x"), { type: "line", x0: enterprise, x1: enterprise, y0: 0, y1: 1, yref: "paper", layer: "below",
+                                  line: { color: tok("chart-total"), width: 1, dash: "dot" } }],
+    annotations: [{ x: enterprise, y: 1, yref: "paper", yanchor: "bottom", showarrow: false,
+                    text: `Enterprise ${fmtNum(enterprise, { kind: "pct" })}`, font: ANNOTATION }],
+  }), plotConfig);
+}
+
+/* ---------- Card 2: line chart with direct end labels ---------- */
+const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030];        // DATA
+const demand = [850, 944, 1047, 1162, 1290, 1432, 1590];
+const supply = [850, 868, 887, 906, 927, 950, 973];
+const gap = demand.at(-1) - supply.at(-1);
+const end = (y, text, color) => ({ x: years.at(-1), y, xanchor: "left", xshift: 8, showarrow: false, align: "left",
+                                   text, font: { color } });
+const endLabels = [
+  end(demand.at(-1), `<b>Demand</b> ${fmtNum(demand.at(-1), { kind: "plain" })}`, tok("chart-total")),
+  end(supply.at(-1), `<b>Internal supply</b> ${fmtNum(supply.at(-1), { kind: "plain" })}`, tok("chart-focus")),
+  end((demand.at(-1) + supply.at(-1)) / 2, `<b>Gap ${fmtNum(gap, { kind: "plain" })} FTE</b><br>by 2030`, tok("semantic-negative-text")),
+];
+
+function drawLine() {
+  Plotly.newPlot("line-chart", [
+    { x: years, y: supply, mode: "lines", line: { color: tok("chart-focus") }, name: "Internal supply",
+      hovertemplate: "%{y:,} FTE<extra>Internal supply</extra>" },
+    { x: years, y: demand, mode: "lines", line: { color: tok("chart-total") }, name: "Demand",
+      fill: "tonexty", fillcolor: alpha(tok("semantic-negative"), 0.12),   // light orange wash: the shortfall
+      hovertemplate: "%{y:,} FTE<extra>Demand</extra>" },
+  ], plotlyLayout("line", {
+    xaxis: { tickvals: years, ticktext: years.map(String) },
+    legend: { traceorder: "reversed" },                            // used only on phones (see fit below)
+    annotations: endLabels,
+  }), plotConfig);
+}
+
+/* Phones: swap the end labels for a compact key on top, and give the bar labels more headroom. */
+function fit() {
+  const phone = narrow.matches;
+  Plotly.relayout("line-chart", { showlegend: phone, annotations: phone ? [] : endLabels, "margin.r": phone ? 16 : 150 });
+  Plotly.relayout("bar-chart", { "xaxis.range": [0, head()] });
+}
+narrow.addEventListener("change", fit);
+
+srTable("bar-table", "Voluntary attrition by job family, FY26", ["Job family", "Attrition (%)", "Headcount"],
+        rows.map(r => [r.family, r.rate.toFixed(1), fmtNum(r.n, { kind: "plain" })]));
+srTable("line-table", "Forecast Data & AI roles, FTE", ["Year", "Demand", "Internal supply"],
+        years.map((y, i) => [y, fmtNum(demand[i], { kind: "plain" }), fmtNum(supply[i], { kind: "plain" })]));
+mck.ready(() => { drawBar(); drawLine(); fit(); });
+</script>
+</body>
+</html>

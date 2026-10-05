@@ -235,3 +235,6 @@ dist/release/
 # Zipped portable skill for Claude.ai (tools/build_skill.py --zip)
 dist/skills/*.zip
 dist/office/*-Official.pptx
+
+# macOS Finder
+.DS_Store

@@ -186,8 +186,8 @@
   <div class="rail">
     <p class="eyebrow">Plans and status</p>
     <h2 class="title"><b>Build</b> plans and status</h2>
-    <p class="lede">No tool has one button for this. The parts are simple: bars, small shapes, a table, and the status colors with their symbols and words.</p>
-    <p><a href="../../docs/color.md#4-status-colors-red-amber-green">color.md: status colors</a> · <a href="../../docs/cookbook/tables.md">tables.md</a></p>
+    <p class="lede">No tool has one button for this, so the kit gives you the parts: <code>mv.roadmap</code>, <code>mv.tracker</code> and <code>mv.status</code> in Python, the roadmap and tracker slides in the starter deck, and the status pill and tracker table on the web.</p>
+    <p><a href="../../docs/cookbook/plans-status.md">docs/cookbook/plans-status.md</a> · <a href="../../docs/color.md#4-status-colors-red-amber-green">color.md: status colors</a></p>
     <h3>Before you send it</h3>
     <ul class="checklist small">
       <li>Status colors only on status: dots, missed milestones</li>
@@ -199,14 +199,14 @@
   </div>
   <div class="stage top">
     <div class="panel">
-      <div class="platform"><h5>PowerPoint</h5><p><strong>Tracker:</strong> Insert › Table; in the status column a small circle (Insert › Shapes › Oval, hold Shift) filled on track <code>#00AF68</code>, at risk <code>#FFB500</code>, off track <code>#DA2103</code>, not started <code>#BFBFBF</code> or complete <code>#005A8C</code>, with the symbol and word beside it. <strong>Gantt:</strong> a Stacked Bar of start and duration; start series Fill › No fill; <em>Categories in reverse order</em>; milestones and today line as shapes.</p></div>
+      <div class="platform"><h5>PowerPoint</h5><p>Starter deck slides 8 (roadmap) and 9 (tracker) are ready to copy. By hand: <strong>Tracker:</strong> Insert › Table; in the status column a small circle (Insert › Shapes › Oval, hold Shift) filled on track <code>#00AF68</code>, at risk <code>#FFB500</code>, off track <code>#DA2103</code>, not started <code>#BFBFBF</code> or complete <code>#005A8C</code>, with the symbol and word beside it. <strong>Gantt:</strong> a Stacked Bar of start and duration; start series Fill › No fill; <em>Categories in reverse order</em>; milestones and today line as shapes.</p></div>
       <div class="platform"><h5>Excel</h5><p>The same stacked-bar Gantt. In a tracker sheet, keep the status word in its own column and color a ● beside it with Conditional Formatting › New Rule › <em>Use a formula to determine which cells to format</em> (<code>=$C2="Off track"</code>, font <code>#DA2103</code>). Skip icon sets: their red, yellow and green are Excel's, can't be changed, and carry no word.</p></div>
       <div class="platform"><h5>Power BI</h5><p>Table visual: a measure returning the status hex (<code>SWITCH</code> on the status), applied to a ● column with Cell elements › Font color › fx › Format style: Field value; the word in the next column. No native Gantt: use Deneb (Vega-Lite, with the kit's <code>vega-lite-config.json</code>) or an AppSource Gantt with the status colors set by hand.</p></div>
-      <div class="platform"><h5>Python</h5><div><p>matplotlib <code>ax.barh(y, end - start, left=start)</code> or <code>broken_barh</code> for bars, <code>"D"</code> markers for milestones, <code>ax.axvline</code> for today; Plotly <code>px.timeline</code>. Colors, symbols and words from <code>mv.STATUS</code>; process stages from <code>mv.STEPS</code>.</p>
-<pre class="snip">s = mv.STATUS["off_track"]       # value "#DA2103", symbol "✕", label "Off track"
-ax.text(x, y, f'{s["symbol"]} {s["label"]}', color=C.text, va="center")
-mv.lint(fig)    # notes status colors: status only, symbol and word</pre></div></div>
-      <div class="platform"><h5>HTML</h5><p>A <code>.mck-table</code> whose status cell holds a small circle in <code>var(--mck-status-off-track)</code> (and <code>-on-track</code>, <code>-at-risk</code>, <code>-not-started</code>, <code>-done</code>), the symbol inside and the word beside. Gantt bars: Plotly horizontal bars with <code>base</code> set to the start date.</p></div>
+      <div class="platform"><h5>Python</h5><div><p><code>mv.roadmap</code>, <code>mv.tracker</code>, <code>mv.status_column</code> and <code>mv.status</code> draw what these pages show: bars, ◆ ◇ ✕ milestones, slip arrows, a dated Today line, every status as colour, symbol and word. Plotly: <code>px.timeline</code> with <code>mv.STATUS</code>.</p>
+<pre class="snip">plan, ms = pd.read_csv("initiative_plan.csv"), pd.read_csv("initiative_milestones.csv")
+mv.roadmap(ax, plan, ms, start="2025-04", end="2027-03", today="2026-03")
+mv.tracker(ax2, plan, milestones=ms)   # exceptions first; status = dot, symbol, word</pre></div></div>
+      <div class="platform"><h5>HTML</h5><p><code>&lt;span class="mck-status mck-status--off-track"&gt;</code> renders the dot, symbol and word from the tokens (also <code>--on-track</code>, <code>--at-risk</code>, <code>--not-started</code>, <code>--done</code>); <code>.mck-tracker</code> styles the table with exceptions in bold. Gantt: Plotly horizontal bars with <code>base</code> set to the start and <code>mck.plotlyLayout("roadmap")</code> from <code>mck-viz.js</code>.</p></div>
       <div class="platform"><h5>R</h5><p><code>geom_linerange()</code> or <code>geom_segment()</code> for bars, <code>geom_point(shape = 23)</code> for milestone diamonds; status colors from <code>mck_status</code>, stage colors from <code>mck_steps</code>.</p></div>
     </div>
   </div>

@@ -54,6 +54,13 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 | Clean axes | `mv.clean_axes(ax, keep=("bottom",), grid="y")` |
 | Numbers | `mv.fmt_num(v, kind="auto" \| "K" \| "M" \| "B" \| "pct" \| "plain", decimals=None, sign=False, prefix="")` (`prefix="$"` for money) (K/M/B, %, true minus: `"$4.3B"`, `"−$71M"`, `"+2.5%"`), `mv.signed(v, decimals, suffix)` (true minus, explicit +), `mv.text_on(fill)` (white or navy text on a fill) |
 | Minimum n (people data) | `df, note = mv.suppress_small(df, "headcount", min_n=10, other_label="Other")` merges groups under 10 into "Other" (or drops them with `other_label=None`; `by=` merges within each period; `sum_cols=` for counts, other numbers are n-weighted) and returns the footnote to pass to `mv.source(..., footnote=note)` |
+| Waterfall (bridge) | `mv.waterfall(ax, steps, values, kinds, focus=..., semantic=None \| "up" \| "down", floor=None)`: totals navy, deltas grey, focus blue; `floor` adds break marks and returns `.note` for the footnote |
+| 100% stacked bar | `mv.hstack(ax, categories, [(name, values), ...], story=..., focus=..., base=counts)`: story segment on the baseline in blue, greys, white separators, names over the top bar |
+| Dumbbell / rank slope | `mv.dumbbell(ax, labels, compare, value, flag_below=-5)` (grey vs. blue, orange when 5%+ below); `mv.rank_slope(ax, names, before, after, focus=...)` |
+| Heat table | `mv.heat(ax, matrix, kind="diverging" \| "sequential", focus_cols=..., n=counts)` with a stepped key (`mv.key_strip`); cells under n = 10 greyed out |
+| KPI card | `mv.kpi_card(ax, value, sentence, change=..., vs=..., better="up", target=..., ring_value=...)`, `mv.kpi_row(ax, cards)`, `mv.delta_label(...)`, `mv.ring`, `mv.big`, `mv.small` |
+| Plans and status | `mv.roadmap(ax, plan, milestones, today=...)`, `mv.tracker(ax, plan, milestones=...)`, `mv.status_column(ax, statuses)`, `mv.status(ax, x, y, key)` / `mv.sdot` (status color + symbol + word); see `docs/cookbook/plans-status.md` |
+| Small multiples | `mv.multiples(fig, {name: values}, x=..., worse=..., ncols=3)`: one shared scale, grey context lines |
 | Real maps | `from mckviz import geo`: `geo.canvas(fig)`, `geo.Map("states-albers-10m.json", "states", box, key=geo.FIPS.get)`, `geo.equal_earth` for world maps; US states, world countries and a county subset ship with the package (see `docs/cookbook/maps.md`) |
 | Translucent fills (Plotly) | `mv.rgba(C.negative, 0.12)` for a shortfall wash, `mv.rgba(C.focus, 0.4)` for Sankey links, instead of an `rgba(...)` literal |
 | Save | `mv.save(fig, path, dpi=200)`, which also lays out the titles and source |
