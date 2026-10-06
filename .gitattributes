@@ -1,0 +1,11 @@
+# Keep LF in the repo and in every working copy, so builds on Windows and Mac produce identical files.
+* text=auto eol=lf
+
+# Binary: never convert.
+*.png  binary
+*.pdf  binary
+*.ttf  binary
+*.xlsx binary
+*.pptx binary
+*.potx binary
+*.zip  binary
