@@ -37,6 +37,15 @@ Sizes are for a 16:9 slide (13.33 × 7.5 in) and a 1× screen. Don't go below th
 
 ## 3. Several charts on one slide
 
+**One chart: two standard widths.** Inside the 0.39 in margins, a one-chart slide uses one of two frames, never an in-between width:
+
+| Frame | Chart width | Right side | Use it when |
+|---|---|---|---|
+| Full width | 12.55 in | Nothing | The chart needs the room: many bars or rows, long labels, a time series with annotations |
+| Chart + takeaways | Two-thirds, 8.04 in | A 0.5 in gutter, then a 4.02 in **Key takeaways** panel | The chart is compact (a few columns, a slope, a dumbbell, a scatter) and the slide is read without a presenter, or a pre-read needs the evidence spelled out |
+
+The takeaways panel is flat: a SemiBold 14 pt navy label over a blue rule, then **2–3 points**, each a SemiBold 16 pt navy lead and a Regular 14 pt body of at most two lines. Points are facts that the chart shows and the headline doesn't already say: a second number, a rank change, an exception. Not advice, not a repeat of the headline, not paragraphs. Compute every number from the data, as for the headline. If you need more than three points, or more than two lines each, the slide is trying to make two arguments, so split it.
+
 One chart per slide is the default; two is the most (`chart.limits.charts_per_slide`). With two, the titles form a hierarchy:
 
 | Level | Style | Says |

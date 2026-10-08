@@ -64,6 +64,13 @@ FOOT_TOP = 6.45                                            # source / footnote b
 BODY_TOP, BODY_BOTTOM = 1.32, 6.95                         # content area: under the title box, above the source line
 # Footer (as in the Standard Template): page number | thin blue rule | confidentiality line | date, centred on 7.2 in.
 FOOTER_TOP, FOOTER_H, FOOTER_PT = 7.08, 0.24, 8
+# Two chart widths on a one-chart slide: full width, or chart + takeaways (the chart two-thirds, a gutter as wide as
+# the two-charts slide's, and the takeaways panel the right third).
+GUTTER = 0.5
+SIDE_CHART_W = (W - LEFT - RIGHT - GUTTER) * 2 / 3          # 8.04 in
+TAKE_LEFT = LEFT + SIDE_CHART_W + GUTTER
+TAKE_W = W - RIGHT - TAKE_LEFT                               # 4.02 in
+TAKE_MAX = 90                                                # characters per point body: two lines at 14 pt
 FOOTER_TEXT = "McKesson Proprietary and Confidential"
 MASTER_NAME = "McKesson Data Viz"
 AUTHOR = "McKesson Workforce Innovation"
@@ -398,6 +405,42 @@ def chart_slide(prs, headline, subtitle, footnote, notes, source=SRC):
         add_footer(slide, lay)
     slide.notes_slide.notes_text_frame.text = notes
     return slide
+
+
+def takeaways(slide, points, top=CHART_TOP, title="Key takeaways"):
+    """Chart + takeaways: the right third of the slide, beside a two-thirds chart (SIDE_CHART_W). Two or three points,
+    each a SemiBold navy lead and a plain body of at most two lines, written from the data; facts, not advice. Flat:
+    a blue rule under the label, no box. All points sit in one text box, so they can be retyped in place."""
+    assert 2 <= len(points) <= 3, "two or three takeaways"
+    for lead, body in points:
+        assert len(body) <= TAKE_MAX, f"takeaway body over {TAKE_MAX} characters: {body!r}"
+    g = slide.shapes.add_group_shape()
+    g.name = "Takeaways"
+    text_box(g, TAKE_LEFT, top, TAKE_W, 0.3, title, 14, C.headline, font=SEMI, anchor=MSO_ANCHOR.BOTTOM,
+             name="Takeaways label")
+    line_shape(g, TAKE_LEFT, top + 0.38, TAKE_LEFT + TAKE_W, top + 0.38, C.focus, width_pt=1.5, dash=False,
+               name="Takeaways rule")
+    box = _shapes(g).add_textbox(Inches(TAKE_LEFT), Inches(top + 0.56), Inches(TAKE_W), Inches(FOOT_TOP - top - 0.76))
+    box.name = "Takeaways text"
+    tf = box.text_frame
+    tf.word_wrap = True
+    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
+    first = True
+    for lead, body in points:
+        for text, size, color, font, before in ((lead, 16, C.headline, SEMI, 0 if first else 20),
+                                                (body, 14, C.text, FONT, 3)):
+            p = tf.paragraphs[0] if first else tf.add_paragraph()
+            first = False
+            p.space_before = Pt(before)
+            run = p.add_run()
+            run.text = text
+            run.font.size, run.font.name = Pt(size), font
+            run.font.color.rgb = rgb(color)
+    nf = slide.notes_slide.notes_text_frame
+    nf.text += (f"\n\nLayout: chart + takeaways. The chart is two-thirds of the width ({SIDE_CHART_W:.2f} in), the "
+                f"takeaways panel the right third ({TAKE_W:.2f} in) after a {GUTTER} in gutter. Keep 2–3 points: a "
+                "SemiBold lead and one or two lines each, facts from the chart, no advice. Retype them for your data.")
+    return g
 
 
 def add_chart(slide, chart_type, data, top=CHART_TOP, height=CHART_H, left=LEFT, width=None):
@@ -883,13 +926,24 @@ def two_charts_data() -> SimpleNamespace:
 
 def column_data() -> SimpleNamespace:
     df = pd.read_csv(DATA / "internal_fill_by_fy.csv")
-    now, prior = int(df.internal_fill_pct.iloc[-1]), int(df.internal_fill_pct.iloc[-2])
-    assert now == df.internal_fill_pct.max()
+    v, fy = df.internal_fill_pct.astype(int), df.fiscal_year
+    now, prior, first = int(v.iloc[-1]), int(v.iloc[-2]), int(v.iloc[0])
+    assert now == v.max()
+    before = prior - first                                     # the change over the years before the latest
+    assert now - prior > before
+    falls = [i for i in range(1, len(df)) if v.iloc[i] < v.iloc[i - 1]]
+    assert len(falls) == 1
+    dip = falls[0]
     return SimpleNamespace(
         df=df, headline=(f"Internal candidates filled {now}% of roles in FY26, up {now - prior} points and the "
                          f"highest in {WORDS[len(df)]} years"),
-        subtitle=f"Share of open roles filled by internal candidates, {df.fiscal_year.iloc[0]}–{df.fiscal_year.iloc[-1]} (%)",
-        footnote="Internal fill rate = roles filled by internal candidates ÷ all roles filled.")
+        subtitle=f"Share of open roles filled by internal candidates, {fy.iloc[0]}–{fy.iloc[-1]} (%)",
+        footnote="Internal fill rate = roles filled by internal candidates ÷ all roles filled.",
+        points=[(f"+{now - first} points since {fy.iloc[0]}", f"From {first}% to {now}% of roles filled internally."),
+                (f"{fy.iloc[-1]} alone: +{now - prior} points",
+                 f"More than the {WORDS[len(df) - 2]} years before it combined ({mv.signed(before, 0)} points)."),
+                (f"One down year: {fy.iloc[dip]}",
+                 f"The rate slipped from {v.iloc[dip - 1]}% to {v.iloc[dip]}% before the {fy.iloc[-1]} rise.")])
 
 
 def dumbbell_data() -> SimpleNamespace:
@@ -897,12 +951,22 @@ def dumbbell_data() -> SimpleNamespace:
     low = df.nsmallest(2, "gap_pct")
     names = {"RN, Specialty": "Specialty nurses", "Pharmacy Technician": "pharmacy technicians"}
     a, b = (names.get(r, r) for r in low.role)
+    below, above = df[df.gap_pct < 0], df[df.gap_pct > 0]
+    usd = df.internal_median_k - df.market_median_k             # the gap in $K
+    widest = df.role[usd.idxmin()]
+    usd_k = lambda k: mv.fmt_num(k * 1000, "K", decimals=0, prefix="$")       # noqa: E731
+    assert widest not in set(low.role)                         # the dollar view names a different role
     return SimpleNamespace(
         df=df, focus=set(low.role),
         headline=(f"{a[0].upper() + a[1:]} and {b} are paid about {abs(low.gap_pct.mean()):.0f}% below market, "
                   f"the widest gaps of {len(df)} benchmarked roles"),
         subtitle="Median base pay, McKesson vs. market, by role, 2026 ($K)",
-        footnote="External market = posted-pay median for comparable roles and metros.")
+        footnote="External market = posted-pay median for comparable roles and metros.",
+        points=[(f"{WORDS[len(below)].capitalize()} of {len(df)} roles pay below market",
+                 f"The other {WORDS[len(above)]} pay {above.gap_pct.min():.1f}–{above.gap_pct.max():.1f}% above it."),
+                (f"Widest gap in dollars: {widest}",
+                 f"{usd_k(usd.min())} a year ({mv.signed(df.gap_pct[usd.idxmin()], 1, '%')}); {a}, the widest "
+                 f"gap in %, trail by {usd_k(-usd[low.index[0]])}.")])
 
 
 def slope_data() -> SimpleNamespace:
@@ -915,11 +979,24 @@ def slope_data() -> SimpleNamespace:
     focus = w.d.idxmax()
     ratio = top / second
     times = "twice" if abs(ratio - 2) < 0.25 else f"{ratio:.0f}×"
+    assert (w.d > 0).all()
+    rank25, rank26 = w.FY25.rank(ascending=False), w.FY26.rank(ascending=False)
+    assert rank26[focus] == 1 and rank25[focus] > 1
+    ordinal = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth"}
+    runner = w.FY26.drop(focus).idxmax()
+    spread = lambda s: int(s.max() - s.min())                   # noqa: E731
+    assert spread(w.FY26) > spread(w.FY25)
     return SimpleNamespace(
         df=w, focus=focus,
         headline=f"{focus}'s internal fill rate rose {top:.0f} points in FY26, {times} the next-largest gain",
         subtitle="Internal fill rate by business unit, FY25 and FY26 (% of roles filled internally)",
-        footnote="Internal fill rate = roles filled by internal candidates ÷ all roles filled.")
+        footnote="Internal fill rate = roles filled by internal candidates ÷ all roles filled.",
+        points=[(f"All {WORDS[len(w)]} units rose",
+                 f"Gains ranged from +{w.d.min():.0f} to +{w.d.max():.0f} points."),
+                (f"{focus}: {ordinal[int(rank25[focus])]} to first",
+                 f"It now leads {runner} by {w.FY26[focus] - w.FY26[runner]:.0f} points."),
+                ("The range between units widened",
+                 f"Highest minus lowest: {spread(w.FY25)} points in FY25, {spread(w.FY26)} in FY26.")])
 
 
 def bubble_data() -> SimpleNamespace:
@@ -927,11 +1004,20 @@ def bubble_data() -> SimpleNamespace:
     top = df.nlargest(2, "genai_exposure_pct")
     short = {"Claims & Billing Specialist": "Claims & Billing", "Customer Care": "Customer Care"}
     a, b = (short.get(r, r) for r in top.role)
+    med = df.median_pay_k.median()
+    assert (top.median_pay_k < med).all()
+    big = df.loc[df.headcount.idxmax()]
+    assert big.genai_exposure_pct == df.genai_exposure_pct.min()
+    pay = sorted(int(p) for p in top.median_pay_k)
     return SimpleNamespace(
         df=df, focus=set(top.role), short=short,
         headline=(f"The two roles most exposed to Gen AI, {a} and {b}, employ {int(top.headcount.sum()):,} people"),
         subtitle="Share of tasks exposed to Gen AI vs. median pay, by role, 2026 (bubble area = headcount)",
-        footnote="Exposure = share of task hours matched to gen-AI-capable activities in an external task taxonomy.")
+        footnote="Exposure = share of task hours matched to gen-AI-capable activities in an external task taxonomy.",
+        points=[("Both pay below the median role",
+                 f"${pay[0]}K and ${pay[1]}K, vs. ${med:.0f}K across all {len(df)} roles."),
+                ("The largest role is the least exposed",
+                 f"{big.role}: {int(big.headcount):,} people, {big.genai_exposure_pct}% of tasks exposed.")])
 
 
 # ====================================================================== drawn-shape helpers
@@ -1006,10 +1092,15 @@ def frame_in(frame):
 
 
 # ====================================================================== chart helpers for the new charts
+C15 = "http://schemas.microsoft.com/office/drawing/2012/chart"
+
+
 def dlbl(point, *, val=False, cat=False, ser=False, pos=None, num_fmt=None, size=12, color=C.text, bold=False,
-         sep=" ", text=None, dx=0.0, dy=0.0):
+         sep=" ", text=None, dx=0.0, dy=0.0, box=None, align=None):
     """One data label: which fields it shows (for XY charts 'cat' is the X value, 'val' the Y value), position, number
-    format, font (Medium; Bold when emphasized), or fixed `text`; dx/dy nudge it (fractions of the chart frame)."""
+    format, font (Medium; Bold when emphasized), or fixed `text`; dx/dy nudge it (fractions of the chart frame);
+    box=(w, h) sizes the label (fractions of the frame), so a long one stays on one line instead of wrapping at about
+    a fifth of the chart's width; align ("l" / "r") then sets which side of the box the text keeps to."""
     if text is not None:
         point_label(point, text, color, bold=bold, size=size, position=pos)
         d = point.data_label._dLbl
@@ -1040,6 +1131,24 @@ def dlbl(point, *, val=False, cat=False, ser=False, pos=None, num_fmt=None, size
         etree.SubElement(man, qn("c:x"), val=f"{dx:.4f}")
         etree.SubElement(man, qn("c:y"), val=f"{dy:.4f}")
         d.find(qn("c:idx")).addnext(lay)
+    if box:                                                    # Format Data Label › Size (Office 2013+ extension)
+        ext_lst = d.find(qn("c:extLst"))
+        if ext_lst is None:
+            ext_lst = etree.SubElement(d, qn("c:extLst"))
+        ext = etree.SubElement(ext_lst, qn("c:ext"), uri="{CE6537A1-D6FC-4f65-9D91-7224C49458BB}", nsmap={"c15": C15})
+        man = etree.SubElement(etree.SubElement(ext, f"{{{C15}}}layout"), qn("c:manualLayout"))
+        etree.SubElement(man, qn("c:w"), val=f"{box[0]:.4f}")
+        etree.SubElement(man, qn("c:h"), val=f"{box[1]:.4f}")
+    if align:
+        for para in d.iter(qn("a:p")):
+            ppr = para.find(qn("a:pPr"))
+            if ppr is None:
+                ppr = etree.Element(qn("a:pPr"))
+                para.insert(0, ppr)
+            ppr.set("algn", align)
+        for body in d.iter(qn("a:bodyPr")):                    # a sized label centres its text block otherwise
+            body.set("wrap", "square")
+            body.set("anchorCtr", "0")
 
 
 def point_line(point, color=None, width_pt=None):
@@ -1382,7 +1491,7 @@ def slide_two_charts(prs):
         "the dot (X = engagement, Y = row number, 1 at the bottom); the grey line between them is the stem. Two charts "
         "is the limit; a third means a second slide.", source=None)
     df, n = T.df, len(T.df)
-    gut = 0.5
+    gut = GUTTER
     colw = (W - LEFT - RIGHT - gut) / 2
     lay = (0.31, 0.02, 0.6, 0.96)
     names = [SHORT_JF.get(f, f) for f in df.index]
@@ -1445,7 +1554,7 @@ def slide_column(prs):
     data = CategoryChartData()
     data.categories = list(df.fiscal_year)
     data.add_series("Internal fill rate (%)", list(df.internal_fill_pct))
-    frame, chart = add_chart(slide, XL_CHART_TYPE.COLUMN_CLUSTERED, data, width=8.0)
+    frame, chart = add_chart(slide, XL_CHART_TYPE.COLUMN_CLUSTERED, data, width=SIDE_CHART_W)
     plot_layout(chart, 0.02, 0.08, 0.96, 0.84)
     plot = chart.plots[0]
     plot.gap_width = BAND_GAP
@@ -1465,6 +1574,7 @@ def slide_column(prs):
     va.has_major_gridlines = False
     baseline(chart.category_axis)
     axis_ticks(chart.category_axis, 12, C.text)
+    takeaways(slide, D.points)
     return slide
 
 
@@ -1480,8 +1590,8 @@ def slide_dumbbell(prs):
         f"number, {n} at the top. Edit Data: change the market and McKesson X values; the gap labels on the right are "
         "typed text (Format Data Label › Text), so update them too. Key: the two dots above the top row are shapes.")
     rows = [(r.role, [float(r.market_median_k), float(r.internal_median_k)]) for r in df.itertuples()]
-    lay = (0.2, 0.06, 0.62, 0.92)
-    frame, chart = row_series_chart(slide, rows, LEFT, CHART_TOP, W - LEFT - RIGHT, CHART_H, x_min, layout=lay)
+    lay = (0.23, 0.06, 0.6, 0.92)                                          # names on one line at the left
+    frame, chart = row_series_chart(slide, rows, LEFT, CHART_TOP, SIDE_CHART_W, CHART_H, x_min, layout=lay)
     xy_axes(chart, n, x_min, x_max, 25, '"$"#,##0"K"')
     for ser, r in zip(chart.plots[0].series, df.itertuples()):
         hi = r.role in D.focus
@@ -1490,7 +1600,8 @@ def slide_dumbbell(prs):
         ser.format.line.color.rgb = rgb(C.context_light)
         ser.format.line.width = Pt(3)
         point_line(ser.points[1], None)                       # no segment from the label anchor to the first dot
-        dlbl(ser.points[0], ser=True, pos=XL_LABEL_POSITION.LEFT, size=11, color=C.headline if hi else C.text)
+        dlbl(ser.points[0], ser=True, pos=XL_LABEL_POSITION.LEFT, size=11, color=C.headline if hi else C.text,
+             box=(lay[0] * 0.95, 0.24 / CHART_H), align="r")
         point_marker(ser.points[1], C.context, 7, edge=None)
         point_marker(ser.points[2], C.negative if hi else C.focus, 9, edge=None)
         right = 1 if r.market_median_k >= r.internal_median_k else 2
@@ -1505,6 +1616,7 @@ def slide_dumbbell(prs):
         shape(g, MSO_SHAPE.OVAL, kx, ky - d / 2, d, d, color, name=f"Key: {lab}")
         text_box(g, kx + 0.18, ky - 0.12, 1.2, 0.24, lab, 11, C.text, anchor=MSO_ANCHOR.MIDDLE, wrap=False)
         kx += 1.15
+    takeaways(slide, D.points)
     return slide
 
 
@@ -1523,8 +1635,8 @@ def slide_slope(prs):
     order = [b for b in w.index if b != D.focus] + [D.focus]               # focus series last: drawn on top
     for b in order:
         data.add_series(b, [float(w.FY25[b]), float(w.FY26[b])])
-    frame, chart = add_chart(slide, XL_CHART_TYPE.LINE_MARKERS, data, width=8.4)
-    lay = (0.2, 0.06, 0.5, 0.84)
+    frame, chart = add_chart(slide, XL_CHART_TYPE.LINE_MARKERS, data, width=SIDE_CHART_W)
+    lay = (0.14, 0.06, 0.5, 0.84)                                         # room on the right for one-line names
     plot_layout(chart, *lay)
     fl, ft, fw, fh = frame_in(frame)
     ypos = lambda v: ft + fh * (lay[1] + lay[3] * (1 - (v - lo) / (hi - lo)))           # noqa: E731
@@ -1559,7 +1671,7 @@ def slide_slope(prs):
         dlbl(ser.points[0], val=True, pos=XL_LABEL_POSITION.LEFT, num_fmt='0"%"', color=txt, bold=f,
              dy=nudge0[b] if abs(nudge0[b]) > 0.002 else 0.0)
         dlbl(ser.points[1], val=True, ser=True, pos=XL_LABEL_POSITION.RIGHT, num_fmt='0"%"', color=txt, bold=f,
-             dy=nudge1[b] if abs(nudge1[b]) > 0.002 else 0.0)
+             dy=nudge1[b] if abs(nudge1[b]) > 0.002 else 0.0, box=(1 - lay[0] - lay[2] - 0.02, 0.24 / fh), align="l")
     va = chart.value_axis
     va.minimum_scale, va.maximum_scale = lo, hi
     va.visible = False
@@ -1568,6 +1680,7 @@ def slide_slope(prs):
     baseline(ca, visible=False)
     axis_ticks(ca, 12, C.headline)
     ca.tick_label_position = XL_TICK_LABEL_POSITION.HIGH                 # period headers on top
+    takeaways(slide, D.points)
     return slide
 
 
@@ -1585,8 +1698,8 @@ def slide_bubble(prs):
     s = data.add_series("Roles")
     for r in df.itertuples():
         s.add_data_point(r.genai_exposure_pct, r.median_pay_k, r.headcount)
-    frame, chart = add_chart(slide, XL_CHART_TYPE.BUBBLE, data, width=10.5)
-    plot_layout(chart, 0.08, 0.04, 0.84, 0.84)
+    frame, chart = add_chart(slide, XL_CHART_TYPE.BUBBLE, data, width=SIDE_CHART_W)
+    plot_layout(chart, 0.115, 0.04, 0.84, 0.84)
     plot = chart.plots[0]
     plot.bubble_scale = 50
     bp = chart._chartSpace.find(".//" + qn("c:bubbleChart"))
@@ -1605,8 +1718,8 @@ def slide_bubble(prs):
             fill(ser.points[i], C.focus)
             ser.points[i].format.line.color.rgb = rgb("#FFFFFF")
             ser.points[i].format.line.width = Pt(1)
-            dlbl(ser.points[i], text=D.short.get(r.role, r.role), color=C.headline, bold=True,      # labels apart
-                 pos=XL_LABEL_POSITION.LEFT if r.role == lowest else XL_LABEL_POSITION.RIGHT)
+            dlbl(ser.points[i], text=D.short.get(r.role, r.role), color=C.headline, bold=True,      # labels apart,
+                 pos=XL_LABEL_POSITION.LEFT if r.role == lowest else XL_LABEL_POSITION.ABOVE)       # inside the axis
     xa, ya = chart.category_axis, chart.value_axis
     xa.minimum_scale, xa.maximum_scale, xa.major_unit = 0, 70, 10
     ya.minimum_scale, ya.maximum_scale, ya.major_unit = 0, 160, 40
@@ -1622,6 +1735,7 @@ def slide_bubble(prs):
         r = tf.paragraphs[0].runs[0]
         r.font.size, r.font.bold, r.font.name = Pt(11), False, FONT
         r.font.color.rgb = rgb(C.text_muted)
+    takeaways(slide, D.points)
     return slide
 
 
