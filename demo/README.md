@@ -1,6 +1,6 @@
 # Data Viz Starter Kit · McKesson Edition, in one screen
 
-**Consulting-grade charts, reproduced with ease in the tools you already use.**
+**Your own data storytelling team, ready when you are.**
 
 This page is the kit on one screen: a short explainer video and the real outputs it shows. What the kit is and why it exists: the [README](../README.md).
 

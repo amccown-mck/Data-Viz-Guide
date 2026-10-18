@@ -123,17 +123,17 @@ hr {{ border: 0; border-top: 1px solid var(--rule); margin: 40px 0 16px; }}
 <main>
 <p class="tag">McKesson Edition</p>
 <h1>Data Viz Starter Kit</h1>
-<p class="lead">Consulting-grade charts, reproduced with ease in the tools you already use.</p>
+<p class="lead">Your own data storytelling team, ready when you are.</p>
 <p class="meta">Version {v} · {date.today():%B %Y} · All example data is synthetic</p>
 
-<p>Most charts get made at the end of the analysis, in whatever tool is open, starting from that tool's defaults. The
-know-how that makes a chart work gets rebuilt every time: which chart answers the question, what to grey out, what the
-title should say, which colors are ours. So the same numbers look different from one tool to the next.</p>
+<p>Top consulting firms have a team behind every executive presentation, people whose whole job is turning analysis
+into a chart a leader gets at a glance. This kit puts that know-how in your hands. You get a guide that teaches the
+craft, templates and code that start you off right in PowerPoint, Excel, Power BI and Python, and a quick check before
+you share. Your AI assistant can use it too.</p>
 
-<p>This kit writes that know-how down once and builds it into the tools you already use. You get a guide that says which chart
-and why, PowerPoint and Excel templates that start on-brand, themes for Power BI and code, a checklist to run before a
-chart goes out, and a playbook your AI assistant works from. It is what a consulting firm's chart
-practice gives its consultants, in one folder.</p>
+<p>Clear charts move decisions forward. When the point of a chart is obvious, a meeting spends its time on what to do,
+not on what the chart means. That's the standard top consulting firms hold every chart to, and it's a craft anyone can
+learn with the right tools. This kit makes it the easy path for every McKesson team.</p>
 
 <div class="first">
 <p><b>Start here:</b> open <a href="guide/McKesson-DataViz-Guide.html">guide/McKesson-DataViz-Guide.html</a> in your
