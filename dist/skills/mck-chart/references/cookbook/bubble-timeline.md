@@ -148,7 +148,7 @@ fig.show()
 `sizeref = 2 * max_value / max_diameter_px**2` with `sizemode="area"` keeps area proportional to the value. The tooltip carries the exact number and the employer name when that's appropriate to share.
 
 ### Excel and PowerPoint
-1. **Theme:** install the `office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
+1. **Theme:** install the `assets/office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
 2. Lay out the data as columns `Date` (Excel date or decimal year), `Row` (1 = top row, 2, 3, …) and `Size`, and **sort by Size, largest first**. Excel draws bubbles in data order, so the small ones end up on top.
 3. Click **Insert → Insert Scatter (X, Y) or Bubble Chart → Bubble**. Under **Chart Design → Select Data**, set X = Date, Y = Row and bubble size = Size. Use one series for context rows and a second series for the focus row.
 4. Press **Ctrl+1 → Series Options →** set **Size represents: Area of bubbles** (never Width) and **Scale bubble size to** ~50–80. Fill = **Accent 1 `#005A8C`** (context series: Hex `B4B0A5`) at **10% transparency**, **Border: Solid line, White, 0.75 pt**.

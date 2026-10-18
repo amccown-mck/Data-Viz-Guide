@@ -147,7 +147,7 @@ If you use `go.Scatter` markers instead of shapes, set `marker.sizemode="area"` 
 
 ### Excel and PowerPoint
 **PowerPoint shapes (most precise for ≤ 12 bubbles):**
-1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `office/` (see [bar.md](bar.md#excel-and-powerpoint)).
+1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `assets/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
 2. In Excel, compute each diameter from the **area** rule: `=ROUND(3 * SQRT(B2 / MAX($B$2:$B$8)), 2)`. That gives inches, with the largest bubble 3 in across. A 4× value gets a 2× diameter.
 3. In PowerPoint, **Insert › Shapes › Oval**. In **Format Shape › Size**, type the computed value into both **Height** and **Width**. Set **Fill: Solid** `B4B0A5` (headline bubble `005A8C`), **Line: No line**, and no shadow or 3D effects.
 4. Select all the bubbles, then use **Shape Format › Align › Align Bottom** (shared baseline) and **Distribute Horizontally**. Order them largest to smallest.

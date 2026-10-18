@@ -16,6 +16,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 TOKENS = json.loads((ROOT / "tokens" / "tokens.json").read_text(encoding="utf-8"))
+VERSION_TEXT = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
 DIST = ROOT / "dist"
 
 C = TOKENS["color"]
@@ -874,6 +875,123 @@ def build_office() -> None:
              "</a:fontScheme>\n")
     write("office/Theme Colors/McKesson Data Viz.xml", colors)
     write("office/Theme Fonts/McKesson Data Viz.xml", fonts)
+    write("office/pptxgenjs-theme.js", pptxgenjs_theme(slots))
+
+
+# The McKesson Standard Template's slide grid (inches, 16:9), as office/build_office.py lays out the .potx master.
+OFFICE_GRID = {"left": 0.39, "right": 0.39, "width": 12.55, "title_top": 0.38, "title_h": 0.93, "sub_top": 1.32,
+               "sub_h": 0.35, "chart_top": 1.8, "chart_h": 4.6, "foot_top": 6.45, "foot_h": 0.5}
+
+
+def pptxgenjs_theme(slots: dict) -> str:
+    """The theme as a pptxgenjs module: color roles, Office scheme slots, text styles on the grid, and chart options
+    (bar, column, line) that follow the cookbook's Excel / PowerPoint recipes. Claude.ai's pptx skill builds decks
+    with pptxgenjs, so this is how an agent there gets a native, editable chart in the house style."""
+    def hx(path: str) -> str:
+        return v(path).lstrip("#").upper()
+
+    def face(weight: int) -> str:                             # Office lists Light, Medium and SemiBold as their own faces
+        return {300: f"{FONT} Light", 500: f"{FONT} Medium", 600: f"{FONT} SemiBold"}.get(weight, FONT)
+
+    def text(role_name: str, **extra) -> dict:
+        r = role(role_name)
+        d = {"fontFace": face(r["weight"]), "fontSize": r["size_pt"], "color": r["hex"].lstrip("#").upper()}
+        if r["weight"] >= 700:
+            d["bold"] = True
+        return {**d, **extra}
+
+    g = OFFICE_GRID
+    box = {"x": g["left"], "w": g["width"], "align": "left", "margin": 0}
+    gap_pct = int(round(100 * (1 - K["bar"]["band_fill"]) / K["bar"]["band_fill"], -1))      # 0.67 -> 50
+    colors = {
+        "focus": hx("chart.focus"), "focusLight": hx("chart.focus_light"), "context": hx("chart.context"),
+        "contextLight": hx("chart.context_light"), "accent": hx("chart.accent"), "total": hx("chart.total"),
+        "annotation": hx("chart.annotation"), "negative": hx("semantic.negative"),
+        "negativeText": hx("semantic.negative_text"), "positive": hx("semantic.positive"),
+        "positiveText": hx("semantic.positive_text"), "axis": hx("chart.axis"), "grid": hx("chart.grid"),
+        "title": hx("text.title"), "headline": hx("text.headline"), "text": hx("text.primary"),
+        "muted": hx("text.muted"), "surfaceSubtle": hx("surface.subtle"), "white": "FFFFFF",
+    }
+    axis_label = {"catAxisLabelFontFace": face(role("tick")["weight"]), "catAxisLabelFontSize": role("tick")["size_pt"],
+                  "catAxisLabelColor": colors["muted"], "catAxisMajorTickMark": "none", "catAxisMinorTickMark": "none",
+                  "catAxisLineShow": True, "catAxisLineColor": colors["axis"], "catAxisLineSize": K["axis"]["width_pt"]}
+    labels = {"showValue": True, "dataLabelPosition": "outEnd", "dataLabelFontFace": face(role("label")["weight"]),
+              "dataLabelFontSize": role("label")["size_pt"], "dataLabelColor": colors["text"],
+              "dataLabelFormatCode": "0.0"}
+    frame = {"showLegend": False, "showTitle": False, "chartArea": {"roundedCorners": False},
+             "valAxisMinVal": 0, "layout": {"x": 0.2, "y": 0.04, "w": 0.76, "h": 0.9}}
+    bar = {"barDir": "bar", "barGrouping": "clustered", "barGapWidthPct": gap_pct, **labels, "valAxisHidden": True,
+           "valGridLine": {"style": "none"}, "catGridLine": {"style": "none"}, **axis_label,
+           "catAxisOrientation": "maxMin", **frame}
+    column = {**bar, "barDir": "col", "catAxisOrientation": "minMax"}
+    line = {"lineSize": K["line"]["width_pt"], "lineDataSymbol": "none", "showValue": False,
+            "valGridLine": {"color": colors["grid"], "size": K["grid"]["width_px"], "style": "solid"},
+            "catGridLine": {"style": "none"}, "valAxisLabelFontFace": face(role("tick")["weight"]),
+            "valAxisLabelFontSize": role("tick")["size_pt"], "valAxisLabelColor": colors["muted"],
+            "valAxisLineShow": False, **axis_label, **frame}
+    theme = {
+        "version": VERSION_TEXT, "font": FONT, "fontLight": face(300), "fontMedium": face(500), "fontSemiBold": face(600),
+        "colors": colors,
+        "categorical": [c.lstrip("#").upper() for c in CAT],
+        "steps": [c.lstrip("#").upper() for c in C["steps"]["values"]],
+        "schemeColors": {k: h.lstrip("#").upper() for k, h in slots.items()},
+        "theme": {"headFontFace": FONT, "bodyFontFace": FONT, "lang": "en-US"},
+        "grid": {"left": g["left"], "right": g["right"], "width": g["width"],
+                 "title": {"y": g["title_top"], "h": g["title_h"]}, "subtitle": {"y": g["sub_top"], "h": g["sub_h"]},
+                 "chart": {"y": g["chart_top"], "h": g["chart_h"]}, "source": {"y": g["foot_top"], "h": g["foot_h"]}},
+        "text": {
+            "slideTitle": text("slide_title", **box, y=g["title_top"], h=g["title_h"], valign="top"),
+            "headline": text("headline", **box, valign="top"),
+            "subtitle": text("subtitle", **box, y=g["sub_top"], h=g["sub_h"], valign="top"),
+            "label": text("label"),
+            "labelFocus": {**text("label"), "fontFace": FONT, "bold": True, "color": colors["headline"]},
+            "tick": text("tick"),
+            "annotation": text("annotation"),
+            "source": text("footnote", **box, y=g["foot_top"], h=g["foot_h"], valign="bottom"),
+            "kpi": text("kpi"),
+        },
+        "barChart": bar, "columnChart": column, "lineChart": line,
+        "benchmarkLine": {"line": {"color": colors["total"], "width": K["axis"]["width_pt"], "dashType": "dash"}},
+        "benchmarkLabel": {**text("footnote"), "color": colors["annotation"], "fill": {"color": "FFFFFF"},
+                           "margin": 0, "align": "center"},
+    }
+    body = json.dumps(theme, indent=2)
+    body = re.sub(r'^(\s*)"(\w+)":', r"\1\2:", body, flags=re.M)              # JS object keys
+    return f"""// pptxgenjs-theme.js: the McKesson Data Viz theme for pptxgenjs (https://gitbrent.github.io/PptxGenJS/).
+// GENERATED by tokens/build.py from tokens/tokens.json (Data Viz Starter Kit, McKesson Edition v{VERSION_TEXT}).
+// Do not edit; change the tokens and rebuild.
+//
+// Use it in Claude.ai (its pptx skill builds decks with pptxgenjs) or in any Node project:
+//   const pptxgen = require("pptxgenjs");
+//   const MCK = require("./pptxgenjs-theme.js");
+//   const pptx = new pptxgen();
+//   pptx.layout = "LAYOUT_WIDE";                      // 13.33 x 7.5 in, the grid in MCK.grid
+//   pptx.theme = MCK.theme;                           // Libre Franklin for headings and body
+//   const slide = pptx.addSlide();
+//   slide.addText(headline, MCK.text.slideTitle);     // 26 pt Bold McKesson Blue, or a title placeholder in a master
+//   slide.addText(subtitle, MCK.text.subtitle);
+//   slide.addChart(pptx.ChartType.bar, [{{ name: "Attrition", labels, values }}],
+//     {{ ...MCK.barChart, x: MCK.grid.left, y: MCK.grid.chart.y, w: MCK.grid.width, h: MCK.grid.chart.h,
+//        chartColors: MCK.pointColors(labels, focusLabels), dataLabelFormatCode: '0.0"%"', altText: headline }});
+//   slide.addText(source, MCK.text.source);
+// Benchmark lines, bold focus category labels and callouts are shapes drawn over the pinned plot area
+// (MCK.barChart.layout): see office-setup.md, "A native chart from code with pptxgenjs".
+// Colors are hex without "#", as pptxgenjs wants. pptxgenjs's `theme` sets fonts only; the Office color scheme
+// (MCK.schemeColors, dk1/dk2/lt2/accent1-6 in the categorical order) is what the kit's .potx carries, so the
+// chart options name every color explicitly and look right in any deck.
+const MCK = {body};
+
+// Per-point colors for a single-series bar or column: context grey for every label, focus blue for the ones the
+// headline names (at most 2), navy for the one accent. With an accent and no focus, the base is light blue
+// (the uniform + accent pattern). Orange (MCK.colors.negative) only when a value means "worse".
+MCK.pointColors = function (labels, focus = [], accent = [], base) {{
+  const f = new Set(focus), a = new Set(accent);
+  const b = base || (accent.length && !focus.length ? MCK.colors.focusLight : MCK.colors.context);
+  return labels.map((l) => (a.has(l) ? MCK.colors.accent : f.has(l) ? MCK.colors.focus : b));
+}};
+
+if (typeof module !== "undefined") module.exports = MCK;
+"""
 
 
 # ---------------------------------------------------------------- accessibility report

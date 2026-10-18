@@ -115,7 +115,7 @@ fig.write_html("out/stacked-100.html", include_plotlyjs="cdn")
 If the data are counts rather than shares, use `barnorm="percent"` in `update_layout` and put the counts and n in `hovertemplate`. Suppress groups with n < 10 before plotting.
 
 ### Excel and PowerPoint
-1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin). Install them from `office/` as described in [bar.md](bar.md#excel-and-powerpoint).
+1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin). Install them from `assets/office/` as described in [bar.md](bar.md#excel-and-powerpoint).
 2. Select the data, then **Insert › Charts › Insert Column or Bar Chart › 100% Stacked Bar** (or **Stacked Column** for absolute values). For horizontal bars, set **Format Axis › Categories in reverse order** so the sheet order runs top-down.
 3. **Chart Design › Select Data › Legend Entries (Series)**: use the ▲▼ arrows so the story series is **first** (baseline/left) or **last** (right end). Never leave it in the middle.
 4. **Format Data Series › Series Options › Gap Width 50%**, Series Overlap 100%. For each series, set **Fill › Solid** (story `005A8C`, or `143359` for a navy exception; others `B4B0A5` and `DEDBD1`) and **Border › Solid line, White, 1.5 pt**.

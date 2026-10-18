@@ -56,6 +56,40 @@ Once the theme is applied, the color picker's top rows are the McKesson palette,
 
 Each chart type's click-by-click recipe is in its cookbook page under **Excel and PowerPoint**, for example [bar.md](cookbook/bar.md#excel-and-powerpoint).
 
+## A native chart from code with pptxgenjs
+In Claude.ai (its pptx skill builds decks with [pptxgenjs](https://gitbrent.github.io/PptxGenJS/)) or any Node project, build the chart as a **native, editable PowerPoint chart**, never a pasted picture. The theme is generated from the tokens as [`dist/office/pptxgenjs-theme.js`](../dist/office/pptxgenjs-theme.js) (`assets/office/pptxgenjs-theme.js` in the portable skill): color roles, the Office scheme slots, text styles on the template grid, and chart options for bar, column and line that match the click-by-click recipes above.
+
+```js
+const pptxgen = require("pptxgenjs");
+const MCK = require("./pptxgenjs-theme.js");
+const pptx = new pptxgen();
+pptx.layout = "LAYOUT_WIDE";                                   // 13.33 × 7.5 in, the grid in MCK.grid
+pptx.theme = MCK.theme;                                        // Libre Franklin for headings and body
+pptx.defineSlideMaster({ title: "Chart - title only", background: { color: "FFFFFF" },
+  objects: [{ placeholder: { options: { name: "title", type: "title", ...MCK.text.slideTitle } } }] });
+const slide = pptx.addSlide({ masterName: "Chart - title only" });
+slide.addText(headline, { placeholder: "title" });             // 26 pt Bold McKesson Blue, editable as the title
+slide.addText(subtitle, MCK.text.subtitle);                    // 14 pt #505050 at 1.32 in
+const focus = ["Pharmacy Technician", "Distribution Center Associate"];
+slide.addChart(pptx.ChartType.bar, [{ name: "Voluntary attrition", labels, values }], {
+  ...MCK.barChart, x: MCK.grid.left, y: MCK.grid.chart.y, w: MCK.grid.width, h: MCK.grid.chart.h,
+  chartColors: MCK.pointColors(labels, focus), dataLabelFormatCode: '0.0"%"',
+  valAxisMaxVal: 30, altText: headline });                     // fix the axis so overlays can be placed
+slide.addText(source, MCK.text.source);                        // Light 9 pt #737373, bottom-left
+pptx.writeFile({ fileName: "attrition-by-job-family.pptx" });
+```
+
+What the options do: `barDir: "bar"` with `catAxisOrientation: "maxMin"` puts the first row on top; `barGapWidthPct: 50` is the 2 : 1 bar-to-gap rule; the value axis and both gridlines are hidden because the bars carry outside-end labels in Libre Franklin Medium 12 pt; the category axis keeps a 0.75 pt `#8C8C8C` zero baseline with no tick marks; `chartArea.roundedCorners: false` keeps the chart flat; `layout` pins the plot area to a fixed fraction of the chart frame. `MCK.pointColors(labels, focus, accent)` gives context grey to every bar, focus blue to the ones the headline names (at most two) and navy to the one accent; pass `MCK.colors.negative` yourself only where a value means "worse".
+
+**Overlays must be shapes.** PowerPoint charts cannot draw a labelled benchmark line, bold one category label or add a bracket, so draw those with `slide.addShape` and `slide.addText` on top of the chart, positioned from the pinned plot area. With `layout: { x, y, w, h }` as fractions of the chart frame `(cx, cy, cw, ch)` and the value axis fixed at `[0, max]`, a value `v` sits at `cx + cw * (layout.x + layout.w * v / max)` inches:
+- **Benchmark line:** `slide.addShape(pptx.ShapeType.line, { x, y: cy + ch * layout.y, w: 0, h: ch * layout.h, ...MCK.benchmarkLine })`, then its label (`"Enterprise 19.9%"`, `MCK.benchmarkLabel`, white fill so it sits over the bars) just above the plot. When a value label sits within about 2 pt of the line, give the label a white backing rectangle or draw the line in segments that skip it.
+- **Bold focus labels:** hide the chart's category labels (`catAxisHidden: true`, keeping the baseline as a drawn line) and add one text box per row, `MCK.text.labelFocus` for the focus rows and `MCK.text.tick` for the rest, right-aligned to the plot's left edge; or leave the axis labels and overlay only the focus names.
+- **Callouts, brackets, a derived-count column:** text boxes and lines in `MCK.colors.annotation`, flat (no shadow, square corners).
+
+Say in the speaker notes that the overlays are shapes and must be moved by hand when the data changes. Set `altText` on the chart to the headline. Before handing back, render the slide (LibreOffice: `soffice --headless --convert-to pdf`) and look at it: the title wraps to at most two lines without touching the subtitle, labels clear the benchmark line, and the fallback font is not in use.
+
+**Theme colors.** pptxgenjs's `theme` option sets the fonts only, so the deck's color picker shows Office's default scheme unless the deck starts from the kit's `.potx` or its `theme1.xml` carries the McKesson scheme (`MCK.schemeColors`: `dk2` McKesson Blue for titles, `lt2` Light Sand, `accent1`–`accent6` in the categorical order). The chart and text options name every color explicitly, so the slide looks right either way; apply **Design › Variants › Colors › McKesson Data Viz** afterwards to get the palette into the picker.
+
 ## Starter deck, slide by slide
 Every slide uses the *Title Only* layout: the headline goes in the title placeholder (Bold 26 pt McKesson Blue `#005A8C`, from the master), the subtitle is a 14 pt `#505050` text box at 1.32 in, and the footnote and source are Libre Franklin Light 9 pt `#737373`, bottom-left, ending at 6.95 in. Charts are native: **right-click › Edit Data** changes the numbers. Data labels are Libre Franklin Medium (Bold where the headline points). Drawn shapes are flat (no shadow, square corners). Headlines are written from the sample data, so rewrite them for yours. The speaker notes on each slide repeat the steps below. The chart workbook has the same charts, plus formulas, on the sheets named in each entry.
 

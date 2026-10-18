@@ -140,7 +140,7 @@ fig.show()
 Put the underlying rate in the hover text (`customdata`) so readers can see the gaps that ranks hide. For a 1:1 social card, set `width=height=1080`, use the Deep Navy background with `focus_on_dark`, and add the logo and source to the image itself.
 
 ### Excel and PowerPoint
-1. **Theme:** install the `office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
+1. **Theme:** install the `assets/office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
 2. Arrange the data with periods across the columns and one row per item (ranks or values). Select it and click **Insert → Insert Line or Area Chart → Line with Markers**. If items end up on the x-axis, click **Chart Design → Switch Row/Column**.
 3. For ranks: **Vertical axis → Format Axis → Values in reverse order**, Bounds 0.5 to n + 0.5, then **Labels: None** and **Line: No line**. Delete the gridlines, the legend and the chart title. For a value slope, keep one fixed min/max scale.
 4. Context series: **Ctrl+1 → Fill & Line → Line → Solid, Hex `B4B0A5`, 1 pt**. Under **Marker → Built-in, Circle, Size 14**, set **Fill `#B4B0A5`** and **Border White 1.5 pt**. Press **F4** to repeat on the next series.

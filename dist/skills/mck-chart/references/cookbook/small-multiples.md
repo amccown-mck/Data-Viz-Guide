@@ -128,7 +128,7 @@ fig.show()
 `px.line(..., facet_col="bu", facet_col_wrap=3)` is quicker for exploration, but it can't draw the grey context of the other groups in each panel. Use the loop above for explanatory charts. On mobile, re-flow the grid to one column.
 
 ### Excel and PowerPoint
-1. **Theme:** install the `office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
+1. **Theme:** install the `assets/office` color and font XMLs and Libre Franklin, then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint.
 2. Build **one** panel completely first: **Insert → Insert Line or Area Chart → 2-D Line → Line**, with all groups as series. Set every series to **Hex `DEDBD1`, 1 pt** and the panel's own group to **Accent 1 `#005A8C`, 2.25 pt**. Set **Marker: None**, delete the legend, and replace the chart title with the group name (Libre Franklin 11 pt, left-aligned).
 3. **Fix the scale:** **Vertical axis → Format Axis → Bounds Minimum / Maximum** to fixed values (e.g. 5 and 15) and **Major unit** to 5. Never leave the bounds on Auto. This is what makes the panels comparable.
 4. Add an end-value data label to the own series' **last point** (**Add Data Label → Value, Position: Right**, bold, in the series color).

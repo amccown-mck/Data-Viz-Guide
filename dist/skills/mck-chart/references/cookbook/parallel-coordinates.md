@@ -208,7 +208,7 @@ print("saved", out)
 - For web pages, use the chart-card pattern in [`examples/python/gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py), with the headline, subtitle and source in HTML.
 
 ### Excel and PowerPoint
-1. Install the theme once (see [bar.md](bar.md#excel-and-powerpoint)): **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (PowerPoint: **Design › Variants › Colors / Fonts**), from `office/`. Fonts are Libre Franklin.
+1. Install the theme once (see [bar.md](bar.md#excel-and-powerpoint)): **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (PowerPoint: **Design › Variants › Colors / Fonts**), from `assets/office/`. Fonts are Libre Franklin.
 2. **Normalize first.** Build a helper table with one row per site and one column per measure, **in your chosen axis order**. Use `=(B2-MIN(B$2:B$19))/(MAX(B$2:B$19)-MIN(B$2:B$19))`; for reversed axes, `=1-(…)`. Put each axis's real range in the header, e.g. `Overtime (hrs/FTE/mo)` + `Alt+Enter` + `4–18`.
 3. Select the helper table, then **Insert › Charts › Insert Line or Area Chart › 2-D Line › Line**. If the measures appear as series, use **Chart Design › Switch Row/Column** so the **measures are the categories** (x-axis) and each site is a series.
 4. Double-click the vertical axis: **Format Axis › Axis Options › Bounds › Minimum 0, Maximum 1**. Then select it and press **Delete**. Delete the horizontal gridlines, the legend and the chart title.

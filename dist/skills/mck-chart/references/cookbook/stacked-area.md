@@ -136,7 +136,7 @@ fig.show()
 Plotly stacks traces in the order you add them, so add the focus trace first to put it on the baseline. Add `groupnorm="percent"` on the first trace for the 100% variant.
 
 ### Excel and PowerPoint
-1. **Theme:** copy the `office` color and font XMLs into `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `...\Theme Fonts\`. Then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint. Install Libre Franklin.
+1. **Theme:** copy the `assets/office` color and font XMLs into `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `...\Theme Fonts\`. Then apply **Page Layout → Colors / Fonts → McKesson Data Viz** in Excel, or **Design → Variants ▾ → Colors / Fonts** in PowerPoint. Install Libre Franklin.
 2. Put years in the first column and one column per segment, with the **focus segment first** and the most volatile last. Click **Insert → Insert Line or Area Chart → 2-D Area → Stacked Area** (or **100% Stacked Area**).
 3. If the order is wrong, use **Chart Design → Select Data → Legend Entries** and the ▲/▼ arrows so the focus series is first, which puts it on the bottom.
 4. Fill each series with **Ctrl+1 → Fill & Line → Fill → Solid fill**. The focus series gets **Accent 1 `#005A8C`**; the others get **More Colors → Hex** `B4B0A5`, `DEDBD1`, `EFEDE7`. For every series set **Border → Solid line, White, 0.75 pt**.

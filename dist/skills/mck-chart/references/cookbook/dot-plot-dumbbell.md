@@ -117,7 +117,7 @@ fig.write_html("out/dumbbell.html", include_plotlyjs="cdn")
 
 ### Excel and PowerPoint
 Excel has no native dumbbell; build it from an **XY scatter** once, then save it as a template.
-1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `office/` (see [bar.md](bar.md#excel-and-powerpoint)).
+1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `assets/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
 2. Set up the sheet with these columns: `Role`, `Market`, `McKesson`, `Row` (1…n), `Plus = MAX(0, Market − McKesson)`, `Minus = MAX(0, McKesson − Market)`, `LabelX = MAX(Market, McKesson) + 3`, `GapPct = (McKesson − Market) / Market`, `GapLabel = IF(GapPct<0,"−","+")&TEXT(ABS(GapPct),"0.0%")` and `AxisX` (the axis minimum, e.g. 35).
 3. **Insert › Charts › Scatter (markers only)**. In **Select Data**, add the series *Market* (X = Market, Y = Row) and *McKesson* (X = McKesson, Y = Row).
 4. Select *McKesson* › **Chart Elements (+) › Error Bars › More Options**. Delete the vertical error bars. For the horizontal ones, set **Direction: Both**, **End Style: No Cap**, **Error Amount › Custom › Specify Value** (Positive = `Plus`, Negative = `Minus`), and **Line: solid `DEDBD1`, 3 pt, Round cap**.
