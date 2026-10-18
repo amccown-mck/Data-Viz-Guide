@@ -2,7 +2,7 @@
 
 This page is the source of truth for how the kit is named and described. The README, the guide's cover and overview, `START-HERE.html` in the release bundle, `demo/README.md` and the agent files all follow it. Change the wording here first, then carry it through.
 
-**Second pass, 2026-10-18.** The first pass took its language from the explainer video: Sam's Tuesday, exec-ready by 3, the three hats. That story works in the video, which has a character and a clock to carry it. Product copy is read by people who haven't seen the video, so it now says in its own words what the kit is, the problem it solves, why it isn't another style guide, who it's for and what you get. The video keeps its own script (`video/explainer-exec-ready-by-3/`). Product copy doesn't quote it.
+**Second pass, 2026-10-18.** The first pass took its language from the explainer video: Sam's Tuesday, exec-ready by 3, the three hats. That story works in the video, which has a character and a clock to carry it. Product copy is read by people who haven't seen the video, so it now says in its own words what the kit is, why it matters, why it isn't another style guide, who it's for and what you get. It leads with what good looks like, not with a pain point, so it reads well to the people making charts and to the leaders reading them. The video keeps its own script (`video/explainer-exec-ready-by-3/`). Product copy doesn't quote it.
 
 ## Name
 
@@ -14,15 +14,19 @@ This page is the source of truth for how the kit is named and described. The REA
 
 ## One line
 
-Consulting-grade charts, reproduced with ease in the tools you already use.
+Your own data storytelling team, ready when you are.
 
-Where there is room for a second line:
+## In one breath
 
-Which chart answers the question, how to make the point land, the brand already set, and a check before it goes out: built into PowerPoint, Excel, Python, Power BI and your AI assistant.
+A kit that helps anyone at McKesson make charts that look and read like a top consulting firm made them.
 
-## The problem
+## What it is
 
-Most charts at McKesson are made by people for whom charts are part of the job, not the job. The analysis is careful. The chart gets made at the end, in whatever tool is open, starting from that tool's defaults. The know-how that makes a chart work lives in a few people's heads and in old decks, so it gets rebuilt every time: which chart answers this question, what to grey out, what the title should claim, which colors are ours. So the same numbers look different in Excel, Python, Power BI and a chat window, reviewers send back the same fixes, and good analysis reaches leaders as a chart they have to decode.
+Top consulting firms have a team behind every executive presentation, people whose whole job is turning analysis into a chart a leader gets at a glance. The Data Viz Starter Kit puts that know-how in your hands. You get a guide that teaches the craft, templates and code that start you off right in PowerPoint, Excel, Power BI and Python, and a quick check before you share. Your AI assistant can use it too.
+
+## Why it matters
+
+Clear charts move decisions forward. When the point of a chart is obvious, a meeting spends its time on what to do, not on what the chart means. That's the standard top consulting firms hold every chart to, and it's a craft anyone can learn with the right tools. This kit makes it the easy path for every McKesson team.
 
 ## Why it isn't another style guide
 
@@ -31,23 +35,23 @@ A style guide describes good charts. This kit makes them the default.
 - **The rules are built into the tools.** Every color, font and chart rule lives in one file, `tokens/tokens.json`, and is generated into the PowerPoint template, the Excel workbook, the Power BI theme, the web and R themes and the `mckviz` Python package. A new chart starts on-brand instead of being fixed later. Change a line and every theme, template and example updates.
 - **The rules are written to be checked.** Each one is testable. A reviewer has the QA checklist, code has `mv.lint`, and an AI assistant works from the rules and runs the checks itself before you see the chart.
 
-## The frame: a consulting firm's chart practice, on call
+## What you get: the team, piece by piece
 
-The owner's own words for it: a mini consulting firm at the ready, top-notch data viz reproduced with ease. A consulting firm's charts look the way they do because of a practice behind them, not one talented person. The kit packages that practice so one analyst can have it:
+The owner's own words for it: a mini consulting firm at the ready, top-notch data viz reproduced with ease. A consulting firm's charts look the way they do because of the data storytelling team behind them, not one talented person. The kit packages that team's know-how so anyone can have it:
 
-| What a firm gives you | What the kit gives you |
+| What a firm's team gives you | What the kit gives you |
 |---|---|
-| **Someone who knows which chart** | **The guide and chart chooser.** Name the question; the chooser names the chart and says why. Fundamentals, formats and 12 chart families, plus a cheat sheet, as a website, a single offline file and a 16:9 PDF |
+| **A data storytelling expert who knows which chart** | **The guide and chart chooser.** Name the question; the chooser names the chart and says why. Fundamentals, formats and 12 chart families, plus a cheat sheet, as a website, a single offline file and a 16:9 PDF |
 | **A house style** | **Themes and templates generated from one file**, for PowerPoint, Excel, Power BI, HTML/CSS, Plotly, Vega-Lite, matplotlib and ggplot2, with native, editable Office charts |
-| **Worked exhibits to copy** | **The cookbook.** 23 chart types, each with a spec table, do/don't rules and tested code or click-by-click steps for every platform. In Python, `mckviz` adds the builders, labels and number formats |
-| **A review before it goes out** | **The QA checklist and `mv.lint`**, so the same fixes stop coming back |
+| **Worked examples to copy** | **The cookbook.** 23 chart types, each with a spec table, do/don't rules and tested code or click-by-click steps for every platform. In Python, `mckviz` adds the builders, labels and number formats |
+| **A review before it reaches an executive** | **The QA checklist and `mv.lint`** |
 | **Associates who follow the house rules** | **The agent playbook**: the full `AGENTS.md`, the portable `mck-chart` skill and the one-page rules file |
 
-Use the frame to explain the kit; don't promise a firm. The kit is a practice you run yourself.
+Use the frame to explain the kit; don't promise a firm. The kit is the know-how and the tools; you still make the call on the story.
 
 ## Who it's for
 
-Anyone at McKesson whose work ends in a chart: the analyst building the monthly deck, the consultant shaping a recommendation for leaders, the data scientist whose model has to land with people who won't read the notebook. Most of us are all three in a given week, so the kit is organized by where you're working, not who you are. One set of rules, three ways in:
+Anyone at McKesson who needs to communicate with data: analysts, consultants, data scientists, and the leaders who present their work. People move between tools all week, so the kit is organized by where you're working, not who you are. One set of rules, three ways in:
 
 | Way in | Tools | Start with |
 |---|---|---|
@@ -67,7 +71,7 @@ Anyone at McKesson whose work ends in a chart: the analyst building the monthly 
 
 ## Voice
 
-Plain, warm, specific. Sentence case. Short sentences. Write to the person making the chart, about their situation: the deadline, the defaults, the reviewer, the leader who has to read it. Numbers in headlines are computed, never eyeballed. "We" means the people making charts. No hype: say what the kit does and let the charts make the case. The video can be playful in its own way; product copy doesn't borrow its characters or its clock.
+Plain, warm, positive, specific. Sentence case. Short sentences. Lead with what good looks like and what the reader can do, not with what goes wrong; the copy should read well to the person making the chart and to the executive reading it. Lean on the consulting-firm comparison and "executive-ready" to say what sets the kit apart from templates, but don't name a firm. Numbers in headlines are computed, never eyeballed. "We" means the people making charts. No hype: say what the kit does and let the charts make the case. The video can be playful in its own way; product copy doesn't borrow its characters or its clock.
 
 ## Call to action
 

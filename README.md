@@ -1,12 +1,12 @@
 # Data Viz Starter Kit Â· McKesson Edition
 
-Consulting-grade charts, reproduced with ease in the tools you already use.
+**Your own data storytelling team, ready when you are.**
 
 > Version 1.1.0 (see [CHANGELOG.md](CHANGELOG.md); the version lives in [VERSION](VERSION)). How we name and describe the kit: [docs/positioning.md](docs/positioning.md). What's next: [ROADMAP.md](ROADMAP.md). License: MIT ([LICENSE](LICENSE)); fonts and map data carry their own open licenses, listed there. Maintainer: Ashley McCown, Workforce Innovation, via [issues](https://github.com/amccown-mck/Data-Viz-Guide/issues).
 
-**The problem.** Most charts at McKesson are made by people for whom charts are part of the job, not the job. The analysis is careful. The chart gets made at the end, in whatever tool is open, starting from that tool's defaults. The know-how that makes a chart work lives in a few people's heads and in old decks, so it gets rebuilt every time: which chart answers this question, what to grey out, what the title should claim, which colors are ours. So the same numbers look different in Excel, Python, Power BI and a chat window, reviewers send back the same fixes, and good analysis reaches leaders as a chart they have to decode.
+**What it is.** Top consulting firms have a team behind every executive presentation, people whose whole job is turning analysis into a chart a leader gets at a glance. The Data Viz Starter Kit puts that know-how in your hands. You get a guide that teaches the craft, templates and code that start you off right in PowerPoint, Excel, Power BI and Python, and a quick check before you share. Your AI assistant can use it too.
 
-**What the kit does.** It gives you what a consulting firm's chart practice gives its consultants: someone who knows which chart, a house style, worked exhibits to copy, a review before anything goes out, and associates who follow the house rules. The rules are short: start from the question, write the finding as the headline, grey for context with one blue focus, honest scales, direct labels, a source line, no group under 10 people.
+**Why it matters.** Clear charts move decisions forward. When the point of a chart is obvious, a meeting spends its time on what to do, not on what the chart means. That's the standard top consulting firms hold every chart to, and it's a craft anyone can learn with the right tools. This kit makes it the easy path for every McKesson team. The rules are short: start from the question, write the finding as the headline, grey for context with one blue focus, honest scales, direct labels, a source line, no group under 10 people.
 
 **Why it isn't another style guide.** A style guide describes good charts. This kit makes them the default. Every color, font and chart rule lives in one file and is generated into the PowerPoint template, the Excel workbook, the Power BI theme, the web and R themes and the `mckviz` Python package, so a new chart starts on-brand instead of being fixed later. And the rules are written to be checked: a reviewer has a checklist, code has `mv.lint`, and an AI assistant works from the rules and runs the checks itself before you see the chart.
 
@@ -14,7 +14,7 @@ Consulting-grade charts, reproduced with ease in the tools you already use.
 
 ## Who it's for: three ways in
 
-Anyone at McKesson whose work ends in a chart: the analyst building the monthly deck, the consultant shaping a recommendation for leaders, the data scientist whose model has to land with people who won't read the notebook. Most of us are all three in a given week, so start from where you're working, not who you are.
+Anyone at McKesson who needs to communicate with data: analysts, consultants, data scientists, and the leaders who present their work. People move between tools all week, so start from where you're working, not who you are.
 
 | Way in | You work in | Start with |
 |---|---|---|
@@ -28,12 +28,12 @@ Making any chart, whatever the tool: [docs/principles.md](docs/principles.md) â†
 
 ## What you get
 
-| What a firm gives you | What the kit gives you |
+| What a consulting firm's team gives you | What the kit gives you |
 |---|---|
-| **Someone who knows which chart** | **The guide and chart chooser.** Fundamentals, formats, 12 chart families, a chooser that says why and a cheat sheet. [dist/guide/](dist/guide/) |
+| **A data storytelling expert who knows which chart** | **The guide and chart chooser.** Fundamentals, formats, 12 chart families, a chooser that says why and a cheat sheet. [dist/guide/](dist/guide/) |
 | **A house style** | **Themes and templates**, generated from one brand file for HTML/CSS, Plotly, Vega-Lite, matplotlib, ggplot2, Power BI, PowerPoint and Excel, plus the template, starter deck and workbook. [dist/](dist/) |
-| **Worked exhibits to copy** | **The cookbook**: 23 chart types, each with a spec table, do/don't rules and tested code or click-by-click steps for every platform [docs/cookbook/](docs/cookbook/). In Python, **`mckviz`** adds the style, labels, number formats, chart builders and maps [python/](python/) |
-| **A review before it goes out** | **The QA checklist** [docs/qa-checklist.md](docs/qa-checklist.md) and **`mv.lint`**, which checks a matplotlib or Plotly chart against the rules |
+| **Worked examples to copy** | **The cookbook**: 23 chart types, each with a spec table, do/don't rules and tested code or click-by-click steps for every platform [docs/cookbook/](docs/cookbook/). In Python, **`mckviz`** adds the style, labels, number formats, chart builders and maps [python/](python/) |
+| **A review before it reaches an executive** | **The QA checklist** [docs/qa-checklist.md](docs/qa-checklist.md) and **`mv.lint`**, which checks a matplotlib or Plotly chart against the rules |
 | **Associates who follow the house rules** | **The agent playbook** in three sizes: [AGENTS.md](AGENTS.md), the portable [mck-chart skill](dist/skills/mck-chart/SKILL.md), the [one-page rules](dist/agents/mck-viz-rules.md) |
 
 ## Getting the kit
