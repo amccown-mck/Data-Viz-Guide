@@ -231,7 +231,8 @@ def zip_skill(dest: Path = ZIP) -> Path:
     mb = dest.stat().st_size / 1e6
     if mb > ZIP_LIMIT_MB:
         raise SystemExit(f"{dest} is {mb:.1f} MB, over the {ZIP_LIMIT_MB} MB limit for a Claude.ai skill")
-    print(f"  wrote {dest.relative_to(ROOT).as_posix()} ({mb:.1f} MB)")
+    shown = dest.relative_to(ROOT).as_posix() if dest.is_relative_to(ROOT) else dest.name   # the bundle zips into a temp folder
+    print(f"  wrote {shown} ({mb:.1f} MB)")
     return dest
 
 
