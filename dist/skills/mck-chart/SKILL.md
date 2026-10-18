@@ -57,6 +57,7 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
 - Check every word against the chart: "all", "most", "doubled", "fastest" must be literally true. Recompute; don't eyeball.
 - The headline names what the focus color shows. If the two disagree, fix the highlight or the headline.
 - The subtitle is neutral: metric, unit, scope, period. The source line names the system, the as-of date and the population (or "Synthetic data for illustration only").
+- **Missing metadata.** When the user gives no source system, as-of date or period, ask once if the conversation allows a question. Otherwise write an explicit placeholder in the source line, `Source: [confirm source and as-of date]; <population>`, leave the period out of the subtitle, and say so in the hand-back. Never invent a system name ("Workday HRIS") or a period ("FY26") that the user did not give.
 
 ## 5. QA
 - Python: run `mv.lint(fig)` (for HTML chart cards, pass `headline=`, `subtitle=`, `source=`). Fix every error and read the warnings.
@@ -65,7 +66,7 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
 - Write alt text: the headline plus 2–3 key numbers.
 
 ## Hand-back
-Give the user the output (file path, or code plus the rendered image), the chart brief, and the alt text. Mention any assumptions about the data (definitions, exclusions, suppressed groups).
+Give the user the output (file path, or code plus the rendered image), the chart brief, and the alt text. Mention any assumptions about the data (definitions, exclusions, suppressed groups), every placeholder left in the chart (source, as-of date, period), and which install path the build used (mckviz, or the no-package fallback and its font).
 
 ## Setup
 - **Python** (3.10+): run `python scripts/check_env.py` (in this folder). It installs `mckviz` from the wheel in `assets/python/` when it isn't installed yet, falls back to GitHub, registers Libre Franklin and prints which path worked. By hand, in this order, stopping at the first that works:
