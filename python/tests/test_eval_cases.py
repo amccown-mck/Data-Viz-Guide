@@ -71,3 +71,17 @@ def test_internal_fill_facts():
     assert (w.loc[rise, "FY25"], w.loc[rise, "FY26"]) == (n["biggest_rise_from"], n["biggest_rise_to"])
     assert int((change > 0).sum()) == n["units_up"] and len(change) == n["units"]
     assert int(df.hires.min()) >= 10 and str(int(df.hires.sum())) in facts["source_expected"].replace(",", "")
+
+
+def test_overtime_facts_and_suppression():
+    facts, df = case("overtime_by_dc")
+    n = facts["headline_numbers"]
+    net = df.network_avg_hrs.iloc[0]
+    assert df[df.associates < 10].site.tolist() == facts["suppressed_rows"]
+    shown = df[df.associates >= 10].sort_values("avg_overtime_hrs_per_week", ascending=False)
+    assert shown.site.head(2).tolist() == facts["focus_rows"]
+    assert shown.avg_overtime_hrs_per_week.head(2).tolist() == [n["top_hrs"], n["second_hrs"]] and net == n["network_avg_hrs"]
+    assert [round(v - net, 1) for v in shown.avg_overtime_hrs_per_week.head(2)] == [n["top_gap_hrs"], n["second_gap_hrs"]]
+    assert int((shown.avg_overtime_hrs_per_week > net).sum()) == n["above_count"] and len(shown) == n["sites_shown"]
+    assert str(int(shown.associates.sum())) in facts["source_expected"].replace(",", "")
+    assert abs((shown.associates * shown.avg_overtime_hrs_per_week).sum() / shown.associates.sum() - net) < 0.1

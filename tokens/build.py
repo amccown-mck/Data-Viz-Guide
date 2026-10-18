@@ -924,6 +924,10 @@ def pptxgenjs_theme(slots: dict) -> str:
            "valGridLine": {"style": "none"}, "catGridLine": {"style": "none"}, **axis_label,
            "catAxisOrientation": "maxMin", **frame}
     column = {**bar, "barDir": "col", "catAxisOrientation": "minMax"}
+    # Stacked charts (100% stacked, waterfall with a hidden base series): PowerPoint rejects outside-end labels on a
+    # stacked series as a corrupt file, so the labels sit in the centre and the series are stacked.
+    stacked = {"barGrouping": "stacked", "barGapWidthPct": gap_pct, "dataLabelPosition": "ctr", "showValue": False}
+    stacked_bar, stacked_column = {**bar, **stacked}, {**column, **stacked}
     line = {"lineSize": K["line"]["width_pt"], "lineDataSymbol": "none", "showValue": False,
             "valGridLine": {"color": colors["grid"], "size": K["grid"]["width_px"], "style": "solid"},
             "catGridLine": {"style": "none"}, "valAxisLabelFontFace": face(role("tick")["weight"]),
@@ -950,7 +954,8 @@ def pptxgenjs_theme(slots: dict) -> str:
             "source": text("footnote", **box, y=g["foot_top"], h=g["foot_h"], valign="bottom"),
             "kpi": text("kpi"),
         },
-        "barChart": bar, "columnChart": column, "lineChart": line,
+        "barChart": bar, "columnChart": column, "stackedBarChart": stacked_bar, "stackedColumnChart": stacked_column,
+        "lineChart": line,
         "benchmarkLine": {"line": {"color": colors["total"], "width": K["axis"]["width_pt"], "dashType": "dash"}},
         "benchmarkLabel": {**text("footnote"), "color": colors["annotation"], "fill": {"color": "FFFFFF"},
                            "margin": 0, "align": "center"},
@@ -974,6 +979,9 @@ def pptxgenjs_theme(slots: dict) -> str:
 //     {{ ...MCK.barChart, x: MCK.grid.left, y: MCK.grid.chart.y, w: MCK.grid.width, h: MCK.grid.chart.h,
 //        chartColors: MCK.pointColors(labels, focusLabels), dataLabelFormatCode: '0.0"%"', altText: headline }});
 //   slide.addText(source, MCK.text.source);
+// Stacked charts (100% stacked, a waterfall with a hidden base series) start from MCK.stackedBarChart or
+// MCK.stackedColumnChart: outside-end labels on a stacked series make PowerPoint call the file corrupt.
+// pptxgenjs colors data labels per series, not per point, so a label the headline points at is a text box.
 // Benchmark lines, bold focus category labels and callouts are shapes drawn over the pinned plot area
 // (MCK.barChart.layout): see office-setup.md, "A native chart from code with pptxgenjs".
 // Colors are hex without "#", as pptxgenjs wants. pptxgenjs's `theme` sets fonts only; the Office color scheme

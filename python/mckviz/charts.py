@@ -122,7 +122,8 @@ def _plain(ax, keep=()):
 
 
 def _wrap(s: str, width: int | None) -> str:
-    return textwrap.fill(str(s), width) if width else str(s)
+    """Wrap on word boundaries only: a long name overflows its slot rather than breaking mid-word."""
+    return textwrap.fill(str(s), width, break_long_words=False, break_on_hyphens=False) if width else str(s)
 
 
 def _month(v) -> int | None:
@@ -378,7 +379,8 @@ def hstack(ax, categories: Sequence[str], parts, *, story: str | None = None, co
 def dumbbell(ax, labels: Sequence[str], compare: Sequence[float], value: Sequence[float], *,
              compare_name: str = "Market", value_name: str = "McKesson", flag_below: float | None = -5.0,
              flag_name: str | None = None, gap: str = "pct", decimals: int = 1, tick_fmt: str = "{:,.0f}",
-             xlim: tuple[float, float] | None = None, key: bool = True, dot: float = 8.0):
+             xlim: tuple[float, float] | None = None, key: bool = True, dot: float = 8.0,
+             focus: Iterable[str] | None = None):
     """Us vs. a comparator per row: comparator grey, us blue, orange where we are `flag_below`% or more below.
 
         ns = mv.dumbbell(ax, df.role, df.market_median_k, df.internal_median_k, tick_fmt="${:,.0f}K")
@@ -387,7 +389,9 @@ def dumbbell(ax, labels: Sequence[str], compare: Sequence[float], value: Sequenc
 
     The first row is drawn on top; sort the rows first (largest shortfall first, say). The gap label after each pair
     is `value` vs. `compare`: in % (gap="pct") or in units (gap="abs"), with a true minus. Flagged rows get bold navy
-    names and orange gap labels. A key names the dot types once, top left (key=False to label them yourself).
+    names and orange gap labels. `focus` names the rows the headline is about when the flag logic does not apply
+    (flag_below=None): their names are bold navy too, so the headline and the highlight agree. A key names the dot
+    types once, top left (key=False to label them yourself).
     Returns SimpleNamespace(flagged, gaps, compare_dots, value_dots, labels).
     """
     labels = [str(s) for s in labels]
@@ -428,7 +432,7 @@ def dumbbell(ax, labels: Sequence[str], compare: Sequence[float], value: Sequenc
     for t in ax.get_yticklabels():
         t.set_fontsize(TICK)
         t.set_color(C.text)
-    _bold_ticks(ax.get_yticklabels(), [lab for lab, f in zip(labels, flagged) if f])
+    _bold_ticks(ax.get_yticklabels(), [lab for lab, f in zip(labels, flagged) if f] + [str(f) for f in (focus or [])])
     ax.set_ylim(len(labels) - 0.5, -0.6)
     ax.set_xlim(*xlim)
     from matplotlib.ticker import FuncFormatter, MaxNLocator

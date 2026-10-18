@@ -5,42 +5,127 @@
     "prompt": "Which job families are slowest to fill, and how far over the 45-day target are they?",
     "question_type": "magnitude / ranking with a target",
     "chart_family": "sorted horizontal bar with a labelled target line (cookbook/bar.md); acceptable alternative: diverging bars of days over target (orange on the over-target side, grey on the other)",
-    "focus_rows": ["Cybersecurity Analyst", "Medical Science Liaison"],
+    "focus_rows": [
+      "Cybersecurity Analyst",
+      "Medical Science Liaison"
+    ],
     "focus_note": "the two slowest; at most 2 highlighted. Blue focus on grey context, or orange for the over-target side in the diverging form (over target = worse). Never green for under target without a ▲▼ or word.",
-    "headline_numbers": {"slowest_days": 92, "second_days": 81, "target_days": 45, "over_target_count": 6, "families": 8, "slowest_vs_target": 2.0},
+    "headline_numbers": {
+      "slowest_days": 92,
+      "second_days": 81,
+      "target_days": 45,
+      "over_target_count": 6,
+      "families": 8,
+      "slowest_vs_target": 2.0
+    },
     "headline_example": "Six of eight job families miss the 45-day fill target, and Cybersecurity Analyst roles take twice as long at 92 days",
     "subtitle_example": "Median days to fill by job family, period not given (days)",
     "suppression": "none: open requisitions are not people counts, and every family has 25 or more",
     "source_expected": "Source: [confirm source and as-of date]; 985 open requisitions across 8 job families (no system, date or period was given)",
-    "fails_if": ["bars start above zero", "every bar has its own color", "the target line is unlabelled", "a system name or period is invented", "orange is used for the fastest families"]
+    "fails_if": [
+      "bars start above zero",
+      "every bar has its own color",
+      "the target line is unlabelled",
+      "a system name or period is invented",
+      "orange is used for the fastest families"
+    ]
   },
   "engagement_by_site": {
     "file": "engagement_by_site.csv",
     "prompt": "Which sites fall short of the enterprise engagement score?",
     "question_type": "magnitude / deviation from a benchmark, values clustered far from zero",
     "chart_family": "dot plot with the enterprise rate as a labelled line (cookbook/dot-plot-dumbbell.md), or diverging bars of the gap in points; NOT a truncated bar chart (values run 64-78)",
-    "focus_rows": ["Richmond Customer Care", "La Vergne DC"],
+    "focus_rows": [
+      "Richmond Customer Care",
+      "La Vergne DC"
+    ],
     "focus_note": "the two sites below the 72% enterprise rate; orange is allowed because below the benchmark is worse, blue focus is fine too",
-    "headline_numbers": {"lowest_pct": 64, "second_pct": 66, "enterprise_pct": 72, "gap_lowest_pts": 8, "gap_second_pts": 6, "sites_shown": 7, "shown_min": 64, "shown_max": 78},
+    "headline_numbers": {
+      "lowest_pct": 64,
+      "second_pct": 66,
+      "enterprise_pct": 72,
+      "gap_lowest_pts": 8,
+      "gap_second_pts": 6,
+      "sites_shown": 7,
+      "shown_min": 64,
+      "shown_max": 78
+    },
     "headline_example": "Two sites fall 6 to 8 points short of the 72% enterprise engagement score",
     "suppression": "Boise Clinic Support has 8 respondents: it must not appear in marks, labels, tooltips or the headline (merge into Other or drop), and a footnote must say one site under 10 respondents is not shown",
-    "suppressed_rows": ["Boise Clinic Support"],
+    "suppressed_rows": [
+      "Boise Clinic Support"
+    ],
     "source_expected": "Source: [confirm source and as-of date]; 1,650 respondents across 7 sites shown",
-    "fails_if": ["Boise appears anywhere, including as the lowest site at 50%", "bars with a truncated axis", "more than 2 highlighted sites", "red vs. green"]
+    "fails_if": [
+      "Boise appears anywhere, including as the lowest site at 50%",
+      "bars with a truncated axis",
+      "more than 2 highlighted sites",
+      "red vs. green"
+    ]
   },
   "internal_fill_two_periods": {
     "file": "internal_fill_two_periods.csv",
     "prompt": "How did internal fill change from FY25 to FY26 across business units?",
     "question_type": "change over time between two periods",
     "chart_family": "slope chart (cookbook/slope-bump.md) or dumbbell (cookbook/dot-plot-dumbbell.md); NOT a multi-period line (only two periods) and NOT grouped bars as the first choice",
-    "focus_rows": ["Enterprise Technology", "Medical-Surgical Distribution"],
+    "focus_rows": [
+      "Enterprise Technology",
+      "Medical-Surgical Distribution"
+    ],
     "focus_note": "the biggest fall (orange, worse) and the biggest rise (blue); at most 2 highlighted, the rest grey",
-    "headline_numbers": {"biggest_fall_pts": -8, "biggest_fall_from": 38, "biggest_fall_to": 30, "biggest_rise_pts": 8, "biggest_rise_from": 34, "biggest_rise_to": 42, "units_up": 4, "units": 6, "second_fall_pts": -5},
+    "headline_numbers": {
+      "biggest_fall_pts": -8,
+      "biggest_fall_from": 38,
+      "biggest_fall_to": 30,
+      "biggest_rise_pts": 8,
+      "biggest_rise_from": 34,
+      "biggest_rise_to": 42,
+      "units_up": 4,
+      "units": 6,
+      "second_fall_pts": -5
+    },
     "headline_example": "Internal fill fell 8 points in Enterprise Technology while Medical-Surgical gained 8, FY25 to FY26",
     "subtitle_example": "Internal fill rate by business unit, FY25 vs. FY26 (% of hires filled internally)",
     "suppression": "none: the smallest group is 142 hires",
     "derived_measure_note": "if the chart or headline counts internal hires (hires × rate), it must call them estimates in the footnote",
     "source_expected": "Source: [confirm source and as-of date]; 3,495 hires across 6 business units, FY25-FY26",
-    "fails_if": ["a line chart with two points per series", "the headline numbers do not match the CSV", "green used for the rise without ▲ or a word"]
+    "fails_if": [
+      "a line chart with two points per series",
+      "the headline numbers do not match the CSV",
+      "green used for the rise without ▲ or a word"
+    ]
+  },
+  "overtime_by_dc": {
+    "file": "overtime_by_dc.csv",
+    "prompt": "Which distribution centers are running the most overtime, and how far above the network average are they? I need one exec-ready chart with a headline, then turn it into a PowerPoint slide.",
+    "question_type": "magnitude / deviation from a benchmark, with a PowerPoint hand-off",
+    "chart_family": "sorted horizontal bar from zero with the 5.9-hour network line labelled in place (cookbook/bar.md), or diverging bars of the gap (mv.diverging_bars, worse above); a dot plot is acceptable; NOT a truncated bar",
+    "focus_rows": [
+      "Aurora",
+      "Shepherdsville"
+    ],
+    "focus_note": "the two sites clearly above the average; Clear Lake (+0.3) may be orange in the diverging form but should not be named as a driver. Orange is allowed because above the average is worse.",
+    "headline_numbers": {
+      "top_hrs": 7.9,
+      "top_gap_hrs": 2.0,
+      "second_hrs": 6.8,
+      "second_gap_hrs": 0.9,
+      "network_avg_hrs": 5.9,
+      "above_count": 3,
+      "sites_shown": 7
+    },
+    "headline_example": "Three of seven distribution centers run above the 5.9-hour network average, led by Aurora at +2.0 hours a week",
+    "suppression": "Mobile micro-DC (pilot) has 7 associates: it must not appear in marks, labels, tooltips or the headline, and a footnote must say one site under 10 associates is not shown",
+    "suppressed_rows": [
+      "Mobile micro-DC (pilot)"
+    ],
+    "source_expected": "Source: [confirm source and as-of date]; associates at 7 distribution centers (8,050 associates shown)",
+    "fails_if": [
+      "the pilot appears anywhere, including as the worst site at 9.4 hours",
+      "a truncated axis",
+      "an invented system name or period",
+      "the slide is a pasted picture rather than a native chart"
+    ],
+    "first_run": "runs/2026-10-18-claude-ai-opus-5.5.md (pass)"
   }
 }

@@ -365,9 +365,12 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
             if lo > 1e-9 and not floating:
                 out.append(Finding("error", "bars-from-zero", f"value axis starts at {lo:g}; bars must start at zero "
                                                               "(use a dot plot for clustered values)"))
-            elif lo > 1e-9 and floating:
-                out.append(Finding("warn", "bars-from-zero", f"value axis starts at {lo:g} (waterfall?): mark the break "
-                                                             "on the totals and say so in a footnote"))
+            elif lo > 1e-9 and floating:                    # a waterfall on a floor: fine once the footnote says so
+                noted = any("break" in t.get_text().lower() or "axis starts" in t.get_text().lower() for t in fig.texts)
+                out.append(Finding("info" if noted else "warn", "bars-from-zero",
+                                   f"value axis starts at {lo:g} (waterfall?): " +
+                                   ("break marks noted in the footnote" if noted else
+                                    "mark the break on the totals and say so in a footnote")))
             labels = [t for t in ax.texts if t.get_text().strip()] + \
                      [c for c in ax.get_children() if type(c).__name__ == "Annotation" and c.get_text().strip()]
             value_ticks = ax.get_xticklabels() if horizontal else ax.get_yticklabels()

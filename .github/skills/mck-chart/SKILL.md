@@ -40,7 +40,7 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
 
 ## 3. Build
 - Start from the cookbook snippet for the platform the user needs:
-  - **Python:** `import mckviz as mv; mv.use(); C = mv.colors` (`mv.use()` styles matplotlib and activates the "mck" Plotly template). Use `mv.fmt_num` for numbers (K/M/B, %, true minus) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `docs/cookbook/maps.md`).
+  - **Python:** `import mckviz as mv; mv.use(); C = mv.colors` (`mv.use()` styles matplotlib and activates the "mck" Plotly template). Use `mv.fmt_num` for numbers (K/M/B, %, true minus), `mv.signed(v, decimals=1)` for a signed delta in a headline (its default is 0 decimals: pass the decimals the chart labels use, so "+2.0" in the headline matches "+2.0 hrs" on the bar) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `docs/cookbook/maps.md`).
     - **matplotlib** for slides, PNG, PDF and print: `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, `mv.label_bars` / `mv.label_line_ends` for labels.
     - **Plotly** when the output is interactive or HTML: `mv.pl_highlight` for colors, `mv.pl_finish(fig, headline, subtitle, source_text)` for the frame, then `fig.write_html(...)`.
   - **HTML:** the chart-card pattern with `dist/web/mck-viz.css` plus `mck-plotly-template.js` or `vega-lite-config.json` (starter: `templates/html/chart-card.html`).

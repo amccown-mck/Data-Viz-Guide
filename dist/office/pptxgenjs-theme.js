@@ -15,6 +15,9 @@
 //     { ...MCK.barChart, x: MCK.grid.left, y: MCK.grid.chart.y, w: MCK.grid.width, h: MCK.grid.chart.h,
 //        chartColors: MCK.pointColors(labels, focusLabels), dataLabelFormatCode: '0.0"%"', altText: headline });
 //   slide.addText(source, MCK.text.source);
+// Stacked charts (100% stacked, a waterfall with a hidden base series) start from MCK.stackedBarChart or
+// MCK.stackedColumnChart: outside-end labels on a stacked series make PowerPoint call the file corrupt.
+// pptxgenjs colors data labels per series, not per point, so a label the headline points at is a text box.
 // Benchmark lines, bold focus category labels and callouts are shapes drawn over the pinned plot area
 // (MCK.barChart.layout): see office-setup.md, "A native chart from code with pptxgenjs".
 // Colors are hex without "#", as pptxgenjs wants. pptxgenjs's `theme` sets fonts only; the Office color scheme
@@ -224,6 +227,84 @@ const MCK = {
     barGapWidthPct: 50,
     showValue: true,
     dataLabelPosition: "outEnd",
+    dataLabelFontFace: "Libre Franklin Medium",
+    dataLabelFontSize: 12,
+    dataLabelColor: "505050",
+    dataLabelFormatCode: "0.0",
+    valAxisHidden: true,
+    valGridLine: {
+      style: "none"
+    },
+    catGridLine: {
+      style: "none"
+    },
+    catAxisLabelFontFace: "Libre Franklin",
+    catAxisLabelFontSize: 11,
+    catAxisLabelColor: "737373",
+    catAxisMajorTickMark: "none",
+    catAxisMinorTickMark: "none",
+    catAxisLineShow: true,
+    catAxisLineColor: "8C8C8C",
+    catAxisLineSize: 0.75,
+    catAxisOrientation: "minMax",
+    showLegend: false,
+    showTitle: false,
+    chartArea: {
+      roundedCorners: false
+    },
+    valAxisMinVal: 0,
+    layout: {
+      x: 0.2,
+      y: 0.04,
+      w: 0.76,
+      h: 0.9
+    }
+  },
+  stackedBarChart: {
+    barDir: "bar",
+    barGrouping: "stacked",
+    barGapWidthPct: 50,
+    showValue: false,
+    dataLabelPosition: "ctr",
+    dataLabelFontFace: "Libre Franklin Medium",
+    dataLabelFontSize: 12,
+    dataLabelColor: "505050",
+    dataLabelFormatCode: "0.0",
+    valAxisHidden: true,
+    valGridLine: {
+      style: "none"
+    },
+    catGridLine: {
+      style: "none"
+    },
+    catAxisLabelFontFace: "Libre Franklin",
+    catAxisLabelFontSize: 11,
+    catAxisLabelColor: "737373",
+    catAxisMajorTickMark: "none",
+    catAxisMinorTickMark: "none",
+    catAxisLineShow: true,
+    catAxisLineColor: "8C8C8C",
+    catAxisLineSize: 0.75,
+    catAxisOrientation: "maxMin",
+    showLegend: false,
+    showTitle: false,
+    chartArea: {
+      roundedCorners: false
+    },
+    valAxisMinVal: 0,
+    layout: {
+      x: 0.2,
+      y: 0.04,
+      w: 0.76,
+      h: 0.9
+    }
+  },
+  stackedColumnChart: {
+    barDir: "col",
+    barGrouping: "stacked",
+    barGapWidthPct: 50,
+    showValue: false,
+    dataLabelPosition: "ctr",
     dataLabelFontFace: "Libre Franklin Medium",
     dataLabelFontSize: 12,
     dataLabelColor: "505050",

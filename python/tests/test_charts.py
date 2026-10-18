@@ -383,3 +383,16 @@ def test_records_accept_plain_dicts_without_pandas(monkeypatch):
     assert mv.charts._records(PLAN)[0]["workstream"] == "Data platform"
     with pytest.raises(ImportError, match="pip install pandas"):
         mv.charts._records("plan.csv")
+
+
+def test_wrap_never_breaks_a_word():
+    from mckviz.charts import _wrap
+    assert _wrap("Shepherdsville", 13) == "Shepherdsville"
+    assert _wrap("If at network avg", 13) == "If at network\navg"
+
+
+def test_dumbbell_focus_bolds_the_named_row():
+    fig, ax = plt.subplots()
+    mv.dumbbell(ax, ["A", "B", "C"], [10, 20, 30], [11, 19, 31], flag_below=None, focus=["B"])
+    weights = [t.get_fontweight() for t in ax.get_yticklabels()]
+    assert weights[1] == 600 and weights[0] != 600 and weights[2] != 600
