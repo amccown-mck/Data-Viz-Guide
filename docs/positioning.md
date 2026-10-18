@@ -18,7 +18,7 @@ Consulting-grade charts, reproduced with ease in the tools you already use.
 
 Where there is room for a second line:
 
-Which chart answers the question, how to make the point land, how to keep it on-brand, and a check before it goes out: built into PowerPoint, Excel, Python, Power BI and your AI assistant.
+Which chart answers the question, how to make the point land, the brand already set, and a check before it goes out: built into PowerPoint, Excel, Python, Power BI and your AI assistant.
 
 ## The problem
 
@@ -29,7 +29,7 @@ Most charts at McKesson are made by people for whom charts are part of the job, 
 A style guide describes good charts. This kit makes them the default.
 
 - **The rules are built into the tools.** Every color, font and chart rule lives in one file, `tokens/tokens.json`, and is generated into the PowerPoint template, the Excel workbook, the Power BI theme, the web and R themes and the `mckviz` Python package. A new chart starts on-brand instead of being fixed later. Change a line and every theme, template and example updates.
-- **The rules are written to be checked.** Each one is testable. A reviewer has the QA checklist, code has `mv.lint`, and an AI assistant reads the same playbook and checks its own work before handing a chart back.
+- **The rules are written to be checked.** Each one is testable. A reviewer has the QA checklist, code has `mv.lint`, and an AI assistant works from the rules and runs the checks itself before you see the chart.
 
 ## The frame: a consulting firm's chart practice, on call
 
@@ -37,7 +37,7 @@ The owner's own words for it: a mini consulting firm at the ready, top-notch dat
 
 | What a firm gives you | What the kit gives you |
 |---|---|
-| **Someone who knows which chart** | **The guide and chart chooser.** Start from what you want to say; the guide names the chart and why. Fundamentals, formats and 12 chart families, plus a cheat sheet, as a website, a single offline file and a 16:9 PDF |
+| **Someone who knows which chart** | **The guide and chart chooser.** Name the question; the chooser names the chart and says why. Fundamentals, formats and 12 chart families, plus a cheat sheet, as a website, a single offline file and a 16:9 PDF |
 | **A house style** | **Themes and templates generated from one file**, for PowerPoint, Excel, Power BI, HTML/CSS, Plotly, Vega-Lite, matplotlib and ggplot2, with native, editable Office charts |
 | **Worked exhibits to copy** | **The cookbook.** 23 chart types, each with a spec table, do/don't rules and tested code or click-by-click steps for every platform. In Python, `mckviz` adds the builders, labels and number formats |
 | **A review before it goes out** | **The QA checklist and `mv.lint`**, so the same fixes stop coming back |
@@ -63,7 +63,7 @@ Anyone at McKesson whose work ends in a chart: the analyst building the monthly 
 - Not a chart library of its own. It sits on matplotlib, Plotly, ggplot2, Vega-Lite and native Office charts.
 - Not a data-cleaning tool. You still clean the export; the kit takes over when the numbers are ready to become a chart.
 - Not only for Workforce Innovation. The examples are workforce data; the rules are for any team.
-- Not yet a chart maker for non-coders. "Paste a table, ask a question, get five on-brand options" is the next build. Today, coding agents follow the rules in a repo and check their own work; people in PowerPoint and Excel use the guide and the templates.
+- Not yet a chart maker for non-coders. "Paste a table, ask a question, get five on-brand options" is the next build. Today, coding agents work to the rules in a repo and lint a chart before handing it over; people in PowerPoint and Excel use the guide and the templates.
 
 ## Voice
 

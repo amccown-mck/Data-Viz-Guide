@@ -131,7 +131,7 @@ title should say, which colors are ours. So the same numbers look different from
 
 <p>This kit writes that know-how down once and builds it into the tools you already use. You get a guide that says which chart
 and why, PowerPoint and Excel templates that start on-brand, themes for Power BI and code, a checklist to run before a
-chart goes out, and a playbook so AI assistants follow the same rules you do. It is what a consulting firm's chart
+chart goes out, and a playbook your AI assistant works from. It is what a consulting firm's chart
 practice gives its consultants, in one folder.</p>
 
 <div class="first">
