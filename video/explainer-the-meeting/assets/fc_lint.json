@@ -1,0 +1,72 @@
+{
+  "note": "Real mv.lint output from mckviz (repo version). Data is synthetic and seeded. Cells ran in one namespace, in order, like a Jupyter kernel; fc_before.png is cell 2's figure as the inline backend shows it.",
+  "cells": {
+    "cell1_model": "import pandas as pd\nfrom attrition_model import TrendSeasonal          # your great model\n\ndf = pd.read_csv(\"attrition_quarterly.csv\")       # FY22-FY26 actuals\nmodel = TrendSeasonal(seasonal=4).fit(df.rate)\nfc = model.forecast(steps=8, interval=0.80)       # FY27-FY28\nfc.tail(3).round(1)",
+    "cell2_before": "import matplotlib.pyplot as plt\n\nplt.figure(figsize=(10, 4.4))\nplt.plot(df.quarter, df.rate, label=\"actual\")\nplt.plot(fc.quarter, fc[\"mean\"], label=\"forecast\")\nplt.fill_between(fc.quarter, fc.lower, fc.upper, alpha=0.3, label=\"80% PI\")\nplt.xticks(rotation=90); plt.legend(); plt.title(\"Attrition forecast\")\nplt.show()",
+    "one_line": "import mckviz as mv; mv.use()",
+    "cell3_helpers": "C, GOAL, pct = mv.colors, 12, lambda v, d=1: mv.fmt_num(v, \"pct\", d)\nnow, (end, lo, hi) = df.rate.iloc[-1], fc.iloc[-1][[\"mean\", \"lower\", \"upper\"]]\n\nfig, ax = plt.subplots(figsize=(8, 4.5))\nax.plot(df.t, df.rate, color=C.focus, label=\"_actual\")                        # actuals, solid\nax.plot(fc.t, fc[\"mean\"], color=C.focus, ls=(0, (4, 3)), label=\"Estimate\")    # forecast, dashed\nax.fill_between(fc.t, fc.lower, fc.upper, color=C.focus, alpha=0.15, lw=0)\nax.axhline(GOAL, color=C.total, lw=0.75, ls=\"--\")\nax.axvline(19, color=C.axis, lw=0.75, ls=\":\")\nax.text(19.3, 23.8, \"Forecast\", va=\"top\", fontsize=10, fontweight=\"bold\", color=C.text_muted)\nax.text(0, GOAL - 0.3, f\"FY28 goal {GOAL}%\", va=\"top\", fontsize=10, color=C.total)\nax.plot(19, now, \"o\", ms=5, color=C.focus)\n\nmv.clean_axes(ax)\nax.set_ylim(8, 24); ax.set_xlim(-0.4, 27.6)\nax.set_yticks([10, 15, 20], [\"10%\", \"15%\", \"20%\"])\nax.set_xticks([1.5 + 4 * k for k in range(7)], [f\"FY{22 + k}\" for k in range(7)])\nax.tick_params(axis=\"x\", length=0)\n\nmv.label_line_ends(ax, fmt=\"{:.1f}%\")                                          # the estimate\nmv.callout(ax, (27, hi), \"80% range\", f\"{pct(lo)}–{pct(hi)}\", xytext=(6, 14), arrow=False)\nmv.callout(ax, (19, now), f\"{pct(now)} now\", xytext=(-70, -24), arrow=False)\nmv.titles(fig, f\"Attrition should keep falling, to about {pct(end, 0)} by FY28, \"\n               f\"but even the best case misses the {GOAL}% goal\",\n          \"Voluntary attrition, enterprise, annualized, FY22–FY26 actual, FY27–FY28 forecast (%)\")\nmv.source(fig, \"Source: synthetic data for illustration only; quarterly, all U.S. regular employees\",\n          footnote=\"Estimate = trend + seasonal model; shaded range = 80% prediction interval.\")",
+    "cell4_lint_and_save": "mv.lint(fig)                                   # house rules: 0 errors before it ships\nmv.save(fig, \"fc_after.png\", dpi=250)",
+    "cell3_shown": {
+      "estimate": "mv.label_line_ends(ax, fmt=\"{:.1f}%\")",
+      "range": "mv.callout(ax, (27, hi), \"80% range\", f\"{pct(lo)}–{pct(hi)}\", xytext=(6, 14), arrow=False)",
+      "headline": "mv.titles(fig, f\"Attrition should keep falling, to about {pct(end, 0)} by FY28, \""
+    },
+    "cell3_lines": 27
+  },
+  "model_output": "   quarter   t  mean  lower  upper\n6  FY28 Q2  25  16.3   15.2   17.3\n7  FY28 Q3  26  15.3   14.2   16.4\n8  FY28 Q4  27  14.7   13.5   15.8",
+  "forecast": {
+    "last_actual": 16.3,
+    "estimate": 14.7,
+    "low": 13.5,
+    "high": 15.8,
+    "goal": 12,
+    "interval": 0.8
+  },
+  "headline": "Attrition should keep falling, to about 15% by FY28, but even the best case misses the 12% goal",
+  "after": {
+    "lint_printed": "lint: no findings",
+    "findings": [],
+    "errors": 0
+  },
+  "before": {
+    "findings": [
+      {
+        "level": "error",
+        "rule": "headline",
+        "message": "no headline: add an insight sentence (mv.titles / mv.pl_finish)",
+        "printed": "ERROR  headline: no headline: add an insight sentence (mv.titles / mv.pl_finish)"
+      },
+      {
+        "level": "error",
+        "rule": "subtitle",
+        "message": "no subtitle: state metric, unit, scope and period",
+        "printed": "ERROR  subtitle: no subtitle: state metric, unit, scope and period"
+      },
+      {
+        "level": "error",
+        "rule": "source",
+        "message": "no \"Source:\" line (mv.source / pl_finish(source_text=...))",
+        "printed": "ERROR  source: no \"Source:\" line (mv.source / pl_finish(source_text=...))"
+      },
+      {
+        "level": "warn",
+        "rule": "direct-labels",
+        "message": "legend with 3 entries; label the lines directly where labels fit",
+        "printed": "WARN   direct-labels: legend with 3 entries; label the lines directly where labels fit"
+      },
+      {
+        "level": "warn",
+        "rule": "no-rotated-labels",
+        "message": "rotated tick labels; use horizontal bars or shorter labels",
+        "printed": "WARN   no-rotated-labels: rotated tick labels; use horizontal bars or shorter labels"
+      },
+      {
+        "level": "warn",
+        "rule": "palette",
+        "message": "colors not in tokens/tokens.json: #1F77B4, #FF7F0E (use mv.colors / mv.CATEGORICAL)",
+        "printed": "WARN   palette: colors not in tokens/tokens.json: #1F77B4, #FF7F0E (use mv.colors / mv.CATEGORICAL)"
+      }
+    ],
+    "errors": 3
+  }
+}

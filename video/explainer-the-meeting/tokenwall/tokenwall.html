@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Wall</title>
+<!--
+  Scene: "The whole house style lives in one file. Change a few lines, and every template and theme updates."
+  1920x1080, deterministic and seekable.
+    window.tokenwall = {duration, seek(t), play(), pause(), time()}
+    ?t=SECONDS   render a still at t (no animation running)
+    ?loop=0      play once instead of looping
+  Everything is scoped under .tw; the JS is one IIFE. McKesson values come from
+  dist/web/mck-viz.css (tokens.json); CoverMyMeds / Sarah Cannon / US Oncology Network / Dark are approximate, inspired-by themes (no logos).
+-->
+<style>
+@font-face{font-family:"TW Franklin";src:url(../../../dist/guide/fonts/LibreFranklin-Regular.ttf);font-weight:400}
+@font-face{font-family:"TW Franklin";src:url(../../../dist/guide/fonts/LibreFranklin-Medium.ttf);font-weight:500}
+@font-face{font-family:"TW Franklin";src:url(../../../dist/guide/fonts/LibreFranklin-SemiBold.ttf);font-weight:600}
+@font-face{font-family:"TW Franklin";src:url(../../../dist/guide/fonts/LibreFranklin-Bold.ttf);font-weight:700}
+@font-face{font-family:"TW Mono";src:url(../../../dist/guide/fonts/Inconsolata-Regular.ttf)}
+
+/* ---------- standalone page only ---------- */
+html,body{margin:0;height:100%;background:#000;overflow:hidden}
+
+/* ---------- scene ---------- */
+.tw{position:relative;width:1920px;height:1080px;overflow:hidden;transform-origin:0 0;
+  -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;background:#EFEDE7}
+.tw *{box-sizing:border-box}
+.tw-cam{position:absolute;inset:0;transform-origin:960px 540px}
+.tw-layer{position:absolute;inset:0;background:var(--bg);color:var(--tx);font-family:var(--fb)}
+.tw-top{will-change:clip-path}
+
+/* ---------- themes: every color, font and shape is a custom property ---------- */
+.tw .th-mck{ /* McKesson: values from dist/web/mck-viz.css */
+  --bg:#EFEDE7;--card:#FFFFFF;--radius:4px;--shadow:0 1px 2px rgba(20,51,89,.06),0 6px 16px rgba(20,51,89,.07);
+  --ink:#143359;--tx:#505050;--mut:#737373;--grid:#E6E4DE;--axis:#8C8C8C;
+  --ctx:#B4B0A5;--ctxl:#DEDBD1;--foc:#005A8C;--foct:#005A8C;--focl:#66C4FF;--acc:#143359;
+  --neg:#EF8200;--negt:#A75B00;--pos:#00AF68;--post:#007A48;--onf:#FFFFFF;--onn:#143359;
+  --fh:"TW Franklin","Libre Franklin",Arial,sans-serif;--fb:"TW Franklin","Libre Franklin",Arial,sans-serif;
+  --hw:600;--nw:700;--ls:-.005em;--capw:700;
+  --brand:#143359;--onb:#FFFFFF;--capc:#005A8C;--hp:#005A8C;--hs:15px}
+/* Sub-brand themes: approximate palettes and system fonts, inspired by the brands (no logos).
+   Chart semantics stay analogous in every theme: grey context, one focus color, a "worse" color, navy-ish totals. */
+.tw .th-cmm{ /* CoverMyMeds-inspired: magenta focus, warm orange brand + "worse", navy text, rounded sans */
+  --bg:#FCF1EA;--card:#FFFFFF;--radius:18px;--shadow:0 2px 4px rgba(27,54,93,.05),0 10px 24px rgba(214,86,40,.10);
+  --ink:#1B365D;--tx:#3B4658;--mut:#5F6878;--grid:#F2E7E0;--axis:#A89B92;
+  --ctx:#C8BDB6;--ctxl:#EBE1DA;--foc:#D1246A;--foct:#B81D5C;--focl:#F4A9C6;--acc:#1B365D;
+  --neg:#EF7D2D;--negt:#AE4E0B;--pos:#2E9E6A;--post:#1F7A50;--onf:#FFFFFF;--onn:#1B365D;
+  --fh:"Arial Rounded MT Bold","Arial Rounded MT","Avenir Next",sans-serif;--fb:"Avenir Next","Helvetica Neue",Arial,sans-serif;
+  --hw:400;--nw:400;--ls:0;--capw:400;
+  --brand:#EF7D2D;--onb:#1B365D;--capc:#D1246A;--hp:#2F6DB5;--hs:14.5px}
+.tw .th-scri{ /* Sarah Cannon-inspired: royal blue focus, sunny yellow brand + gold "worse", sky blue, geometric sans */
+  --bg:#EDF4FA;--card:#FFFFFF;--radius:14px;--shadow:0 1px 2px rgba(30,64,130,.06),0 8px 20px rgba(30,64,130,.09);
+  --ink:#1E3F7F;--tx:#38475F;--mut:#5A677C;--grid:#E3EBF3;--axis:#94A3B8;
+  --ctx:#B7C3D3;--ctxl:#DCE4EE;--foc:#2D5AA8;--foct:#2D5AA8;--focl:#9CCFEA;--acc:#1E3F7F;
+  --neg:#E2A400;--negt:#8A6200;--pos:#2E9E6A;--post:#1F7A50;--onf:#FFFFFF;--onn:#1E3F7F;
+  --fh:"Futura","Century Gothic","Avenir Next",sans-serif;--fb:"Avenir Next","Helvetica Neue",Arial,sans-serif;
+  --hw:500;--nw:500;--ls:0;--capw:500;
+  --brand:#F2D13A;--onb:#1E3F7F;--capc:#2D5AA8;--hp:#2D5AA8;--hs:14.5px}
+.tw .th-uson{ /* US Oncology Network-inspired: teal focus, warm orange brand + "worse", navy text, serif headings */
+  --bg:#E8F0EF;--card:#FFFFFF;--radius:2px;--shadow:0 1px 2px rgba(20,60,70,.06),0 6px 16px rgba(20,60,70,.08);
+  --ink:#1F3F66;--tx:#3A4954;--mut:#5B6A74;--grid:#E1E9E8;--axis:#8FA1A3;
+  --ctx:#B3C1C1;--ctxl:#D9E2E1;--foc:#2A7C83;--foct:#1F6A70;--focl:#8FC6C6;--acc:#1F3F66;
+  --neg:#E3892F;--negt:#A2560E;--pos:#3C9A5F;--post:#2A7A47;--onf:#FFFFFF;--onn:#1F3F66;
+  --fh:Georgia,"Times New Roman",serif;--fb:"Avenir Next","Helvetica Neue",Arial,sans-serif;
+  --hw:700;--nw:700;--ls:-.005em;--capw:700;
+  --brand:#E3892F;--onb:#1F3F66;--capc:#C0661A;--hp:#2A7C83;--hs:15px}
+.tw .th-dark{ /* Dark mode: deep navy + sky */
+  --bg:#050E1C;--card:#0F2747;--radius:6px;--shadow:0 0 0 1px rgba(255,255,255,.10),0 10px 24px rgba(0,0,0,.5);
+  --ink:#FFFFFF;--tx:#DCE6F2;--mut:#A9BDD6;--grid:#1F3D66;--axis:#7F98B8;
+  --ctx:#6F86A8;--ctxl:#2C4A73;--foc:#66C4FF;--foct:#7FD0FF;--focl:#3F7FBE;--acc:#FFFFFF;
+  --neg:#FFA733;--negt:#FFB65C;--pos:#3DDC97;--post:#5FE3A8;--onf:#0B3266;--onn:#0B3266;
+  --fh:"TW Franklin","Libre Franklin",Arial,sans-serif;--fb:"TW Franklin","Libre Franklin",Arial,sans-serif;
+  --hw:600;--nw:700;--ls:-.005em;--capw:700;
+  --brand:#FFFFFF;--onb:#0B3266;--capc:#7FD0FF;--hp:#66C4FF;--hs:15px}
+
+/* ---------- left column: caption + theme chip (inside the themed world) ---------- */
+.tw-cap{position:absolute;left:48px;top:250px;width:540px;font-family:var(--fh);font-weight:var(--capw);
+  font-size:46px;line-height:54px;letter-spacing:-.015em;color:var(--ink);transform-origin:0 50%}
+.tw-cap{display:grid}
+.tw-cap > span{grid-area:1/1}
+.tw-cap .c1{opacity:calc(1 - var(--c2, 0))} .tw-cap .c2{opacity:var(--c2, 0)}
+.tw-cap b{display:block;font-weight:inherit;color:var(--capc)}
+.tw-chip{position:absolute;left:48px;top:792px;height:44px;padding:0 18px 0 14px;display:flex;align-items:center;gap:12px;
+  background:var(--card);border-radius:calc(var(--radius) + 18px);box-shadow:var(--shadow);font-family:var(--fb);
+  font-size:17px;color:var(--mut);transform-origin:0 50%}
+.tw-chip i{width:18px;height:18px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 1px rgba(0,0,0,.08);display:block}
+.tw-chip b{color:var(--ink);font-weight:var(--capw);font-family:var(--fh)}
+
+/* ---------- brand decoration (left column, behind the caption; sub-brand themes only) ---------- */
+.tw-deco{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.tw-deco i{position:absolute;display:none}
+.tw .th-cmm .tw-deco i{display:block;border-radius:50%;border-style:solid}
+.tw .th-cmm .tw-deco .d1{left:-190px;top:880px;width:560px;height:560px;border-width:12px;border-color:#EF7D2D #EF7D2D transparent #D1246A;transform:rotate(-20deg)}
+.tw .th-cmm .tw-deco .d2{left:-150px;top:930px;width:440px;height:440px;border-width:3px;border-color:#1B365D transparent transparent transparent;transform:rotate(30deg);opacity:.35}
+.tw .th-cmm .tw-deco .d3{left:-130px;top:-210px;width:400px;height:400px;border-width:9px;border-color:transparent #D1246A #EF7D2D transparent;transform:rotate(10deg)}
+.tw .th-scri .tw-deco i{display:block}
+.tw .th-scri .tw-deco .d1{left:60px;top:902px;width:430px;height:150px;border-radius:75px;background:#F2D13A}
+.tw .th-scri .tw-deco .d2{left:-40px;top:902px;width:180px;height:150px;border-radius:0 75px 75px 0;background:#2D5AA8}
+.tw .th-scri .tw-deco .d3{left:-140px;top:-50px;width:600px;height:180px;border-radius:90px;background:linear-gradient(90deg,#2D6FC0,#A9D8EA)}
+.tw .th-uson .tw-deco i{display:block}
+.tw .th-uson .tw-deco .d1{left:0;top:0;width:640px;height:220px;background:rgba(42,124,131,.14);clip-path:polygon(0 0,100% 0,0 100%)}
+.tw .th-uson .tw-deco .d2{left:0;top:870px;width:600px;height:210px;background:linear-gradient(120deg,#2A7C83 20%,#E3892F 95%);clip-path:polygon(0 100%,100% 100%,0 0);opacity:.9}
+.tw .th-uson .tw-deco .d3{left:0;top:940px;width:300px;height:140px;background:rgba(255,255,255,.18);clip-path:polygon(0 100%,100% 100%,0 0)}
+
+/* ---------- the wall ---------- */
+.tw-wall{position:absolute;left:592px;top:116px;width:1280px;height:849px}
+.tw-tile{position:absolute;padding:14px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  overflow:hidden;transform-origin:50% 50%}
+.tw-h{font-family:var(--fh);font-weight:var(--hw);font-size:var(--hs);line-height:19px;height:38px;overflow:hidden;color:var(--ink);letter-spacing:var(--ls)}
+.tw-s{font-size:12px;line-height:15px;height:15px;margin-top:3px;color:var(--mut);white-space:nowrap}
+.tw-tile svg{display:block;margin-top:8px;overflow:visible}
+.tw-src{margin-top:6px;font-size:11px;line-height:14px;color:var(--mut);white-space:nowrap}
+.tw-sheen{position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:linear-gradient(115deg,rgba(255,255,255,0) 20%,rgba(255,255,255,.95) 50%,rgba(255,255,255,0) 80%)}
+
+.tw svg text{font-family:var(--fb);font-size:11.5px;fill:var(--tx)}
+.tw svg .m{fill:var(--mut)} .tw svg .k{fill:var(--ink)} .tw svg .b{font-weight:700}
+.tw svg .ft{fill:var(--foct)} .tw svg .nt{fill:var(--negt)} .tw svg .at{fill:var(--acc)}
+.tw svg .s11{font-size:11px}
+.tw svg .halo{paint-order:stroke;stroke:var(--card);stroke-width:4px;stroke-linejoin:round}
+.tw svg .fF{fill:var(--foc)} .tw svg .fC{fill:var(--ctx)} .tw svg .fL{fill:var(--ctxl)} .tw svg .fFL{fill:var(--focl)}
+.tw svg .fA{fill:var(--acc)} .tw svg .fN{fill:var(--neg)} .tw svg .fK{fill:var(--card)}
+.tw svg .sF{stroke:var(--foc)} .tw svg .sC{stroke:var(--ctx)} .tw svg .sL{stroke:var(--ctxl)} .tw svg .sG{stroke:var(--grid)}
+.tw svg .sX{stroke:var(--axis)} .tw svg .sA{stroke:var(--acc)} .tw svg .sN{stroke:var(--neg)} .tw svg .sK{stroke:var(--ink)}
+
+/* header strip */
+.tw-hdr{display:flex;align-items:center;gap:14px;padding:0 18px;font-size:13px;color:var(--mut)}
+.tw-mark{width:28px;height:28px;border-radius:calc(var(--radius) + 2px);background:var(--brand);color:var(--onb);
+  display:grid;place-items:center;font:var(--capw) 11px/1 var(--fh);letter-spacing:.02em}
+.tw-hdr .ttl{font-family:var(--fh);font-weight:var(--hw);font-size:16px;color:var(--ink);white-space:nowrap}
+.tw-hdr .ttl span{color:var(--mut);font-weight:400;font-family:var(--fb)}
+.tw-tabs{display:flex;gap:22px;margin-left:30px;height:52px;align-items:stretch}
+.tw-tabs span{display:flex;align-items:center;font-size:13.5px;color:var(--mut);border-bottom:3px solid transparent;padding-top:3px}
+.tw-tabs .on{color:var(--ink);font-weight:700;border-bottom-color:var(--foc)}
+.tw-pills{margin-left:auto;display:flex;gap:8px}
+.tw-pills span{height:28px;padding:0 12px;display:flex;align-items:center;border-radius:calc(var(--radius) + 10px);
+  background:var(--bg);color:var(--tx);font-size:12.5px;white-space:nowrap}
+.tw-pills .syn{background:transparent;color:var(--mut);border:1px solid var(--ctxl)}
+
+/* KPI tiles */
+.tw-kpi .lab{font-size:12.5px;line-height:15px;color:var(--mut);white-space:nowrap}
+.tw-kpi .num{font-family:var(--fh);font-weight:var(--nw);font-size:34px;line-height:40px;margin-top:4px;color:var(--ink);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.tw-kpi .dl{font-size:12.5px;line-height:15px;margin-top:3px;white-space:nowrap;color:var(--mut)}
+.tw-kpi .up{color:var(--post);font-weight:700} .tw-kpi .dn{color:var(--negt);font-weight:700}
+.tw-kpi.fill{background:var(--foc)}
+.tw-kpi.fill .lab,.tw-kpi.fill .num,.tw-kpi.fill .dl{color:var(--onf)}
+.tw-kpi.fill .lab,.tw-kpi.fill .dl{opacity:.86}
+
+/* slide thumbnail */
+.tw-slide{padding:0}
+.tw-slide .band{position:absolute;left:0;top:0;right:0;height:6px;background:var(--brand)}
+.tw-slide .st{position:absolute;left:20px;top:20px;width:320px;font-family:var(--fh);font-weight:var(--hw);font-size:15.5px;line-height:19px;color:var(--ink);letter-spacing:var(--ls)}
+.tw-slide .ss{position:absolute;left:20px;top:62px;font-size:11px;color:var(--mut);white-space:nowrap}
+.tw-slide .lg{position:absolute;right:18px;top:20px;width:30px;height:30px;border-radius:calc(var(--radius) + 2px);
+  background:var(--brand);color:var(--onb);display:grid;place-items:center;font:var(--capw) 11px/1 var(--fh)}
+.tw-slide svg{position:absolute;left:20px;top:84px;margin:0}
+.tw-slide .sf{position:absolute;left:20px;right:20px;bottom:12px;display:flex;justify-content:space-between;font-size:11px;color:var(--mut)}
+.tw-slide .tag{position:absolute;right:56px;top:24px;font-size:11px;color:var(--mut)}
+
+/* ---------- the wave ---------- */
+.tw-ring{position:absolute;left:0;top:0;border-radius:50%;pointer-events:none;opacity:0;
+  box-shadow:0 0 0 4px rgba(255,255,255,.95),0 0 0 12px color-mix(in srgb,var(--foc) 85%,transparent),0 0 60px 28px color-mix(in srgb,var(--foc) 60%,transparent),
+    inset 0 0 0 3px color-mix(in srgb,var(--focl) 90%,transparent),inset 0 0 110px 30px color-mix(in srgb,var(--foc) 50%,transparent)}
+.tw-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+
+/* ---------- tokens.json editor (brand-neutral, sits above the world) ---------- */
+.tw-ed{position:absolute;left:48px;top:402px;width:540px;background:#0D1219;border-radius:14px;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,255,255,.09),0 30px 70px rgba(0,0,0,.38),0 8px 18px rgba(0,0,0,.22);
+  font-family:"TW Mono",Menlo,monospace;color:#D4D4D4;transform-origin:100% 50%}
+.tw-ed .bar{height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;background:#151B24;border-bottom:1px solid rgba(255,255,255,.06)}
+.tw-ed .bar i{width:12px;height:12px;border-radius:50%;background:#3A4250;display:block}
+.tw-ed .tab{margin-left:14px;font:500 15px/1 "TW Franklin",Arial,sans-serif;color:#E6EDF3;display:flex;gap:8px;align-items:center}
+.tw-ed .tab em{font-style:normal;color:#8B949E}
+.tw-ed .dot{width:8px;height:8px;border-radius:50%;background:#E3B341;opacity:0}
+.tw-ed .body{padding:12px 0}
+.tw-ed .ln{position:relative;height:40px;display:flex;align-items:center;font-size:22px;white-space:pre}
+.tw-ed .ln .hl{position:absolute;inset:0;opacity:0;background:rgba(255,255,255,.07);border-left:4px solid #fff}
+.tw-ed .ln .no{position:relative;width:46px;padding-right:16px;text-align:right;color:#4D5766;font-size:18px}
+.tw-ed .k{color:#9CDCFE} .tw-ed .s{color:#CE9178} .tw-ed .p{color:#C9D1D9}
+.tw-ed .val{display:inline-grid;overflow:hidden;vertical-align:top;height:40px;align-items:center}
+.tw-ed .val > span{grid-area:1/1}
+.tw-ed .caret{display:inline-block;width:2px;height:26px;background:#E6EDF3;vertical-align:middle;margin-left:1px;opacity:0}
+.tw-ed .sw{display:inline-block;width:18px;height:18px;border-radius:4px;margin-left:12px;vertical-align:middle;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+.tw-ed .stat{height:42px;display:flex;align-items:center;gap:10px;padding:0 18px;border-top:1px solid rgba(255,255,255,.06);
+  background:#10161E;font:500 14px/1 "TW Franklin",Arial,sans-serif;color:#8B949E;white-space:nowrap;position:relative;overflow:hidden}
+.tw-ed .stat b{color:#3FB950;font-weight:700}
+.tw-ed .stat .glow{position:absolute;inset:0;background:linear-gradient(90deg,rgba(63,185,80,.0),rgba(63,185,80,.28),rgba(63,185,80,0));opacity:0}
+</style>
+</head>
+<body>
+<div class="tw" id="tokenwall"></div>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.querySelector(".tw");
+  if (!root) return;
+
+  /* ================= data (synthetic, from examples/data/*.csv) ================= */
+  var D = {
+    family: [ // attrition_by_job_family.csv
+      ["Pharmacy Tech", 27.4], ["DC Associate", 24.1], ["Customer Care", 18.9], ["Specialty Nursing", 14.2],
+      ["Data & Analytics", 12.9], ["Supply Chain Plan.", 11.8], ["Sales", 10.6], ["Software Eng.", 9.8], ["HR", 8.1], ["Finance", 7.4]],
+    enterprise: 19.9,
+    quarters: ["Q1 FY24","Q2 FY24","Q3 FY24","Q4 FY24","Q1 FY25","Q2 FY25","Q3 FY25","Q4 FY25","Q1 FY26","Q2 FY26","Q3 FY26","Q4 FY26"],
+    lines: [ // attrition_quarterly.csv
+      {name: "Pharm. tech", focus: true, v: [33.6,34.1,33.2,34.4,33.9,34.2,32.8,31.0,29.8,28.0,26.6,25.2]},
+      {name: "DC assoc.", v: [24.8,25.3,24.1,25.0,24.6,23.9,24.4,24.8,24.5,23.8,24.3,23.8]},
+      {name: "Cust. care", v: [20.2,19.6,19.9,19.1,19.4,18.8,19.3,18.9,19.2,18.7,19.1,18.6]},
+      {name: "Software", v: [12.4,12.0,11.7,11.6,11.2,11.0,10.6,10.4,10.1,9.8,9.9,9.4]}],
+    bridge: [ // headcount_bridge.csv
+      ["FY25", "", 18000, "total"], ["Ext.", "hires", 4660, "delta"], ["Moves", "in", 520, "delta"],
+      ["Vol.", "exits", -4543, "delta"], ["Invol.", "exits", -610, "delta"], ["Moves", "out", -330, "delta"], ["FY26", "", 17697, "total"]],
+    mix: [ // workforce_mix.csv  [function, FT, PT, contingent]
+      ["Technology", 58, 12, 30], ["Corporate", 88, 4, 8], ["Distribution", 71, 22, 7], ["Customer Care", 64, 30, 6], ["Pharmacy Ops", 83, 12, 5]],
+    fill: [ // internal_fill_by_bu.csv  FY22, FY26
+      ["Technology", 14, 41], ["U.S. Pharma", 28, 32], ["Med-Surg", 26, 30], ["RxTS", 21, 27], ["Corporate", 19, 25], ["Oncology", 24, 21]],
+    fillFY: {FY25: 24, FY26: 29}, // internal_fill_by_fy.csv
+    succession: [ // succession_coverage_bu.csv  critical roles, ready-now Mar25, Mar26
+      ["Corporate", 70, 38, 49], ["Med-Surg", 62, 30, 40], ["Oncology", 48, 19, 21], ["RxTS", 40, 24, 31], ["Technology", 85, 36, 50], ["U.S. Pharma", 105, 50, 63]],
+    target: 75,
+    heatDrivers: ["Growth", "Workload", "Tools", "Pay"],
+    heat: [ // engagement_vs_benchmark.csv (Growth, Workload, Tools & tech, Pay fairness)
+      ["Corporate", 2, 3, 1, -1], ["Med-Surg", -1, -5, 0, 1], ["Oncology", -3, -11, -6, -4],
+      ["RxTS", 1, -4, 2, -6], ["Technology", 6, -7, 8, -3], ["U.S. Pharma", -6, -8, -1, 0]]
+  };
+
+  /* ================= helpers ================= */
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  function num(v) { return Math.round(v).toLocaleString("en-US"); }
+  function sgn(v) { return (v < 0 ? "−" : "+") + num(Math.abs(v)); }
+  function f1(v) { return (Math.round(v * 10) / 10).toFixed(1); }
+  function T(x, y, s, cls, extra) {
+    return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (cls ? ' class="' + cls + '"' : "") + (extra || "") + ">" + esc(s) + "</text>";
+  }
+  function R(x, y, w, h, cls, extra) {
+    return '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + Math.max(0, w).toFixed(1) + '" height="' + Math.max(0, h).toFixed(1) + '" class="' + cls + '"' + (extra || "") + "/>";
+  }
+  function L(x1, y1, x2, y2, cls, w, extra) {
+    return '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" class="' + cls + '" stroke-width="' + (w || 1) + '"' + (extra || "") + "/>";
+  }
+  function svg(w, h, inner) { return '<svg width="' + w.toFixed(1) + '" height="' + h + '" viewBox="0 0 ' + w.toFixed(1) + " " + h + '">' + inner + "</svg>"; }
+  var END = ' text-anchor="end"', MID = ' text-anchor="middle"';
+
+  /* ================= layout (px, 12-col grid in a 1280 x 849 wall) ================= */
+  var GAP = 14, COL = (1280 - 11 * GAP) / 12, PAD = 14;
+  var ROWS = [52, 104, 117, 250, 270], rowY = [0];
+  for (var i = 1; i < ROWS.length; i++) rowY[i] = rowY[i - 1] + ROWS[i - 1] + GAP;
+  function box(c0, c1, r0, r1) { // inclusive columns/rows, 0-based
+    var x = c0 * (COL + GAP), w = (c1 - c0 + 1) * COL + (c1 - c0) * GAP;
+    var y = rowY[r0], h = rowY[r1] + ROWS[r1] - y;
+    return {x: x, y: y, w: w, h: h};
+  }
+  function chartH(b) { return b.h - 2 * PAD - 84; }
+  function innerW(b) { return b.w - 2 * PAD; }
+
+  /* ================= charts ================= */
+  function rankedBar(W, H) {
+    var labW = 112, x0 = 118, x1 = W - 42, top = 20, max = 30, n = D.family.length, rh = (H - top) / n, bh = 16;
+    var X = function (v) { return x0 + v / max * (x1 - x0); };
+    var s = L(X(D.enterprise), top - 5, X(D.enterprise), H, "sX", 1, ' stroke-dasharray="3 3"');
+    s += T(X(D.enterprise), 10, "Enterprise " + f1(D.enterprise) + "%", "m s11", MID);
+    D.family.forEach(function (r, i) {
+      var y = top + i * rh + (rh - bh) / 2, hi = i === 0;
+      s += R(x0, y, X(r[1]) - x0, bh, hi ? "fF" : "fC");
+      s += T(labW, y + bh / 2 + 4, r[0], hi ? "k b" : "", END);
+      s += T(X(r[1]) + 5, y + bh / 2 + 4, f1(r[1]) + "%", hi ? "ft b halo" : "halo");
+    });
+    s += L(x0, top - 2, x0, H, "sX", 1);
+    return svg(W, H, s);
+  }
+
+  function lineChart(W, H) {
+    var ml = 32, mr = 124, mt = 14, mb = 22, lo = 5, hi = 37, n = 12;
+    var X = function (i) { return ml + i * (W - ml - mr) / (n - 1); };
+    var Y = function (v) { return mt + (hi - v) / (hi - lo) * (H - mt - mb); };
+    var s = "";
+    [10, 20, 30].forEach(function (g) { s += L(ml, Y(g), W - mr + 4, Y(g), "sG", 1) + T(ml - 6, Y(g) + 4, g + "%", "m s11", END); });
+    [0, 4, 8].forEach(function (i) { s += T(X(i), H - 4, D.quarters[i], "m s11", i === 0 ? "" : MID); });
+    var ends = [];
+    D.lines.slice().reverse().forEach(function (ln) {
+      var d = ln.v.map(function (v, i) { return (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(v).toFixed(1); }).join("");
+      s += '<path d="' + d + '" fill="none" class="' + (ln.focus ? "sF" : "sC") + '" stroke-width="' + (ln.focus ? 3 : 1.6) + '" stroke-linejoin="round" stroke-linecap="round"/>';
+      ends.push({y: Y(ln.v[n - 1]), ln: ln});
+    });
+    // dodge end labels (min 14px apart)
+    ends.sort(function (a, b) { return a.y - b.y; });
+    for (var k = 1; k < ends.length; k++) if (ends[k].y - ends[k - 1].y < 14) { var mid = (ends[k].y + ends[k - 1].y) / 2; ends[k - 1].y = mid - 7; ends[k].y = mid + 7; }
+    ends.forEach(function (e) {
+      var ln = e.ln, last = ln.v[n - 1];
+      s += '<circle cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(last).toFixed(1) + '" r="' + (ln.focus ? 4 : 2.6) + '" class="' + (ln.focus ? "fF" : "fC") + '"/>';
+      s += T(X(n - 1) + 9, e.y + 4, ln.name + " " + f1(last) + "%", ln.focus ? "ft b" : "m s11");
+    });
+    var pk = D.lines[0].v.indexOf(Math.max.apply(null, D.lines[0].v)), pv = D.lines[0].v[pk];
+    s += '<circle cx="' + X(pk).toFixed(1) + '" cy="' + Y(pv).toFixed(1) + '" r="4" class="fK sF" stroke-width="2"/>';
+    s += T(X(pk) + 8, Y(pv) - 9, "Peak " + f1(pv) + "%", "k s11 halo");
+    return svg(W, H, s);
+  }
+
+  function dotPlot(W, H) {
+    var rows = D.succession.map(function (r) { return {n: r[0], a: r[2] / r[1] * 100, b: r[3] / r[1] * 100}; })
+      .sort(function (p, q) { return q.b - p.b; });
+    var top = 24, labW = 80, x0 = 88, x1 = W - 44, lo = 30, hi = 90, rh = (H - top) / rows.length;
+    var X = function (v) { return x0 + (v - lo) / (hi - lo) * (x1 - x0); };
+    var best = rows[0], worst = rows[rows.length - 1];
+    var s = '<circle cx="5" cy="7" r="4" class="fK sC" stroke-width="1.6"/>' + T(14, 11, "Mar 2025", "m s11");
+    s += '<circle cx="80" cy="7" r="4.5" class="fC"/>' + T(89, 11, "Mar 2026", "m s11");
+    s += L(X(D.target), 16, X(D.target), H, "sA", 1.2, ' stroke-dasharray="4 3"') + T(X(D.target), 11, "Target " + D.target + "%", "k b s11", MID);
+    rows.forEach(function (r, i) {
+      var y = top + i * rh + rh / 2, cls = r === best ? "fF" : r === worst ? "fN" : "fC";
+      s += T(labW, y + 4, r.n, r === best || r === worst ? "k b" : "", END);
+      s += L(X(r.a), y, X(r.b), y, "sL", 3);
+      s += '<circle cx="' + X(r.a).toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4" class="fK sC" stroke-width="1.6"/>';
+      s += '<circle cx="' + X(r.b).toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5" class="' + cls + '"/>';
+      var lx = X(r.b) + 9; if (lx < X(D.target) + 4 && lx + 30 > X(D.target)) lx = X(D.target) + 5;
+      s += T(lx, y + 4, Math.round(r.b) + "%", (r === best ? "ft b" : r === worst ? "nt b" : "m") + " halo");
+    });
+    return {svg: svg(W, H, s), best: best, worst: worst};
+  }
+
+  function waterfall(W, H) {
+    var top = 16, base = H - 30, n = D.bridge.length, slot = W / n, bw = 27, run = 0, max = 0, r2;
+    D.bridge.forEach(function (r) { run = r[3] === "total" ? r[2] : run + r[2]; max = Math.max(max, run, r[3] === "total" ? r[2] : 0); });
+    var Y = function (v) { return base - v / max * (base - top - 4); };
+    var s = "", prev = 0; run = 0;
+    D.bridge.forEach(function (r, i) {
+      var cx = slot * i + slot / 2, x = cx - bw / 2, a, b, tot = r[3] === "total", named = /hires|exits/.test(r[1]) && r[0] !== "Invol.";
+      if (tot) { a = 0; b = r[2]; run = r[2]; } else { a = run; b = run + r[2]; run = b; }
+      var y1 = Y(Math.max(a, b)), y2 = Y(Math.min(a, b));
+      s += R(x, y1, bw, Math.max(1.5, y2 - y1), tot ? "fA" : named ? "fF" : "fC");
+      if (i > 0) s += L(slot * (i - 1) + slot / 2 + bw / 2, Y(prev), x, Y(prev), "sX", 0.75);
+      prev = run;
+      s += T(cx, y1 - 4, tot ? num(r[2]) : sgn(r[2]), tot ? "k b s11" : named ? "ft b s11" : "s11", MID);
+      s += T(cx, base + 13, r[0], tot ? "k b s11" : "m s11", MID);
+      if (r[1]) s += T(cx, base + 26, r[1], "m s11", MID);
+    });
+    s += L(0, base, W, base, "sX", 1);
+    return svg(W, H, s);
+  }
+
+  function mixBar(W, H) {
+    var top = 24, labW = 86, x0 = 92, x1 = W - 36, rh = (H - top) / D.mix.length, bh = 17, s = "";
+    [["Full-time", "fL"], ["Part-time", "fC"], ["Contingent", "fFL"]].forEach(function (k, i) {
+      var x = [0, 74, 150][i]; s += R(x, 1, 11, 11, k[1]) + T(x + 16, 11, k[0], "m s11");
+    });
+    D.mix.forEach(function (r, i) {
+      var y = top + i * rh + (rh - bh) / 2, x = x0, w = x1 - x0, hi = i === 0;
+      s += T(labW, y + bh / 2 + 4, r[0], hi ? "k b" : "", END);
+      [[r[1], "fL"], [r[2], "fC"], [r[3], hi ? "fF" : "fFL"]].forEach(function (seg) {
+        var sw = seg[0] / 100 * w; s += R(x, y, sw - 1.5, bh, seg[1]); x += sw;
+      });
+      s += T(x1 + 5, y + bh / 2 + 4, r[3] + "%", hi ? "ft b" : "m");
+    });
+    return svg(W, H, s);
+  }
+
+  function slope(W, H) {
+    var top = 20, xL = 116, xR = 222, lo = 10, hi = 45;
+    var Y = function (v) { return top + 6 + (hi - v) / (hi - lo) * (H - top - 14); };
+    var s = T(xL, 11, "FY22", "m s11 b", MID) + T(xR, 11, "FY26", "m s11 b", MID);
+    s += L(xL, 16, xL, H, "sG", 1) + L(xR, 16, xR, H, "sG", 1);
+    var others = D.fill.slice(1), tech = D.fill[0];
+    others.forEach(function (r) {
+      s += L(xL, Y(r[1]), xR, Y(r[2]), "sC", 1.5);
+      s += '<circle cx="' + xL + '" cy="' + Y(r[1]).toFixed(1) + '" r="2.5" class="fC"/><circle cx="' + xR + '" cy="' + Y(r[2]).toFixed(1) + '" r="2.5" class="fC"/>';
+    });
+    s += L(xL, Y(tech[1]), xR, Y(tech[2]), "sF", 3);
+    s += '<circle cx="' + xL + '" cy="' + Y(tech[1]).toFixed(1) + '" r="4" class="fF"/><circle cx="' + xR + '" cy="' + Y(tech[2]).toFixed(1) + '" r="4" class="fF"/>';
+    var oL = others.map(function (r) { return r[1]; }), oR = others.map(function (r) { return r[2]; });
+    var minL = Math.min.apply(null, oL), maxL = Math.max.apply(null, oL), minR = Math.min.apply(null, oR), maxR = Math.max.apply(null, oR);
+    s += T(xL - 9, Y(tech[1]) + 4, "Technology " + tech[1] + "%", "ft b", END);
+    s += T(xL - 9, Y((minL + maxL) / 2) + 4, "Other BUs " + minL + "–" + maxL + "%", "m s11", END);
+    s += T(xR + 9, Y(tech[2]) + 4, tech[2] + "%", "ft b");
+    s += T(xR + 9, Y((minR + maxR) / 2) + 4, minR + "–" + maxR + "%", "m s11");
+    return svg(W, H, s);
+  }
+
+  function heat(W, H) {
+    var rows = D.heat.slice().sort(function (a, b) { return a[2] - b[2]; });
+    var hh = 20, labW = 74, x0 = 80, cw = (W - x0) / 4, rh = (H - hh) / rows.length, s = "", maxAbs = 11;
+    D.heatDrivers.forEach(function (d, j) { s += T(x0 + cw * j + cw / 2, 12, d, j === 1 ? "k b s11" : "m s11", MID); });
+    rows.forEach(function (r, i) {
+      var y = hh + i * rh;
+      s += T(labW, y + rh / 2 + 4, r[0], "", END);
+      for (var j = 0; j < 4; j++) {
+        var v = r[j + 1], p = v === 0 ? 0 : Math.round(14 + Math.abs(v) / maxAbs * 76), x = x0 + cw * j;
+        var fill = v === 0 ? "var(--grid)" : "color-mix(in srgb, var(" + (v > 0 ? "--hp" : "--neg") + ") " + p + "%, var(--card))";
+        s += '<rect x="' + (x + 1).toFixed(1) + '" y="' + (y + 1).toFixed(1) + '" width="' + (cw - 2).toFixed(1) + '" height="' + (rh - 2).toFixed(1) + '" style="fill:' + fill + '"/>';
+        var strong = p >= 58;
+        s += '<text x="' + (x + cw / 2).toFixed(1) + '" y="' + (y + rh / 2 + 4).toFixed(1) + '" text-anchor="middle" style="fill:' +
+          (strong ? (v > 0 ? "var(--onf)" : "var(--onn)") : "var(--ink)") + ';font-weight:' + (strong ? 700 : 400) + '">' + (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "</text>";
+      }
+    });
+    s += R(x0 + cw + 0.5, hh - 0.5, cw - 1, H - hh, "sK", ' fill="none" stroke-width="1.6"');
+    return svg(W, H, s);
+  }
+
+  function slideChart(W, H) {
+    var top5 = D.family.slice(0, 5), names = ["Pharm. tech", "DC assoc.", "Cust. care", "Nursing", "Analytics"];
+    var slot = W / 5, bw = 34, base = H - 18, max = 30, s = "";
+    top5.forEach(function (r, i) {
+      var cx = slot * i + slot / 2, h = r[1] / max * (base - 14);
+      s += R(cx - bw / 2, base - h, bw, h, i === 0 ? "fF" : "fC");
+      s += T(cx, base - h - 5, f1(r[1]) + "%", i === 0 ? "ft b s11" : "s11", MID);
+      s += T(cx, base + 13, names[i], i === 0 ? "k b s11" : "m s11", MID);
+    });
+    s += L(0, base, W, base, "sX", 1);
+    return svg(W, H, s);
+  }
+
+  /* ================= headlines computed from the data ================= */
+  var pt = D.family[0], ptQ = D.lines[0].v, ptPeak = Math.max.apply(null, ptQ), ptDrop = ptPeak - ptQ[ptQ.length - 1];
+  var ptPeakQ = D.quarters[ptQ.indexOf(ptPeak)].split(" ")[1];
+  var hires = D.bridge[1][2], vol = -D.bridge[3][2], startHC = D.bridge[0][2], endHC = D.bridge[6][2];
+  var tech = D.fill[0], mixTop = D.mix[0];
+  var wlBehind = D.heat.filter(function (r) { return r[2] < 0; }).length;
+  var crit = 0, ready = 0; D.succession.forEach(function (r) { crit += r[1]; ready += r[3]; });
+  var readyPct = Math.round(ready / crit * 100);
+
+  /* ================= build one copy of the world ================= */
+  function tile(b, cls, inner, id) {
+    return '<div class="tw-tile ' + (cls || "") + '" data-pop="' + id + '" style="left:' + b.x.toFixed(1) + "px;top:" + b.y + "px;width:" + b.w.toFixed(1) + "px;height:" + b.h + 'px">' + inner + '<div class="tw-sheen"></div></div>';
+  }
+  function card(b, h, sub, chart, src, id) {
+    return tile(b, "", '<div class="tw-h">' + esc(h) + '</div><div class="tw-s">' + esc(sub) + "</div>" + chart + '<div class="tw-src">' + esc(src || "Source: synthetic HR data, FY26") + "</div>", id);
+  }
+  var B = {
+    hdr: box(0, 11, 0, 0), k1: box(0, 1, 1, 1), k2: box(2, 3, 1, 1), k3: box(4, 5, 1, 1), k4: box(6, 7, 1, 1),
+    sl: box(8, 11, 1, 2), bar: box(0, 3, 2, 3), line: box(4, 7, 2, 3), dot: box(8, 11, 3, 3),
+    wf: box(0, 2, 4, 4), mix: box(3, 5, 4, 4), slope: box(6, 8, 4, 4), heat: box(9, 11, 4, 4)
+  };
+  function kpi(b, lab, val, dl, fill, id) {
+    return tile(b, "tw-kpi" + (fill ? " fill" : ""), '<div class="lab">' + lab + '</div><div class="num">' + val + '</div><div class="dl">' + dl + "</div>", id);
+  }
+  function world(theme) {
+    var dp = dotPlot(innerW(B.dot), chartH(B.dot));
+    var h = "";
+    h += '<div class="tw-deco"><i class="d1"></i><i class="d2"></i><i class="d3"></i></div>';
+    h += '<div class="tw-cap" data-pop="cap"><span class="c1">Your house style?<b>It lives in one file.</b></span><span class="c2">Change a few lines.<b>Everything updates.</b></span></div>';
+    h += '<div class="tw-chip" data-pop="chip"><i></i>Theme <b>' + theme.name + "</b></div>";
+    h += '<div class="tw-wall">';
+    h += tile(B.hdr, "tw-hdr", '<div class="tw-mark">WI</div><div class="ttl">Workforce Innovation <span>/ Attrition &amp; mobility</span></div>' +
+      '<div class="tw-tabs"><span class="on">Overview</span><span>Attrition</span><span>Mobility</span><span>Succession</span></div>' +
+      '<div class="tw-pills"><span>FY26 ▾</span><span>All business units ▾</span><span class="syn">Synthetic data</span></div>', "hdr");
+    h += kpi(B.k1, "Headcount, end FY26", num(endHC), sgn(endHC - startHC) + " (" + f1((endHC - startHC) / startHC * 100).replace("-", "−") + "%) vs FY25", true, "k1");
+    h += kpi(B.k2, "Voluntary exits, FY26", num(vol), f1(vol / startHC * 100) + "% of opening headcount", false, "k2");
+    h += kpi(B.k3, "Internal fill rate", D.fillFY.FY26 + "%", '<span class="up">▲ ' + (D.fillFY.FY26 - D.fillFY.FY25) + " pts</span> vs FY25", false, "k3");
+    h += kpi(B.k4, "Ready-now coverage", readyPct + "%", '<span class="dn">▼ ' + (D.target - readyPct) + " pts</span> below target", false, "k4");
+    // slide thumbnail
+    var sw = B.sl.w - 40, sh = B.sl.h - 84 - 34;
+    h += tile(B.sl, "tw-slide", '<div class="band"></div><div class="st">Pharmacy techs still lead attrition, despite a ' + f1(ptDrop).replace(/\.0$/, "") + "-pt drop since " + ptPeakQ + '</div>' +
+      '<div class="ss">Voluntary attrition, top 5 job families, FY26 (%)</div><div class="lg">WI</div>' + slideChart(sw, sh) +
+      '<div class="sf"><span>Source: synthetic HR data, FY26</span><span>Board update · 4</span></div>', "sl");
+    h += card(B.bar, "Pharmacy techs quit at " + f1(pt[1]) + "%, " + f1(pt[1] - D.enterprise) + " pts above the enterprise rate",
+      "Voluntary attrition by job family, FY26 (%)", rankedBar(innerW(B.bar), chartH(B.bar)), null, "bar");
+    h += card(B.line, "Pharmacy tech attrition is down " + f1(ptDrop) + " pts from its " + ptPeakQ + " peak",
+      "Voluntary attrition by quarter, FY24–FY26 (%)", lineChart(innerW(B.line), chartH(B.line)), null, "line");
+    h += card(B.dot, "Only " + dp.best.n + " meets the " + D.target + "% ready-now target; " + dp.worst.n + " lags at " + Math.round(dp.worst.b) + "%",
+      "Critical roles with a ready-now successor (%)", dp.svg, "Source: synthetic succession data, Mar 2026", "dot");
+    h += card(B.wf, num(vol) + " voluntary exits nearly cancelled out " + num(hires) + " hires",
+      "Headcount bridge, FY25 to FY26 (people)", waterfall(innerW(B.wf), chartH(B.wf)), null, "wf");
+    h += card(B.mix, mixTop[3] + "% of " + mixTop[0] + "’s workforce is contingent",
+      "Workforce mix by function, FY26 (%)", mixBar(innerW(B.mix), chartH(B.mix)), null, "mix");
+    h += card(B.slope, tech[0] + " nearly tripled its internal fill rate, to " + tech[2] + "%",
+      "Internal fill by BU, FY22 vs FY26 (%)", slope(innerW(B.slope), chartH(B.slope)), null, "slope");
+    h += card(B.heat, "Workload lags the benchmark in " + wlBehind + " of " + D.heat.length + " BUs",
+      "Engagement vs benchmark by driver (pts)", heat(innerW(B.heat), chartH(B.heat)), "Source: synthetic survey data, FY26", "heat");
+    h += "</div>";
+    return h;
+  }
+
+  /* ================= themes + editor ================= */
+  var THEMES = [
+    {cls: "th-mck", name: "McKesson", v: ["#005A8C", "#143359", "#EFEDE7", "Libre Franklin"]},
+    {cls: "th-cmm", name: "CoverMyMeds", v: ["#D1246A", "#EF7D2D", "#FCF1EA", "Arial Rounded"]},
+    {cls: "th-scri", name: "Sarah Cannon", v: ["#2D5AA8", "#F2D13A", "#EDF4FA", "Futura"]},
+    {cls: "th-uson", name: "The US Oncology Network", v: ["#2A7C83", "#E3892F", "#E8F0EF", "Georgia"]},
+    {cls: "th-dark", name: "Dark mode", v: ["#66C4FF", "#FFFFFF", "#050E1C", "Libre Franklin"]}
+  ];
+  var KEYS = ["color.chart.focus", "color.brand.accent", "color.surface.subtle", "font.heading"];
+  var PADK = 23;
+
+  /* ================= timeline ================= */
+  // Times are seconds into the video scene (s-brand, narration from u = .5), so seek(u) needs no mapping:
+  //   0.50 "And the whole house style lives in one file."  3.33 "Change a few lines, and every template and theme updates."
+  //   (typing; the other lines flip on chart / slide / dashboard)  7.49 "CoverMyMeds."  9.40 "Sarah Cannon."
+  //   11.25 "The US Oncology Network."  then hold on USON (no dark-mode beat in this video).
+  // W = wave start, D = wave length. Each theme holds still until the next name is spoken.
+  var CAP2 = 3.33;   // caption changes to "Change a few lines. Everything updates."
+  var SWAPS = [
+    {from: 0, to: 1, W: 6.90, D: 0.65, type: {t0: 3.46, del: 0.05, typ: 0.085}, flips: [4.85, 5.55, 6.20]},
+    {from: 1, to: 2, W: 9.32, D: 0.45},
+    {from: 2, to: 3, W: 11.17, D: 0.45, final: true}
+  ];
+  var DUR = 16;
+  // editor events per swap: line edits end just before the wave
+  var EDITS = [];
+  SWAPS.forEach(function (sw, k) {
+    var from = THEMES[sw.from].v, to = THEMES[sw.to].v, lines = [];
+    for (var j = 0; j < 4; j++) if (from[j] !== to[j]) lines.push(j);
+    if (sw.type) {
+      // type the focus line by hand, then flip the rest one by one
+      var ty = sw.type, oldS = from[0].slice(1), newS = to[0].slice(1);
+      var t1 = ty.t0 + oldS.length * ty.del + newS.length * ty.typ;
+      EDITS.push({sw: k, line: 0, kind: "type", t0: ty.t0, t1: t1, del: ty.del, typ: ty.typ, from: from[0], to: to[0]});
+      var rest = lines.filter(function (j) { return j !== 0; });
+      rest.forEach(function (j, i) { var a = sw.flips ? sw.flips[i] : t1 + 0.05 + i * 0.07; EDITS.push({sw: k, line: j, kind: "flip", t0: a, t1: a + 0.16, from: from[j], to: to[j]}); });
+      sw.E = ty.t0;
+    } else {
+      var stag = 0.055, dur = 0.12, lead = (lines.length - 1) * stag + dur + 0.03;
+      lines.forEach(function (j, i) { var a = sw.W - lead + i * stag; EDITS.push({sw: k, line: j, kind: "flip", t0: a, t1: a + dur, from: from[j], to: to[j]}); });
+      sw.E = sw.W - lead;
+    }
+  });
+
+  /* ================= DOM ================= */
+  var ed = '<div class="tw-ed"><div class="bar"><i></i><i></i><i></i><div class="tab"><span class="dot"></span>tokens.json <em>— tokens/</em></div></div><div class="body">';
+  ed += '<div class="ln"><span class="no">1</span><span class="p">{</span></div>';
+  KEYS.forEach(function (k, j) {
+    var pad = new Array(PADK - k.length - 2).join(" ");
+    ed += '<div class="ln" data-l="' + j + '"><span class="hl"></span><span class="no">' + (j + 2) + '</span><span class="p">  </span><span class="k">"' + k + '"</span><span class="p">:' + pad + ' </span>' +
+      '<span class="val"><span class="o s"></span><span class="n s"></span></span><span class="caret"></span>' + (j < 3 ? '<span class="p">,</span>' : "") +
+      (j < 3 ? '<span class="sw"></span>' : "") + "</div>";
+  });
+  ed += '<div class="ln"><span class="no">6</span><span class="p">}</span></div></div>';
+  ed += '<div class="stat"><span class="glow"></span><span class="msg"></span></div></div>';
+
+  root.innerHTML = '<div class="tw-cam"><div class="tw-layer tw-base"></div><div class="tw-layer tw-top"></div>' +
+    '<div class="tw-ring"></div>' + ed + '<div class="tw-flash"></div></div>';
+  var cam = root.querySelector(".tw-cam"), base = root.querySelector(".tw-base"), top = root.querySelector(".tw-top");
+  var ring = root.querySelector(".tw-ring"), flash = root.querySelector(".tw-flash"), edEl = root.querySelector(".tw-ed");
+  var lnEls = [].slice.call(root.querySelectorAll(".tw-ed .ln[data-l]")).map(function (el) {
+    return {el: el, hl: el.querySelector(".hl"), o: el.querySelector(".o"), n: el.querySelector(".n"), caret: el.querySelector(".caret"), sw: el.querySelector(".sw")};
+  });
+  var dot = root.querySelector(".tw-ed .dot"), stMsg = root.querySelector(".tw-ed .msg"), stGlow = root.querySelector(".tw-ed .glow");
+
+  // pop targets: centers in stage coordinates (wall at 592,116)
+  var WALL = {x: 592, y: 116};
+  var POPC = {cap: [300, 304], chip: [140, 814]}, POPW = {cap: 540, chip: 220};
+  Object.keys(B).forEach(function (k) { POPW[k] = B[k].w; POPC[k] = [WALL.x + B[k].x + B[k].w / 2, WALL.y + B[k].y + B[k].h / 2]; });
+  var ORIGIN = [588, 538]; // right edge of the editor, at the focus line
+  var RMAX = 1560;
+
+  var worldCache = {};
+  function setLayer(layer, idx) {
+    if (layer._idx === idx) return;
+    layer._idx = idx;
+    layer.className = "tw-layer " + (layer === base ? "tw-base " : "tw-top ") + THEMES[idx].cls;
+    if (!worldCache[idx]) worldCache[idx] = world(THEMES[idx]);
+    layer.innerHTML = worldCache[idx];
+    layer._pops = [].slice.call(layer.querySelectorAll("[data-pop]")).map(function (el) {
+      var c = POPC[el.getAttribute("data-pop")];
+      return {el: el, sheen: el.querySelector(".tw-sheen"), d: Math.hypot(c[0] - ORIGIN[0], c[1] - ORIGIN[1]), k: Math.min(1, 420 / POPW[el.getAttribute("data-pop")])};
+    });
+  }
+
+  /* ================= render(t): pure function of time ================= */
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function easeOut(p) { return 1 - Math.pow(1 - p, 2.4); }
+  function bump(x, w) { return Math.exp(-(x * x) / (w * w)); }
+  function valueAt(j, t) {
+    var cur = THEMES[0].v[j], ev = null;
+    EDITS.forEach(function (e) { if (e.line === j && e.t0 <= t) { if (t >= e.t1) cur = e.to; else ev = e; } });
+    return {v: cur, ev: ev};
+  }
+
+  var current = 0;
+  function render(t) {
+    t = clamp(t, 0, DUR); current = t;
+    // --- which themes are on screen
+    var settled = 0, wave = null;
+    SWAPS.forEach(function (sw) { if (t >= sw.W) { if (t < sw.W + sw.D) wave = sw; else settled = sw.to; } });
+    var b = wave ? wave.from : settled;
+    setLayer(base, b);
+    var kick = 0;
+    if (wave) {
+      var p = (t - wave.W) / wave.D, e = easeOut(p), r = RMAX * e;
+      setLayer(top, wave.to);
+      top.style.display = "";
+      top.style.clipPath = "circle(" + r.toFixed(1) + "px at " + ORIGIN[0] + "px " + ORIGIN[1] + "px)";
+      ring.className = "tw-ring " + THEMES[wave.to].cls;
+      ring.style.width = ring.style.height = (2 * r).toFixed(1) + "px";
+      ring.style.transform = "translate(" + (ORIGIN[0] - r).toFixed(1) + "px," + (ORIGIN[1] - r).toFixed(1) + "px)";
+      ring.style.opacity = (clamp(p / 0.06, 0, 1) * (1 - clamp((p - 0.7) / 0.3, 0, 1))).toFixed(3);
+      var amp = wave.final ? 0.06 : 0.045;
+      top._pops.forEach(function (o) {
+        var g = bump(r - o.d - 40, 150);
+        o.el.style.transform = g > 0.002 ? "scale(" + (1 + amp * o.k * g).toFixed(4) + ")" : "";
+        if (o.sheen) o.sheen.style.opacity = (0.55 * g).toFixed(3);
+      });
+      flash.style.opacity = ((wave.final ? 0.32 : 0.22) * Math.max(0, 1 - p / 0.22)).toFixed(3);
+      kick = Math.sin(clamp(p / 0.45, 0, 1) * Math.PI);
+    } else {
+      top.style.display = "none"; top.style.clipPath = ""; ring.style.opacity = 0; flash.style.opacity = 0;
+    }
+    root.style.setProperty("--c2", clamp((t - CAP2) / 0.35, 0, 1).toFixed(3));
+    cam.style.transform = kick ? "scale(" + (1 + 0.007 * kick).toFixed(4) + ")" : "";
+
+    // --- editor
+    var activeLine = -1, unsaved = false;
+    SWAPS.forEach(function (sw) { if (t >= sw.E && t < sw.W) unsaved = true; });
+    lnEls.forEach(function (L, j) {
+      var st = valueAt(j, t), ev = st.ev, hlOp = 0, newCol = null;
+      L.o.style.transform = ""; L.o.style.opacity = 0; L.n.style.transform = ""; L.n.style.opacity = 1;
+      if (ev && ev.kind === "type") {
+        var dt = t - ev.t0, oldS = ev.from.slice(1), newS = ev.to.slice(1), nd = Math.min(oldS.length, Math.floor(dt / ev.del));
+        var s = nd < oldS.length ? oldS.slice(0, oldS.length - nd) : newS.slice(0, Math.floor((dt - oldS.length * ev.del) / ev.typ));
+        L.n.textContent = '"#' + s + '"'; activeLine = j; hlOp = 1; newCol = ev.to;
+      } else if (ev) {
+        var q = easeOut(clamp((t - ev.t0) / (ev.t1 - ev.t0), 0, 1));
+        L.o.textContent = '"' + ev.from + '"'; L.n.textContent = '"' + ev.to + '"';
+        L.o.style.opacity = 1 - q; L.o.style.transform = "translateY(" + (-q * 30).toFixed(1) + "px)";
+        L.n.style.opacity = q; L.n.style.transform = "translateY(" + ((1 - q) * 30).toFixed(1) + "px)";
+        activeLine = j; hlOp = 1; newCol = ev.to;
+      } else {
+        L.n.textContent = '"' + st.v + '"';
+      }
+      // line glow: held while editing, flashes when its swap's wave fires, fades out after
+      SWAPS.forEach(function (sw, k) {
+        var touched = EDITS.some(function (e) { return e.sw === k && e.line === j; });
+        if (!touched) return;
+        if (t >= sw.E && t < sw.W && EDITS.some(function (e) { return e.sw === k && e.line === j && t >= e.t0; })) { hlOp = Math.max(hlOp, 1); newCol = THEMES[sw.to].v[0]; }
+        if (t >= sw.W && t < sw.W + 0.5) { hlOp = Math.max(hlOp, 1 - (t - sw.W) / 0.5); newCol = THEMES[sw.to].v[0]; }
+      });
+      L.hl.style.opacity = hlOp.toFixed(3);
+      if (newCol) L.hl.style.borderLeftColor = newCol;
+      if (L.sw) {
+        var shown = ev && ev.kind === "flip" ? (t - ev.t0 < (ev.t1 - ev.t0) / 2 ? ev.from : ev.to) : ev && ev.kind === "type" ? (t >= ev.t1 ? ev.to : ev.from) : st.v;
+        L.sw.style.background = shown;
+      }
+      L.caret.style.opacity = 0;
+    });
+    // caret: on the line being edited (solid), else blinking on the focus line
+    if (activeLine >= 0) lnEls[activeLine].caret.style.opacity = 1;
+    else lnEls[0].caret.style.opacity = (Math.floor(t * 1.8) % 2 === 0) ? 1 : 0;
+    dot.style.opacity = unsaved ? 1 : 0;
+    var lastW = null; SWAPS.forEach(function (sw) { if (t >= sw.W) lastW = sw; });
+    if (unsaved) { stMsg.innerHTML = "Editing tokens.json…"; stGlow.style.opacity = 0; }
+    else if (lastW) {
+      stMsg.innerHTML = "<b>✓</b> build.py → CSS · Plotly · Vega-Lite · Office · Power BI · R";
+      stGlow.style.opacity = Math.max(0, 1 - (t - lastW.W) / 0.7).toFixed(3);
+    } else { stMsg.innerHTML = "One file drives every chart, slide and dashboard"; stGlow.style.opacity = 0; }
+    var edKick = 0; SWAPS.forEach(function (sw) { if (t >= sw.W - 0.06 && t < sw.W + 0.25) edKick = Math.sin(clamp((t - sw.W + 0.06) / 0.31, 0, 1) * Math.PI); });
+    edEl.style.transform = edKick ? "scale(" + (1 + 0.018 * edKick).toFixed(4) + ")" : "";
+  }
+
+  /* ================= playback API ================= */
+  var raf = 0, t0 = 0, loop = true;
+  function frame(now) {
+    var t = (now - t0) / 1000;
+    if (t >= DUR) { if (loop) { t0 = now; t = 0; } else { render(DUR); raf = 0; return; } }
+    render(t); raf = requestAnimationFrame(frame);
+  }
+  function play(from) {
+    pause(); var s = from == null ? (current >= DUR ? 0 : current) : from;
+    t0 = performance.now() - s * 1000; raf = requestAnimationFrame(frame);
+  }
+  function pause() { if (raf) cancelAnimationFrame(raf); raf = 0; }
+  function seek(t) { pause(); render(+t || 0); }
+  window.tokenwall = {duration: DUR, seek: seek, play: play, pause: pause, time: function () { return current; },
+    themes: THEMES.map(function (x) { return x.name; }), swaps: SWAPS.map(function (s) { return {to: THEMES[s.to].name, start: s.W, dur: s.D}; })};
+
+  // fit the 1920x1080 stage into the window when standalone
+  function fit() {
+    if (root.hasAttribute("data-nofit")) return;
+    var s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    root.style.transform = Math.abs(s - 1) < 1e-3 ? "" : "translate(" + ((innerWidth - 1920 * s) / 2) + "px," + ((innerHeight - 1080 * s) / 2) + "px) scale(" + s + ")";
+  }
+  fit(); addEventListener("resize", fit);
+
+  var q = new URLSearchParams(location.search);
+  loop = q.get("loop") !== "0";
+  if (q.has("t")) seek(parseFloat(q.get("t")));
+  else { render(0); (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { play(0); }); }
+})();
+</script>
+</body>
+</html>

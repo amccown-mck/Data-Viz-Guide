@@ -1,0 +1,136 @@
+<section class="scene bg-deep bg-dots" id="s-ai" data-min="19">
+
+  <!-- ============ A · three assistants (c0: 0.5 – 5.47) ============ -->
+  <span class="kick lime a x" data-sfx="whoosh" style="--k:slam;--t:.1s;--t2:5.35s;--k2:xwhipL;--d2:.3s;left:80px;top:56px">✦ With an AI assistant</span>
+  <h2 class="cap md inv a x" style="--k:up;--t:.6s;--d:.5s;--t2:5.35s;--k2:xwhipL;--d2:.32s;left:80px;top:168px;white-space:nowrap">Work with an <span class="m">AI assistant?</span></h2>
+
+  <div class="ai-glow a x" style="--k:fade;--t:.8s;--d:.8s;--t2:5.35s;--k2:xfade;left:660px;top:280px"></div>
+  <div class="ai-chips a x" style="--k:cut;--t:0s;--t2:5.4s;--k2:xwhipL;--d2:.32s;left:0;top:470px;width:1920px">
+    <div class="ai-as a" data-sfx="pop" style="--k:slam;--t:1.9s;--d:.5s"><span class="gl cop"></span>Copilot</div>
+    <div class="ai-as a" data-sfx="pop" data-sfx-semi="3" style="--k:slam;--t:2.7s;--d:.5s"><span class="gl cla"></span>Claude</div>
+    <div class="ai-as a" data-sfx="pop" data-sfx-semi="6" style="--k:slam;--t:3.6s;--d:.5s"><span class="gl term">❯_</span>Coding agent</div>
+  </div>
+  <p class="ai-note a x" style="--k:fade;--t:4.4s;--d:.4s;--t2:5.35s;--k2:xfade;left:0;width:1920px;top:720px">…or whichever assistant you use</p>
+
+  <!-- ============ B · playbook, rules, lint (c1 5.47 · c2 7.63 · c3 9.47) ============ -->
+  <h2 class="cap md inv a x" data-sfx="whoosh" style="--k:slam;--t:5.5s;--d:.5s;--t2:12.6s;--k2:xwhipL;--d2:.32s;left:80px;top:56px;white-space:nowrap">It reads <span class="m">the same playbook.</span></h2>
+
+  <!-- the assistant's terminal -->
+  <div class="win dark ai-term a x" data-sfx="thunk" style="--k:up;--t:5.55s;--d:.5s;--t2:12.6s;--k2:xwhipL;--d2:.32s;left:80px;top:200px;width:900px;height:730px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">Your AI assistant</span><span class="r mono">~/leadership-deck</span></div>
+    <div class="term">
+      <div class="ln"><span class="pr">❯</span> Build the attrition chart for the leadership deck</div>
+      <div class="gap"></div>
+      <div class="ln a" data-sfx="tick" style="--k:left;--t:5.9s;--d:.3s"><span class="tool">⏺ Read</span> <span class="fn">AGENTS.md</span></div>
+      <div class="ln a" data-sfx="pop" style="--k:left;--t:6.2s;--d:.3s"><span class="tool">⏺ Skill</span> <span class="fn">mck-chart</span></div>
+      <div class="ln dim a" style="--k:fade;--t:6.4s;--d:.3s">  question → chart type → build → headline → QA</div>
+      <div class="ai-filew a" data-sfx="slot" style="--k:pop;--t:6.55s;--d:.4s">
+        <div class="file"><span class="ic" style="background:var(--blue)">MD</span><div><b>AGENTS.md · mck-chart skill</b><span>The same rules every chart must meet</span></div></div>
+      </div>
+      <div class="gap"></div>
+      <!-- c3: checks its own work -->
+      <div class="ln a" style="--k:fade;--t:9.5s;--d:.2s"><span class="pr">❯</span> <span class="type" data-sfx="type" style="--t:9.55s;--d:.45s">mv.lint(fig)</span></div>
+      <div class="ai-lint a" data-sfx="check" style="--k:pop;--t:10.25s;--d:.4s"><b><i>✓</i><span id="ai-lintline">lint: no findings</span></b><span class="sub"><span id="ai-errs">0 errors</span> · QA checklist done</span></div>
+      <div class="ln a" style="--k:left;--t:11.0s;--d:.3s"><span class="tool">⏺</span> Handing back: <span class="fn">attrition.png</span> + chart brief</div>
+      <div class="ln a" style="--k:fade;--t:11.3s;--d:.2s"><span class="pr">❯</span><span class="caret"></span></div>
+    </div>
+  </div>
+
+  <!-- c2: the rule rows -->
+  <div class="ai-rules a x" style="--k:cut;--t:0s;--t2:12.6s;--k2:xwhipR;--d2:.32s;left:1040px;top:200px;width:800px">
+    <div class="ai-eyebrow a" style="--k:fade;--t:7.65s;--d:.3s">Follows the same rules</div>
+    <div class="ai-rule a" data-sfx="pop" style="--k:ai-in;--t:7.8s;--d:.5s">Insight headline</div>
+    <div class="ai-rule a" data-sfx="pop" data-sfx-semi="2" style="--k:ai-in;--t:8.1s;--d:.5s">Grey context, blue focus</div>
+    <div class="ai-rule a" data-sfx="pop" data-sfx-semi="4" style="--k:ai-in;--t:8.4s;--d:.5s">Orange means worse</div>
+    <div class="ai-rule a" data-sfx="pop" data-sfx-semi="5" style="--k:ai-in;--t:8.7s;--d:.5s">No group under 10</div>
+    <div class="ai-rule more a" style="--k:fade;--t:9.0s;--d:.4s">…and every other rule in the playbook</div>
+  </div>
+
+  <!-- ============ C · same chart, same standard (c4: 12.71 – end) ============ -->
+  <h2 class="cap md inv a" data-sfx="whoosh" style="--k:slam;--t:12.75s;--d:.5s;left:80px;top:56px;white-space:nowrap">Same chart. <span class="m">Same standard.</span></h2>
+
+  <div class="card ai-shot a" data-sfx="thunk" style="--k:up;--t:12.9s;--d:.5s;left:80px;top:200px;width:1040px">
+    <img src="assets/opt1.png" alt="">
+  </div>
+
+  <div class="ai-badge a" data-sfx="pop" style="--k:slam;--t:13.7s;--d:.5s;left:1200px;top:290px">
+    <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="22" r="13" fill="var(--navy)"/><path d="M8 60c2-15 11-22 24-22s22 7 24 22z" fill="var(--navy)"/></svg>
+    <div><span class="lbl">Made by</span><b>a person</b></div>
+  </div>
+  <div class="ai-badge a" data-sfx="pop" data-sfx-semi="4" style="--k:slam;--t:14.3s;--d:.5s;left:1200px;top:450px">
+    <span class="av">✦</span>
+    <div><span class="lbl">Made by</span><b>an agent</b></div>
+  </div>
+  <span class="ai-eq a" style="--k:pop;--t:14.9s;--d:.4s;left:1200px;top:618px">=</span>
+  <span class="kick lime ai-kick a" data-sfx="stamp sparkle" style="--k:stamp;--t:15.3s;--d:.45s;left:1200px;top:690px">Same standard</span>
+
+  <span class="ai-tw a" style="--k:ai-twk;--t:15.4s;--d:.9s;left:1560px;top:640px;font-size:46px;color:var(--lime)">✦</span>
+  <span class="ai-tw a" style="--k:ai-twk;--t:15.5s;--d:.9s;left:1730px;top:700px;font-size:36px;color:var(--sky)">✦</span>
+  <span class="ai-tw a" style="--k:ai-twk;--t:15.6s;--d:.9s;left:1640px;top:780px;font-size:30px;color:#fff">✦</span>
+</section>
+
+<style>
+/* ---------- A · assistants ---------- */
+#s-ai .ai-glow{width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(102,196,255,.32),rgba(217,241,78,.08) 45%,transparent 68%)}
+#s-ai.on .ai-glow{animation:fade .8s ease-out var(--t) both,ai-pulse 2.4s ease-in-out var(--t) infinite alternate,xfade .3s ease-in var(--t2) forwards}
+@keyframes ai-pulse{from{scale:.94}to{scale:1.06}}
+#s-ai .ai-chips{display:flex;justify-content:center;gap:56px}
+#s-ai .ai-as{display:flex;align-items:center;gap:22px;background:#fff;color:var(--navy);font-weight:700;font-size:52px;
+  padding:16px 44px 16px 16px;border-radius:70px;box-shadow:0 18px 44px rgba(0,0,0,.35);white-space:nowrap}
+#s-ai .gl{flex:none;display:inline-flex;align-items:center;justify-content:center;width:76px;height:76px;border-radius:50%;background-repeat:no-repeat;background-position:center;background-size:56% 56%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z' fill='white'/%3E%3Ccircle cx='8' cy='10.5' r='1.5' fill='%23143359'/%3E%3Ccircle cx='12' cy='10.5' r='1.5' fill='%23143359'/%3E%3Ccircle cx='16' cy='10.5' r='1.5' fill='%23143359'/%3E%3C/svg%3E")}
+#s-ai .gl.cop{background-color:var(--teal)}
+#s-ai .gl.cla{background-color:var(--claude)}
+#s-ai .gl.term{background-image:none;background-color:var(--navy);color:var(--lime);font:700 30px Mono,monospace;letter-spacing:-.04em}
+#s-ai .ai-note{text-align:center;font-size:30px;font-style:italic;color:#B8C7DC}
+#s-ai .ai-tw{line-height:1;text-shadow:0 0 18px rgba(217,241,78,.6)}
+@keyframes ai-twk{0%{opacity:0;transform:scale(.2) rotate(-40deg)}40%{opacity:1;transform:scale(1.25) rotate(10deg)}100%{opacity:0;transform:scale(.6) rotate(30deg)}}
+
+/* ---------- B · terminal + rules ---------- */
+#s-ai .ai-term .tb .r{font-size:20px}
+#s-ai .term{font-size:27px;line-height:1.5;padding:24px 28px}
+#s-ai .term .ln{white-space:pre}
+#s-ai .term .gap{height:18px}
+#s-ai .term .caret{background:var(--sky)}
+#s-ai .ai-filew{margin:14px 0 4px 44px;width:640px}
+#s-ai .ai-filew .file b{font-size:24px}
+#s-ai .ai-filew .file span{font-size:20px}
+#s-ai .ai-lint{display:flex;flex-direction:column;gap:6px;margin:10px 0 10px 44px;padding:16px 24px;border-radius:14px;background:rgba(255,255,255,.07);border:1.5px solid rgba(102,196,255,.35)}
+#s-ai .ai-lint b{display:flex;align-items:center;gap:14px;font:700 34px Mono,monospace;color:var(--mint)}
+#s-ai .ai-lint b i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:var(--mint);color:var(--navy);font-size:28px}
+#s-ai .ai-lint .sub{font-size:23px;color:#9fb0cc;padding-left:58px}
+#s-ai .ai-rules{display:flex;flex-direction:column;gap:18px}
+#s-ai .ai-eyebrow{font-size:24px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#B8C7DC;margin-bottom:4px}
+#s-ai .ai-rule{background:#fff;color:var(--navy);font-weight:600;font-size:36px;padding:18px 28px;border-radius:14px;box-shadow:0 10px 26px rgba(0,0,0,.3);white-space:nowrap}
+#s-ai .ai-rule::before{content:"✓  ";color:var(--mck-green-base,#2E8B57);font-weight:700}
+#s-ai .ai-rule.more{background:transparent;box-shadow:none;color:#B8C7DC;font-style:italic;font-weight:400;font-size:28px;padding:6px 28px}
+#s-ai .ai-rule.more::before{content:none}
+@keyframes ai-in{0%{opacity:0;transform:translateX(120px) scale(.9)}60%{opacity:1;transform:translateX(-8px) scale(1.02)}100%{opacity:1;transform:none}}
+
+/* ---------- C · same standard ---------- */
+#s-ai .ai-shot{padding:18px}
+#s-ai .ai-shot img{display:block;width:100%;height:auto;border:1px solid var(--ui-line)}
+#s-ai .ai-badge{display:flex;align-items:center;gap:22px;background:#fff;color:var(--navy);padding:18px 40px 18px 22px;border-radius:24px;box-shadow:0 18px 44px rgba(0,0,0,.35);white-space:nowrap;min-width:520px}
+#s-ai .ai-badge .lbl{display:block;font-size:22px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#s-ai .ai-badge b{display:block;font-size:48px;line-height:1.1}
+#s-ai .ai-badge svg{flex:none}
+#s-ai .ai-badge .av{flex:none;width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--lime));display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:34px;font-weight:700}
+#s-ai .ai-eq{font-size:56px;font-weight:700;color:var(--lime);line-height:1;width:520px;text-align:center}
+#s-ai .ai-kick{font-size:40px;padding:16px 34px}
+</style>
+
+<script>
+(() => {
+  const NB = (window.KIT && window.KIT.nb) || {};
+  const fin = NB.final || {};
+  const root = document.getElementById("s-ai");
+  if (fin.lint_printed) root.querySelector("#ai-lintline").textContent = fin.lint_printed;
+  if (typeof fin.errors === "number") root.querySelector("#ai-errs").textContent = fin.errors + (fin.errors === 1 ? " error" : " errors");
+
+  SCENES["s-ai"] = {
+    narrAt: .5,
+    clock: () => null,
+    sfx: [[9.55, "type", {dur: .45}], [10.25, "check"], [11.0, "blip"]],
+  };
+})();
+</script>

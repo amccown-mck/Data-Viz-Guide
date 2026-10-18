@@ -1,0 +1,70 @@
+<section class="scene bg-navy" id="s-lead" data-min="16">
+  <!-- Cues (narrAt .5): c0 .50 here's your part · c1 3.41 ask for the headline · c2 5.43 one sentence, verb, number, chart proves
+       c3 10.43 if a chart can't, not ready · c4 13.73 say that once -->
+
+  <!-- c0: the address -->
+  <p class="cap inv a x" style="--k:up;--t:.5s;--t2:3.3s;--k2:xfade;left:130px;top:400px;width:1660px;font-size:92px">If you lead a team, <span style="color:var(--lime)">here's your part.</span></p>
+
+  <!-- c1: the slam -->
+  <h2 class="cap xl inv a x" data-sfx="stamp" style="--k:slam;--t:3.41s;--t2:5.35s;--k2:xfade;left:0;width:1920px;top:420px;text-align:center;font-size:150px">Ask for the <span class="m">headline</span>.</h2>
+
+  <!-- c2: anatomy of a real headline -->
+  <p class="lead-in a x" style="--k:up;--t:5.43s;--t2:10.35s;--k2:xfade">One sentence, with a <b>verb</b> and a <b>number</b>, that the chart <b>visibly proves</b>.</p>
+  <div class="hcard a x" data-sfx="pop" style="--k:pop;--t:6.1s;--t2:10.35s;--k2:xfade">
+    <p class="hl">Pharmacy technicians and distribution center associates
+      <span class="w"><i class="ul bar" style="--t:6.9s"></i><b class="lab a" data-sfx="blip" style="--k:pop;--t:7s">verb</b>lose</span>
+      about <span class="w"><i class="ul bar" style="--t:7.7s"></i><b class="lab a" data-sfx="blip" data-sfx-semi="3" style="--k:pop;--t:7.8s">number</b>1 in 4</span>
+      people a year, well above the <span class="w"><i class="ul bar" style="--t:7.9s"></i><b class="lab a" style="--k:pop;--t:8s">number</b>19.9%</span>
+      enterprise rate</p>
+  </div>
+  <div class="proof a x" data-sfx="whoosh" style="--k:whipR;--t:8.7s;--t2:10.35s;--k2:xfade">
+    <span class="kick lime a" style="--k:pop;--t:9.1s">the chart proves it</span>
+    <div class="shot"><img src="assets/opt1.png" alt=""></div>
+  </div>
+
+  <!-- c3: the chart that can't -->
+  <p class="cap inv a x" style="--k:up;--t:10.43s;--t2:13.65s;--k2:xfade;left:130px;top:120px;width:1500px;font-size:80px">If a chart can't give you that, <span style="color:var(--sky)">it isn't ready.</span></p>
+  <div class="dull a x" data-sfx="thunk" style="--k:up;--t:10.9s;--t2:13.65s;--k2:xfade">
+    <div class="ct">Chart Title</div>
+    <div class="bars"><i style="height:62%"></i><i style="height:88%"></i><i style="height:45%"></i><i style="height:71%"></i><i style="height:54%"></i><i style="height:80%"></i><i style="height:38%"></i></div>
+    <div class="leg"><span></span>Series 1 <span></span>Series 2 <span></span>Series 3</div>
+    <div class="stamp a" data-sfx="stamp" style="--k:stamp;--t:12.1s">Not ready</div>
+  </div>
+
+  <!-- c4: say it once -->
+  <p class="cap inv a" style="--k:up;--t:13.73s;left:130px;top:120px;width:1600px;font-size:72px">Say that once, <span style="color:var(--lime)">and watch what comes back.</span></p>
+  <p class="once a" data-sfx="stamp sparkle" style="--k:stamp;--t:14.8s"><span class="sticker">Say it once.</span></p>
+</section>
+<style>
+#s-lead .lead-in{left:130px;top:110px;width:1300px;margin:0;font-size:46px;line-height:1.25;font-weight:400;color:var(--skyl)}
+#s-lead .lead-in b{color:#fff;font-weight:700}
+#s-lead .hcard{left:130px;top:300px;width:900px;background:#fff;padding:44px 48px 52px;box-shadow:var(--shadow)}
+#s-lead .hl{margin:0;font-size:48px;line-height:1.9;font-weight:600;letter-spacing:-.01em;color:var(--navy)}
+#s-lead .w{position:relative;display:inline-block;padding:0 6px;margin:0 -6px;white-space:nowrap}
+#s-lead .w .ul{position:absolute;left:0;right:0;bottom:18px;height:12px;background:var(--lime);transform-origin:left center;z-index:0}
+#s-lead .w .lab{position:absolute;left:50%;top:100%;translate:-50% -8px;font-size:22px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;line-height:1;padding:5px 10px;background:var(--navy);color:var(--lime);white-space:nowrap}
+#s-lead .w .lab::before{content:"";position:absolute;left:50%;top:-7px;margin-left:-7px;border:7px solid transparent;border-top:0;border-bottom-color:var(--navy)}
+#s-lead .proof{left:1080px;top:300px;width:710px}
+#s-lead .proof .kick{display:inline-block;margin:0 0 16px 0;font-size:24px}
+#s-lead .proof .shot{background:#fff;padding:6px;box-shadow:var(--shadow)}
+#s-lead .proof .shot img{display:block;width:100%;height:auto}
+/* the dull placeholder */
+#s-lead .dull{left:640px;top:380px;width:640px;height:400px;background:#E8E8E8;border:2px solid #C9C9C9;color:#8A8A8A;padding:26px 36px}
+#s-lead .dull .ct{font-family:Arial,Helvetica,sans-serif;font-size:36px;text-align:center;color:#7A7A7A;margin-bottom:22px}
+#s-lead .dull .bars{height:210px;border-left:2px solid #B5B5B5;border-bottom:2px solid #B5B5B5;display:flex;align-items:flex-end;gap:22px;padding:0 20px}
+#s-lead .dull .bars i{flex:1;background:#AFAFAF;display:block}
+#s-lead .dull .bars i:nth-child(2n){background:#C4C4C4} #s-lead .dull .bars i:nth-child(3n){background:#9A9A9A}
+#s-lead .dull .leg{font-family:Arial,Helvetica,sans-serif;font-size:20px;margin-top:14px;text-align:center}
+#s-lead .dull .leg span{display:inline-block;width:14px;height:14px;background:#AFAFAF;margin:0 6px 0 14px}
+#s-lead .dull .stamp{position:absolute;left:96px;top:128px;rotate:-12deg;border:7px solid var(--mck-semantic-negative);color:var(--mck-semantic-negative);font-size:66px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1;padding:10px 24px;white-space:nowrap}
+#s-lead .once{left:0;width:1920px;top:560px;text-align:center;margin:0}
+#s-lead .once .sticker{display:inline-block;font-size:110px;rotate:-3deg;padding:.18em .5em}
+</style>
+<script>
+SCENES["s-lead"] = {
+  narrAt: .5,
+  clock: () => null,
+  spark: [[0, {x: 2200, y: 1080 - 203 * 1.6 - 24, s: 1.6, pose: "stand", dark: true}],
+          [13.73, {x: 1400, pose: "thumbs"}]],
+};
+</script>

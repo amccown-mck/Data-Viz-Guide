@@ -35,6 +35,7 @@ video/
                                   board.py (design board), final/{sam.svg, spark.svg, README.md}
   voice/                          make_scratch.py, make_voice_kokoro.py, make_voice_elevenlabs.py,
                                   assemble_voice.py, pack_audio.py; .tts/ (the Kokoro virtualenv, ignored)
+  explainer-the-meeting/          the second video ("The meeting", about 3:00, no Sam; see its README)
   explainer-exec-ready-by-3/      the finished video's source (see its README for the story)
     README.md, STORY.md, CUES.md, ref_cues.json
     scenes/                       14 scene files plus 98-score.html (the music cue sheet)

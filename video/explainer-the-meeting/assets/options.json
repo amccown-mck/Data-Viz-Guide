@@ -1,0 +1,61 @@
+{
+  "prompt": "I'm trying to show which job families are driving attrition. Can you give me 5 options I could pop into this exec's deck right now to fit this storyline?",
+  "data": "Synthetic (examples/data)",
+  "options": [
+    {
+      "file": "opt1.png",
+      "chart_type": "Ranked bar with reference line",
+      "headline": "Pharmacy technicians and distribution center associates lose about 1 in 4 people a year, well above the 19.9% enterprise rate",
+      "subtitle": "Voluntary attrition by job family, FY26 (%)",
+      "why": "The classic: ranks every family and shows the two clearly above the enterprise line, so the 'who' is instant",
+      "lint": {
+        "errors": 0,
+        "findings": []
+      }
+    },
+    {
+      "file": "opt2.png",
+      "chart_type": "Deviation dot plot vs. enterprise rate",
+      "headline": "Only two job families run above the 19.9% enterprise rate, by 7.5 and 4.2 points",
+      "subtitle": "Voluntary attrition by job family vs. the enterprise rate, FY26 (%; gap in percentage points)",
+      "why": "Turns the benchmark into the axis of the story: everyone else sits below the line, only two families sit above it",
+      "lint": {
+        "errors": 0,
+        "findings": []
+      }
+    },
+    {
+      "file": "opt3.png",
+      "chart_type": "Slope chart (FY25 to FY26)",
+      "headline": "Pharmacy technician attrition fell 5.6 points in FY26, but distribution center associates barely moved at 24.1%",
+      "subtitle": "Voluntary attrition, FY25 vs. FY26, 6 tracked job families (%)",
+      "why": "Adds the 'so what next': one driver is improving fast, the other is stuck, which points the exec at DC associates",
+      "lint": {
+        "errors": 0,
+        "findings": []
+      }
+    },
+    {
+      "file": "opt4.png",
+      "chart_type": "Heat table / scorecard",
+      "headline": "The two largest frontline job families combine attrition above 24% with the lowest engagement scores (66 and 68)",
+      "subtitle": "Workforce scorecard by job family, FY26; totals weighted by headcount",
+      "why": "For the exec who asks 'why': shows the two attrition drivers are also the biggest populations with the weakest engagement",
+      "lint": {
+        "errors": 0,
+        "findings": []
+      }
+    },
+    {
+      "file": "opt5.png",
+      "chart_type": "Big-number KPI with supporting comparison",
+      "headline": "Two job families account for 73% of voluntary exits but only 58% of headcount",
+      "subtitle": "Share of voluntary exits and of headcount, two highest-attrition job families, FY26 (%)",
+      "why": "One number an exec remembers: nearly three-quarters of the exit problem sits in two families",
+      "lint": {
+        "errors": 0,
+        "findings": []
+      }
+    }
+  ]
+}

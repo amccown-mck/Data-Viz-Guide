@@ -1,0 +1,47 @@
+<section class="scene bg-deep" id="s-close" data-min="22">
+  <!-- c0 (.5) + c1 (3.26): the two lines, then out before the slam -->
+  <p class="cap inv a x" data-sfx="whoosh" style="--k:up;--t:.5s;--d:.5s;--t2:7.5s;--k2:xfade;--d2:.3s;left:150px;top:200px;width:1700px;font-size:88px">Clear charts move <span style="color:var(--lime)">decisions forward</span>.</p>
+  <p class="cl-line a x" style="--k:up;--t:3.26s;--d:.5s;--t2:7.5s;--k2:xfade;--d2:.3s;left:150px;top:460px;width:1620px">This kit makes them the easy path, for <b>every team at McKesson</b>.</p>
+
+  <!-- c2 (7.81): the slam -->
+  <h2 class="cap xl inv a x" data-sfx="stamp" style="--k:slam;--t:7.81s;--d:.45s;--t2:11.1s;--k2:xfade;--d2:.3s;left:0;width:1920px;top:400px;font-size:124px;text-align:center;white-space:nowrap">Try it on <span class="m">one chart</span> this week.</h2>
+
+  <!-- c3 (11.18): the closing card, held for the narration pause -->
+  <div class="cl-title">
+    <h1 class="cap inv a dv" style="--k:slam;--t:11.18s;--d:.45s">Data Viz</h1>
+    <div class="a kitw" style="--k:stamp;--t:11.48s;--d:.4s"><span class="sticker kit">Starter Kit</span></div>
+    <div class="a edw" style="--k:cl-tag;--t:11.95s;--d:.45s"><span class="ed">McKesson Edition</span></div>
+  </div>
+  <p class="cl-find a" data-sfx="blip" style="--k:fade;--t:13.4s;--d:.5s;left:0;top:800px;width:1920px">github.com/amccown-mck/Data-Viz-Guide <i>·</i> the guide <i>·</i> the release bundle</p>
+</section>
+<style>
+  #s-close .cl-line{margin:0;font-size:60px;line-height:1.15;font-weight:400;color:var(--sky);letter-spacing:-.01em}
+  #s-close .cl-line b{color:#fff;font-weight:700}
+
+  #s-close .cl-title{left:0;top:150px;width:1920px;height:520px;transform-origin:50% 0;z-index:2}
+  #s-close .cl-title>*{position:absolute;left:0;width:1920px;text-align:center;margin:0}
+  #s-close .dv{top:0;font-size:184px;line-height:1}
+  #s-close .kitw{top:210px;z-index:1}
+  #s-close .kit{display:inline-block;font-size:160px;line-height:1;padding:.1em .42em .16em;rotate:-3deg;letter-spacing:-.02em;box-shadow:0 22px 60px rgba(0,0,0,.4)}
+  #s-close .edw{top:430px;left:600px;width:1100px;text-align:right}
+  #s-close .ed{display:inline-block;font-size:46px;font-weight:600;letter-spacing:.04em;color:var(--sky);border:3px solid var(--sky);
+    border-radius:40px;padding:10px 28px;rotate:-3deg;background:rgba(11,50,102,.6)}
+  @keyframes cl-tag{0%{opacity:0;transform:translateX(-60px) scale(.6)}70%{opacity:1;transform:translateX(6px) scale(1.04)}100%{opacity:1;transform:none}}
+
+  #s-close .cl-find{margin:0;text-align:center;font:400 36px/1.3 Mono,monospace;color:#fff;letter-spacing:.01em}
+  #s-close .cl-find i{font-style:normal;color:var(--lime);padding:0 .5em}
+</style>
+<script>
+SCENES["s-close"] = {
+  narrAt: .5,
+  spark: [
+    [0, {x: 1600, y: 1080 - 203 * 1.05 - 14, s: 1.05, pose: "think", dark: true}],
+    [7.81, {pose: "thumbs"}],
+    [11.18, {pose: "wave"}],
+    [15.5, {pose: "thumbs"}],
+    [18, {pose: "wave"}],
+  ],
+  clock: () => null,
+  sfx: [[3.26, "pop"], [7.5, "whoosh"], [11.18, "powerup"], [11.22, "whoosh"], [11.48, "stamp"], [11.95, "pop"]],
+};
+</script>
