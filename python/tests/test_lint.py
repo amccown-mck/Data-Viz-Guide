@@ -316,3 +316,27 @@ def test_categorical_series_do_not_collapse_into_a_ramp():
     assert "max-6-colors" in rules(found, "error")                  # blue + navy + orange are not "the diverging ramp"
     assert "orange-semantic" in rules(found, "info")
     plt.close(fig)
+
+
+def test_repeated_period_labels_as_x_are_flagged_in_both_backends():
+    # matplotlib: "Q2" three times collapses to one category, so the line folds back on itself
+    fig, ax = plt.subplots()
+    ax.plot(["Q1 '24", "Q2", "Q3", "Q4", "Q1 '25", "Q2", "Q3"], [1, 2, 3, 4, 5, 6, 7], color=C.focus)
+    mv.titles(fig, "Attrition fell three points after the reset", "Attrition by quarter, FY24–FY25 (%)")
+    mv.source(fig, "Source: test")
+    assert "x-repeats" in rules(mv.lint(fig, quiet=True), "warn")
+    # unique periods pass, and so does a vertical rule (two points, same x) and a connected scatter with no repeats
+    fig, ax = plt.subplots()
+    ax.plot(["Q1 '24", "Q2 '24", "Q3 '24", "Q4 '24", "Q1 '25"], [1, 2, 3, 4, 5], color=C.focus)
+    ax.axvline(2, color=C.axis)
+    ax.plot([1.0, 3.0, 2.0], [1, 2, 3], color=C.context)
+    mv.titles(fig, "Attrition fell three points after the reset", "Attrition by quarter, FY24–FY25 (%)")
+    mv.source(fig, "Source: test")
+    assert "x-repeats" not in rules(mv.lint(fig, quiet=True), "warn")
+    # plotly: same trap on a category axis; a fill-to-self band legitimately repeats x and is not flagged
+    fig = go.Figure(go.Scatter(x=["Q1 '24", "Q2", "Q3", "Q4", "Q1 '25", "Q2"], y=[1, 2, 3, 4, 5, 6], mode="lines",
+                               line_color=C.focus))
+    assert "x-repeats" in rules(mv.lint(fig, **HEAD), "warn")
+    band = go.Scatter(x=["a", "b", "c", "c", "b", "a"], y=[1, 2, 3, 4, 3, 2], fill="toself", line_width=0)
+    line = go.Scatter(x=["a", "b", "c"], y=[1, 2, 3], mode="lines", line_color=C.focus)
+    assert "x-repeats" not in rules(mv.lint(go.Figure([band, line]), **HEAD), "warn")

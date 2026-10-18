@@ -297,6 +297,19 @@ def _missing_glyphs(text_artist) -> set[str]:
     return {c for c in chars if ord(c) not in covered}
 
 
+def _x_repeats(xdata) -> bool:
+    """True when a line of 3+ points goes back to an earlier x: the signature of repeated period labels used as x."""
+    try:
+        import numpy as np
+        x = np.asarray(xdata, dtype=float)
+    except (TypeError, ValueError):
+        return False
+    if x.ndim != 1 or len(x) < 3 or np.isnan(x).any():
+        return False
+    d = np.diff(x)
+    return bool((d < 0).any() and (d > 0).any() and len(np.unique(x)) < len(x))
+
+
 def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
     from matplotlib.container import BarContainer
     from matplotlib.patches import Wedge
@@ -335,6 +348,11 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
                 h = _hex(ln.get_color())
                 if h:
                     used.append(h)
+                if _x_repeats(ln.get_xdata(orig=False)):
+                    out.append(Finding("warn", "x-repeats", "a line revisits earlier x positions: repeated period "
+                                                            "labels (\"Q2\", \"Q2\") used as x? give each period its "
+                                                            "own value and abbreviate in the tick text"))
+                    break
 
         # Bars: zero baseline, labels vs. value axis
         bars = [c for c in ax.containers if isinstance(c, BarContainer)]
@@ -511,6 +529,14 @@ def _lint_plotly(fig, headline, subtitle, source) -> list[Finding]:
     for tr in fig.data:
         if tr.type == "pie" and tr.labels is not None and len(tr.labels) > 5:
             out.append(Finding("error", "pie-max-5", f"{len(tr.labels)} pie/donut segments; use ≤ 5 or a sorted bar"))
+    for tr in fig.data:                                   # a line through "Q1 '24, Q2, Q3, Q4, Q1 '25, Q2, ..." folds back
+        if tr.type == "scatter" and "lines" in (tr.mode or "lines") and not tr.fill and tr.x is not None:
+            xs = list(tr.x)
+            if len(xs) >= 3 and len(set(map(str, xs))) < len(xs):
+                out.append(Finding("warn", "x-repeats", f'trace "{tr.name or ""}" has repeated x values: on a category '
+                                                        "axis every \"Q2\" shares one position; use unique periods "
+                                                        "(\"Q2 '25\") as x and abbreviate in ticktext"))
+                break
     shown = [tr for tr in fig.data if tr.type not in ("pie", "sankey", "heatmap", "treemap")
              and getattr(tr, "showlegend", None) is not False]
     if len(shown) > 1 and lay.showlegend is not False:

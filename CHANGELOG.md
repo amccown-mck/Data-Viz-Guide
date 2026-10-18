@@ -38,6 +38,9 @@ The version lives in one place, the `VERSION` file at the repo root. `tokens/bui
 - `START-HERE.html` in the release bundle lists Menlo as a code-font fallback for Mac readers.
 - `ROADMAP.md` gains Mac resume commands and a note on iCloud-synced folders.
 
+### Fixed
+- **Line page, Plotly block: the forecast chart folded back on itself** (2026-10-18). The abbreviated tick labels (`Q1 '24`, `Q2`, `Q3`, `Q4`, `Q1 '25`, ...) were used as the x values, so on Plotly's category axis every `Q2` shared one position and the shaded reset period landed at the far right. The block now uses unique periods (`Q2 '25`) as x with the abbreviation in `ticktext`, adds the "Forecast" boundary the QA list asks for, and the band no longer shows vertex markers. `mv.lint` gains `x-repeats` (both backends): a line that revisits earlier x positions, or a Plotly line trace with repeated x values, is the signature of this mistake. The R block labels its quarters instead of 1–12.
+
 ## [1.1.0] - 2026-10-01
 
 Second review round, plus packaging so the kit travels outside this repo.

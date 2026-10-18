@@ -126,20 +126,25 @@ actual = {
 }
 focus = "Pharmacy Technician"
 base, low, high = [20.6, 20.3, 20.0, 19.8, 19.6], [20.6, 19.6, 18.9, 18.3, 17.8], [20.6, 21.0, 21.2, 21.4, 21.6]
-ticks = [f"Q{q % 4 + 1}" + (f" '{24 + q // 4}" if q % 4 == 0 else "") for q in range(16)]
-x_act, x_fc = ticks[:12], ticks[11:]
+# x values must be unique per period ("Q2 '25"), never the abbreviated tick text: on a category axis every "Q2"
+# would land on the same position and the lines would fold back on themselves. Abbreviate in ticktext instead.
+periods = [f"Q{q % 4 + 1} '{24 + q // 4}" for q in range(16)]
+ticks = [p if q % 4 == 0 else p.split()[0] for q, p in enumerate(periods)]   # year on the first tick of each year
+x_act, x_fc = periods[:12], periods[11:]              # forecast starts at the last actual point
 
 fig = go.Figure()
-fig.add_vrect(x0=5.5, x1=7.5, fillcolor=C.surface_subtle, line_width=0, layer="below",
+fig.add_vrect(x0=5.5, x1=7.5, fillcolor=C.surface_subtle, line_width=0, layer="below",   # category positions
               annotation_text="<b>Pay-band reset + self-scheduling</b>", annotation_position="top left")
+fig.add_vline(x=11, line={"color": C.axis, "width": 0.75, "dash": "dot"}, annotation_text="Forecast",
+              annotation_position="top right", annotation_font={"color": C.text_muted, "size": 11})
 for name, y in actual.items():
     if name != focus:
         fig.add_scatter(x=x_act, y=y, name=name, mode="lines", line={"color": C.context, "width": 1.25},
                         hovertemplate="%{y:.1f}%<extra>" + name + "</extra>")
         fig.add_annotation(x=x_act[-1], y=y[-1], text=name, xanchor="left", xshift=6, showarrow=False,
                            font={"color": C.text_muted, "size": 12})
-fig.add_scatter(x=x_fc + x_fc[::-1], y=high + low[::-1], fill="toself", fillcolor="rgba(0,90,140,0.15)",
-                line_width=0, hoverinfo="skip", showlegend=False)
+fig.add_scatter(x=x_fc + x_fc[::-1], y=high + low[::-1], fill="toself", fillcolor=mv.rgba(C.focus, 0.15),
+                mode="lines", line_width=0, hoverinfo="skip", showlegend=False)   # mode: no vertex markers
 fig.add_scatter(x=x_fc, y=base, mode="lines", line={"color": C.focus, "width": 2, "dash": "dash"},
                 customdata=list(zip(low, high)), hovertemplate="Base %{y:.1f}% (%{customdata[0]}\u2013%{customdata[1]})<extra>Forecast</extra>")
 fig.add_scatter(x=x_act, y=actual[focus], mode="lines", line={"color": C.focus, "width": 3},
@@ -147,6 +152,7 @@ fig.add_scatter(x=x_act, y=actual[focus], mode="lines", line={"color": C.focus, 
 fig.add_annotation(x=x_fc[-1], y=base[-1], text=f"<b>{focus}</b><br>{base[-1]:.1f} base ({low[-1]}\u2013{high[-1]})",
                    xanchor="left", xshift=6, showarrow=False, align="left", font={"color": C.focus, "size": 13})
 fig.update_layout(showlegend=False, hovermode="x unified", margin={"r": 170})
+fig.update_xaxes(type="category", categoryorder="array", categoryarray=periods, tickvals=periods, ticktext=ticks)
 fig.update_yaxes(range=[5, 34])
 mv.pl_finish(fig, "Pharmacy Technician attrition fell ~9 points after the pay and scheduling reset",
              "Voluntary attrition by job family, annualized, Q1 2024\u2013Q4 2026 actual, 2027 forecast (%)",
@@ -197,6 +203,7 @@ ggplot(df, aes(quarter, attrition, group = job_family, colour = job_family)) +
   geom_text(data = ends, aes(label = job_family), hjust = 0, nudge_x = 0.15, size = 3.5) +
   scale_colour_manual(values = mck_highlight(unique(df$job_family), focus = focus), guide = "none") +
   scale_linewidth_manual(values = c(`FALSE` = 0.45, `TRUE` = 1.05), guide = "none") +   # ~1 pt / 2.25 pt
+  scale_x_continuous(breaks = c(1, 5, 9), labels = c("Q1 '24", "Q1 '25", "Q1 '26")) +   # quarters as labels, not 1-12
   coord_cartesian(clip = "off") +
   theme_mck() + theme(plot.margin = margin(16, 140, 16, 16)) +
   labs(x = NULL, y = NULL,
@@ -210,6 +217,7 @@ ggplot(df, aes(quarter, attrition, group = job_family, colour = job_family)) +
 - [ ] Every line is labelled at its end (or by a compact top key on mobile), with no colliding labels and no legend. Context labels use `#737373`, not grey `#B4B0A5`.
 - [ ] The focus line is 2.25 pt (slides) or 2 px (screen) and context lines are ≤ 1.25 px. No markers and no smoothing.
 - [ ] No fill under a line unless the y-axis starts at 0. Periods are evenly spaced and missing data shows as a gap.
+- [ ] Every period has its own x value (a date, an index, or a unique label such as `Q2 '25`); the abbreviated `Q2` goes in the tick text only. A line that doubles back on itself means repeated labels were used as x (`mv.lint` flags this as `x-repeats`).
 - [ ] Forecasts are dashed, start from the last actual, show a low–high band and a "Forecast" boundary, and the scenarios are defined in the footnote.
 - [ ] Each shaded period carries a label, and its start and end match the event dates in the callout.
 
