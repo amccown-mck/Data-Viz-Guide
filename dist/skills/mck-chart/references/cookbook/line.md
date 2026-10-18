@@ -157,7 +157,7 @@ fig.show()
 For pages, use the chart-card pattern in [`gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py): the headline, subtitle and source go in HTML and Plotly draws only the data. `hovermode="x unified"` gives cursor tracking across series. On mobile, swap the end-label annotations for a one-row key on top.
 
 ### Excel and PowerPoint
-1. **Theme (once per machine):** copy `office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `office/Theme Fonts/McKesson Data Viz.xml` to `...\Document Themes\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`.
+1. **Theme (once per machine):** copy `assets/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `assets/office/Theme Fonts/McKesson Data Viz.xml` to `...\Document Themes\Theme Fonts\`. Install Libre Franklin from `assets/fonts`.
 2. Apply it in **Excel** with **Page Layout → Colors → McKesson Data Viz** and **Page Layout → Fonts → McKesson Data Viz**. In **PowerPoint**, use **Design → Variants ▾ → Colors / Fonts → McKesson Data Viz**. Accent 1 = `#005A8C`, Accent 2 = `#143359`, Accent 3 = `#009EFF`; light blue `#66C4FF` via **More Colors › Hex**.
 3. Put periods in the first column and one series per column, then select the range and click **Insert → Insert Line or Area Chart → 2-D Line → Line**.
 4. Delete the chart title (the headline goes in the slide title) and click the legend → **Delete**.

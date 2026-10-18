@@ -1,7 +1,7 @@
 """Build the release bundle: one zip, attached to a GitHub Release, for people who won't use git.
 
     python tools/make_bundle.py              -> dist/release/DataViz-Starter-Kit-McKesson-Edition-v<version>.zip
-    python tools/make_bundle.py --no-wheel   skip building the mckviz wheel (offline machines)
+    python tools/make_bundle.py --no-wheel   skip building the mckviz wheel (no uv on this machine)
 
 Run the builds first (tokens/build.py, office/build_office.py, tools/build_guide.py): the bundle packs what is in
 dist/ now and says so if something is missing. Layout inside the zip:
@@ -17,7 +17,8 @@ dist/ now and says so if something is missing. Layout inside the zip:
       web/                     CSS variables and components, mck-viz.js helper, Plotly template, Vega-Lite config,
                                chart-card starters (online and offline, with vendor/plotly.min.js), R theme
       python/                  the mckviz wheel (pip install it offline) and how to install from GitHub
-      agents/                  the one-file rules, the portable mck-chart skill (folder and Claude.ai zip)
+      agents/                  the one-file rules, the portable mck-chart skill (folder and Claude.ai zip, both
+                               with the same wheel inside, so the skill works where GitHub is unreachable)
 
 dist/office/McKesson-DataViz-Starter-Official.pptx (built locally from the internal brand template, never committed)
 is included when it exists.
@@ -204,24 +205,11 @@ U.S. Census and Natural Earth boundaries.</p>
 """
 
 
-def build_wheel(dest: Path) -> Path | None:
-    with tempfile.TemporaryDirectory() as tmp:
-        r = subprocess.run([sys.executable, "-m", "pip", "wheel", "--no-deps", "-q", "-w", tmp, str(ROOT / "python")],
-                           capture_output=True, text=True)
-        for junk in ("build", "mckviz.egg-info"):              # setuptools builds in-tree; tidy up (both gitignored)
-            shutil.rmtree(ROOT / "python" / junk, ignore_errors=True)
-        wheels = list(Path(tmp).glob("mckviz-*.whl"))
-        if r.returncode or not wheels:
-            print(f"  note: could not build the mckviz wheel ({(r.stderr or r.stdout).strip()[-200:]}); skipped")
-            return None
-        dest.mkdir(parents=True, exist_ok=True)
-        return Path(shutil.copy2(wheels[0], dest / wheels[0].name))
-
-
 def main() -> None:
     import build_skill
 
-    build_skill.build()
+    with_wheel = "--no-wheel" not in sys.argv
+    build_skill.build(wheel=with_wheel)                    # fails loudly when uv is missing (unless --no-wheel)
     with tempfile.TemporaryDirectory() as tmp:
         stage = Path(tmp) / NAME
         missing = []
@@ -246,8 +234,11 @@ def main() -> None:
                 shutil.copy2(f, fonts / f.name)
         shutil.copytree(build_skill.OUT, stage / "agents" / "mck-chart")
         build_skill.zip_skill(stage / "agents" / "mck-chart-skill.zip")
-        wheel = None if "--no-wheel" in sys.argv else build_wheel(stage / "python")
         (stage / "python").mkdir(exist_ok=True)
+        wheel = None
+        if with_wheel:                                      # the same wheel the skill carries
+            src = next((build_skill.OUT / "assets" / "python").glob("mckviz-*.whl"))
+            wheel = Path(shutil.copy2(src, stage / "python" / src.name))
         (stage / "python" / "INSTALL.txt").write_text(
             f"Install the mckviz Python package (matplotlib and Plotly theme, fonts, helpers, maps, chart lint):\n\n"
             f"  pip install \"mckviz @ git+{REPO_URL}@v{VERSION}#subdirectory=python\"\n\n"

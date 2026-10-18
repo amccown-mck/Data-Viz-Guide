@@ -6,9 +6,9 @@
 
 | Where | How |
 |---|---|
-| PowerPoint / Excel / Word | Install the TTFs from [`fonts/LibreFranklin`](https://github.com/amccown-mck/Data-Viz-Guide/tree/main/fonts/LibreFranklin) (or BrandHQ). Fallback: Arial. |
+| PowerPoint / Excel / Word | Install the TTFs from [`fonts/LibreFranklin`](../assets/fonts) (or BrandHQ). Fallback: Arial. |
 | HTML | Google Fonts: `family=Libre+Franklin:wght@300;400;500;600;700;800`. Stack: `'Libre Franklin', 'Franklin Gothic Book', Arial, sans-serif`. |
-| Python (matplotlib) | `mckviz.use()` registers the bundled TTFs automatically. |
+| Python (matplotlib) | `mckviz.use()` registers the bundled TTFs automatically. Without the package, register the TTFs with `font_manager.addfont`; if that is impossible, fall back to Liberation Sans or Arimo (metric-compatible with Arial) and say so in the QA exceptions. |
 | R | Install the TTFs, then use `{systemfonts}` / `{showtext}`; `theme_mck(base_family = "Libre Franklin")`. |
 | Power BI | Custom fonts only render where installed; theme falls back to Segoe UI in the service. |
 

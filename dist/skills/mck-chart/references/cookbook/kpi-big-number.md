@@ -127,7 +127,7 @@ For a ring in Plotly, use `go.Pie(values=[62, 38], hole=0.8, sort=False, directi
 
 ### Excel and PowerPoint
 **Big number (text box)**
-1. Install Libre Franklin from `fonts/LibreFranklin`, and the McKesson Data Viz theme colors from `office/` (see [bar.md](bar.md#excel-and-powerpoint)).
+1. Install Libre Franklin from `assets/fonts`, and the McKesson Data Viz theme colors from `office/` (see [bar.md](bar.md#excel-and-powerpoint)).
 2. **Insert › Text Box**, type the number (e.g., `62%`). Set **Home › Font** to **Libre Franklin, Bold, 54 pt**, with **Font Color › More Colors › Hex 143359** (Navy; *Text 2* in the theme is McKesson Blue, for slide titles). In **Format Shape › Text Options › Text Box**, set the left inset to 0 cm so the numeral aligns with the headline edge, and **Do not Autofit**.
 3. Add a second text box directly below: **one sentence**, Libre Franklin 14 pt, `#505050` ("254 of 410 critical roles now have at least one ready-now successor").
 4. Add the comparison: Libre Franklin Medium 12–14 pt, `#007A48` (favorable) or `#A75B00` (unfavorable), e.g., "+14 pts vs. Mar 2025". For a true minus, use **Insert › Symbol**, character code **2212**.

@@ -264,3 +264,5 @@ video/**/*-sheet.png
 *.webm
 *.mov
 video/**/*.wav
+# The mckviz wheel inside the portable skill (built by tools/build_skill.py --zip and tools/make_bundle.py)
+dist/skills/mck-chart/assets/python/*.whl

@@ -36,9 +36,9 @@
 | Keep bars grey and blue; let status live in its own column | Color Gantt bars red/amber/green |
 
 ## Workforce examples
-- **Roadmap:** *Headline:* "Two of seven workstreams are off track, both waiting on the skills inventory's Workday integration". *Subtitle:* "Workforce Innovation roadmap by workstream, FY26–FY27, with status as of 31 Mar 2026". *Data:* [`initiative_plan.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/initiative_plan.csv), [`initiative_milestones.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/initiative_milestones.csv).
+- **Roadmap:** *Headline:* "Two of seven workstreams are off track, both waiting on the skills inventory's Workday integration". *Subtitle:* "Workforce Innovation roadmap by workstream, FY26–FY27, with status as of 31 Mar 2026". *Data:* [`initiative_plan.csv`](../../assets/data/initiative_plan.csv), [`initiative_milestones.csv`](../../assets/data/initiative_milestones.csv).
 - **Tracker:** *Headline:* "Three of seven workstreams need a decision, all because the Workday integration slipped three months". *Subtitle:* "Status, owner, next milestone and change since February, as of 31 Mar 2026". *Data:* the same two files.
-- **Status column:** *Headline:* "The skills inventory has used 71% of its budget with the integration still three months out". *Subtitle:* "Budget used by workstream, FY26–FY27 plan, as of 31 Mar 2026 (%)". *Data:* `initiative_plan.csv` (`budget_used_pct`, `status`); monthly history in [`initiative_status_history.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/initiative_status_history.csv).
+- **Status column:** *Headline:* "The skills inventory has used 71% of its budget with the integration still three months out". *Subtitle:* "Budget used by workstream, FY26–FY27 plan, as of 31 Mar 2026 (%)". *Data:* `initiative_plan.csv` (`budget_used_pct`, `status`); monthly history in [`initiative_status_history.csv`](../../assets/data/initiative_status_history.csv).
 
 ## Build it
 

@@ -42,7 +42,7 @@
 | Show exclusive counts and say so | Mix "total in set" and "only in set" numbers in one diagram |
 
 ## Workforce examples
-- **Firm level, internal (count Venn):** *Headline:* "Only 140 of 8,800 employees with a verified skill profile combine clinical, data and supply-chain expertise". *Subtitle:* "Employees by verified skill area, U.S. regular employees, skills inventory as of Mar 2026 (headcount)". *Data:* [`assets/data/skills_overlap.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/skills_overlap.csv), one row per skill combination with exclusive counts. Built below.
+- **Firm level, internal (count Venn):** *Headline:* "Only 140 of 8,800 employees with a verified skill profile combine clinical, data and supply-chain expertise". *Subtitle:* "Employees by verified skill area, U.S. regular employees, skills inventory as of Mar 2026 (headcount)". *Data:* [`assets/data/skills_overlap.csv`](../../assets/data/skills_overlap.csv), one row per skill combination with exclusive counts. Built below.
 - **Program level, internal (two sets):** *Headline:* "Two-thirds of our mentors also lead an employee resource group, so the same 300 people carry both programs". *Subtitle:* "Active mentors and ERG leaders, U.S., FY26 (people)". *Data:* the learning system and the ERG roster, joined on employee ID and aggregated. Consider a 100% bar first.
 - **Operating model (concept Venn, no numbers):** *Headline:* "Workforce intelligence sits where people analytics, finance and strategy meet". *Subtitle:* "Capabilities of the SWP operating model". The overlaps name roles (workforce planner, people-data engineer, HR business partner), and the descriptions sit outside with leader lines.
 

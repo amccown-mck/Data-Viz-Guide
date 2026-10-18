@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<a:clrScheme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="McKesson Data Viz">
+  <a:dk1><a:srgbClr val="505050"/></a:dk1>
+  <a:lt1><a:srgbClr val="FFFFFF"/></a:lt1>
+  <a:dk2><a:srgbClr val="005A8C"/></a:dk2>
+  <a:lt2><a:srgbClr val="EFEDE7"/></a:lt2>
+  <a:accent1><a:srgbClr val="005A8C"/></a:accent1>
+  <a:accent2><a:srgbClr val="143359"/></a:accent2>
+  <a:accent3><a:srgbClr val="009EFF"/></a:accent3>
+  <a:accent4><a:srgbClr val="00AF9D"/></a:accent4>
+  <a:accent5><a:srgbClr val="05CE90"/></a:accent5>
+  <a:accent6><a:srgbClr val="EF8200"/></a:accent6>
+  <a:hlink><a:srgbClr val="0A5FBC"/></a:hlink>
+  <a:folHlink><a:srgbClr val="5A7194"/></a:folHlink>
+</a:clrScheme>

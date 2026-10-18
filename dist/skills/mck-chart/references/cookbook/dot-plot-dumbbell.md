@@ -42,7 +42,7 @@
 | State the comparator in the subtitle or footnote (market definition, benchmark source, cohort n) | Leave "market" or "benchmark" undefined |
 
 ## Workforce examples
-- **Firm vs. external market:** *Headline:* "McKesson pay trails the market by 5% or more for three clinical and pharmacy roles". *Subtitle:* "Median base pay, McKesson vs. external market, 2026 ($K)". *Data:* [`assets/data/pay_vs_market.csv`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/data/pay_vs_market.csv): internal compensation vs. external posted-pay medians for matched roles and metros.
+- **Firm vs. external market:** *Headline:* "McKesson pay trails the market by 5% or more for three clinical and pharmacy roles". *Subtitle:* "Median base pay, McKesson vs. external market, 2026 ($K)". *Data:* [`assets/data/pay_vs_market.csv`](../../assets/data/pay_vs_market.csv): internal compensation vs. external posted-pay medians for matched roles and metros.
 - **Team, internal (dot plot):** *Headline:* "Two distribution-center teams score 8+ points below the company engagement index of 76". *Subtitle:* "Employee engagement index by DC team, Q2 2026 (0–100)". *Data:* engagement survey, teams with n ≥ 10 respondents. Range 60–90, with a company line in navy, dashed and labelled.
 - **Individual → cohort, internal (before/after):** *Headline:* "The first Data Academy cohort lifted SQL proficiency from 1.8 to 3.1, the largest gain of any skill". *Subtitle:* "Average assessed proficiency before vs. after the program, cohort 1 (n = 48), 1–5 scale". *Data:* pre- and post-program skill assessments (LMS). "Before" dots in grey, "after" dots in blue, SQL in navy.
 
