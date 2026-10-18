@@ -20,7 +20,7 @@ from pathlib import Path
 SKILL = Path(__file__).resolve().parents[1]
 WHEELS = sorted((SKILL / "assets" / "python").glob("mckviz-*.whl"))
 FONTS = SKILL / "assets" / "fonts"
-GITHUB = 'mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python'
+GITHUB = 'mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python'
 FALLBACK_FONTS = ("Liberation Sans", "Arimo", "Arial")      # the first two are metric-compatible with Arial
 FONT = "Libre Franklin"
 
@@ -118,8 +118,8 @@ def main() -> int:
     def parts(v: str) -> tuple:
         return tuple(int(x) for x in v.split(".")[:3] if x.isdigit())
 
-    if parts(getattr(mv, "__version__", "0")) < parts("1.1.0"):
-        print(f"note: this skill was written for mckviz 1.1.0; upgrade with:\n  pip install \"{GITHUB}\"")
+    if parts(getattr(mv, "__version__", "0")) < parts("1.2.0"):
+        print(f"note: this skill was written for mckviz 1.2.0; upgrade with:\n  pip install \"{GITHUB}\"")
     for extra in ("plotly", "pandas"):
         try:
             __import__(extra)

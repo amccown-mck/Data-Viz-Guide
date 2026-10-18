@@ -2,7 +2,7 @@
 
 **Your own data storytelling team, ready when you are.**
 
-> Version 1.1.0 (see [CHANGELOG.md](CHANGELOG.md); the version lives in [VERSION](VERSION)). How we name and describe the kit: [docs/positioning.md](docs/positioning.md). What's next: [ROADMAP.md](ROADMAP.md). License: MIT ([LICENSE](LICENSE)); fonts and map data carry their own open licenses, listed there. Maintainer: Ashley McCown, Workforce Innovation, via [issues](https://github.com/amccown-mck/Data-Viz-Guide/issues).
+> Version 1.2.0 (see [CHANGELOG.md](CHANGELOG.md); the version lives in [VERSION](VERSION)). How we name and describe the kit: [docs/positioning.md](docs/positioning.md). What's next: [ROADMAP.md](ROADMAP.md). License: MIT ([LICENSE](LICENSE)); fonts and map data carry their own open licenses, listed there. Maintainer: Ashley McCown, Workforce Innovation, via [issues](https://github.com/amccown-mck/Data-Viz-Guide/issues).
 
 **What it is.** Top consulting firms have a team behind every executive presentation, people whose whole job is turning analysis into a chart a leader gets at a glance. The Data Viz Starter Kit puts that know-how in your hands. You get a guide that teaches the craft, templates and code that start you off right in PowerPoint, Excel, Power BI and Python, and a quick check before you share. Your AI assistant can use it too.
 
@@ -19,7 +19,7 @@ Anyone at McKesson who needs to communicate with data: analysts, consultants, da
 | Way in | You work in | Start with |
 |---|---|---|
 | **In PowerPoint and Excel** | PowerPoint, Excel, Power BI | [The guide](dist/guide/index.html) ([PDF](dist/guide/McKesson-DataViz-Guide.pdf)), the [chart chooser](dist/print/chart-chooser.pdf) and [cheat sheet](dist/print/cheat-sheet.pdf) to print or pin, then [docs/office-setup.md](docs/office-setup.md): install the fonts and theme and start from the template, starter deck and chart workbook in [dist/office/](dist/office/). Power BI: [docs/powerbi-setup.md](docs/powerbi-setup.md) and [the theme](dist/powerbi/mckesson-dataviz-theme.json) |
-| **In code** | Python, R, the web | **Python:** in any project, `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"` (fonts and map data included), then `import mckviz as mv; mv.use()`; examples in [examples/python/](examples/python/), `mv.lint` in CI in [docs/ci.md](docs/ci.md). **Web:** [templates/html/chart-card.html](templates/html/chart-card.html) and the themes in [dist/web/](dist/web/). **R:** `source("dist/r/theme_mck.R")`, examples in [examples/r/](examples/r/gallery_ggplot2.R) |
+| **In code** | Python, R, the web | **Python:** in any project, `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python"` (fonts and map data included), then `import mckviz as mv; mv.use()`; examples in [examples/python/](examples/python/), `mv.lint` in CI in [docs/ci.md](docs/ci.md). **Web:** [templates/html/chart-card.html](templates/html/chart-card.html) and the themes in [dist/web/](dist/web/). **R:** `source("dist/r/theme_mck.R")`, examples in [examples/r/](examples/r/gallery_ggplot2.R) |
 | **With an AI assistant** | Copilot, Claude, coding agents | [For agents](#for-agents) below |
 
 Workforce Innovation uses the kit first, so the examples are workforce data on purpose: attrition, headcount, hiring, planning. The rules work the same for finance, operations or sales.

@@ -36,7 +36,7 @@ If you are resuming unfinished work on the kit, read [`ROADMAP.md`](ROADMAP.md) 
 
 ### Platform recipes
 
-**Python (matplotlib or Plotly):** in this repo, install with `pip install -e ./python[examples]`. In any other repo, install the tagged release: `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"` (fonts and map data included; `mv.use()` warns if the fonts can't be registered).
+**Python (matplotlib or Plotly):** in this repo, install with `pip install -e ./python[examples]`. In any other repo, install the tagged release: `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python"` (fonts and map data included; `mv.use()` warns if the fonts can't be registered).
 ```python
 import mckviz as mv
 mv.use()                     # Libre Franklin + matplotlib style + Plotly template "mck"

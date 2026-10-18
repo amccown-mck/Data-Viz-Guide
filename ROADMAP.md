@@ -1,6 +1,6 @@
 # Roadmap
 
-Last updated: 2026-10-18. The kit is the **Data Viz Starter Kit · McKesson Edition**, version 1.1.0 (`VERSION`, `CHANGELOG.md`); how we name and describe it is in [`docs/positioning.md`](docs/positioning.md). This page has two parts: **What's next** (for anyone) and the **Working log** below it (for whoever resumes work on the kit, person or agent; read it before you start).
+Last updated: 2026-10-18. The kit is the **Data Viz Starter Kit · McKesson Edition**, version 1.2.0 (`VERSION`, `CHANGELOG.md`); how we name and describe it is in [`docs/positioning.md`](docs/positioning.md). This page has two parts: **What's next** (for anyone) and the **Working log** below it (for whoever resumes work on the kit, person or agent; read it before you start).
 
 ## What's next
 
@@ -40,7 +40,7 @@ Everything below is the record of how the kit got here, kept for whoever resumes
 | Brand extraction | Libre Franklin typeface, plus the core, 2026, and extended palettes taken from the Social Media guide and FY26 Impact Report | `tokens/tokens.json`, `tools/*.py` |
 | Design tokens | Single source of truth, including chart roles (focus, accent, context, total), categorical-6, sequential, and diverging (orange-blue, CVD-safe) | `tokens/tokens.json` |
 | Token build | `python tokens/build.py` generates CSS, Plotly, Vega-Lite, mplstyle, ggplot2, Power BI theme, Office theme XML, a palette report, and swatches | `dist/` |
-| Python package | `mckviz` 1.1.0: `use()`, `highlight()`, `titles()`, `source()`, `label_bars()`, `label_line_ends()`, `callout()`, `shade_period()`, `pl_finish()`, `fmt_num()`, `suppress_small()`, `lint()`, and `mckviz.geo` (real maps). Installable from a tag: `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"`; fonts and map data are package data | `python/mckviz/` |
+| Python package | `mckviz` 1.2.0: `use()`, `highlight()`, `titles()`, `source()`, `label_bars()`, `label_line_ends()`, `callout()`, `shade_period()`, `pl_finish()`, `fmt_num()`, `suppress_small()`, `lint()`, and `mckviz.geo` (real maps). Installable from a tag: `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python"`; fonts and map data are package data | `python/mckviz/` |
 | Fonts | Static Libre Franklin TTFs (SIL OFL); synced into `python/mckviz/fonts/` by `tokens/build.py`. Inconsolata Regular (SIL OFL) for code in the guide, so Windows and Mac builds lay out the same | `fonts/LibreFranklin/`, `fonts/Inconsolata/` |
 | Versioning | One `VERSION` file read by `pyproject.toml`, the guide cover, the agent rules, the skill and the bundle; `CHANGELOG.md` (Keep a Changelog). The owner tags `v<version>` | `VERSION`, `CHANGELOG.md` |
 | Release bundle | `tools/make_bundle.py` → `dist/release/DataViz-Starter-Kit-McKesson-Edition-v<version>.zip` (not committed) with `START-HERE.html` for non-technical readers: guide (standalone + PDF), one-pagers, Office, Power BI, fonts, web themes, `mckviz` wheel, agent rules and skill | `tools/make_bundle.py` |

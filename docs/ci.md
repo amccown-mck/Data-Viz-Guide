@@ -67,13 +67,13 @@ jobs:
           python-version: "3.12"
       - name: Install
         run: |
-          pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"
+          pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python"
           pip install pandas plotly pytest
       - name: Lint every chart
         run: pytest tests/test_charts.py -q
 ```
 
-The `@v1.1.0` tag must exist on GitHub (use the tag that matches the kit's `VERSION`). If the kit repo is private, give the job read access: create a fine-grained token with read access to the kit repo, store it as a secret (for example `KIT_TOKEN`), and install with `pip install "mckviz @ git+https://x-access-token:${{ secrets.KIT_TOKEN }}@github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"`. Without network access to GitHub, commit the wheel from the release bundle (`python/mckviz-<version>-py3-none-any.whl`) and `pip install` that file instead.
+The `@v1.2.0` tag must exist on GitHub (use the tag that matches the kit's `VERSION`). If the kit repo is private, give the job read access: create a fine-grained token with read access to the kit repo, store it as a secret (for example `KIT_TOKEN`), and install with `pip install "mckviz @ git+https://x-access-token:${{ secrets.KIT_TOKEN }}@github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python"`. Without network access to GitHub, commit the wheel from the release bundle (`python/mckviz-<version>-py3-none-any.whl`) and `pip install` that file instead.
 
 ## Upgrading
 

@@ -9,7 +9,7 @@ headlines, direct labels, number formats, maps and a chart lint. Part of the
 From a release tag (fonts and map data are included):
 
 ```bash
-pip install "mckviz[plotly] @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"
+pip install "mckviz[plotly] @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python"
 ```
 
 Drop `[plotly]` for matplotlib only. If the repo is private, see `docs/ci.md` for a token, or install the wheel from the

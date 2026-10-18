@@ -4,7 +4,7 @@
 
 ```
 pip install assets/python/mckviz-*.whl                                       # 1. the wheel shipped in this folder (no GitHub needed)
-pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"       # 2. the tagged release on GitHub
+pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python"       # 2. the tagged release on GitHub
 pip install plotly pandas          # if the chart uses them
 python scripts/check_env.py        # does 1 then 2 for you, registers the font, and prints which path worked
 ```

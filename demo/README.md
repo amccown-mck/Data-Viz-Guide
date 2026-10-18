@@ -30,7 +30,7 @@ Every chart below is real kit output on synthetic data: made with `mckviz` or th
 ## Where to go next
 
 - **The guide:** [`dist/guide/index.html`](../dist/guide/index.html), or the [PDF](../dist/guide/McKesson-DataViz-Guide.pdf).
-- **Python:** `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"`, then `import mckviz as mv; mv.use()`.
+- **Python:** `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.2.0#subdirectory=python"`, then `import mckviz as mv; mv.use()`.
 - **Agents:** the `mck-chart` skill ([`dist/skills/mck-chart/`](../dist/skills/mck-chart/)) and [`AGENTS.md`](../AGENTS.md).
 - **Everything else:** the [README](../README.md).
 
