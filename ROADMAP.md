@@ -1,8 +1,36 @@
-# Roadmap and status
+# Roadmap
 
-Last updated: 2026-10-18 (positioning and the front door: Data Viz Starter Kit · McKesson Edition). Read this first when resuming work, whether you're a person or an agent.
+Last updated: 2026-10-18. The kit is the **Data Viz Starter Kit · McKesson Edition**, version 1.1.0 (`VERSION`, `CHANGELOG.md`); how we name and describe it is in [`docs/positioning.md`](docs/positioning.md). This page has two parts: **What's next** (for anyone) and the **Working log** below it (for whoever resumes work on the kit, person or agent; read it before you start).
 
-## Done
+## What's next
+
+The owner's goal from here: turn the kit from a "could we do this?" experiment into something cohesive enough to share with any McKesson team, while Workforce Innovation stays the first user and the examples stay workforce data. The repo is the **engine** (tokens, rules, lint, `mckviz`, build, skill); the guide, the Office kit and the agent playbook are the first **product** on it, and others can follow.
+
+**In order:**
+1. **Finish-line items a stranger will notice:** a `LICENSE` and the "owner to confirm" license line in `python/pyproject.toml`; a maintainer name and contact (pyproject `TODO(owner)`, START-HERE's "questions" line); split this file into a short public "what's next" and the working log (done 2026-10-18); drop "a work in progress" from the video's closing card when the video ships.
+2. **The explainer video** (4:47, the v4 cut in `out/explainer/`, exported to `data-viz-kit-explainer-video.mp4`) lives in a gitignored folder and a Downloads folder. Decide where it is kept (the release bundle, SharePoint next to the zip, or a tracked `video/` folder for the source) and link it from the README and START-HERE.
+3. **The agent door for non-coders:** "paste a table, ask a question, get five on-brand options with computed headlines" (the video's "coming soon"). First verify the portable skill in Claude.ai (`dist/skills/mck-chart.zip`) and Copilot; then decide whether the flow is a skill, a Claude Code plugin or a small app on `mckviz`.
+4. A fresh end-to-end read of the guide against `docs/positioning.md` (audience wording, "we", the three hats), then the open items below.
+
+### Open items
+
+Things that need a person, a machine or a decision we don't have here. Details and dates are in the working log.
+
+- **Release.** Publish the release zip (`python tools/make_bundle.py`) to SharePoint. If the repo is private, `pip install` from GitHub needs a token (`docs/ci.md`); the wheel in the bundle is the offline fallback.
+- **Agents.** Load the portable skill (`dist/skills/mck-chart.zip`) in Claude.ai and in Copilot once, to confirm it works there (part of step 3 above).
+- **Power BI** (on hold; needs a person with Power BI Desktop): load the theme, build a sample page (bar highlight with a color measure, matrix heat table, KPI cards), publish it and view it in the Service from a machine without Libre Franklin; confirm the font table in `docs/powerbi-setup.md` (SemiBold visual titles, Bold card callouts, Segoe UI fallbacks) and remove its "Status" note.
+- **Office files on Windows** (needs a visual check): the rebuilt `.potx`/`.pptx` (Slide Master positions, footer, no shadows, square chart corners) and `.xlsx` (Cell Styles, Palette sheet); starter slides 8 (milestones, Today line, labels on the gridlines), 9 (row heights) and 10 (names, stems) and the glyphs ✓ ✕ ▲; the Excel Roadmap Today line and KPI bar. Known: on slide 10 the dot plot's rows sit about 0.1 in above the bar rows beside them. Excel's Filled Map offering Robinson for world maps is stated in the guide but not verified.
+- **Assumption to confirm:** the roadmap's slip bar assumes the paused SWP refresh slips 3 months like the Workday integration (the data has no forecast end).
+- **Brand.** Confirm with Brand that the swatch values on BrandHQ match the values extracted from the PDFs, and check the derived ramps (sequential, diverging, context grey).
+- **Still open from the toolkit audit:** web recipes for the remaining chart families; a Standard-Template build of the new starter slides (needs the internal template locally); `.crtx` chart templates (python-pptx cannot write them); a guide spread for the two one-chart widths (the Formats section's McKesson slide would be the place); the gallery's small phone-width gaps.
+- **R** (needs a machine with R): tranche C in the working log.
+- **Possible future:** an MCP server exposing the kit to any MCP-capable assistant, worth it only if many tools beyond Claude Code and Copilot need the kit.
+
+## Working log
+
+Everything below is the record of how the kit got here, kept for whoever resumes work on it. The transcripts of the sessions that built v0.1 were lost, so this log and `git log` are the record.
+
+### Done
 
 | Area | What exists | Where |
 |---|---|---|
@@ -29,19 +57,13 @@ Last updated: 2026-10-18 (positioning and the front door: Data Viz Starter Kit �
 | R examples | ggplot2 gallery (bar highlight, line with end labels, diverging heatmap) using the generated theme | `examples/r/`, `examples/output/r-*.png` |
 | Guide | Browsable HTML guide + 16:9 PDF from one source (103 spreads, 348 exhibits), plus a standalone single-file HTML that works offline, modelled on the McKinsey spreads: overview, Fundamentals, nine chart families (anatomy, variants, best practice, build it), Formats, Toolkit. Exhibits drawn from tokens and data; every quoted number computed | `guide/`, `tools/build_guide.py`, `dist/guide/` |
 
-## Productizing (started 2026-10-18)
-
-The owner's goal from here: turn the kit from a "could we do this?" experiment into something cohesive enough to share with any McKesson team, while Workforce Innovation stays the first user and the examples stay workforce data. The repo is the **engine** (tokens, rules, lint, `mckviz`, build, skill); the guide, the Office kit and the agent playbook are the first **product** on it, and others can follow.
+### Productizing (started 2026-10-18)
 
 **Step 1, positioning and the front door (done 2026-10-18):** `docs/positioning.md` is the source of truth for the name (**Data Viz Starter Kit**, **McKesson Edition** as a secondary tag, as decided for the explainer video), the one line, the problem (Sam's Tuesday), the promise (exec-ready by 3), the three hats, what's in the box, what the kit is not, and the voice. The README, the guide's cover, overview, top bar, folio and titles, the Toolkit spread, `START-HERE.html`, the bundle name (`DataViz-Starter-Kit-McKesson-Edition-v<version>.zip`), the agent files and the Office document properties follow it.
 
-**Next, in order:**
-1. **Finish-line items a stranger will notice:** a `LICENSE` and the "owner to confirm" license line in `python/pyproject.toml`; a maintainer name and contact (pyproject `TODO(owner)`, START-HERE's "questions" line); split this file into a short public "what's next" and the working log; drop "a work in progress" from the video's closing card when the video ships.
-2. **The explainer video** (4:47, the v4 cut in `out/explainer/`, exported to `data-viz-kit-explainer-video.mp4`) lives in a gitignored folder and a Downloads folder. Decide where it is kept (the release bundle, SharePoint next to the zip, or a tracked `video/` folder for the source) and link it from the README and START-HERE.
-3. **The agent door for non-coders:** "paste a table, ask a question, get five on-brand options with computed headlines" (the video's "coming soon"). First verify the portable skill in Claude.ai (`dist/skills/mck-chart.zip`) and Copilot; then decide whether the flow is a skill, a Claude Code plugin or a small app on `mckviz`.
-4. A fresh end-to-end read of the guide against `docs/positioning.md` (audience wording, "we", the three hats), then the open items below.
+The numbered steps are at the top of this page under What's next.
 
-## Current focus: the guide itself (decided 2026-09-30)
+### Current focus: the guide itself (decided 2026-09-30)
 
 The original ask was a McKesson data-viz guideline as thorough as the McKinsey guide, usable by consultants, developers and coding agents. By v0.1 the toolkit was strong but the guide itself was thin, so the guide now comes first. Agreed with the owner: **pilot first** (done), **local files** (HTML + PDF in the repo; sharing decided later), and a look that **balances McKinsey-level polish with the McKesson brand**.
 
@@ -58,7 +80,7 @@ Third round (2026-10-01, v1.1.0), from a reader review (a consultant and a devel
 
 Open for the owner: publish the release zip to SharePoint; Power BI checks (on hold); load the portable skill in Claude.ai (`dist/skills/mck-chart.zip`) and Copilot once to confirm. (`v1.1.0` is tagged.)
 
-## Toolkit audit and hygiene (2026-10-04)
+### Toolkit audit and hygiene (2026-10-04)
 
 Five parallel reviews (Office, Python, R, web, agent assets) found the generated core consistent with the tokens but the hand-written layers drifted and coverage behind the guide. **Tranche A (done, same day):** categorical order settled and propagated (see Working notes); slide title stated once; Office accent-slot text corrected; consistency test; lint false positives and Plotly gaps; 11 more verified snippets; packaging and README; portable skill with data and zip; Plotly template, Vega and CSS fixes; gallery phone gaps and aria; chart-card baseline and hidden table; flat Office theme, `.potx` on the grid with footer, Excel type and named styles, status swatches. **Needs a visual check on Windows:** the rebuilt `.potx`/`.pptx` (Slide Master positions, footer, no shadows, square chart corners) and the `.xlsx` (Cell Styles, Palette sheet).
 
@@ -76,7 +98,7 @@ Distribution and agents (v1.1.0, 2026-10-01), done: `mckviz` installs from a tag
 
 How to extend: add `guide/ex_<section>.py` (exhibits register on import) and `guide/pages/<section>.html` (spreads with `{{exhibit:…}}`, `{{text:…}}`, `{{folio}}`), add the page to `PAGES` in `tools/build_guide.py`, build, then review contact sheets and the PDF pages by eye. For a hero exhibit, mark it `{{exhibit:name|phone}}` and check it in phone mode too (render with `exhibits.PHONE = True`; branch on `ph(desktop, phone)` where markers or labels collide). Testing at phone width: headless Chrome will not open a window under 500 px, so load the page in a 390 px `<iframe>` and screenshot that.
 
-## Toolkit steps (v0.1 plan, in priority order)
+### Toolkit steps (v0.1 plan, in priority order)
 
 1. ~~**Finish the cookbook.**~~ Done: `distribution`, `tables` and `venn` pages added, with gallery charts and verified snippets.
 2. ~~**Agent assets.**~~ Done: expanded `AGENTS.md`; `CLAUDE.md` and `.github/copilot-instructions.md` point to it; path-scoped `.github/instructions/viz-{python,web,r}.instructions.md`; the `mck-chart` workflow skill (`.github/skills/`, with a Claude Code shim in `.claude/skills/`); the portable rules file is generated from `agents/mck-viz-rules.template.md` into `dist/agents/mck-viz-rules.md` by `tokens/build.py`.
@@ -87,7 +109,7 @@ How to extend: add `guide/ex_<section>.py` (exhibits register on import) and `gu
 7. ~~**QA automation.**~~ Done: `mv.lint(fig)` (`python/mckviz/lint.py`) checks matplotlib and Plotly figures for missing headline/subtitle/source, label-like headlines, > 6 colors (a ramp counts once), off-palette colors, red–green, truncated bars (waterfall breaks warn), labels plus value axis, legends, dual axes, pies > 5, rotated and tiny text, 3D. `tools/lint_charts.py` lints the whole gallery (0 errors); `python -m pytest python/tests` covers each rule. Not covered (needs judgment): whether the headline is true, chart choice, overlaps.
 8. **Brand confirmation.** Confirm with Brand that the full swatch values on BrandHQ match the values extracted from the PDFs, and check the derived ramps (sequential, diverging, context grey).
 
-## Resume commands
+### Resume commands
 
 ```powershell
 cd C:\Users\exs4yig\repos\data-viz-guide
@@ -121,7 +143,7 @@ chflags -R nohidden .venv        # see Working notes: iCloud marks dot-folders h
 .venv/bin/python -m pytest python/tests
 ```
 
-## Working notes
+### Working notes
 
 - The source McKinsey images and brand PDFs stay **outside** the repo, in OneDrive `Desktop\McK-Data-Viz\`: `gif-frames\unique\` (61 stills), `hi-res-slides\` (4 spreads), `_work\mck-pages\` (page notes), `McK-Brand-reference\` (brand PDFs), `rebrand-site-images\` (rebrand case-study images). Never commit them.
 - The transcripts of the sessions that built v0.1 were lost; this file and `git log` are the record.
