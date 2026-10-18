@@ -359,7 +359,7 @@ def write_standalone(all_single: str) -> None:
                  lambda m: f'<a {m.group(1) or ""}data-page="{next(s for s in first_of if first_of[s] == m.group(2))}" '
                            f'href="#{m.group(2)}"', bar)
     note = ('<p class="standalone-note">This is the standalone copy of the guide: one file that works offline. Links to '
-            'templates, themes and code open the starter kit on GitHub; the release bundle has them as files.</p>')
+            'templates, themes and code open the Data Viz Starter Kit on GitHub; the release bundle has them as files.</p>')
     body = body.replace('<p class="small">Inspired by the structure', note + '\n    <p class="small">Inspired by the structure', 1)
     STANDALONE.write_text(LAYOUT.format(title="Data Visualization Guide · McKesson Edition", head=f"<style>\n{css}\n</style>",
                                         topbar=bar, body=body, script=STANDALONE_JS + FOLD_JS), encoding="utf-8")

@@ -1,4 +1,4 @@
-# McKesson data-viz rules for coding agents
+# Data Viz Starter Kit · McKesson Edition: rules for coding agents
 
 <!-- GENERATED from tokens/tokens.json by tokens/build.py - edit agents/*.template.md, not this file. -->
 
