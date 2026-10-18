@@ -1,6 +1,8 @@
 # Positioning: what the kit is and how we describe it
 
-This page is the source of truth for how the kit is named and described. The README, the guide's cover and overview, `START-HERE.html` in the release bundle, the agent files and the explainer video all follow it. Change the wording here first, then carry it through.
+This page is the source of truth for how the kit is named and described. The README, the guide's cover and overview, `START-HERE.html` in the release bundle, `demo/README.md` and the agent files all follow it. Change the wording here first, then carry it through.
+
+**Second pass, 2026-10-18.** The first pass took its language from the explainer video: Sam's Tuesday, exec-ready by 3, the three hats. That story works in the video, which has a character and a clock to carry it. Product copy is read by people who haven't seen the video, so it now says in its own words what the kit is, the problem it solves, why it isn't another style guide, who it's for and what you get. The video keeps its own script (`video/explainer-exec-ready-by-3/`). Product copy doesn't quote it.
 
 ## Name
 
@@ -12,55 +14,60 @@ This page is the source of truth for how the kit is named and described. The REA
 
 ## One line
 
-One visual language for everyone who makes charts: business folks, technical folks and the AI agents working alongside them.
+Consulting-grade charts, reproduced with ease in the tools you already use.
 
-## The problem (Sam's Tuesday)
+Where there is room for a second line:
 
-It's 2:07 on a Tuesday. A VP asks where we're losing people and whether it's getting better, exec-ready by 3. The data takes twelve minutes to clean. The chart takes the rest: which chart tells this story, which blue is our blue, "Chart Title", `final_v7_REAL_final.pptx`, and the chatbot makes everything purple. Every tool has its own idea of good, so the same numbers look different in Excel, Python, Power BI and a chat window, and most of what gets made says nothing.
+Which chart answers the question, how to make the point land, how to keep it on-brand, and a check before it goes out: built into PowerPoint, Excel, Python, Power BI and your AI assistant.
 
-## The promise
+## The problem
 
-Exec-ready by 3. Less time fiddling, more time on the story. The kit makes the right chart the easy chart in every tool we use, and the rules are checked before a chart leaves your hands, by you, a reviewer or an agent.
+Most charts at McKesson are made by people for whom charts are part of the job, not the job. The analysis is careful. The chart gets made at the end, in whatever tool is open, starting from that tool's defaults. The know-how that makes a chart work lives in a few people's heads and in old decks, so it gets rebuilt every time: which chart answers this question, what to grey out, what the title should claim, which colors are ours. So the same numbers look different in Excel, Python, Power BI and a chat window, reviewers send back the same fixes, and good analysis reaches leaders as a chart they have to decode.
 
-## Who it's for: three hats
+## Why it isn't another style guide
 
-| Hat | Lives in | Gets |
-|---|---|---|
-| **Business folks**: consultants, analysts, anyone with a deck due | PowerPoint, Excel | The guide and chart chooser (which chart, and why), the cheat sheet, the template, starter deck and chart workbook, all with native, editable charts |
-| **Technical folks**: analysts, data scientists, engineers | Python, R, Power BI, the web | `mckviz` (one line puts a chart on-brand; helpers for headlines, labels, estimates and ranges), themes for every library, and `mv.lint` to check the result |
-| **AI agents**: Copilot, Claude, coding agents | Wherever you work | The same playbook: `AGENTS.md`, the `mck-chart` skill, the one-page rules, so an assistant follows the rules and checks its own work |
+A style guide describes good charts. This kit makes them the default.
 
-Many people wear all three: consultant before lunch, analyst after lunch, agent wrangler by 3. One kit fits every hat.
+- **The rules are built into the tools.** Every color, font and chart rule lives in one file, `tokens/tokens.json`, and is generated into the PowerPoint template, the Excel workbook, the Power BI theme, the web and R themes and the `mckviz` Python package. A new chart starts on-brand instead of being fixed later. Change a line and every theme, template and example updates.
+- **The rules are written to be checked.** Each one is testable. A reviewer has the QA checklist, code has `mv.lint`, and an AI assistant reads the same playbook and checks its own work before handing a chart back.
 
-**Primary users today:** Workforce Innovation. The examples are workforce data on purpose (attrition, headcount, hiring, planning), because that is who is using it first and the examples should feel real to them. The rules are the same for finance, operations or sales. All example data is synthetic.
+## The frame: a consulting firm's chart practice, on call
 
-## What's in the box
+The owner's own words for it: a mini consulting firm at the ready, top-notch data viz reproduced with ease. A consulting firm's charts look the way they do because of a practice behind them, not one talented person. The kit packages that practice so one analyst can have it:
 
-| Tile | What it is |
+| What a firm gives you | What the kit gives you |
 |---|---|
-| **A guide** | Which chart to use and when, how to keep it on-brand, what to avoid: 12 chart families plus fundamentals, formats, a chart chooser and a cheat sheet, as a website, a single offline file and a 16:9 PDF |
-| **A cookbook** | 23 chart types, each with a spec table, do/don't rules and tested code or click-by-click steps for every platform |
-| **`mckviz`** | The Python package: style, labels, number formats, chart builders, maps and a chart lint, for matplotlib and Plotly |
-| **Themes** | Generated from one brand file for HTML/CSS, Plotly, Vega-Lite, matplotlib, ggplot2, Power BI, PowerPoint and Excel, plus the template, starter deck and workbook |
-| **A playbook for agents** | Rules an AI assistant reads, in three sizes: the full `AGENTS.md`, the portable skill, the one-page rules file |
+| **Someone who knows which chart** | **The guide and chart chooser.** Start from what you want to say; the guide names the chart and why. Fundamentals, formats and 12 chart families, plus a cheat sheet, as a website, a single offline file and a 16:9 PDF |
+| **A house style** | **Themes and templates generated from one file**, for PowerPoint, Excel, Power BI, HTML/CSS, Plotly, Vega-Lite, matplotlib and ggplot2, with native, editable Office charts |
+| **Worked exhibits to copy** | **The cookbook.** 23 chart types, each with a spec table, do/don't rules and tested code or click-by-click steps for every platform. In Python, `mckviz` adds the builders, labels and number formats |
+| **A review before it goes out** | **The QA checklist and `mv.lint`**, so the same fixes stop coming back |
+| **Associates who follow the house rules** | **The agent playbook**: the full `AGENTS.md`, the portable `mck-chart` skill and the one-page rules file |
 
-## How it holds together
+Use the frame to explain the kit; don't promise a firm. The kit is a practice you run yourself.
 
-- **The brand lives in one file.** `tokens/tokens.json` holds every color, font and chart constant. Change a line and every theme, template and example updates.
-- **The rules are written to be checked.** Each rule is testable, `mv.lint` tests the ones code can see, and the QA checklist covers the rest. The agent playbook is the same rules in a form an assistant follows.
-- **A chart practice in a box.** The useful comparison is a consulting firm's chart team: a house style, a chooser that says why, worked exhibits for every chart, a review step before anything goes out, and associates (the agents) who follow the rules. The kit packages that practice so one analyst can reproduce it with ease.
+## Who it's for
+
+Anyone at McKesson whose work ends in a chart: the analyst building the monthly deck, the consultant shaping a recommendation for leaders, the data scientist whose model has to land with people who won't read the notebook. Most of us are all three in a given week, so the kit is organized by where you're working, not who you are. One set of rules, three ways in:
+
+| Way in | Tools | Start with |
+|---|---|---|
+| **In PowerPoint and Excel** | PowerPoint, Excel, Power BI | The guide and chart chooser, the cheat sheet, then the template, starter deck and chart workbook; the Power BI theme |
+| **In code** | Python, R, the web, Power BI | `mckviz` and the themes, the cookbook's tested code, `mv.lint` to check the result |
+| **With an AI assistant** | Copilot, Claude, coding agents | `AGENTS.md` in this repo; the `mck-chart` skill or the one-page rules anywhere else |
+
+**First users:** Workforce Innovation. The examples are workforce data on purpose (attrition, headcount, hiring, planning), because that is who is using it first and the examples should feel real to them. The rules work the same for finance, operations or sales. All example data is synthetic.
 
 ## What it is not
 
 - Not a BI or dashboard product. It styles and disciplines the tools you already use, including Power BI.
 - Not a chart library of its own. It sits on matplotlib, Plotly, ggplot2, Vega-Lite and native Office charts.
-- Not a data-cleaning tool. Sam still cleans the export; the kit takes over at "make it say something".
+- Not a data-cleaning tool. You still clean the export; the kit takes over when the numbers are ready to become a chart.
 - Not only for Workforce Innovation. The examples are workforce data; the rules are for any team.
-- Not yet a chart maker for non-coders. "Paste a table, ask a question, get five on-brand options" is the next build. Today, coding agents follow the rules in a repo and check their own work; business folks use the guide and the templates.
+- Not yet a chart maker for non-coders. "Paste a table, ask a question, get five on-brand options" is the next build. Today, coding agents follow the rules in a repo and check their own work; people in PowerPoint and Excel use the guide and the templates.
 
 ## Voice
 
-Plain, warm, about the craft. Sentence case. Short sentences. Numbers in headlines are computed, never eyeballed. "We" means the people making charts. Playful where the video is playful (Sam, the cold coffee), never at the expense of being clear.
+Plain, warm, specific. Sentence case. Short sentences. Write to the person making the chart, about their situation: the deadline, the defaults, the reviewer, the leader who has to read it. Numbers in headlines are computed, never eyeballed. "We" means the people making charts. No hype: say what the kit does and let the charts make the case. The video can be playful in its own way; product copy doesn't borrow its characters or its clock.
 
 ## Call to action
 
