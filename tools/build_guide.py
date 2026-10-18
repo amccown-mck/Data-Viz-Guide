@@ -138,8 +138,8 @@ def topbar(active: str | None, href) -> str:
     tools = "".join(f'<a class="tool" href="{href(stem)}"{" aria-current=page" if stem == active else ""}>{label}</a>'
                     for stem, label, _, kind in PAGES if kind == "tool")
     pdf = f'<a class="pdf" href="{PDF.name}">PDF</a>' if active != "__standalone__" else ""
-    return (f'<header class="topbar"><a class="brand" href="{href("index")}"><b>McKesson</b> <span>Data Visualization '
-            f'Guide</span></a><nav aria-label="Sections">{links}</nav><div class="tools">{tools}{pdf}</div></header>\n')
+    return (f'<header class="topbar"><a class="brand" href="{href("index")}"><b>Data Viz Starter Kit</b> <span>McKesson '
+            f'Edition</span></a><nav aria-label="Sections">{links}</nav><div class="tools">{tools}{pdf}</div></header>\n')
 
 
 def render(stem: str, section: str, svgs: dict, text: dict, snippets: dict, used: set, idx, link) -> str:
@@ -172,7 +172,7 @@ def render(stem: str, section: str, svgs: dict, text: dict, snippets: dict, used
 
     def folio(m):
         sid = SPREAD_RE.findall(src[:m.start()])[-1]
-        return (f'<div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>{section}</span>'
+        return (f'<div class="folio" aria-hidden="true"><span>Data Visualization Guide · McKesson Edition</span><span>{section}</span>'
                 f'<span class="n">{page_of[sid]}</span></div>')
 
     out = re.sub(r"\{\{folio\}\}", folio, src)
@@ -260,7 +260,7 @@ def main() -> None:
     for stem, label, section, _ in PAGES:
         pages[stem] = render(stem, section, svgs, exhibits.TEXT, exhibits.HTML, used, idx, multi_link)
         singles[stem] = render(stem, section, svgs, exhibits.TEXT, exhibits.HTML, set(), idx, single_link)
-        title = "McKesson Data Visualization Guide" + ("" if stem == "index" else f": {label}")
+        title = "Data Visualization Guide · McKesson Edition" + ("" if stem == "index" else f": {label}")
         (OUT / f"{stem}.html").write_text(
             LAYOUT.format(title=title, head=LINKED_CSS, topbar=topbar(stem, lambda s: f"{s}.html"),
                           body=fold(pages[stem]), script=FOLD_JS), encoding="utf-8")
@@ -268,7 +268,7 @@ def main() -> None:
 
     every = set(stem_of)
     all_single = repo_links(single_doc_links("\n".join(singles[s] for s, *_ in PAGES), first_of, every))
-    (OUT / "print.html").write_text(LAYOUT.format(title="McKesson Data Visualization Guide", head=LINKED_CSS, topbar="",
+    (OUT / "print.html").write_text(LAYOUT.format(title="Data Visualization Guide · McKesson Edition", head=LINKED_CSS, topbar="",
                                                   body=all_single, script=""), encoding="utf-8")
     for name, ids in ONE_PAGERS.items():                     # print sources for the one-page PDFs
         body = "\n".join(re.search(rf'<section class="spread[^"]*" id="{i}".*?</section>', all_single, re.S).group(0)
@@ -361,7 +361,7 @@ def write_standalone(all_single: str) -> None:
     note = ('<p class="standalone-note">This is the standalone copy of the guide: one file that works offline. Links to '
             'templates, themes and code open the starter kit on GitHub; the release bundle has them as files.</p>')
     body = body.replace('<p class="small">Inspired by the structure', note + '\n    <p class="small">Inspired by the structure', 1)
-    STANDALONE.write_text(LAYOUT.format(title="McKesson Data Visualization Guide", head=f"<style>\n{css}\n</style>",
+    STANDALONE.write_text(LAYOUT.format(title="Data Visualization Guide · McKesson Edition", head=f"<style>\n{css}\n</style>",
                                         topbar=bar, body=body, script=STANDALONE_JS + FOLD_JS), encoding="utf-8")
     left = re.findall(r'(?:src|href)="(?!#|data:|https?:)[^"]+"', STANDALONE.read_text(encoding="utf-8"))
     mb = STANDALONE.stat().st_size / 1e6

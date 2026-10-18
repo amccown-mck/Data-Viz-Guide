@@ -1,12 +1,12 @@
 """Build the release bundle: one zip for SharePoint, for people who won't use git.
 
-    python tools/make_bundle.py              -> dist/release/McKesson-DataViz-Kit-v<version>.zip
+    python tools/make_bundle.py              -> dist/release/DataViz-Starter-Kit-McKesson-Edition-v<version>.zip
     python tools/make_bundle.py --no-wheel   skip building the mckviz wheel (offline machines)
 
 Run the builds first (tokens/build.py, office/build_office.py, tools/build_guide.py): the bundle packs what is in
 dist/ now and says so if something is missing. Layout inside the zip:
 
-    McKesson-DataViz-Kit-v<version>/
+    DataViz-Starter-Kit-McKesson-Edition-v<version>/
       START-HERE.html          what's inside and what to open first, written for non-technical readers
       CHANGELOG.md
       guide/                   the standalone guide (one HTML file, works offline) and the 16:9 PDF
@@ -37,7 +37,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-NAME = f"McKesson-DataViz-Kit-v{VERSION}"
+NAME = f"DataViz-Starter-Kit-McKesson-Edition-v{VERSION}"
 OUT = DIST / "release" / f"{NAME}.zip"
 REPO_URL = "https://github.com/amccown-mck/Data-Viz-Guide"
 sys.path[:0] = [str(ROOT / "tools")]
@@ -91,7 +91,7 @@ def start_here(has_official: bool, has_wheel: bool) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>McKesson Data Viz Kit</title>
+<title>Data Viz Starter Kit · McKesson Edition</title>
 <style>
 @font-face {{ font-family: "Libre Franklin"; font-weight: 400; src: url("fonts/LibreFranklin/LibreFranklin-Regular.ttf"); }}
 @font-face {{ font-family: "Libre Franklin"; font-weight: 600; src: url("fonts/LibreFranklin/LibreFranklin-SemiBold.ttf"); }}
@@ -105,6 +105,7 @@ h1 {{ color: var(--title); font-size: 32px; line-height: 1.2; margin: 0 0 6px; f
 h2 {{ color: var(--head); font-size: 20px; margin: 36px 0 8px; font-weight: 600; }}
 .lead {{ font-size: 18px; color: var(--head); margin: 0 0 4px; }}
 .meta {{ color: var(--muted); font-size: 14px; margin: 0 0 28px; }}
+.tag {{ color: var(--muted); font-size: 12.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; margin: 0 0 6px; }}
 .first {{ background: var(--panel); padding: 18px 22px; border-left: 4px solid var(--focus); }}
 .first p {{ margin: 0 0 6px; }}
 a {{ color: var(--focus); }}
@@ -118,9 +119,15 @@ hr {{ border: 0; border-top: 1px solid var(--rule); margin: 40px 0 16px; }}
 </head>
 <body>
 <main>
-<h1>McKesson Data Visualization Kit</h1>
-<p class="lead">Everything you need to make charts that look and read like McKesson, in the tools you already use.</p>
+<p class="tag">McKesson Edition</p>
+<h1>Data Viz Starter Kit</h1>
+<p class="lead">One visual language for everyone who makes charts: business folks, technical folks and the AI agents working alongside them.</p>
 <p class="meta">Version {v} · {date.today():%B %Y} · All example data is synthetic</p>
+
+<p>Every tool has its own idea of good, so the same numbers look different in Excel, Python, Power BI and a chat
+window, and most charts say nothing. This kit makes the right chart the easy chart in every tool you already use, and
+checks the rules before a chart leaves your hands. Which chart and why, templates and code that are already on-brand,
+and a playbook so AI assistants follow the same rules you do.</p>
 
 <div class="first">
 <p><b>Start here:</b> open <a href="guide/McKesson-DataViz-Guide.html">guide/McKesson-DataViz-Guide.html</a> in your

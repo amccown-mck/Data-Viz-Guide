@@ -24,4 +24,4 @@ mv.save(fig, "out/chart.png", dpi=200)
 
 For a Plotly chart whose headline, subtitle and source live in HTML (the chart-card pattern), pass them to the lint: `mv.lint(fig, headline=..., subtitle=..., source=...)`. In CI, `mv.lint(fig, strict=True)` raises on any error.
 
-Without network access to GitHub, ask the user for the release bundle (`McKesson-DataViz-Kit-v{{version}}.zip`), or use the colors in `references/rules.md` as named constants.
+Without network access to GitHub, ask the user for the release bundle (`DataViz-Starter-Kit-McKesson-Edition-v{{version}}.zip`), or use the colors in `references/rules.md` as named constants.

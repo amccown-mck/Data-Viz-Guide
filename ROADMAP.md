@@ -1,6 +1,6 @@
 # Roadmap and status
 
-Last updated: 2026-10-08 (chart + takeaways frame for one-chart slides; LF line endings via .gitattributes). Read this first when resuming work, whether you're a person or an agent.
+Last updated: 2026-10-18 (positioning and the front door: Data Viz Starter Kit · McKesson Edition). Read this first when resuming work, whether you're a person or an agent.
 
 ## Done
 
@@ -13,7 +13,7 @@ Last updated: 2026-10-08 (chart + takeaways frame for one-chart slides; LF line 
 | Python package | `mckviz` 1.1.0: `use()`, `highlight()`, `titles()`, `source()`, `label_bars()`, `label_line_ends()`, `callout()`, `shade_period()`, `pl_finish()`, `fmt_num()`, `suppress_small()`, `lint()`, and `mckviz.geo` (real maps). Installable from a tag: `pip install "mckviz @ git+https://github.com/amccown-mck/Data-Viz-Guide@v1.1.0#subdirectory=python"`; fonts and map data are package data | `python/mckviz/` |
 | Fonts | Static Libre Franklin TTFs (SIL OFL); synced into `python/mckviz/fonts/` by `tokens/build.py`. Inconsolata Regular (SIL OFL) for code in the guide, so Windows and Mac builds lay out the same | `fonts/LibreFranklin/`, `fonts/Inconsolata/` |
 | Versioning | One `VERSION` file read by `pyproject.toml`, the guide cover, the agent rules, the skill and the bundle; `CHANGELOG.md` (Keep a Changelog). The owner tags `v<version>` | `VERSION`, `CHANGELOG.md` |
-| Release bundle | `tools/make_bundle.py` → `dist/release/McKesson-DataViz-Kit-v<version>.zip` (not committed) with `START-HERE.html` for non-technical readers: guide (standalone + PDF), one-pagers, Office, Power BI, fonts, web themes, `mckviz` wheel, agent rules and skill | `tools/make_bundle.py` |
+| Release bundle | `tools/make_bundle.py` → `dist/release/DataViz-Starter-Kit-McKesson-Edition-v<version>.zip` (not committed) with `START-HERE.html` for non-technical readers: guide (standalone + PDF), one-pagers, Office, Power BI, fonts, web themes, `mckviz` wheel, agent rules and skill | `tools/make_bundle.py` |
 | Portable agent skill | `dist/skills/mck-chart/`: SKILL.md, rules, chooser, principles, QA, all cookbook pages, theme assets, `scripts/check_env.py`; works in `~/.claude/skills/`, `.claude/skills/`, `.github/skills/`, and zipped for Claude.ai. Generated with the in-repo `.github/skills/mck-chart/SKILL.md` from one template | `agents/skill/`, `tools/build_skill.py` |
 | CI recipe | Running `mv.lint(fig, strict=True)` in another repo's GitHub Actions | `docs/ci.md` |
 | Example data | 12 synthetic workforce / SWP datasets, including individual-level compa-ratios | `examples/data/` (`make_data.py`) |
@@ -28,6 +28,18 @@ Last updated: 2026-10-08 (chart + takeaways frame for one-chart slides; LF line 
 | Chart lint | `mv.lint(fig)` for matplotlib/Plotly, gallery runner, pytest suite | `python/mckviz/lint.py`, `tools/lint_charts.py`, `python/tests/` |
 | R examples | ggplot2 gallery (bar highlight, line with end labels, diverging heatmap) using the generated theme | `examples/r/`, `examples/output/r-*.png` |
 | Guide | Browsable HTML guide + 16:9 PDF from one source (103 spreads, 348 exhibits), plus a standalone single-file HTML that works offline, modelled on the McKinsey spreads: overview, Fundamentals, nine chart families (anatomy, variants, best practice, build it), Formats, Toolkit. Exhibits drawn from tokens and data; every quoted number computed | `guide/`, `tools/build_guide.py`, `dist/guide/` |
+
+## Productizing (started 2026-10-18)
+
+The owner's goal from here: turn the kit from a "could we do this?" experiment into something cohesive enough to share with any McKesson team, while Workforce Innovation stays the first user and the examples stay workforce data. The repo is the **engine** (tokens, rules, lint, `mckviz`, build, skill); the guide, the Office kit and the agent playbook are the first **product** on it, and others can follow.
+
+**Step 1, positioning and the front door (done 2026-10-18):** `docs/positioning.md` is the source of truth for the name (**Data Viz Starter Kit**, **McKesson Edition** as a secondary tag, as decided for the explainer video), the one line, the problem (Sam's Tuesday), the promise (exec-ready by 3), the three hats, what's in the box, what the kit is not, and the voice. The README, the guide's cover, overview, top bar, folio and titles, the Toolkit spread, `START-HERE.html`, the bundle name (`DataViz-Starter-Kit-McKesson-Edition-v<version>.zip`), the agent files and the Office document properties follow it.
+
+**Next, in order:**
+1. **Finish-line items a stranger will notice:** a `LICENSE` and the "owner to confirm" license line in `python/pyproject.toml`; a maintainer name and contact (pyproject `TODO(owner)`, START-HERE's "questions" line); split this file into a short public "what's next" and the working log; drop "a work in progress" from the video's closing card when the video ships.
+2. **The explainer video** (4:47, the v4 cut in `out/explainer/`, exported to `data-viz-kit-explainer-video.mp4`) lives in a gitignored folder and a Downloads folder. Decide where it is kept (the release bundle, SharePoint next to the zip, or a tracked `video/` folder for the source) and link it from the README and START-HERE.
+3. **The agent door for non-coders:** "paste a table, ask a question, get five on-brand options with computed headlines" (the video's "coming soon"). First verify the portable skill in Claude.ai (`dist/skills/mck-chart.zip`) and Copilot; then decide whether the flow is a skill, a Claude Code plugin or a small app on `mckviz`.
+4. A fresh end-to-end read of the guide against `docs/positioning.md` (audience wording, "we", the three hats), then the open items below.
 
 ## Current focus: the guide itself (decided 2026-09-30)
 

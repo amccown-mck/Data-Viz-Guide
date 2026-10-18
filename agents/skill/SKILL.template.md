@@ -6,7 +6,7 @@ description: Make a McKesson-standard chart or table from data, going from quest
 # McKesson chart workflow
 
 <!-- portable -->
-This skill is the McKesson data-visualization kit (v{{version}}) for any repo or tool. Everything it refers to is in this folder: `references/rules.md` (the house rules on one page), `references/choosing-a-chart.md`, `references/principles.md`, `references/qa-checklist.md`, one page per chart type in `references/cookbook/`, and theme files in `assets/`. Setup for each platform is in [Setup](#setup) at the end.
+This skill is the Data Viz Starter Kit, McKesson Edition (v{{version}}), for any repo or tool. Everything it refers to is in this folder: `references/rules.md` (the house rules on one page), `references/choosing-a-chart.md`, `references/principles.md`, `references/qa-checklist.md`, one page per chart type in `references/cookbook/`, and theme files in `assets/`. Setup for each platform is in [Setup](#setup) at the end.
 <!-- /portable -->
 <!-- repo -->
 This is the in-repo copy of the skill; the full rules are in `AGENTS.md`. A portable copy that works in any repo (and zips for Claude.ai) is generated into `dist/skills/mck-chart/` by `python tools/build_skill.py`.
@@ -71,6 +71,6 @@ Give the user the output (file path, or code plus the rendered image), the chart
 - **Python** (3.10+): `pip install "mckviz @ git+{{repo_url}}@v{{version}}#subdirectory=python"`, plus `plotly` and `pandas` if you use them. The fonts and map data come with the package. Run `python scripts/check_env.py` (in this folder) to confirm `mckviz` is installed and Libre Franklin registers; it prints the install command if not. If you can't install packages, take the colors from `references/rules.md` and define them once as named constants.
 - **HTML / JS:** copy `assets/web/` next to the page; `assets/html/chart-card.html` is a working starter (bar and line cards).
 - **R:** `source("assets/r/theme_mck.R")`. **Power BI:** import `assets/powerbi/mckesson-dataviz-theme.json`.
-- **Excel / PowerPoint:** the template, starter deck, workbook and fonts are in the release bundle (`McKesson-DataViz-Kit-v{{version}}.zip`) or at {{repo_url}}.
+- **Excel / PowerPoint:** the template, starter deck, workbook and fonts are in the release bundle (`DataViz-Starter-Kit-McKesson-Edition-v{{version}}.zip`) or at {{repo_url}}.
 - **Cookbook snippets run from this folder:** paths such as `assets/data/workforce_mix.csv` (synthetic sample data) and `assets/web/mck-viz.css` are relative to the skill folder, so `cd` here first, or replace the path with the user's file and keep the structure. `office/...` and `fonts/...` paths are folders in the release bundle. Outputs go to `out/`.
 <!-- /portable -->

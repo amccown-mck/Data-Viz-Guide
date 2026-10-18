@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>McKesson Data Visualization Guide</title>
+<title>Data Visualization Guide · McKesson Edition</title>
 <link rel="stylesheet" href="mck-viz.css">
 <link rel="stylesheet" href="guide.css">
 </head>
 <body>
-<header class="topbar"><a class="brand" href="index.html"><b>McKesson</b> <span>Data Visualization Guide</span></a><nav aria-label="Sections"><a href="index.html" aria-current=page>Overview</a><a href="fundamentals.html">Fundamentals</a><a href="formats.html">Formats</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="plans.html">Plans and status</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
+<header class="topbar"><a class="brand" href="index.html"><b>Data Viz Starter Kit</b> <span>McKesson Edition</span></a><nav aria-label="Sections"><a href="index.html" aria-current=page>Overview</a><a href="fundamentals.html">Fundamentals</a><a href="formats.html">Formats</a><a href="magnitude.html">Magnitude</a><a href="part-to-whole.html">Part-to-whole</a><a href="change-over-time.html">Change over time</a><a href="ranking.html">Ranking</a><a href="distribution.html">Distribution</a><a href="correlation.html">Correlation</a><a href="flows.html">Flows</a><a href="geo.html">Geo-spatial</a><a href="single-number.html">Single number</a><a href="plans.html">Plans and status</a><a href="toolkit.html">Toolkit</a></nav><div class="tools"><a class="tool" href="chooser.html">Chart chooser</a><a class="tool" href="cheat-sheet.html">Cheat sheet</a><a class="pdf" href="McKesson-DataViz-Guide.pdf">PDF</a></div></header>
 <main>
 <section class="spread cover" id="cover">
   <div class="inner">
@@ -17,27 +17,28 @@
         <div style="height:38%"></div><div style="height:52%"></div><div class="f" style="height:100%"></div>
         <div style="height:61%"></div><div style="height:45%"></div><div style="height:30%"></div>
       </div>
+      <p class="edition">Data Viz Starter Kit · McKesson Edition</p>
       <h1><b>Data visualization</b> guide</h1>
-      <p class="sub">How McKesson Workforce Innovation turns workforce data into charts that lead to decisions.</p>
+      <p class="sub">One visual language for everyone who makes charts: business folks, technical folks and the AI agents working alongside them.</p>
     </div>
     <div class="meta"><span>Version 1.1.0</span><span>October 2026</span><span>All example data is synthetic</span></div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">1</span></div>
+  <div class="folio" aria-hidden="true"><span>Data Visualization Guide · McKesson Edition</span><span>Overview</span><span class="n">1</span></div>
 </section>
 
 <section class="spread" id="how-to-use">
   <div class="rail">
     <p class="eyebrow">Overview</p>
     <h2 class="title"><b>How to use</b> this guide</h2>
-    <p class="lede">One set of rules, three ways in. The guide teaches the thinking; the starter kit makes the right answer the easy one in every tool we use.</p>
-    <p>Every chart we make should do one job: answer a business question so clearly that the reader knows what to do next. The rules here are written to be checked, by a reviewer or by an agent, before a chart leaves the team.</p>
-    <p class="small">Inspired by the structure of a leading consulting firm's public data-visualization guide, rebuilt for McKesson's brand and for the work of Workforce Innovation.</p>
+    <p class="lede">One set of rules, three ways in. The guide teaches the thinking; the kit makes the right chart the easy chart in every tool we use, and checks it before it leaves your hands.</p>
+    <p>It's 2:07 and a VP wants to know where we're losing people, exec-ready by 3. Every tool has its own idea of good, so the same numbers come out looking different, and most charts say nothing. The rules here fix that, and they are written to be checked, by you, a reviewer or an agent.</p>
+    <p class="small">Inspired by the structure of a leading consulting firm's public guide, rebuilt for McKesson's brand. Workforce Innovation uses it first, so the examples are workforce data; the rules are the same for any team.</p>
   </div>
   <div class="stage">
     <div class="grid g3">
       <div class="tile">
-        <p class="step">Consultants and analysts</p>
-        <h4>Decks, reports, workbooks</h4>
+        <p class="step">Business folks</p>
+        <h4>PowerPoint, Excel, a deck due by 3</h4>
         <p class="note">Read <a href="fundamentals.html">Fundamentals</a> once, then use the chart pages as you build. Keep the cheat sheet next to you.</p>
         <ul class="note">
           <li>PowerPoint template and starter deck</li>
@@ -47,8 +48,8 @@
         </ul>
       </div>
       <div class="tile">
-        <p class="step">Developers and data scientists</p>
-        <h4>Python, HTML, R, Power BI</h4>
+        <p class="step">Technical folks</p>
+        <h4>Python, R, Power BI, the web</h4>
         <p class="note">Each chart page links to tested code. Themes are generated from one token file, so every tool matches.</p>
         <ul class="note">
           <li><code>mckviz</code> for matplotlib and Plotly</li>
@@ -58,9 +59,9 @@
         </ul>
       </div>
       <div class="tile">
-        <p class="step">Coding agents</p>
-        <h4>Claude, Copilot and others</h4>
-        <p class="note">Agents read <code>AGENTS.md</code> automatically in this repo. For other repos, copy one self-contained rules file.</p>
+        <p class="step">AI agents</p>
+        <h4>Copilot, Claude, coding agents</h4>
+        <p class="note">The same playbook, read by the assistant: in this repo through <code>AGENTS.md</code>, anywhere else as a skill or one rules file. It checks its own work.</p>
         <ul class="note">
           <li><code>AGENTS.md</code>: workflow and rules</li>
           <li><code>mck-chart</code> skill: question to QA</li>
@@ -80,7 +81,7 @@
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">2</span></div>
+  <div class="folio" aria-hidden="true"><span>Data Visualization Guide · McKesson Edition</span><span>Overview</span><span class="n">2</span></div>
 </section>
 
 <section class="spread" id="quick-start">
@@ -127,7 +128,7 @@
       </div>
     </div>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">3</span></div>
+  <div class="folio" aria-hidden="true"><span>Data Visualization Guide · McKesson Edition</span><span>Overview</span><span class="n">3</span></div>
 </section>
 
 <section class="spread" id="contents">
@@ -156,7 +157,7 @@
       <li><span class="no">13</span><span><a href="toolkit.html#kit">Toolkit</a><small>Downloads, set-up for each tool, the QA checklist, guidance for agents</small></span><span class="pg">111</span></li>
     </ol>
   </div>
-  <div class="folio" aria-hidden="true"><span>McKesson Data Visualization Guide</span><span>Overview</span><span class="n">4</span></div>
+  <div class="folio" aria-hidden="true"><span>Data Visualization Guide · McKesson Edition</span><span>Overview</span><span class="n">4</span></div>
 </section>
 
 </main>

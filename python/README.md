@@ -2,7 +2,7 @@
 
 The McKesson data-visualization theme and helpers for matplotlib and Plotly: Libre Franklin, the token colors, insight
 headlines, direct labels, number formats, maps and a chart lint. Part of the
-[Data-Viz-Guide](https://github.com/amccown-mck/Data-Viz-Guide) kit; the rules are in its `docs/` and `AGENTS.md`.
+[Data Viz Starter Kit, McKesson Edition](https://github.com/amccown-mck/Data-Viz-Guide); the rules are in its `docs/` and `AGENTS.md`.
 
 ## Install
 

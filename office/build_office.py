@@ -311,7 +311,7 @@ def set_properties(prs, title: str, description: str) -> None:
     default thumbnail, which would otherwise show a generic picture in File Explorer and SharePoint."""
     now = datetime.now(timezone.utc).replace(tzinfo=None, microsecond=0)
     cp = prs.core_properties
-    cp.title, cp.subject, cp.author, cp.last_modified_by = title, "McKesson data-viz starter kit", AUTHOR, AUTHOR
+    cp.title, cp.subject, cp.author, cp.last_modified_by = title, "Data Viz Starter Kit · McKesson Edition", AUTHOR, AUTHOR
     cp.comments, cp.keywords, cp.category = description, "McKesson; data visualization; charts; template", ""
     cp.created = cp.modified = now
     cp.last_printed = now
@@ -611,7 +611,7 @@ def slide_cover(prs):
     text_box(slide, LEFT, 3.75, 9.5, 1.2,
              "Native, editable charts in the McKesson data-viz style. Copy a slide, then right-click the chart › "
              "Edit Data to drop in your numbers.", 16, C.text)
-    text_box(slide, LEFT, FOOT_TOP, 9, 0.5, "McKesson data-viz starter kit · generated from tokens/tokens.json", 9,
+    text_box(slide, LEFT, FOOT_TOP, 9, 0.5, "Data Viz Starter Kit · McKesson Edition · generated from tokens/tokens.json", 9,
              C.text_muted, light=True, anchor=MSO_ANCHOR.BOTTOM)
     slide.notes_slide.notes_text_frame.text = (
         "Install Libre Franklin (fonts/LibreFranklin) and the theme (docs/office-setup.md) before editing, "
@@ -1853,7 +1853,7 @@ def build_xlsx() -> Path:
     wb = xlsxwriter.Workbook(str(path), {"default_format_properties": {"font_name": FONT, "font_size": 10,
                                                                          "font_color": C.text}})
     now = datetime.now(timezone.utc).replace(tzinfo=None, microsecond=0)
-    wb.set_properties({"title": "McKesson data-viz chart workbook", "subject": "McKesson data-viz starter kit",
+    wb.set_properties({"title": "McKesson data-viz chart workbook", "subject": "Data Viz Starter Kit · McKesson Edition",
                        "author": AUTHOR, "manager": "", "company": "McKesson", "category": "",
                        "keywords": "McKesson; data visualization; charts",
                        "comments": "Palette sheet, native sample charts and a heat table in the McKesson data-viz "

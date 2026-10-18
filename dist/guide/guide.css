@@ -1,4 +1,4 @@
-/* McKesson Data Visualization Guide: layout and type for guide/pages/*.html.
+/* Data Visualization Guide (Data Viz Starter Kit · McKesson Edition): layout and type for guide/pages/*.html.
    Colors come from mck-viz.css (generated from tokens/tokens.json); this file only sets layout, type and proportion.
    A spread is designed at 1280 x 720 px, which prints 1:1 on a 13.333 x 7.5 in (16:9) page. */
 
@@ -204,8 +204,9 @@ pre.snip { margin: 6px 0 0; background: var(--g-stage); padding: 10px 12px; over
 .cover .inner { padding: 72px 72px 64px; display: flex; flex-direction: column; justify-content: space-between; min-height: 720px; }
 .cover h1 { font-size: 64px; line-height: 1.02; font-weight: 300; letter-spacing: -0.03em; margin: 0; max-width: 11em; }
 .cover h1 b { font-weight: 700; }
+.cover .edition { font-size: 12.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #fff; opacity: 0.85; margin: 0 0 14px; }
 .cover .sub { font-size: 19px; font-weight: 300; max-width: 34em; margin: 22px 0 0; color: #fff; opacity: 0.88; }
-.cover .meta { display: flex; gap: 28px; font-size: 12px; opacity: 0.8; }
+.cover .meta { display: flex; gap: 28px; font-size: 12px; opacity: 0.8; margin-top: 28px; }
 .cover .bars { display: flex; align-items: flex-end; gap: 10px; height: 120px; margin-bottom: 40px; }
 .cover .bars div { width: 34px; background: var(--mck-chart-context-on-dark); }
 .cover .bars div.f { background: var(--mck-chart-focus-on-dark); }

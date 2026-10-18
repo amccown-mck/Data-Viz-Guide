@@ -1,6 +1,6 @@
 # Agent instructions
 
-You are working in the McKesson data-visualization starter kit. These instructions apply to every coding agent (Claude Code, GitHub Copilot, Cursor, Codex and others). `CLAUDE.md` and `.github/copilot-instructions.md` point here, and this file is the source of truth.
+You are working in the Data Viz Starter Kit, McKesson Edition (how we name and describe it: `docs/positioning.md`). These instructions apply to every coding agent (Claude Code, GitHub Copilot, Cursor, Codex and others). `CLAUDE.md` and `.github/copilot-instructions.md` point here, and this file is the source of truth.
 
 Two kinds of task happen here. Follow the section that matches yours:
 - **A. Making a chart** (in this repo, or for McKesson anywhere): follow the workflow and rules below.

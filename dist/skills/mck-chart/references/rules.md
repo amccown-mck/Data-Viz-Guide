@@ -2,7 +2,7 @@
 
 <!-- GENERATED from tokens/tokens.json by tokens/build.py - edit agents/*.template.md, not this file. -->
 
-Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` or `.cursor/rules/mck-viz.md`) so that coding agents there make charts to the McKesson standard. It is self-contained. The full guide, themes and the `mckviz` Python package live in the **data-viz-guide** repo (<https://github.com/amccown-mck/Data-Viz-Guide>, kit version 1.1.0). For fuller instructions that an agent loads on demand (chart chooser, cookbook pages, QA checklist), use the portable `mck-chart` skill from the same repo (`dist/skills/mck-chart/`).
+Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` or `.cursor/rules/mck-viz.md`) so that coding agents there make charts to the McKesson standard. It is self-contained. The full guide, themes and the `mckviz` Python package live in the **Data Viz Starter Kit, McKesson Edition** repo (<https://github.com/amccown-mck/Data-Viz-Guide>, kit version 1.1.0). For fuller instructions that an agent loads on demand (chart chooser, cookbook pages, QA checklist), use the portable `mck-chart` skill from the same repo (`dist/skills/mck-chart/`).
 
 ## Workflow
 1. **Question:** write the one question the chart answers. Default to explanatory charts (decks, reports).
