@@ -442,6 +442,109 @@ def dumbbell(ax, labels: Sequence[str], compare: Sequence[float], value: Sequenc
     return SimpleNamespace(flagged=flagged, gaps=gaps, compare_dots=cd, value_dots=vd, labels=texts)
 
 
+# ------------------------------------------------------------------ DIVERGING BARS
+def diverging_bars(ax, labels: Sequence[str], values: Sequence[float], *, worse: str = "above", fmt=None,
+                   decimals: int = 1, suffix: str = "", zero_label: str | None = None, pad: float = 0.02):
+    """Deviation from a benchmark per row: orange on the unfavorable side, focus blue on the other.
+
+        gap = df.vol_attrition_pct - enterprise_rate
+        ns = mv.diverging_bars(ax, df.job_family, gap, worse="above", suffix=" pts")
+        mv.titles(fig, f"{ns.worse.sum()} of {len(df)} job families run above the enterprise rate", "...")
+
+    `values` are already deviations (value minus benchmark), so zero is the benchmark and the bars start there.
+    worse="above" paints positive bars orange (attrition, cost, time-to-fill); worse="below" paints negative bars
+    orange (engagement, fill rate). Labels sit at the bar ends with a true minus and an explicit plus (`mv.signed`),
+    or through `fmt` (a format string or a callable; a leading hyphen becomes a true minus). Unfavorable rows get bold
+    navy category names and orange label text. The x-limits are padded for the label widths, so a label on a negative
+    bar stays inside the plot and never runs into the category names. The first row is drawn on top; sort first.
+    The value axis is removed (the labels carry the values); a thin zero line stays, with `zero_label` above it.
+    Returns SimpleNamespace(bars, labels, worse, xlim).
+    """
+    if worse not in ("above", "below"):
+        raise ValueError('worse must be "above" or "below"')
+    labels = [str(s) for s in labels]
+    v = _floats(values, "values")
+    if len(labels) != len(v):
+        raise ValueError("labels and values must have the same length")
+    bad = v > 0 if worse == "above" else v < 0
+
+    def text_of(x):
+        if fmt is None:
+            return signed(x, decimals, suffix)
+        s = fmt(x) if callable(fmt) else fmt.format(x)
+        return MINUS + s[1:] if s.startswith("-") else s
+
+    y = np.arange(len(labels))
+    cols = [C.negative if b else C.focus for b in bad]
+    bars = ax.barh(y, v, color=cols, height=BAND, zorder=2)
+    texts = []
+    for i in y:
+        neg = v[i] < 0
+        texts.append(ax.annotate(text_of(v[i]), (v[i], i), xytext=(-3 if neg else 3, 0), textcoords="offset points",
+                                 ha="right" if neg else "left", va="center", fontsize=LABEL,
+                                 fontweight=700 if bad[i] else 500, color=C.negative_text if bad[i] else C.text,
+                                 zorder=4))
+    # Pad the limits so every label fits inside the plot: solve span from the label widths in axes fraction.
+    lo_v, hi_v = min(0.0, float(v.min())), max(0.0, float(v.max()))
+    ax_pt = ax.get_window_extent().width * 72 / ax.figure.dpi or 1.0
+    left_pt = max([_text_width_pt(ax, t.get_text(), LABEL, 700) + 3 for t, x in zip(texts, v) if x < 0], default=0.0)
+    right_pt = max([_text_width_pt(ax, t.get_text(), LABEL, 700) + 3 for t, x in zip(texts, v) if x >= 0], default=0.0)
+    f_left, f_right = left_pt / ax_pt, right_pt / ax_pt
+    span = (hi_v - lo_v) / max(1 - f_left - f_right - 2 * pad, 0.3) or 1.0
+    xlim = (lo_v - (f_left + pad) * span, hi_v + (f_right + pad) * span)
+    ax.set_xlim(*xlim)
+    ax.set_yticks(y, labels)
+    for t in ax.get_yticklabels():
+        t.set_fontsize(TICK)
+        t.set_color(C.text)
+    _bold_ticks(ax.get_yticklabels(), [lab for lab, b in zip(labels, bad) if b])
+    ax.set_ylim(len(labels) - 0.5, -0.6)
+    ax.set_xticks([])
+    _plain(ax)
+    ax.axvline(0, color=C.axis, lw=0.75, zorder=3)
+    if zero_label:
+        ax.annotate(zero_label, (0, 1), xycoords=("data", "axes fraction"), xytext=(0, 4), textcoords="offset points",
+                    ha="center", va="bottom", fontsize=SMALL, color=C.annotation, annotation_clip=False)
+    return SimpleNamespace(bars=bars, labels=texts, worse=bad, xlim=xlim)
+
+
+# ------------------------------------------------------------------ POINT LABELS
+def label_points(ax, xs: Sequence[float], ys: Sequence[float], names: Sequence[str], sizes=None, *,
+                 focus: Iterable[str] = (), right_frac: float = 0.75, pad: float = 3.0, fontsize: float | None = None):
+    """Name the points of a scatter or bubble chart in place, with a white halo.
+
+        sc = ax.scatter(df.pay, df.exposure, s=sizes, c=mv.highlight(df.role, focus=focus))
+        mv.label_points(ax, df.pay, df.exposure, df.role, sizes, focus=focus)
+
+    Each label sits just outside its marker (`sizes` are the scatter's marker areas in pt², so the offset clears the
+    bubble): to the right of the point, or to the left when the point lies in the right `right_frac` of the x-range
+    (the default is the right 25%), so labels never run off the plot edge. Names in `focus` are bold navy, the rest
+    muted. Set the x-limits before calling, because the side is decided against the current limits.
+    Returns the list of Text artists.
+    """
+    names = [str(s) for s in names]
+    x, y = _floats(xs, "xs"), _floats(ys, "ys")
+    if not (len(names) == len(x) == len(y)):
+        raise ValueError("xs, ys and names must have the same length")
+    s = np.full(len(x), 0.0) if sizes is None else _floats(sizes, "sizes")
+    if len(s) == 1 and len(x) > 1:
+        s = np.full(len(x), float(s[0]))
+    focus = {str(f) for f in focus}
+    x0, x1 = ax.get_xlim()
+    cut = x0 + right_frac * (x1 - x0)
+    size = fontsize or (LABEL - 1)
+    out = []
+    for xi, yi, name, si in zip(x, y, names, s):
+        rad = math.sqrt(max(si, 0) / math.pi) + pad
+        left = xi >= cut
+        bold = name in focus
+        out.append(ax.annotate(name, (xi, yi), xytext=(-rad if left else rad, 0), textcoords="offset points",
+                               ha="right" if left else "left", va="center", fontsize=size + (1 if bold else 0),
+                               fontweight=700 if bold else 400, color=C.headline if bold else C.text_muted,
+                               path_effects=halo(), zorder=5))
+    return out
+
+
 # ------------------------------------------------------------------ RANK SLOPE
 def rank_slope(ax, names: Sequence[str], before: Sequence[int], after: Sequence[int], *, focus: Iterable[str] = (),
                worse: Iterable[str] = (), headers: tuple[str, str] = ("Before", "After"), nums: bool = True,

@@ -509,9 +509,9 @@ def pl_highlight(labels: Iterable, focus=None, accent=None, base: str | None = N
 
 
 from .lint import Finding, LintError, lint  # noqa: E402  (needs the names above)
-from .charts import (STATUS_ORDER, big, delta_label, dumbbell, heat, hstack, key_strip, kpi_card,  # noqa: E402
-                     kpi_row, multiples, rank_slope, ring, roadmap, sdot, small, status, status_column, status_key,
-                     tracker, waterfall)
+from .charts import (STATUS_ORDER, big, delta_label, diverging_bars, dumbbell, heat, hstack, key_strip,  # noqa: E402
+                     kpi_card, kpi_row, label_points, multiples, rank_slope, ring, roadmap, sdot, small, status,
+                     status_column, status_key, tracker, waterfall)
 
 
 def __getattr__(name: str):
@@ -530,7 +530,7 @@ __all__ = [
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",
     "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
     # chart builders (mckviz/charts.py)
-    "waterfall", "hstack", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
+    "waterfall", "hstack", "diverging_bars", "label_points", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
     "kpi_row", "delta_label", "sdot", "status", "status_key", "status_column", "tracker", "roadmap", "multiples",
     "STATUS_ORDER",
 ]

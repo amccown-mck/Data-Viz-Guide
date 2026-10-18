@@ -93,6 +93,38 @@ mv.save(fig, "out/bar-highlight.png", dpi=200)
 ```
 To show one navy exception against all-light-blue bars instead, use `mv.highlight(labels, accent="Pharmacy Technician", base=C.focus_light)`. For grouped bars, offset each series by `±width/2` with `width = 0.67 / n_series`, color the series with `mv.categorical(n)`, and put a top-left legend or label the first cluster.
 
+**Diverging bars** (deviation from a benchmark): pass the gaps, not the raw values, and name the unfavorable side. `mv.diverging_bars` paints that side orange and the other focus blue, labels the bar ends with a true minus, bolds the unfavorable category names and pads the limits so the labels on negative bars never run into the names.
+```python
+# verified runnable (from the repo root)
+from pathlib import Path
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import pandas as pd
+
+import mckviz as mv
+
+mv.use()
+
+df = pd.read_csv(Path("examples/data/attrition_by_job_family.csv"))
+ent = df.enterprise_rate_pct.iloc[0]
+df["gap_pts"] = df.vol_attrition_pct - ent                                # deviation from the benchmark
+df = df.sort_values("gap_pts", ascending=False)                           # first row on top
+
+fig, ax = plt.subplots(figsize=(10, 5.6))
+ns = mv.diverging_bars(ax, df.job_family, df.gap_pts, worse="above", suffix=" pts",
+                       zero_label=f"Enterprise {ent:.1f}%")               # orange = above the rate = worse
+top, n_above = df.iloc[0], int(ns.worse.sum())
+mv.titles(fig, f"{top.job_family} attrition runs {top.gap_pts:.1f} pts above the enterprise rate, "
+               f"the widest gap of {len(df)} job families",
+          f"Voluntary attrition minus the {ent:.1f}% enterprise rate, by job family, FY26 (percentage points)")
+mv.source(fig, "Source: Synthetic data for illustration only",
+          footnote=f"{n_above} job families are above the enterprise rate. Voluntary attrition = voluntary exits "
+                   "\u00f7 average headcount, trailing 12 months.")
+mv.save(fig, "out/bar-diverging.png", dpi=200)
+```
+
 ### Python — Plotly / HTML
 ```python
 # verified: builds without error

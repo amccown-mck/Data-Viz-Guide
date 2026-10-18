@@ -120,6 +120,20 @@ def _status_column(ax):
     return mv.status_column(ax, [p["status"] for p in PLAN])
 
 
+def _diverging(ax):
+    gaps = [7.5, 4.2, -1.0, -5.7, -12.5]
+    return mv.diverging_bars(ax, CATS[:3] + ["Nursing", "Finance"], gaps, worse="above", suffix=" pts",
+                             zero_label="Enterprise 19.9%")
+
+
+def _label_points(ax):
+    xs, ys, sizes = [40, 95, 140, 150], [58, 28, 41, 10], [900, 300, 500, 120]
+    names = ["Customer Care", "Sales", "Software Engineering", "Finance"]
+    ax.scatter(xs, ys, s=sizes, c=mv.highlight(names, focus={"Customer Care"}), lw=0)
+    ax.set_xlim(28, 152)
+    return mv.label_points(ax, xs, ys, names, sizes, focus={"Customer Care"})
+
+
 def _rank_slope(ax):
     return mv.rank_slope(ax, ["Data", "Sales", "Ops"], [3, 1, 2], [1, 2, 3], focus={"Data"}, headers=("2023", "2026"))
 
@@ -127,7 +141,8 @@ def _rank_slope(ax):
 BUILDERS = {"waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
             "dumbbell": _dumbbell, "heat": _heat, "heat_sequential": _heat_seq, "kpi_card": _kpi,
             "kpi_row": _kpi_row, "ring": _ring, "tracker": _tracker, "roadmap": _roadmap,
-            "status_column": _status_column, "rank_slope": _rank_slope}
+            "status_column": _status_column, "rank_slope": _rank_slope, "diverging_bars": _diverging,
+            "label_points": _label_points}
 
 
 @pytest.mark.parametrize("name", list(BUILDERS))
@@ -232,6 +247,54 @@ def test_dumbbell_flags_shortfalls_in_orange_only():
     assert face == [C.negative.upper(), C.negative.upper(), C.focus.upper()]
     assert {to_hex(c).upper() for c in ns.compare_dots.get_facecolors()} == {C.context.upper()}
     assert ns.labels[0].get_text().startswith(MINUS)
+
+
+def test_diverging_bars_orange_only_on_the_worse_side_with_true_minus():
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ns = _diverging(ax)
+    assert hexes(ns.bars) == [C.negative.upper()] * 2 + [C.focus.upper()] * 3
+    assert ns.worse.tolist() == [True, True, False, False, False]
+    assert [t.get_text() for t in ns.labels] == ["+7.5 pts", "+4.2 pts", f"{MINUS}1.0 pts", f"{MINUS}5.7 pts",
+                                                 f"{MINUS}12.5 pts"]
+    assert "-" not in "".join(t.get_text() for t in ns.labels)
+    assert [to_hex(t.get_color()).upper() for t in ns.labels[:2]] == [C.negative_text.upper()] * 2
+    ticks = ax.get_yticklabels()
+    assert [t.get_fontweight() for t in ticks[:2]] == [600, 600] and ticks[2].get_fontweight() != 600
+    assert to_hex(ticks[0].get_color()).upper() == C.headline.upper()
+    assert not ax.get_xticks().size                                    # labels replace the value axis
+    # worse="below" flips the side; a format string keeps the true minus
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ns = mv.diverging_bars(ax, ["A", "B"], [3, -4], worse="below", fmt="{:+.0f}%")
+    assert hexes(ns.bars) == [C.focus.upper(), C.negative.upper()]
+    assert [t.get_text() for t in ns.labels] == ["+3%", f"{MINUS}4%"]
+    with pytest.raises(ValueError):
+        mv.diverging_bars(ax, ["A"], [1], worse="left")
+
+
+def test_diverging_bars_negative_labels_stay_inside_the_plot():
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ns = mv.diverging_bars(ax, ["Long category name here", "B", "C"], [-12.5, -1.0, 2.0], suffix=" pts")
+    fig.canvas.draw()
+    x0 = ax.get_window_extent().x0
+    for t in ns.labels:
+        assert t.get_window_extent().x0 >= x0 - 0.5                  # never left of the axes, into the names
+    assert ns.xlim[0] < -12.5 and ns.xlim[1] > 2.0
+
+
+def test_label_points_go_left_in_the_right_quarter_with_a_halo():
+    fig, ax = plt.subplots(figsize=(10, 5))
+    texts = _label_points(ax)
+    sides = {t.get_text(): t.get_ha() for t in texts}
+    assert sides == {"Customer Care": "left", "Sales": "left", "Software Engineering": "right", "Finance": "right"}
+    assert all(t.get_path_effects() for t in texts)
+    cc = [t for t in texts if t.get_text() == "Customer Care"][0]
+    assert cc.get_fontweight() == 700 and to_hex(cc.get_color()).upper() == C.headline.upper()
+    sales = [t for t in texts if t.get_text() == "Sales"][0]
+    assert sales.get_fontweight() == 400 and to_hex(sales.get_color()).upper() == C.text_muted.upper()
+    big_off, small_off = cc.xyann[0], [t for t in texts if t.get_text() == "Sales"][0].xyann[0]
+    assert big_off > small_off > 0                                     # the offset clears the bubble
+    with pytest.raises(ValueError):
+        mv.label_points(ax, [1, 2], [1], ["a", "b"])
 
 
 def test_heat_classes_and_suppression():
