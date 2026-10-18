@@ -1,34 +1,37 @@
-<section class="scene bg-deep" id="s-open" data-min="22">
-  <!-- u = narrAt (.6) + cue. c0 .60 "Picture a leadership meeting." · c1 2.65 "A chart goes up." · c2 4.72 "Twelve colors. Two axes. ... Chart Title."
-       c3 10.19 "So the first question isn't 'what should we do?'" · c4 13.16 "It's 'what am I looking at?'"
-       c5 15.86 "Ten minutes later, the room is still decoding the chart." · c6 19.53 "And the decision waits." -->
+<section class="scene bg-deep" id="s-open" data-min="28">
+  <!-- u = narrAt (.6) + cue. c0 .60 "Picture a leadership meeting." · c1 2.65 "On the table: where are we losing people, and what do we do about it."
+       c2 7.45 "A chart goes up." · c3 9.51 "Twelve colors. Two axes. ... Chart Title." (→ 14.99)
+       c4 14.99 "So the first question isn't 'what should we do?'" · c5 17.96 "It's 'what am I looking at?'"
+       c6 20.66 "Ten minutes later, the room is still decoding the chart." · c7 24.33 "And the decision waits." -->
 
   <!-- the room: a presentation screen, a conference table, six seated figures seen from behind -->
   <div class="mt-screen a" style="--k:fade;--t:0s;--d:.5s;left:360px;top:50px;width:1200px;height:680px">
-    <img class="mt-chart a" data-sfx="thunk" src="assets/meet_bad.png" alt="" style="--k:fade;--t:2.65s;--d:.06s">
+    <img class="mt-chart a" data-sfx="thunk" src="assets/meet_bad.png" alt="" style="--k:fade;--t:7.45s;--d:.06s">
   </div>
-  <!-- c2: the callouts sit in the dark margins beside the screen, not on the chart -->
-  <p class="sticker mt-call a" data-sfx="pop" style="--k:stamp;--t:4.85s;--d:.4s;left:40px;top:170px;rotate:-6deg">12 colors</p>
-  <p class="sticker mt-call a" data-sfx="pop" data-sfx-semi="3" style="--k:stamp;--t:5.75s;--d:.4s;left:1610px;top:420px;rotate:4deg">2 axes</p>
-  <p class="sticker navy mt-call a" data-sfx="thunk" style="--k:stamp;--t:8.55s;--d:.4s;left:24px;top:400px;rotate:-2deg">“Chart Title”</p>
+  <!-- c3: the callouts sit in the dark margins beside the screen, not on the chart -->
+  <p class="sticker mt-call a" data-sfx="pop" style="--k:stamp;--t:9.65s;--d:.4s;left:40px;top:170px;rotate:-6deg">12 colors</p>
+  <p class="sticker mt-call a" data-sfx="pop" data-sfx-semi="3" style="--k:stamp;--t:10.55s;--d:.4s;left:1610px;top:420px;rotate:4deg">2 axes</p>
+  <p class="sticker navy mt-call a" data-sfx="thunk" style="--k:stamp;--t:13.35s;--d:.4s;left:24px;top:400px;rotate:-2deg">“Chart Title”</p>
   <div class="mt-table a" style="--k:fade;--t:0s;--d:.5s"></div>
   <div class="mt-people a" style="--k:up;--t:.1s;--d:.5s">
     <div class="mt-p" style="left:300px"></div><div class="mt-p" style="left:530px"></div><div class="mt-p" style="left:760px"></div>
     <div class="mt-p" style="left:990px"></div><div class="mt-p" style="left:1220px"></div><div class="mt-p" style="left:1450px"></div>
   </div>
 
-  <!-- c0: the caption, over the dark screen, out when the chart goes up -->
+  <!-- c0: the caption, over the dark screen, out when the agenda card comes up -->
   <h2 class="cap inv a x" data-sfx="whoosh" style="--k:slam;--t:.6s;--d:.45s;--t2:2.65s;--k2:xcut;--d2:.01s;left:80px;top:300px;width:1760px">Picture a leadership&nbsp;meeting.</h2>
+  <!-- c1: the agenda card on the dark screen, out when the chart goes up (c2) -->
+  <div class="mt-agenda a x" data-sfx="pop" style="--k:up;--t:2.65s;--d:.45s;--t2:7.45s;--k2:xcut;--d2:.01s;left:470px;top:210px;width:980px"><small>On the table</small>Where are we losing people, and what do we do about&nbsp;it?</div>
 
-  <!-- c3: the question that should have been asked, crossed out -->
-  <div class="mt-bub a" data-sfx="pop" style="--k:pop;--t:10.19s;--d:.35s;left:60px;top:665px"><span>What should we do?</span><i class="mt-strike"></i></div>
-  <!-- c4: the question that is asked (hold) -->
-  <div class="mt-bub a" data-sfx="pop" data-sfx-semi="-2" style="--k:pop;--t:13.16s;--d:.35s;left:690px;top:625px"><span>What am I looking at?</span></div>
-  <!-- c5: the timer, and another question -->
-  <div class="mt-timer a" data-sfx="ticktock" style="--k:pop;--t:15.86s;--d:.35s;left:1620px;top:60px"><i></i><b class="mt-time">0:00</b></div>
-  <div class="mt-bub a" data-sfx="pop" data-sfx-semi="2" style="--k:pop;--t:17.1s;--d:.35s;left:1400px;top:665px"><span>Which line is us?</span></div>
-  <!-- c6: the decision waits -->
-  <p class="sticker mt-dec a" data-sfx="trombone" style="--k:slam;--t:19.53s;--d:.45s;left:580px;top:905px;rotate:-3deg">Decision: waiting ⏳</p>
+  <!-- c4: the question that should have been asked, crossed out -->
+  <div class="mt-bub a" data-sfx="pop" style="--k:pop;--t:14.99s;--d:.35s;left:60px;top:665px"><span>What should we do?</span><i class="mt-strike"></i></div>
+  <!-- c5: the question that is asked (hold) -->
+  <div class="mt-bub a" data-sfx="pop" data-sfx-semi="-2" style="--k:pop;--t:17.96s;--d:.35s;left:690px;top:665px"><span>What am I looking at?</span></div>
+  <!-- c6: the timer, and another question -->
+  <div class="mt-timer a" data-sfx="ticktock" style="--k:pop;--t:20.66s;--d:.35s;left:1620px;top:60px"><i></i><b class="mt-time">0:00</b></div>
+  <div class="mt-bub a" data-sfx="pop" data-sfx-semi="2" style="--k:pop;--t:21.9s;--d:.35s;left:1400px;top:665px"><span>Which line is us?</span></div>
+  <!-- c7: the decision waits -->
+  <p class="sticker mt-dec a" data-sfx="trombone" style="--k:slam;--t:24.33s;--d:.45s;left:580px;top:905px;rotate:-3deg">Decision: waiting ⏳</p>
 </section>
 <style>
   #s-open .mt-screen{background:#0b1626;border:14px solid #1f2a3a;box-shadow:0 0 0 2px #0a0f18,0 30px 80px rgba(0,0,0,.5);overflow:hidden}
@@ -44,12 +47,14 @@
   #s-open .mt-bub::after{content:"";position:absolute;left:70px;bottom:-26px;border:14px solid transparent;border-top:18px solid #fff;border-bottom:0}
   #s-open .mt-bub span{position:relative;display:inline-block}
   #s-open .mt-strike{position:absolute;left:28px;right:28px;top:50%;height:7px;margin-top:-3px;background:var(--mck-orange,#E07B39);border-radius:4px;transform:scaleX(0);transform-origin:left center;opacity:0}
-  #s-open.on .mt-strike{animation:mt-strike .35s ease-out 11.7s forwards}
+  #s-open.on .mt-strike{animation:mt-strike .35s ease-out 16.5s forwards}
   @keyframes mt-strike{from{transform:scaleX(0);opacity:1}to{transform:scaleX(1);opacity:1}}
   #s-open .mt-timer{position:absolute;display:flex;align-items:center;gap:14px;background:#fff;color:var(--navy);border-radius:60px;padding:12px 28px 12px 20px;box-shadow:0 14px 36px rgba(0,0,0,.35)}
   #s-open .mt-timer i{width:26px;height:26px;border-radius:50%;background:var(--mck-orange,#E07B39);box-shadow:0 0 0 6px rgba(224,123,57,.25)}
   #s-open .mt-timer b{font-family:Mono,monospace;font-size:54px;font-weight:700;letter-spacing:.02em;min-width:150px;text-align:right}
   #s-open .mt-dec{font-size:72px;z-index:4}
+  #s-open .mt-agenda{position:absolute;background:var(--sand,#f3efe6);color:var(--navy);font-weight:600;font-size:56px;line-height:1.15;padding:34px 48px 40px;box-shadow:0 20px 60px rgba(0,0,0,.45);z-index:3;border-left:14px solid var(--mck-blue,#005A8C)}
+  #s-open .mt-agenda small{display:block;font-size:26px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#505050;margin-bottom:14px}
 </style>
 <script>
 SCENES["s-open"] = {
@@ -58,7 +63,7 @@ SCENES["s-open"] = {
   sfx: [],
   frame(u) {
     const el = document.querySelector("#s-open .mt-time"); if (!el) return;
-    const T0 = 15.86, T1 = 19.1;                          // the clock runs 0:00 -> 10:00 across chunk 5
+    const T0 = 20.66, T1 = 23.9;                          // the clock runs 0:00 -> 10:00 across chunk 6
     const f = Math.max(0, Math.min(1, (u - T0) / (T1 - T0)));
     const s = Math.round(f * 600);
     el.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;

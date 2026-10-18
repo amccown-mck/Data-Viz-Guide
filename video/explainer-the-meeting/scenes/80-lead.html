@@ -1,41 +1,51 @@
-<section class="scene bg-navy" id="s-lead" data-min="16">
-  <!-- Cues (narrAt .5): c0 .50 here's your part · c1 3.41 ask for the headline · c2 5.43 one sentence, verb, number, chart proves
-       c3 10.43 if a chart can't, not ready · c4 13.73 say that once -->
+<section class="scene bg-navy" id="s-lead" data-min="20">
+  <!-- Cues (narrAt .5): c0 .50 remember that first meeting · c1 2.61 here's your part · c2 5.52 ask for the headline
+       c3 7.54 one sentence, verb, number, chart proves · c4 12.54 if a chart can't, not ready · c5 15.84 say that once -->
 
-  <!-- c0: the address -->
-  <p class="cap inv a x" style="--k:up;--t:.5s;--t2:3.3s;--k2:xfade;left:130px;top:400px;width:1660px;font-size:92px">If you lead a team, <span style="color:var(--lime)">here's your part.</span></p>
+  <!-- c0: the callback, a small version of the bad "Chart Title" meeting, whipped out at c1 -->
+  <div class="recall a x" data-sfx="thunk" style="--k:fade;--t:.5s;--d:.45s;--t2:2.61s;--k2:xwhipL;--d2:.35s">
+    <div class="screen"><img src="assets/meet_bad.png" alt=""></div>
+  </div>
+  <p class="cap inv a x" style="--k:up;--t:.5s;--t2:2.61s;--k2:xwhipL;--d2:.35s;left:0;width:1920px;top:820px;text-align:center;font-size:76px">Remember that <span style="color:var(--sky)">first meeting?</span></p>
 
-  <!-- c1: the slam -->
-  <h2 class="cap xl inv a x" data-sfx="stamp" style="--k:slam;--t:3.41s;--t2:5.35s;--k2:xfade;left:0;width:1920px;top:420px;text-align:center;font-size:150px">Ask for the <span class="m">headline</span>.</h2>
+  <!-- c1: the address -->
+  <p class="cap inv a x" style="--k:up;--t:2.61s;--t2:5.42s;--k2:xfade;left:130px;top:400px;width:1660px;font-size:92px">If you lead a team, <span style="color:var(--lime)">here's your part.</span></p>
 
-  <!-- c2: anatomy of a real headline -->
-  <p class="lead-in a x" style="--k:up;--t:5.43s;--t2:10.35s;--k2:xfade">One sentence, with a <b>verb</b> and a <b>number</b>, that the chart <b>visibly proves</b>.</p>
-  <div class="hcard a x" data-sfx="pop" style="--k:pop;--t:6.1s;--t2:10.35s;--k2:xfade">
+  <!-- c2: the slam -->
+  <h2 class="cap xl inv a x" data-sfx="stamp" style="--k:slam;--t:5.52s;--t2:7.46s;--k2:xfade;left:0;width:1920px;top:420px;text-align:center;font-size:150px">Ask for the <span class="m">headline</span>.</h2>
+
+  <!-- c3: anatomy of a real headline -->
+  <p class="lead-in a x" style="--k:up;--t:7.54s;--t2:12.46s;--k2:xfade">One sentence, with a <b>verb</b> and a <b>number</b>, that the chart <b>visibly proves</b>.</p>
+  <div class="hcard a x" data-sfx="pop" style="--k:pop;--t:8.21s;--t2:12.46s;--k2:xfade">
     <p class="hl">Pharmacy technicians and distribution center associates
-      <span class="w"><i class="ul bar" style="--t:6.9s"></i><b class="lab a" data-sfx="blip" style="--k:pop;--t:7s">verb</b>lose</span>
-      about <span class="w"><i class="ul bar" style="--t:7.7s"></i><b class="lab a" data-sfx="blip" data-sfx-semi="3" style="--k:pop;--t:7.8s">number</b>1 in 4</span>
-      people a year, well above the <span class="w"><i class="ul bar" style="--t:7.9s"></i><b class="lab a" style="--k:pop;--t:8s">number</b>19.9%</span>
+      <span class="w"><i class="ul bar" style="--t:9.01s"></i><b class="lab a" data-sfx="blip" style="--k:pop;--t:9.11s">verb</b>lose</span>
+      about <span class="w"><i class="ul bar" style="--t:9.81s"></i><b class="lab a" data-sfx="blip" data-sfx-semi="3" style="--k:pop;--t:9.91s">number</b>1 in 4</span>
+      people a year, well above the <span class="w"><i class="ul bar" style="--t:10.01s"></i><b class="lab a" style="--k:pop;--t:10.11s">number</b>19.9%</span>
       enterprise rate</p>
   </div>
-  <div class="proof a x" data-sfx="whoosh" style="--k:whipR;--e:cubic-bezier(.2,.8,.2,1);--t:8.7s;--t2:10.35s;--k2:xfade">
-    <span class="kick lime a" style="--k:pop;--t:9.1s">the chart proves it</span>
+  <div class="proof a x" data-sfx="whoosh" style="--k:whipR;--e:cubic-bezier(.2,.8,.2,1);--t:10.81s;--t2:12.46s;--k2:xfade">
+    <span class="kick lime a" style="--k:pop;--t:11.21s">the chart proves it</span>
     <div class="shot"><img src="assets/opt1.png" alt=""></div>
   </div>
 
-  <!-- c3: the chart that can't -->
-  <p class="cap inv a x" style="--k:up;--t:10.43s;--t2:13.65s;--k2:xfade;left:130px;top:120px;width:1500px;font-size:80px">If a chart can't give you that, <span style="color:var(--sky)">it isn't ready.</span></p>
-  <div class="dull a x" data-sfx="thunk" style="--k:up;--t:10.9s;--t2:13.65s;--k2:xfade">
+  <!-- c4: the chart that can't -->
+  <p class="cap inv a x" style="--k:up;--t:12.54s;--t2:15.76s;--k2:xfade;left:130px;top:120px;width:1500px;font-size:80px">If a chart can't give you that, <span style="color:var(--sky)">it isn't ready.</span></p>
+  <div class="dull a x" data-sfx="thunk" style="--k:up;--t:13.01s;--t2:15.76s;--k2:xfade">
     <div class="ct">Chart Title</div>
     <div class="bars"><i style="height:62%"></i><i style="height:88%"></i><i style="height:45%"></i><i style="height:71%"></i><i style="height:54%"></i><i style="height:80%"></i><i style="height:38%"></i></div>
     <div class="leg"><span></span>Series 1 <span></span>Series 2 <span></span>Series 3</div>
-    <div class="stamp a" data-sfx="stamp" style="--k:stamp;--t:12.1s">Not ready</div>
+    <div class="stamp a" data-sfx="stamp" style="--k:stamp;--t:14.21s">Not ready</div>
   </div>
 
-  <!-- c4: say it once -->
-  <p class="cap inv a" style="--k:up;--t:13.73s;left:130px;top:120px;width:1600px;font-size:72px">Say that once, <span style="color:var(--lime)">and watch what comes back.</span></p>
-  <p class="once a" data-sfx="stamp sparkle" style="--k:stamp;--t:14.8s"><span class="sticker">Say it once.</span></p>
+  <!-- c5: say it once -->
+  <p class="cap inv a" style="--k:up;--t:15.84s;left:130px;top:120px;width:1600px;font-size:72px">Say that once, <span style="color:var(--lime)">and watch what comes back.</span></p>
+  <p class="once a" data-sfx="stamp sparkle" style="--k:stamp;--t:16.91s"><span class="sticker">Say it once.</span></p>
 </section>
 <style>
+/* the callback screen: a thin-bezel version of the s-open meeting screen, centered */
+#s-lead .recall{left:560px;top:230px;width:800px;height:450px}
+#s-lead .recall .screen{position:absolute;inset:0;background:#0b1626;border:8px solid #1f2a3a;box-shadow:0 0 0 2px #0a0f18,0 30px 80px rgba(0,0,0,.5);overflow:hidden}
+#s-lead .recall .screen img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;background:#fff}
 #s-lead .lead-in{left:130px;top:110px;width:1300px;margin:0;font-size:46px;line-height:1.25;font-weight:400;color:var(--skyl)}
 #s-lead .lead-in b{color:#fff;font-weight:700}
 #s-lead .hcard{left:130px;top:300px;width:1060px;background:#fff;padding:36px 48px 48px;box-shadow:var(--shadow)}
@@ -65,6 +75,6 @@ SCENES["s-lead"] = {
   narrAt: .5,
   clock: () => null,
   spark: [[0, {x: 2200, y: 1080 - 203 * 1.6 - 24, s: 1.6, pose: "stand", dark: true}],
-          [13.73, {x: 1400, pose: "thumbs"}]],
+          [15.84, {x: 1400, pose: "thumbs"}]],
 };
 </script>

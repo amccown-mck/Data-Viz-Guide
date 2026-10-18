@@ -5,21 +5,22 @@
   const c = (id, i, d = 0) => (SCENES[id]?.narrAt ?? .5) + ((window.REFCUES || {})[id]?.cues[i] ?? 0) + d;
   const cue = (id, music, hits = []) => { if (SCENES[id]) Object.assign(SCENES[id], {music, hits}); };
   // Act 1: the meeting that decodes a chart, then the same meeting that decides
-  cue("s-open", [[0, "intro"], [c("s-open", 2), "pulse"], [c("s-open", 5), "tense1"]],
-                [[c("s-open", 1), "thump"], [c("s-open", 6), "downer"]]);
-  cue("s-flip", [[0, "hush"], [c("s-flip", 1), "hope"], [c("s-flip", 4), "build"]],
-                [[c("s-flip", 1), "sparkle"], [c("s-flip", 4, -.6), "revcym", {dur: .6}]]);
+  cue("s-open", [[0, "intro"], [c("s-open", 3), "pulse"], [c("s-open", 6), "tense1"]],
+                [[c("s-open", 2), "thump"], [c("s-open", 7), "downer"]]);
+  cue("s-flip", [[0, "hush"], [c("s-flip", 1), "hope"], [c("s-flip", 5), "build"]],
+                [[c("s-flip", 1), "sparkle"], [c("s-flip", 5, -.6), "revcym", {dur: .6}], [c("s-flip", 6), "sparkle"]]);
   // Act 2: the kit. The drop lands on the title
   cue("s-kit", [[0, "build"], [c("s-kit", 3), "power"]],
                [[c("s-kit", 3, -1), "revcym", {dur: 1}], [c("s-kit", 3), "impact"], [c("s-kit", 6), "sparkle"]]);
   cue("s-office", [[0, "biz"]], [[c("s-office", 5), "sparkle"]]);
   cue("s-code", [[0, "tech"]], [[c("s-code", 1), "sparkle"], [c("s-code", 3), "sting"]]);
-  cue("s-ai", [[0, "ai"]], [[c("s-ai", 4), "impact"]]);
-  cue("s-brand", [[0, "wall0"], [c("s-brand", 1), "wallup"], [c("s-brand", 2), "wall1"], [c("s-brand", 3), "wall2"], [c("s-brand", 4), "wall3"]],
-                 [[c("s-brand", 1), "sparkle"], [c("s-brand", 2), "impact"], [c("s-brand", 3), "thump"], [c("s-brand", 4), "thump"]]);
+  cue("s-ai", [[0, "ai"]], [[c("s-ai", 4), "sparkle"], [c("s-ai", 5), "impact"]]);
+  // the brand swap: three brands inside chunk 1, home on chunk 2
+  cue("s-brand", [[0, "wall0"], [c("s-brand", 1), "wallup"], [c("s-brand", 1, 1.4), "wall1"], [c("s-brand", 1, 3.0), "wall2"], [c("s-brand", 1, 4.6), "wall3"], [c("s-brand", 2), "power"]],
+                 [[c("s-brand", 1, 1.4), "impact"], [c("s-brand", 1, 3.0), "thump"], [c("s-brand", 1, 4.6), "thump"], [c("s-brand", 2), "sparkle"]]);
   // Act 3: the leader's part, and the close
-  cue("s-lead", [[0, "why"]], [[c("s-lead", 1), "thump"], [c("s-lead", 4), "sparkle"]]);
-  cue("s-close", [[0, "closeq"], [c("s-close", 2), "imagine"], [c("s-close", 3), "finale"]],
-                 [[c("s-close", 2), "thump"], [c("s-close", 3, -1), "revcym", {dur: 1}], [c("s-close", 3), "impact"]]);
+  cue("s-lead", [[0, "why"]], [[c("s-lead", 2), "thump"], [c("s-lead", 5), "sparkle"]]);
+  cue("s-close", [[0, "closeq"], [c("s-close", 2), "imagine"], [c("s-close", 4), "finale"]],
+                 [[c("s-close", 3), "thump"], [c("s-close", 4, -1), "revcym", {dur: 1}], [c("s-close", 4), "impact"]]);
 })();
 </script>

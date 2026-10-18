@@ -1,22 +1,45 @@
-<section class="scene bg-deep" id="s-close" data-min="22">
-  <!-- c0 (.5) + c1 (3.26): the two lines, then out before the slam -->
-  <p class="cap inv a x" data-sfx="whoosh" style="--k:up;--t:.5s;--d:.5s;--t2:7.5s;--k2:xfade;--d2:.3s;left:150px;top:200px;width:1700px;font-size:88px">Clear charts move <span style="color:var(--lime)">decisions forward</span>.</p>
-  <p class="cl-line a x" style="--k:up;--t:3.26s;--d:.5s;--t2:7.5s;--k2:xfade;--d2:.3s;left:150px;top:460px;width:1620px">This kit makes them the easy path, for <b>every team at McKesson</b>.</p>
+<section class="scene bg-deep" id="s-close" data-min="24">
+  <!-- Cues (narrAt .5): c0 .50 clear charts move decisions forward · c1 3.26 fewer minutes decoding, more deciding
+       c2 7.02 next leadership meeting is on the calendar · c3 10.45 bring one chart that leads with its point · c4 14.16 the kit, held 6 s -->
 
-  <!-- c2 (7.81): the slam -->
-  <h2 class="cap xl inv a x" data-sfx="stamp" style="--k:slam;--t:7.81s;--d:.45s;--t2:11.1s;--k2:xfade;--d2:.3s;left:0;width:1920px;top:400px;font-size:124px;text-align:center;white-space:nowrap">Try it on <span class="m">one chart</span> this week.</h2>
+  <!-- c0 + c1: the two lines, then out before the calendar -->
+  <p class="cap inv a x" data-sfx="whoosh" style="--k:up;--t:.5s;--d:.5s;--t2:6.9s;--k2:xfade;--d2:.3s;left:150px;top:200px;width:1700px;font-size:88px">Clear charts move <span style="color:var(--lime)">decisions forward</span>.</p>
+  <p class="cl-line a x" style="--k:up;--t:3.26s;--d:.5s;--t2:6.9s;--k2:xfade;--d2:.3s;left:150px;top:460px;width:1620px">Fewer minutes decoding.<br><b>More minutes <span class="m">deciding</span>.</b></p>
 
-  <!-- c3 (11.18): the closing card, held for the narration pause -->
-  <div class="cl-title">
-    <h1 class="cap inv a dv" style="--k:slam;--t:11.18s;--d:.45s">Data Viz</h1>
-    <div class="a kitw" style="--k:stamp;--t:11.48s;--d:.4s"><span class="sticker kit">Starter Kit</span></div>
-    <div class="a edw" style="--k:cl-tag;--t:11.95s;--d:.45s"><span class="ed">McKesson Edition</span></div>
+  <!-- c2: the calendar tile; c3: the chart gets attached to it -->
+  <div class="cl-cal a x" data-sfx="pop" style="--k:pop;--t:7.02s;--d:.4s;--t2:14.05s;--k2:xfade;--d2:.3s">
+    <div class="day">THU</div>
+    <div class="ev">Leadership sync</div>
+    <div class="tm">9:00 – 10:00</div>
+    <div class="att a" data-sfx="pop" data-sfx-semi="3" style="--k:stamp;--t:10.45s;--d:.4s"><img src="assets/opt1.png" alt=""><span class="kick lime">attached</span></div>
   </div>
-  <p class="cl-find a" data-sfx="blip" style="--k:fade;--t:13.4s;--d:.5s;left:0;top:800px;width:1920px">github.com/amccown-mck/Data-Viz-Guide <i>·</i> the guide <i>·</i> the release bundle</p>
+
+  <!-- c3: the slam, with the on-screen CTA as a small pill under it -->
+  <h2 class="cap inv a x" data-sfx="stamp" style="--k:slam;--t:10.45s;--d:.45s;--t2:14.05s;--k2:xfade;--d2:.3s;left:110px;width:1700px;top:650px;font-size:92px;text-align:center">Bring one chart that<br><span class="m">leads with its point</span>.</h2>
+  <p class="cl-cta a x" style="--k:pop;--t:11.4s;--d:.35s;--t2:14.05s;--k2:xfade;--d2:.3s"><span class="kick lime">Try it on one chart this week</span></p>
+
+  <!-- c4: the closing card, held -->
+  <div class="cl-title">
+    <h1 class="cap inv a dv" style="--k:slam;--t:14.16s;--d:.45s">Data Viz</h1>
+    <div class="a kitw" style="--k:stamp;--t:14.46s;--d:.4s"><span class="sticker kit">Starter Kit</span></div>
+    <div class="a edw" style="--k:cl-tag;--t:14.93s;--d:.45s"><span class="ed">McKesson Edition</span></div>
+  </div>
+  <p class="cl-find a" data-sfx="blip" style="--k:fade;--t:16.4s;--d:.5s;left:0;top:800px;width:1920px">github.com/amccown-mck/Data-Viz-Guide <i>·</i> the guide <i>·</i> the release bundle</p>
 </section>
 <style>
-  #s-close .cl-line{margin:0;font-size:60px;line-height:1.15;font-weight:400;color:var(--sky);letter-spacing:-.01em}
+  #s-close .cl-line{margin:0;font-size:64px;line-height:1.15;font-weight:400;color:var(--sky);letter-spacing:-.01em}
   #s-close .cl-line b{color:#fff;font-weight:700}
+
+  /* the calendar tile: a flat white square card, centered */
+  #s-close .cl-cal{left:700px;top:90px;width:520px;height:440px;background:#fff;color:var(--navy);box-shadow:0 22px 60px rgba(0,0,0,.4);text-align:center;z-index:2}
+  #s-close .cl-cal .day{background:var(--navy);color:#fff;font-size:40px;font-weight:700;letter-spacing:.18em;line-height:1;padding:22px 0}
+  #s-close .cl-cal .ev{font-size:52px;font-weight:700;line-height:1.05;letter-spacing:-.02em;padding:64px 30px 0}
+  #s-close .cl-cal .tm{font-size:34px;font-weight:400;color:#505050;margin-top:22px}
+  #s-close .cl-cal .att{position:absolute;left:400px;top:290px;width:420px;background:#fff;padding:6px;box-shadow:0 22px 60px rgba(0,0,0,.45);rotate:4deg;z-index:3}
+  #s-close .cl-cal .att img{display:block;width:100%;height:auto}
+  #s-close .cl-cal .att .kick{position:absolute;left:-18px;top:-22px;font-size:22px;padding:8px 16px}
+  #s-close .cl-cta{left:0;width:1920px;top:900px;margin:0;text-align:center}
+  #s-close .cl-cta .kick{font-size:26px}
 
   #s-close .cl-title{left:0;top:150px;width:1920px;height:520px;transform-origin:50% 0;z-index:2}
   #s-close .cl-title>*{position:absolute;left:0;width:1920px;text-align:center;margin:0}
@@ -36,12 +59,12 @@ SCENES["s-close"] = {
   narrAt: .5,
   spark: [
     [0, {x: 1600, y: 1080 - 203 * 1.05 - 14, s: 1.05, pose: "think", dark: true}],
-    [7.81, {pose: "thumbs"}],
-    [11.18, {pose: "wave"}],
-    [15.5, {pose: "thumbs"}],
-    [18, {pose: "wave"}],
+    [10.45, {pose: "thumbs"}],
+    [14.16, {pose: "wave"}],
+    [18.5, {pose: "thumbs"}],
+    [21, {pose: "wave"}],
   ],
   clock: () => null,
-  sfx: [[3.26, "pop"], [7.5, "whoosh"], [11.18, "powerup"], [11.22, "whoosh"], [11.48, "stamp"], [11.95, "pop"]],
+  sfx: [[3.26, "pop"], [6.9, "whoosh"], [14.16, "powerup"], [14.2, "whoosh"], [14.46, "stamp"], [14.93, "pop"]],
 };
 </script>

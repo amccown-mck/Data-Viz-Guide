@@ -4,6 +4,8 @@ Read with `../engine/CONTRACT.md` (how a scene file works) and `CUES.md` (when e
 
 Visual language: the same as "Exec-ready by 3" (`../explainer-exec-ready-by-3/scenes/`): sand/navy/deep backgrounds, `.cap` captions, lime `<span class="m">` marker, stickers and kick pills, flat UI frames from `engine/frames`. Reuse markup from the old scenes freely. Audience: leaders as much as analysts, so hold on anything that must be read.
 
+**Second script pass (2026-10-18, flow).** Stakes in the open (the question on the table), a concrete decision and the refrain "Fewer minutes decoding. More minutes deciding." in the flip, a "ready for the room" refrain closing each of the three ways in, the brand scene cut to three chunks with a bridge to the leader, a callback to the first meeting in s-lead, and a meeting bookend at the close (the spoken CTA is "Bring one chart that leads with its point"; "Try it on one chart this week" stays on screen). Chunk numbers in the table below are from the first pass; `CUES.md` is the source of truth for timing.
+
 | # | file | id | Beats (chunk → what appears) | Music (98-score) |
 |---|---|---|---|---|
 | 1 | 10-open | s-open | A leadership meeting room (screen, table, abstract seated figures). c1 the bad chart goes up on the screen (`assets/meet_bad.png`: default colors, two axes, "Chart Title"). c2 callouts pop: "12 colors", "2 axes", "Chart Title". c3–c4 speech bubbles: "What am I looking at?" c5 a timer runs to 10:00 over the room. c6 sticker "Decision: waiting". | intro → pulse → tense1, downer at the end |

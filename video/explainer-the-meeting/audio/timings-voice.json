@@ -2,17 +2,19 @@
  "s-open": {
   "cues": [
    0.0,
-   1.782,
-   3.69,
-   8.519,
-   11.281,
-   13.808,
-   17.275
+   1.784,
+   6.196,
+   8.103,
+   12.932,
+   15.692,
+   18.22,
+   21.689
   ],
-  "dur": 18.843,
+  "dur": 23.257,
   "hold": 0.6,
   "chunks": [
    "Picture a leadership meeting.",
+   "On the table: where are we losing people, and what do we do about it.",
    "A chart goes up.",
    "Twelve colors. Two axes. And a title that says... \"Chart Title.\"",
    "So the first question isn't \"what should we do?\"",
@@ -25,12 +27,13 @@
   "cues": [
    0.0,
    2.176,
-   4.664,
-   8.76,
-   12.51,
-   14.798
+   4.663,
+   8.759,
+   12.509,
+   14.892,
+   23.102
   ],
-  "dur": 17.615,
+  "dur": 26.093,
   "hold": 0.8,
   "chunks": [
    "Same meeting. Same data.",
@@ -38,41 +41,42 @@
    "a headline that says the finding, in one sentence, with the number.",
    "Grey for context. One blue bar for what matters.",
    "Everyone gets it in three seconds.",
-   "So the meeting spends its time on what to do about it."
+   "Two frontline job families, one in four people a year. Where the retention budget goes is settled before the coffee's cold.",
+   "Fewer minutes decoding. More minutes deciding."
   ]
  },
  "s-kit": {
   "cues": [
    0.0,
-   3.713,
-   8.993,
-   10.733,
-   13.161,
-   16.621,
-   19.931
+   3.715,
+   7.895,
+   9.635,
+   12.074,
+   15.537,
+   17.528
   ],
-  "dur": 21.204,
+  "dur": 18.881,
   "hold": 0.6,
   "chunks": [
    "That's the standard top consulting firms hold every chart to.",
-   "They can, because there's a whole team behind every executive presentation.",
+   "There's a whole team behind every executive presentation.",
    "Now you have one too.",
    "The Data Viz Starter Kit.",
    "Your own data storytelling team, ready when you are.",
-   "It's organized by where you work, not by your job title.",
-   "Three ways in."
+   "Wherever you work, there's a way in.",
+   "Three, in fact."
   ]
  },
  "s-office": {
   "cues": [
    0.0,
-   1.958,
-   4.127,
-   7.139,
-   9.789,
-   12.218
+   1.959,
+   4.129,
+   7.141,
+   9.791,
+   12.221
   ],
-  "dur": 15.732,
+  "dur": 14.806,
   "hold": 0.5,
   "chunks": [
    "Live in PowerPoint and Excel?",
@@ -80,72 +84,72 @@
    "The chart chooser names the chart, and says why.",
    "Then the templates make it on-brand from the first click,",
    "with native charts you can still edit.",
-   "A quick checklist before you share, and it's ready for the room."
+   "A quick checklist, and it's ready for the room."
   ]
  },
  "s-code": {
   "cues": [
    0.0,
-   2.982,
-   5.23,
-   10.515
+   3.118,
+   5.366,
+   10.651
   ],
-  "dur": 14.536,
+  "dur": 14.032,
   "hold": 0.5,
   "chunks": [
-   "Work in code? Python, R, Power BI.",
+   "In code, it's Python, R and Power BI.",
    "One line puts a chart on-brand.",
    "The helpers label the estimate, shade the range, and compute the headline from the data.",
-   "And lint checks it against the house rules before anyone else sees it."
+   "Lint checks it against the house rules. Ready for the room."
   ]
  },
  "s-ai": {
   "cues": [
    0.0,
-   4.219,
-   6.103,
-   7.562,
-   10.538
+   3.821,
+   5.807,
+   7.33,
+   10.106,
+   11.763
   ],
-  "dur": 14.339,
+  "dur": 15.567,
   "hold": 0.6,
   "chunks": [
-   "Work with an AI assistant? Copilot, Claude, a coding agent.",
-   "They read the same playbook you do,",
-   "follow the same rules,",
-   "and check their own work before handing it back.",
+   "With an AI assistant, Copilot, Claude, or a coding agent,",
+   "it reads the same playbook you do,",
+   "follows the same rules,",
+   "and checks its own work before handing it back.",
+   "Ready for the room.",
    "Same chart. Same standard. Whoever, or whatever, made it."
   ]
  },
  "s-brand": {
   "cues": [
    0.0,
-   2.536,
-   6.304,
-   8.005,
-   9.653
+   2.407,
+   8.482
   ],
-  "dur": 11.709,
+  "dur": 12.516,
   "hold": 0.6,
   "chunks": [
-   "And the whole house style lives in one file.",
-   "Change a few lines, and every template and theme updates.",
-   "CoverMyMeds.",
-   "Sarah Cannon.",
-   "The US Oncology Network."
+   "And the whole house style lives in one file,",
+   "so CoverMyMeds, Sarah Cannon and The US Oncology Network each get their own edition.",
+   "One standard, every McKesson business. Which brings us to you."
   ]
  },
  "s-lead": {
   "cues": [
    0.0,
-   2.413,
-   4.133,
-   8.814,
-   11.663
+   1.793,
+   4.207,
+   5.927,
+   10.606,
+   13.455
   ],
-  "dur": 14.111,
+  "dur": 15.903,
   "hold": 0.6,
   "chunks": [
+   "Remember that first meeting?",
    "If you lead a team, here's your part.",
    "Ask for the headline.",
    "One sentence, with a verb and a number, that the chart visibly proves.",
@@ -156,16 +160,18 @@
  "s-close": {
   "cues": [
    0.0,
-   2.312,
-   6.615,
-   9.666
+   2.311,
+   5.601,
+   8.81,
+   12.294
   ],
-  "dur": 12.758,
+  "dur": 15.386,
   "hold": 5.6,
   "chunks": [
    "Clear charts move decisions forward.",
-   "This kit makes them the easy path, for every team at McKesson.",
-   "Try it on one chart this week.",
+   "Fewer minutes decoding. More minutes deciding.",
+   "Your next leadership meeting is already on the calendar.",
+   "Bring one chart that leads with its point.",
    "The Data Viz Starter Kit. McKesson Edition."
   ]
  }

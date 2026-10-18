@@ -88,6 +88,13 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden}
 .tw-chip i{width:18px;height:18px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 1px rgba(0,0,0,.08);display:block}
 .tw-chip b{color:var(--ink);font-weight:var(--capw);font-family:var(--fh)}
 
+/* ---------- the closing band over the wall (c2): navy on white so it reads over any theme ---------- */
+.tw-band{position:absolute;left:592px;top:452px;width:1328px;min-height:176px;padding:36px 56px 40px;display:flex;align-items:center;
+  background:#FFFFFF;border-left:14px solid #005A8C;box-shadow:0 2px 6px rgba(20,51,89,.12),0 24px 60px rgba(20,51,89,.28);
+  font-family:"TW Franklin","Libre Franklin",Arial,sans-serif;font-weight:400;font-size:58px;line-height:1.12;white-space:nowrap;letter-spacing:-.015em;color:#143359;
+  opacity:var(--c3,0);transform:translateY(calc((1 - var(--c3,0)) * 48px));text-wrap:balance}
+.tw-band b{font-weight:700;color:#005A8C}
+
 /* ---------- brand decoration (left column, behind the caption; sub-brand themes only) ---------- */
 .tw-deco{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .tw-deco i{position:absolute;display:none}
@@ -438,7 +445,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden}
     var dp = dotPlot(innerW(B.dot), chartH(B.dot));
     var h = "";
     h += '<div class="tw-deco"><i class="d1"></i><i class="d2"></i><i class="d3"></i></div>';
-    h += '<div class="tw-cap" data-pop="cap"><span class="c1">Your house style?<b>It lives in one file.</b></span><span class="c2">Change a few lines.<b>Everything updates.</b></span></div>';
+    h += '<div class="tw-cap" data-pop="cap"><span class="c1">Your house style?<b>It lives in one file.</b></span><span class="c2">Change a few lines.<b>Their own edition.</b></span></div>';
     h += '<div class="tw-chip" data-pop="chip"><i></i>Theme <b>' + theme.name + "</b></div>";
     h += '<div class="tw-wall">';
     h += tile(B.hdr, "tw-hdr", '<div class="tw-mark">WI</div><div class="ttl">Workforce Innovation <span>/ Attrition &amp; mobility</span></div>' +
@@ -484,17 +491,23 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden}
 
   /* ================= timeline ================= */
   // Times are seconds into the video scene (s-brand, narration from u = .5), so seek(u) needs no mapping:
-  //   0.50 "And the whole house style lives in one file."  3.33 "Change a few lines, and every template and theme updates."
-  //   (typing; the other lines flip on chart / slide / dashboard)  7.49 "CoverMyMeds."  9.40 "Sarah Cannon."
-  //   11.25 "The US Oncology Network."  then hold on USON (no dark-mode beat in this video).
+  //   c0 0.50 "And the whole house style lives in one file,"
+  //   c1 3.23 "so CoverMyMeds, Sarah Cannon and The US Oncology Network each get their own edition."
+  //      typing starts right at c1 (quick), the other lines flip, then the three brands land inside the chunk:
+  //      CoverMyMeds wave 4.63 (c1 + 1.4), Sarah Cannon 6.23 (c1 + 3.0), The US Oncology Network 7.83 (c1 + 4.6)
+  //      (the music cue sheet is pinned to these u's).
+  //   c2 9.26 "One standard, every McKesson business. Which brings us to you." -> swap back to McKesson (final)
+  //      and the band caption over the wall, held to the end. No dark-mode beat in this video.
   // W = wave start, D = wave length. Each theme holds still until the next name is spoken.
-  var CAP2 = 3.33;   // caption changes to "Change a few lines. Everything updates."
+  var CAP2 = 3.23;   // caption changes to "Change a few lines. Their own edition."
+  var CAP3 = 9.26;   // the band over the wall: "One standard, every McKesson business."
   var SWAPS = [
-    {from: 0, to: 1, W: 6.90, D: 0.65, type: {t0: 3.46, del: 0.05, typ: 0.085}, flips: [4.85, 5.55, 6.20]},
-    {from: 1, to: 2, W: 9.32, D: 0.45},
-    {from: 2, to: 3, W: 11.17, D: 0.45, final: true}
+    {from: 0, to: 1, W: 4.63, D: 0.55, type: {t0: 3.23, del: 0.04, typ: 0.06}, flips: [3.95, 4.15, 4.35]},
+    {from: 1, to: 2, W: 6.23, D: 0.45},
+    {from: 2, to: 3, W: 7.83, D: 0.45},
+    {from: 3, to: 0, W: 9.26, D: 0.55, final: true}
   ];
-  var DUR = 16;
+  var DUR = 15;
   // editor events per swap: line edits end just before the wave
   var EDITS = [];
   SWAPS.forEach(function (sw, k) {
@@ -528,7 +541,8 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden}
   ed += '<div class="stat"><span class="glow"></span><span class="msg"></span></div></div>';
 
   root.innerHTML = '<div class="tw-cam"><div class="tw-layer tw-base"></div><div class="tw-layer tw-top"></div>' +
-    '<div class="tw-ring"></div>' + ed + '<div class="tw-flash"></div></div>';
+    '<div class="tw-ring"></div>' + ed + '<div class="tw-flash"></div></div>' +
+    '<div class="tw-band"><span>One standard, <b>every McKesson business.</b></span></div>';
   var cam = root.querySelector(".tw-cam"), base = root.querySelector(".tw-base"), top = root.querySelector(".tw-top");
   var ring = root.querySelector(".tw-ring"), flash = root.querySelector(".tw-flash"), edEl = root.querySelector(".tw-ed");
   var lnEls = [].slice.call(root.querySelectorAll(".tw-ed .ln[data-l]")).map(function (el) {
@@ -596,6 +610,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden}
       top.style.display = "none"; top.style.clipPath = ""; ring.style.opacity = 0; flash.style.opacity = 0;
     }
     root.style.setProperty("--c2", clamp((t - CAP2) / 0.35, 0, 1).toFixed(3));
+    root.style.setProperty("--c3", easeOut(clamp((t - CAP3) / 0.5, 0, 1)).toFixed(3));
     cam.style.transform = kick ? "scale(" + (1 + 0.007 * kick).toFixed(4) + ")" : "";
 
     // --- editor

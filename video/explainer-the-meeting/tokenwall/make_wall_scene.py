@@ -3,8 +3,10 @@
 The tokenwall timeline is authored in scene time (u, narration from narrAt = .5; see the SWAPS comment in
 tokenwall.html), so frame(u) seeks it 1:1. This script fixes font paths for <video>/explainer.html,
 scopes the CSS under #s-brand and hands the clock to the video engine.
-Cues (CUES.md, s-brand): 0 house style in one file, 1 change a few lines (2.83), 2 CoverMyMeds (6.99),
-3 Sarah Cannon (8.90), 4 The US Oncology Network (10.75); u = .5 + cue. No dark-mode beat: the scene holds on USON.
+Cues (CUES.md, s-brand, u = .5 + cue): c0 .5 house style in one file; c1 3.23 "so CoverMyMeds, Sarah Cannon and
+The US Oncology Network each get their own edition" (waves at 4.63 / 6.23 / 7.83, pinned to the music cue sheet);
+c2 9.26 "One standard, every McKesson business" (swap back to McKesson + the band caption, held to the end).
+Scene length: .5 + 13.22 + 1 ≈ 15 (data-min).
 """
 import pathlib
 import re
@@ -39,7 +41,7 @@ script = script.replace('document.querySelector(".tw")', 'document.getElementByI
 script = re.sub(r"var q = new URLSearchParams\(location.search\);.*?\n\}\)\(\);\s*$",
                 "seek(0);\n})();\n", script, flags=re.S)
 
-scene = f"""<section class="scene" id="s-brand" data-min="16">
+scene = f"""<section class="scene" id="s-brand" data-min="15">
   <div class="tw" id="tokenwall" data-nofit></div>
 </section>
 <style>
@@ -52,8 +54,8 @@ SCENES["s-brand"] = {{
   narrAt: .5,
   clock: () => null,
   frame(u) {{ window.tokenwall?.seek(Math.min(u, window.tokenwall.duration)); }},
-  sfx: [[3.46, "type", {{dur: .81}}], [4.85, "blip"], [5.55, "blip"], [6.2, "blip"],
-        [6.9, "snap"], [9.32, "snap"], [11.17, "snap"]],
+  sfx: [[3.23, "type", {{dur: .6}}], [3.95, "blip"], [4.15, "blip"], [4.35, "blip"],
+        [4.63, "snap"], [6.23, "snap"], [7.83, "snap"], [9.26, "snap"]],
 }};
 </script>
 """

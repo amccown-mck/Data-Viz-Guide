@@ -1,7 +1,8 @@
-<section class="scene bg-sand" id="s-flip" data-min="21">
+<section class="scene bg-sand" id="s-flip" data-min="30">
   <!-- u = narrAt (.5) + cue. c0 .50 "Same meeting. Same data." · c1 2.98 "This time, the chart leads with its point:"
        c2 5.89 "a headline that says the finding, in one sentence, with the number." · c3 10.58 "Grey for context. One blue bar for what matters."
-       c4 14.47 "Everyone gets it in three seconds." · c5 17.00 "So the meeting spends its time on what to do about it." -->
+       c4 14.47 "Everyone gets it in three seconds." · c5 17.10 "Two frontline job families, one in four people a year. Where the retention budget goes is settled before the coffee's cold."
+       c6 25.13 "Fewer minutes decoding. More minutes deciding." -->
 
   <!-- the same room, lights up -->
   <div class="mt-screen a" style="--k:fade;--t:0s;--d:.4s;left:360px;top:50px;width:1200px;height:680px">
@@ -10,11 +11,12 @@
     <img class="mt-chart mt-good a" data-sfx="whoosh" src="assets/opt1.png" alt="" style="--k:whipR;--t:2.98s;--d:.5s">
     <!-- c2: the headline, marked -->
     <div class="mt-mark a" style="--k:wipe;--t:5.95s;--d:.7s;left:36px;top:48px;width:610px;height:64px"></div>
+    <div class="mt-dim mt-dim2 a" style="--k:fade;--t:25.13s;--d:.35s"></div>
   </div>
   <!-- c2/c3: the stickers sit in the right margin beside the screen, pointing in, never on the chart -->
-  <p class="sticker mt-call mt-side a" data-sfx="pop" style="--k:stamp;--t:6.9s;--d:.4s;left:1566px;top:90px;font-size:36px;rotate:-3deg">the finding,<br>in one sentence</p>
-  <p class="sticker navy mt-call mt-side mt-left a" data-sfx="pop" style="--k:stamp;--t:10.58s;--d:.4s;left:1584px;top:245px;rotate:2deg">Blue =<br>what matters</p>
-  <p class="sticker navy mt-call mt-side mt-left a" data-sfx="pop" data-sfx-semi="4" style="--k:stamp;--t:12.1s;--d:.4s;left:1584px;top:440px;rotate:-2deg">Grey =<br>context</p>
+  <p class="sticker mt-call mt-side a x" data-sfx="pop" style="--k:stamp;--t:6.9s;--d:.4s;--t2:25.13s;--k2:xfade;--d2:.3s;left:1566px;top:90px;font-size:36px;rotate:-3deg">the finding,<br>in one sentence</p>
+  <p class="sticker navy mt-call mt-side mt-left a x" data-sfx="pop" style="--k:stamp;--t:10.58s;--d:.4s;--t2:25.13s;--k2:xfade;--d2:.3s;left:1584px;top:245px;rotate:2deg">Blue =<br>what matters</p>
+  <p class="sticker navy mt-call mt-side mt-left a x" data-sfx="pop" data-sfx-semi="4" style="--k:stamp;--t:12.1s;--d:.4s;--t2:25.13s;--k2:xfade;--d2:.3s;left:1584px;top:440px;rotate:-2deg">Grey =<br>context</p>
   <div class="mt-table a" style="--k:fade;--t:0s;--d:.4s"></div>
   <div class="mt-people a" style="--k:fade;--t:0s;--d:.4s">
     <div class="mt-p" style="left:300px"></div><div class="mt-p" style="left:530px"></div><div class="mt-p" style="left:760px"></div>
@@ -25,16 +27,20 @@
   <h2 class="cap inv a x" data-sfx="pop" style="--k:slam;--t:.5s;--d:.45s;--t2:2.98s;--k2:xwhipL;--d2:.4s;left:80px;top:300px;width:1760px">Same meeting. <span class="m">Same data.</span></h2>
 
   <!-- c4: three seconds -->
-  <p class="sticker mt-dec a x" data-sfx="ding" style="--k:slam;--t:14.47s;--d:.45s;--t2:17s;--k2:xfade;--d2:.3s;left:700px;top:780px;rotate:-3deg">3 seconds ⚡</p>
-  <!-- c5: the room moves on -->
-  <div class="mt-bub a" data-sfx="pop" style="--k:pop;--t:17s;--d:.35s;left:380px;top:690px"><span>So what do we do about it?</span></div>
-  <p class="kick lime mt-made a" data-sfx="check" style="--k:slam;--t:18.2s;--d:.4s;left:1090px;top:840px">Decision: made ✓</p>
+  <p class="sticker mt-dec a x" data-sfx="ding" style="--k:slam;--t:14.47s;--d:.45s;--t2:17.1s;--k2:xfade;--d2:.3s;left:700px;top:780px;rotate:-3deg">3 seconds ⚡</p>
+  <!-- c5: the room decides -->
+  <div class="mt-bub a" data-sfx="pop" style="--k:pop;--t:17.1s;--d:.35s;left:380px;top:690px"><span>Retention budget → frontline. Done.</span></div>
+  <p class="kick lime mt-made a" data-sfx="check" style="--k:slam;--t:19.6s;--d:.4s;left:1150px;top:840px">Decision: made ✓</p>
+  <!-- c6: the payoff, over the dimmed screen -->
+  <h2 class="cap md inv mt-pay a" data-sfx="whoosh" style="--k:slam;--t:25.13s;--d:.45s;left:374px;top:270px;width:1172px">Fewer minutes decoding.<br>More minutes <span class="m">deciding.</span></h2>
 </section>
 <style>
   #s-flip .mt-screen{background:#fff;border:14px solid #2a3648;box-shadow:0 0 0 2px #1b2433,0 30px 80px rgba(20,51,89,.25);overflow:hidden}
   #s-flip .mt-chart{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;background:#fff}
   #s-flip .mt-good{z-index:2}
   #s-flip .mt-dim{position:absolute;inset:0;background:rgba(20,51,89,.82);z-index:1}
+  #s-flip .mt-dim2{z-index:5;background:rgba(20,51,89,.9)}
+  #s-flip .mt-pay{z-index:6;line-height:1.15;text-align:center}
   #s-flip .mt-mark{position:absolute;background:var(--lime);opacity:.55;mix-blend-mode:multiply;z-index:3;border-radius:6px}
   #s-flip .mt-call{position:absolute;font-size:40px;z-index:4}
   #s-flip .mt-side{white-space:normal;line-height:1.05;text-align:left}
@@ -54,7 +60,7 @@
 SCENES["s-flip"] = {
   narrAt: .5,
   clock: () => null,
-  spark: [[0, {x: 1660, y: 820, s: .9, pose: "thumbs", show: false, snap: true}], [18.6, {show: true}]],
+  spark: [[0, {x: 1660, y: 820, s: .9, pose: "thumbs", show: false, snap: true}], [25.13, {show: true}]],
   sfx: [],
 };
 </script>
