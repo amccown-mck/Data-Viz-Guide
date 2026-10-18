@@ -54,6 +54,31 @@ def test_label_headline_is_flagged():
     plt.close(fig)
 
 
+def test_headline_starting_with_a_digit_warns():
+    fig = good_bar()
+    found = mv.lint(fig, headline="2 frontline job families lose about 1 in 4 people a year", quiet=True)
+    assert any(f.rule == "headline" and f.level == "warn" and "digit" in f.message for f in found)
+    found = mv.lint(fig, headline="Two frontline job families lose about 1 in 4 people a year", quiet=True)
+    assert not [f for f in found if f.rule == "headline"]
+    plt.close(fig)
+
+
+def test_glyph_the_font_lacks_warns_unless_a_fallback_family_has_it():
+    fig = good_bar()
+    ax = fig.axes[0]
+    t = ax.text(5, 1, "\u25b6 Pharmacy Technician", fontsize=10)      # ▶ is not in Libre Franklin
+    with pytest.warns(UserWarning, match="Glyph 9654"):                 # matplotlib's own notice when it draws the box
+        found = mv.lint(fig, quiet=True)
+    hits = [f for f in found if f.rule == "missing-glyph"]
+    assert hits and hits[0].level == "warn" and "\u25b6" in hits[0].message
+    t.set_fontfamily([mv.FONT, "DejaVu Sans"])                          # the builders' fallback for ▲▼
+    assert not [f for f in mv.lint(fig, quiet=True) if f.rule == "missing-glyph"]
+    t.set_text("\u2212 7.5 pts")                                        # true minus is in Libre Franklin
+    t.set_fontfamily(mv.FONT)
+    assert not [f for f in mv.lint(fig, quiet=True) if f.rule == "missing-glyph"]
+    plt.close(fig)
+
+
 def test_truncated_bars_rainbow_red_green_rotation_legend():
     fig, ax = plt.subplots()
     rainbow = ["red", "green", "blue", "orange", "purple", "brown", "pink", "olive"]

@@ -167,7 +167,8 @@ ax.set_xlim(-0.6, grid.shape[1] + 1.4)
 ax.set_ylim(len(grid) - 0.5, -1.2)
 ax.axis("off")
 
-mv.titles(fig, f"{len(went_off)} workstreams went off track this quarter after the skills inventory turned at risk",
+words = {1: "One", 2: "Two", 3: "Three", 4: "Four"}                     # spell out a number that opens the headline
+mv.titles(fig, f"{words[len(went_off)]} workstreams went off track this quarter after the skills inventory turned at risk",
           "Monthly status by workstream, Oct 2025–Mar 2026")
 mv.source(fig, "Source: Workforce Innovation PMO (synthetic data for illustration only), as of 31 Mar 2026")
 mv.lint(fig, strict=True)

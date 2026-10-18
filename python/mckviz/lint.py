@@ -206,6 +206,9 @@ def _headline_findings(headline: str | None, subtitle: str | None, source: str |
         text = " ".join(headline.replace("<br>", " ").split())
         if len(text.split()) < 5:
             out.append(Finding("warn", "headline", f'"{text}" reads like a label; state the finding as a sentence'))
+        if text[0].isdigit():
+            out.append(Finding("warn", "headline", f'starts with a digit ("{text.split()[0]}"); spell out a number that '
+                                                   'opens a sentence ("Two", not "2")'))
         if text.endswith("."):
             out.append(Finding("info", "headline", "drop the final period"))
         if not re.search(r"\d|\b(one|two|three|four|five|six|seven|eight|nine|ten|half|twice|double|triple|all|most|none|every)\b",
@@ -247,6 +250,51 @@ def _image_colors(im, samples: int = 9) -> list[str]:
             px = px / 255.0
         rgba = np.unique(np.round(px[:: max(1, len(px) // 2000)], 3), axis=0)[:64]
     return [h for h in (_hex(tuple(c)) for c in rgba) if h]
+
+
+_GLYPHS: dict[str, frozenset[int]] = {}
+
+
+def _glyphs(path: str) -> frozenset[int]:
+    """The code points a font file covers (cached per file)."""
+    if path not in _GLYPHS:
+        try:
+            from fontTools.ttLib import TTFont
+
+            with TTFont(path, lazy=True) as f:
+                _GLYPHS[path] = frozenset(f.getBestCmap() or {})
+        except Exception:                                   # unreadable font: assume it has everything
+            _GLYPHS[path] = frozenset()
+    return _GLYPHS[path]
+
+
+def _missing_glyphs(text_artist) -> set[str]:
+    """Characters of a Text artist that none of its font families can draw (matplotlib falls back to a box)."""
+    from matplotlib import font_manager as fm
+
+    chars = {c for c in text_artist.get_text() if ord(c) > 0x7F and not c.isspace()}
+    if not chars:
+        return set()
+    props = text_artist.get_fontproperties()
+    families = props.get_family()
+    if isinstance(families, str):
+        families = [families]
+    covered: set[int] = set()
+    found_any = False
+    for fam in families:
+        try:
+            path = fm.findfont(fm.FontProperties(family=fam, weight=props.get_weight(), style=props.get_style()),
+                               fallback_to_default=False)
+        except ValueError:
+            continue
+        glyphs = _glyphs(path)
+        if not glyphs:                                      # could not read the font: don't guess
+            return set()
+        found_any = True
+        covered |= glyphs
+    if not found_any:
+        return set()
+    return {c for c in chars if ord(c) not in covered}
 
 
 def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
@@ -336,6 +384,16 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
     if small:
         out.append(Finding("warn", "min-text-size", f"text at {', '.join(map(str, small))} pt; keep ≥ {MIN_FONT_PT:g} pt "
                                                     "on a 10 in figure (≈ 9 pt on a slide)"))
+    missing: dict[str, str] = {}
+    for t in fig.findobj(Text):
+        if t.get_visible() and t.get_text().strip():
+            for c in _missing_glyphs(t):
+                missing.setdefault(c, " ".join(t.get_text().split())[:40])
+    if missing:
+        where = "; ".join(f"{c!r} in \"{s}\"" for c, s in sorted(missing.items())[:4])
+        out.append(Finding("warn", "missing-glyph", f"{where}: the font has no glyph for it, so it renders as a box; "
+                                                    "use a word or a drawn marker, or give the text a fallback family "
+                                                    "(fontfamily=[mv.FONT, \"DejaVu Sans\"])"))
     return out + _color_findings(used)
 
 
