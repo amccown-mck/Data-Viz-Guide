@@ -36,6 +36,13 @@ QA:           pass | exceptions: <list>
 - Pick from `{{docs}}choosing-a-chart.md` (the first choice unless a sanity check rules it out), then **read** `{{docs}}principles.md` and `{{docs}}cookbook/<page>.md`. Note the page's spec table and "When not to use".
 - Common traps: clustered values far from zero → dot plot, not truncated bars. Two units over time → two aligned charts, not dual axes. More than 6 categories → highlight plus grey, or group into "Other". A spread across people → distribution, not an average.
 
+### Storyline or options requests
+When the user pastes a table and asks for "N options" or "charts that fit this storyline", don't build N charts of the same thing. Work the data first, then the angles:
+- **List the question types the data can support.** One period and one measure per category supports magnitude (ranked bars with a benchmark line), deviation from a benchmark (diverging bars, `mv.diverging_bars`) and derived counts (headcount × rate, as a second ranked bar or a KPI card). A slope or change-over-time chart needs **two periods**. A heat table needs **two dimensions**. A correlation or bubble scatter needs two measures per category (a count can be the bubble area). A part-to-whole needs parts that sum to a whole.
+- **Say what the data cannot support.** If an asked-for chart needs a field the table lacks (a trend without a second period, a heat table with one dimension), name it and what would be needed, instead of forcing it.
+- **Build one chart per supported angle**, each with its own headline computed from the data and its own focus. Different angles may name different focus items; each chart's headline must match its own highlight.
+- **Hand back a one-line brief per option** (angle, chart type, headline) plus **a recommendation of which one to lead with** and why (usually the one whose headline answers the storyline's question most directly), then the full chart brief for that one.
+
 ## 3. Build
 - Start from the cookbook snippet for the platform the user needs:
   - **Python:** `import mckviz as mv; mv.use(); C = mv.colors` (`mv.use()` styles matplotlib and activates the "mck" Plotly template). Use `mv.fmt_num` for numbers (K/M/B, %, true minus) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `{{docs}}cookbook/maps.md`).
@@ -46,10 +53,12 @@ QA:           pass | exceptions: <list>
   - **Power BI, R:** follow the cookbook page's section for that platform, using {{themes}}.
 - **No hex literals.** Use color roles only: context grey, focus blue, navy accent (the one exception), light blue for a uniform series, navy totals and benchmarks. Orange only when it means "worse" (below target, shrinking, a shortfall), green only when it means "better", both with ▲▼ or words. Red/amber/green only as status colors (`mv.STATUS`) with a symbol and word, never for data series.
 - Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.
+- When a chart shows a **derived measure** (leavers = headcount × attrition rate, hours freed = FTE × share, cost = headcount × average pay), say so in the footnote and call the result an estimate ("Estimated leavers = headcount × voluntary attrition rate"). Never present a derived count as a recorded one.
 - Drop or merge any group with n < 10 **before** plotting (`df, note = mv.suppress_small(df, "headcount")`, then pass `note` as the footnote), and keep individual values out of tooltips.
 
 ## 4. Headline
 - Compute the finding in code (shares, gaps, counts, multipliers, "n of m"), then write a full sentence with a verb and the number: "Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate".
+- **Spell out a number that starts the headline** ("Two frontline job families...", not "2 frontline..."); digits are fine anywhere else. `mv.lint` warns when a headline starts with a digit.
 - Check every word against the chart: "all", "most", "doubled", "fastest" must be literally true. Recompute; don't eyeball.
 - The headline names what the focus color shows. If the two disagree, fix the highlight or the headline.
 - The subtitle is neutral: metric, unit, scope, period. The source line names the system, the as-of date and the population (or "Synthetic data for illustration only").
