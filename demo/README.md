@@ -10,7 +10,7 @@ The explainer, *Exec-ready by 3*, follows an analyst who has a leader's question
 
 | Where | Link |
 |---|---|
-| GitHub Release asset | `data-viz-kit-explainer-video.mp4` on the next release: https://github.com/amccown-mck/Data-Viz-Guide/releases (owner: attach the file to the release, then paste the asset link here) |
+| GitHub Release asset | [`data-viz-kit-explainer-video.mp4`](https://github.com/amccown-mck/Data-Viz-Guide/releases/download/v1.2.0/data-viz-kit-explainer-video.mp4) (147 MB), attached to the [v1.2.0 release](https://github.com/amccown-mck/Data-Viz-Guide/releases/tag/v1.2.0) |
 | Source | [`video/explainer-exec-ready-by-3/`](../video/explainer-exec-ready-by-3/README.md): scenes, storyboard, narration and the engine that built it ([`video/README.md`](../video/README.md)). Build it and press Space to watch it in Chrome without the mp4 |
 
 The mp4 is 147 MB, over GitHub's 100 MB file limit, so it is never in git.
