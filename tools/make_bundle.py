@@ -45,6 +45,7 @@ sys.path[:0] = [str(ROOT / "tools")]
 # bundle path -> source (relative to the repo root). Missing optional files are skipped with a note.
 FILES = {
     "CHANGELOG.md": "CHANGELOG.md",
+    "LICENSE": "LICENSE",
     "guide/McKesson-DataViz-Guide.html": "dist/guide/McKesson-DataViz-Guide.html",
     "guide/McKesson-DataViz-Guide.pdf": "dist/guide/McKesson-DataViz-Guide.pdf",
     "guide/McKesson-DataViz-Quick-Guide.pdf": "dist/guide/McKesson-DataViz-Quick-Guide.pdf",
@@ -189,9 +190,10 @@ or into a repo's <code>.claude/skills/</code>. <b>GitHub Copilot:</b> into the r
 </ul>
 
 <hr>
-<p class="small">What changed in this version: <code>CHANGELOG.md</code>. Questions and suggestions: the Workforce
-Innovation team. Fonts: SIL Open Font License 1.1. Map data in the Python package: us-atlas and world-atlas (ISC),
-from public-domain U.S. Census and Natural Earth boundaries.</p>
+<p class="small">What changed in this version: <code>CHANGELOG.md</code>. Questions and suggestions: Ashley McCown,
+Workforce Innovation, via <a href="{REPO_URL}/issues">{REPO_URL}/issues</a>. Code: MIT (<code>LICENSE</code>).
+Fonts: SIL Open Font License 1.1. Map data in the Python package: us-atlas and world-atlas (ISC), from public-domain
+U.S. Census and Natural Earth boundaries.</p>
 </main>
 </body>
 </html>

@@ -9,15 +9,16 @@ dynamic = ["version"]
 description = "McKesson data-visualization theme and helpers for matplotlib and Plotly"
 readme = "README.md"
 requires-python = ">=3.10"
-# Code license: owner to confirm. The bundled fonts are SIL OFL 1.1 (fonts/OFL.txt) and the map data ISC over
-# public-domain boundaries (geodata/README.md); see README.md.
-license = { text = "Proprietary - McKesson internal" }
-authors = [{ name = "McKesson Workforce Innovation" }]   # TODO(owner): add a maintainer name and email
+# The code is MIT (LICENSE at the repo root). The bundled fonts are SIL OFL 1.1 (fonts/OFL.txt) and the map data ISC
+# over public-domain boundaries (geodata/README.md); see README.md.
+license = { text = "MIT" }
+authors = [{ name = "McKesson Workforce Innovation" }]
+maintainers = [{ name = "Ashley McCown" }]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: Other/Proprietary License",
+    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
@@ -36,6 +37,7 @@ dev = ["pytest>=8", "jsonschema>=4", "pandas>=2.0"]
 [project.urls]
 Homepage = "https://github.com/amccown-mck/Data-Viz-Guide"
 Changelog = "https://github.com/amccown-mck/Data-Viz-Guide/blob/main/CHANGELOG.md"
+Issues = "https://github.com/amccown-mck/Data-Viz-Guide/issues"
 
 [tool.setuptools.dynamic]
 version = { file = "mckviz/VERSION" }

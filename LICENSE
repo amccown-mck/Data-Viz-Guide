@@ -1,0 +1,47 @@
+MIT License
+
+Copyright (c) 2026 McKesson Corporation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+----------------------------------------------------------------------------
+
+Scope and third-party material
+
+The MIT License above covers the code, the design tokens, the generated theme
+files, the documentation and the example data in this repository (the Data Viz
+Starter Kit, McKesson Edition). The McKesson name, logo and brand colors remain
+the property of McKesson Corporation; this license does not grant trademark
+rights.
+
+Bundled material under its own license:
+
+- Fonts: Libre Franklin (fonts/LibreFranklin/, copied into
+  python/mckviz/fonts/) and Inconsolata (fonts/Inconsolata/) are licensed under
+  the SIL Open Font License 1.1. See fonts/LibreFranklin/OFL.txt,
+  fonts/Inconsolata/OFL.txt and python/mckviz/fonts/OFL.txt.
+- Map data: the TopoJSON files in python/mckviz/geodata/ come from us-atlas
+  and world-atlas (ISC License, Copyright 2013-2019 Michael Bostock), built
+  from U.S. Census Bureau and Natural Earth boundaries, which are in the public
+  domain. See python/mckviz/geodata/README.md.
+- Plotly.js: the vendored copy in dist/web/vendor/plotly.min.js is MIT
+  licensed by Plotly, Inc. See dist/web/vendor/LICENSE-plotly.txt.
+
+Maintainer: Ashley McCown, Workforce Innovation. Questions and suggestions:
+https://github.com/amccown-mck/Data-Viz-Guide/issues

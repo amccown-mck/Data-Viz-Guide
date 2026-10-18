@@ -2,7 +2,7 @@
 
 One visual language for everyone who makes charts: business folks, technical folks and the AI agents working alongside them.
 
-> Version 1.1.0 (see [CHANGELOG.md](CHANGELOG.md); the version lives in [VERSION](VERSION)). How we name and describe the kit: [docs/positioning.md](docs/positioning.md). What's next: [ROADMAP.md](ROADMAP.md).
+> Version 1.1.0 (see [CHANGELOG.md](CHANGELOG.md); the version lives in [VERSION](VERSION)). How we name and describe the kit: [docs/positioning.md](docs/positioning.md). What's next: [ROADMAP.md](ROADMAP.md). License: MIT ([LICENSE](LICENSE)); fonts and map data carry their own open licenses, listed there. Maintainer: Ashley McCown, Workforce Innovation, via [issues](https://github.com/amccown-mck/Data-Viz-Guide/issues).
 
 **The problem.** It's 2:07 on a Tuesday and a VP wants to know where we're losing people, exec-ready by 3. The data takes twelve minutes to clean. The chart takes the rest: which chart tells this story, which blue is our blue, "Chart Title", `final_v7_REAL_final.pptx`, and the chatbot makes everything purple. Every tool has its own idea of good, so the same numbers look different in Excel, Python, Power BI and a chat window, and most of what gets made says nothing.
 

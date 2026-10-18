@@ -69,7 +69,8 @@ red-green colors, bars from zero, labels plus a value axis, legends, dual axes, 
 
 ## Licenses
 
-- **Code:** proprietary, McKesson internal (owner to confirm; no LICENSE file yet).
+- **Code:** MIT, Copyright (c) 2026 McKesson Corporation (`LICENSE` at the repo root). Maintainer: Ashley McCown,
+  Workforce Innovation; questions and suggestions go to the repo's [issues](https://github.com/amccown-mck/Data-Viz-Guide/issues).
 - **Fonts** (`mckviz/fonts/`): Libre Franklin, SIL Open Font License 1.1 (`mckviz/fonts/OFL.txt`).
 - **Map data** (`mckviz/geodata/`): us-atlas and world-atlas TopoJSON (ISC), built from U.S. Census Bureau and Natural
   Earth boundaries, both in the public domain. Details in `mckviz/geodata/README.md`.

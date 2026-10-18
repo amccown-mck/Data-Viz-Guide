@@ -78,4 +78,4 @@ Use the "safe" measures in every visual, and hide the raw ones (**Model › Hide
 - [ ] Checked in the Service as a viewer without Libre Franklin. Nothing is clipped in Segoe UI.
 
 ## Status
-The theme JSON validates against schema 2.157 and passes the house-rule checks in `tools/check_powerbi_theme.py`. **Not yet done by hand:** loading the theme in Power BI Desktop, building a sample page, and publishing it to the Service to confirm the Segoe UI fallback renders as described. This guide's font table follows from how Power BI renders text in the browser. Confirm it with a real report before rollout (see ROADMAP step 5).
+The theme JSON validates against schema 2.157 and passes the house-rule checks in `tools/check_powerbi_theme.py`. **Not yet done by hand:** loading the theme in Power BI Desktop, building a sample page, and publishing it to the Service to confirm the Segoe UI fallback renders as described. This guide's font table follows from how Power BI renders text in the browser. Confirm it with a real report before rollout (see the Power BI item under "Open items" in `ROADMAP.md`).
