@@ -43,7 +43,8 @@ video/
     tokenwall/                    tokenwall.html (the brand-swap scene source) + make_wall_scene.py (turns it into scenes/70-wall.html)
     review-notes-v3.md            the owner's review of the previous cut (its screenshots are in the archive)
   _template/                      the smallest video that builds: one scene, an empty lines.tsv
-  archive/                        (ignored) earlier cuts, stills, the review screenshots, voice samples
+  archive/                        (ignored) earlier cuts, stills, the review screenshots, voice samples, and
+                                  out-explainer-original/ (the whole pre-move folder, kept until the owner deletes it)
 ```
 
 Generated files never go in git: `<video>/explainer.html`, `<video>/narration.js`, `<video>/stills/`, `audio/chunks/`, the scratch `audio/*.m4a`, `assets/raw/`, `frames/png/`, the character boards, exports (`*.mp4`, `*.webm`, `*.wav`) and `voice/.tts/`. The rules are in the repo's `.gitignore`.
@@ -75,7 +76,7 @@ Generated files never go in git: `<video>/explainer.html`, `<video>/narration.js
 | Previous cuts | `v2-archive/` (the 2:44 cut and older lines) | 4.5 MB | No → `archive/` |
 | The export | `data-viz-kit-explainer-video.mp4` (in Downloads) | 147 MB | No: over GitHub's 100 MB limit; see `demo/README.md` |
 
-Tracked source: about 8 MB. Everything else (about 107 MB plus the 1 GB virtualenv) is ignored or archived.
+Tracked source: about 8 MB. Everything else (about 107 MB plus the 1 GB virtualenv) is ignored or archived. The moved copy was checked against the original in Chrome before the original folder went to `archive/out-explainer-original/`: 14 scenes, 14 narration clips, 287.4 s, identical scene start times and a byte-identical `narration.js`.
 
 ## Start a new video
 
