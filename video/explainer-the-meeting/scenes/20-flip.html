@@ -9,12 +9,12 @@
     <div class="mt-dim a x" style="--k:cut;--t:0s;--d:.05s;--t2:2.98s;--k2:xwhipL;--d2:.4s"></div>
     <img class="mt-chart mt-good a" data-sfx="whoosh" src="assets/opt1.png" alt="" style="--k:whipR;--t:2.98s;--d:.5s">
     <!-- c2: the headline, marked -->
-    <div class="mt-mark a" style="--k:wipe;--t:5.95s;--d:.7s;left:36px;top:44px;width:610px;height:70px"></div>
-    <p class="sticker mt-call a" data-sfx="pop" style="--k:stamp;--t:6.9s;--d:.4s;left:680px;top:56px;font-size:34px;rotate:-3deg">the finding, in one sentence</p>
-    <!-- c3: two callouts -->
-    <p class="sticker navy mt-call mt-up a" data-sfx="pop" style="--k:stamp;--t:10.58s;--d:.4s;left:620px;top:262px;rotate:2deg">Blue = what matters</p>
-    <p class="sticker navy mt-call mt-up a" data-sfx="pop" data-sfx-semi="4" style="--k:stamp;--t:12.1s;--d:.4s;left:600px;top:470px;rotate:-2deg">Grey = context</p>
+    <div class="mt-mark a" style="--k:wipe;--t:5.95s;--d:.7s;left:36px;top:48px;width:610px;height:64px"></div>
   </div>
+  <!-- c2/c3: the stickers sit in the right margin beside the screen, pointing in, never on the chart -->
+  <p class="sticker mt-call mt-side a" data-sfx="pop" style="--k:stamp;--t:6.9s;--d:.4s;left:1566px;top:90px;font-size:36px;rotate:-3deg">the finding,<br>in one sentence</p>
+  <p class="sticker navy mt-call mt-side mt-left a" data-sfx="pop" style="--k:stamp;--t:10.58s;--d:.4s;left:1584px;top:245px;rotate:2deg">Blue =<br>what matters</p>
+  <p class="sticker navy mt-call mt-side mt-left a" data-sfx="pop" data-sfx-semi="4" style="--k:stamp;--t:12.1s;--d:.4s;left:1584px;top:440px;rotate:-2deg">Grey =<br>context</p>
   <div class="mt-table a" style="--k:fade;--t:0s;--d:.4s"></div>
   <div class="mt-people a" style="--k:fade;--t:0s;--d:.4s">
     <div class="mt-p" style="left:300px"></div><div class="mt-p" style="left:530px"></div><div class="mt-p" style="left:760px"></div>
@@ -27,8 +27,8 @@
   <!-- c4: three seconds -->
   <p class="sticker mt-dec a x" data-sfx="ding" style="--k:slam;--t:14.47s;--d:.45s;--t2:17s;--k2:xfade;--d2:.3s;left:700px;top:780px;rotate:-3deg">3 seconds ⚡</p>
   <!-- c5: the room moves on -->
-  <div class="mt-bub a" data-sfx="pop" style="--k:pop;--t:17s;--d:.35s;left:420px;top:690px"><span>So what do we do about it?</span></div>
-  <p class="kick lime mt-made a" data-sfx="check" style="--k:slam;--t:18.2s;--d:.4s;left:1180px;top:830px">Decision: made ✓</p>
+  <div class="mt-bub a" data-sfx="pop" style="--k:pop;--t:17s;--d:.35s;left:380px;top:690px"><span>So what do we do about it?</span></div>
+  <p class="kick lime mt-made a" data-sfx="check" style="--k:slam;--t:18.2s;--d:.4s;left:1090px;top:840px">Decision: made ✓</p>
 </section>
 <style>
   #s-flip .mt-screen{background:#fff;border:14px solid #2a3648;box-shadow:0 0 0 2px #1b2433,0 30px 80px rgba(20,51,89,.25);overflow:hidden}
@@ -37,7 +37,8 @@
   #s-flip .mt-dim{position:absolute;inset:0;background:rgba(20,51,89,.82);z-index:1}
   #s-flip .mt-mark{position:absolute;background:var(--lime);opacity:.55;mix-blend-mode:multiply;z-index:3;border-radius:6px}
   #s-flip .mt-call{position:absolute;font-size:40px;z-index:4}
-  #s-flip .mt-up::before{content:"";position:absolute;left:34px;top:-18px;border:12px solid transparent;border-bottom:18px solid var(--navy);border-top:0}
+  #s-flip .mt-side{white-space:normal;line-height:1.05;text-align:left}
+  #s-flip .mt-left::before{content:"";position:absolute;left:-18px;top:28px;border:12px solid transparent;border-right:18px solid var(--navy);border-left:0}
   #s-flip .mt-table{position:absolute;left:160px;top:790px;width:1600px;height:360px;background:#d9d3c5;border-radius:48px 48px 0 0;box-shadow:inset 0 10px 0 rgba(255,255,255,.5)}
   #s-flip .mt-people{position:absolute;left:0;top:0;width:1920px;height:1080px}
   #s-flip .mt-p{position:absolute;top:905px;width:170px;height:200px;background:#7d8aa3;border-radius:60px 60px 0 0}

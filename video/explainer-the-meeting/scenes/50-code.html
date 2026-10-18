@@ -59,11 +59,17 @@
               <img class="a" src="assets/fc_after.png" alt="" style="--k:fcSnap;--t:7.55s;--d:.5s">
               <i class="fc-flash a" style="--k:fcFlash;--t:7.52s;--d:.45s"></i>
               <i class="fc-box a x" data-sfx="sparkle" style="--k:pop;--t:8.4s;--d:.35s;--t2:12.4s;--k2:xfade;left:704px;top:303px;width:140px;height:34px"></i>
-              <span class="sticker fc-tag a x" style="--k:pop;--t:8.45s;--d:.35s;--t2:12.4s;--k2:xfade;left:716px;top:344px">estimate</span>
               <i class="fc-box a x" data-sfx="sparkle" style="--k:pop;--t:9.6s;--d:.35s;--t2:12.4s;--k2:xfade;left:510px;top:240px;width:190px;height:106px"></i>
-              <span class="sticker fc-tag a x" style="--k:pop;--t:9.65s;--d:.35s;--t2:12.4s;--k2:xfade;left:560px;top:186px">range</span>
               <i class="fc-box a x" data-sfx="sparkle" style="--k:pop;--t:10.7s;--d:.35s;--t2:12.4s;--k2:xfade;left:12px;top:14px;width:498px;height:70px"></i>
-              <span class="sticker fc-tag a x" style="--k:pop;--t:10.75s;--d:.35s;--t2:12.4s;--k2:xfade;left:524px;top:30px">headline</span>
+              <!-- the tags sit to the right of the chart, each with a thin pointer back to its box -->
+              <svg class="fc-ptr" viewBox="0 0 1100 566" width="1100" height="566">
+                <line class="a x" style="--k:fade;--t:8.45s;--d:.3s;--t2:12.4s;--k2:xfade" x1="846" y1="330" x2="884" y2="400"/>
+                <line class="a x" style="--k:fade;--t:9.65s;--d:.3s;--t2:12.4s;--k2:xfade" x1="702" y1="244" x2="884" y2="226"/>
+                <line class="a x" style="--k:fade;--t:10.75s;--d:.3s;--t2:12.4s;--k2:xfade" x1="512" y1="50" x2="884" y2="50"/>
+              </svg>
+              <span class="sticker fc-tag a x" style="--k:pop;--t:8.45s;--d:.35s;--t2:12.4s;--k2:xfade;left:886px;top:378px">estimate</span>
+              <span class="sticker fc-tag a x" style="--k:pop;--t:9.65s;--d:.35s;--t2:12.4s;--k2:xfade;left:886px;top:204px">range</span>
+              <span class="sticker fc-tag a x" style="--k:pop;--t:10.75s;--d:.35s;--t2:12.4s;--k2:xfade;left:886px;top:28px">headline</span>
             </div></div>
           </div>
 
@@ -93,7 +99,7 @@
   </div>
 
   <h2 class="cap sm a" style="--k:up;--t:12.5s;left:1320px;top:230px;width:560px">Checked against the <span class="m">house rules.</span></h2>
-  <div class="fc-rules a" style="--k:cut;--t:12.5s;left:1320px;top:470px;width:560px">
+  <div class="fc-rules a" style="--k:cut;--t:12.5s;left:1300px;top:470px;width:600px">
     <span class="a" style="--k:pop;--t:13.2s;--d:.3s">✓ headline</span><span class="a" style="--k:pop;--t:13.32s;--d:.3s">✓ subtitle</span>
     <span class="a" style="--k:pop;--t:13.44s;--d:.3s">✓ source line</span><span class="a" style="--k:pop;--t:13.56s;--d:.3s">✓ house colors</span>
     <span class="a" style="--k:pop;--t:13.68s;--d:.3s">✓ direct labels</span><span class="a" style="--k:pop;--t:13.8s;--d:.3s">✓ text size</span>
@@ -150,7 +156,9 @@
 #s-code .fc-shot .fc-flash{position:absolute;inset:0;background:#fff;box-shadow:inset 0 0 0 6px var(--lime)}
 @keyframes fcFlash{0%{opacity:0}25%{opacity:.95}100%{opacity:0}}
 @keyframes fcSnap{0%{opacity:0;transform:scale(.92)}45%{opacity:1;transform:scale(1.035)}100%{opacity:1;transform:none}}
-#s-code .fc-tag{position:absolute;font-size:24px;font-family:LF,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+#s-code .fc-tag{position:absolute;font-size:28px;font-family:LF,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+#s-code .fc-ptr{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+#s-code .fc-ptr line{stroke:var(--navy);stroke-width:2.5;stroke-linecap:round}
 #s-code .fc-box{position:absolute;border:4px solid var(--lime);border-radius:9px;box-shadow:0 0 0 3px rgba(20,51,89,.85),0 8px 22px rgba(20,51,89,.25)}
 #s-code .fc-lint{margin-top:8px}
 #s-code .fc-big{font:700 50px LF,sans-serif;color:var(--mck-green-dark);display:flex;align-items:center;gap:14px;height:70px}
@@ -160,12 +168,12 @@
 /* right column */
 #s-code .fc-sub{font-size:36px;line-height:1.3;color:var(--text);font-weight:400}
 #s-code .fc-sub code{font-family:Mono,monospace;font-size:.95em;color:var(--navy);background:#fff;border-radius:6px;padding:0 .25em}
-#s-code .fc-rows{display:flex;flex-direction:column;gap:26px}
+#s-code .fc-rows{display:flex;flex-direction:column;gap:36px}
 #s-code .fc-row{display:flex;align-items:center;gap:18px;font-size:38px;color:var(--navy)}
 #s-code .fc-row i{flex:none;font-style:normal;width:54px;height:54px;border-radius:50%;background:var(--lime);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700}
 #s-code .fc-rows b{font-weight:700}
-#s-code .fc-rules{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-#s-code .fc-rules span{font-size:30px;font-weight:600;color:var(--mck-green-dark);background:#fff;border-radius:40px;padding:10px 20px;box-shadow:0 6px 16px rgba(11,50,102,.10)}
+#s-code .fc-rules{display:grid;grid-template-columns:1fr 1fr;gap:20px 18px}
+#s-code .fc-rules span{font-size:32px;font-weight:600;color:var(--mck-green-dark);background:#fff;border-radius:40px;padding:12px 22px;white-space:nowrap;justify-self:start;box-shadow:0 6px 16px rgba(11,50,102,.10)}
 </style>
 <script>
 addEventListener("DOMContentLoaded", () => {
