@@ -1,15 +1,16 @@
 # Data Viz Starter Kit · McKesson Edition, in one screen
 
-**One visual language for everyone who makes charts: business folks, technical folks and the AI agents working alongside them.**
+**Consulting-grade charts, reproduced with ease in the tools you already use.**
+
+This page is the kit on one screen: a short explainer video and the real outputs it shows. What the kit is and why it exists: the [README](../README.md).
 
 ## The video (4:47)
 
-"Exec-ready by 3": it's 2:07 on a Tuesday, a VP wants to know where we're losing people, and Sam has 53 minutes. Take one goes the usual way. Take two uses the kit.
+The explainer, *Exec-ready by 3*, follows an analyst who has a leader's question and under an hour to answer it: once the usual way, once with the kit.
 
 | Where | Link |
 |---|---|
 | GitHub Release asset | `data-viz-kit-explainer-video.mp4` on the next release: https://github.com/amccown-mck/Data-Viz-Guide/releases (owner: attach the file to the release, then paste the asset link here) |
-| SharePoint | _(owner: paste the SharePoint link here, next to the release zip)_ |
 | Source | [`video/explainer-exec-ready-by-3/`](../video/explainer-exec-ready-by-3/README.md): scenes, storyboard, narration and the engine that built it ([`video/README.md`](../video/README.md)). Build it and press Space to watch it in Chrome without the mp4 |
 
 The mp4 is 147 MB, over GitHub's 100 MB file limit, so it is never in git.

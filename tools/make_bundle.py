@@ -1,4 +1,4 @@
-"""Build the release bundle: one zip for SharePoint, for people who won't use git.
+"""Build the release bundle: one zip, attached to a GitHub Release, for people who won't use git.
 
     python tools/make_bundle.py              -> dist/release/DataViz-Starter-Kit-McKesson-Edition-v<version>.zip
     python tools/make_bundle.py --no-wheel   skip building the mckviz wheel (offline machines)
@@ -122,13 +122,17 @@ hr {{ border: 0; border-top: 1px solid var(--rule); margin: 40px 0 16px; }}
 <main>
 <p class="tag">McKesson Edition</p>
 <h1>Data Viz Starter Kit</h1>
-<p class="lead">One visual language for everyone who makes charts: business folks, technical folks and the AI agents working alongside them.</p>
+<p class="lead">Consulting-grade charts, reproduced with ease in the tools you already use.</p>
 <p class="meta">Version {v} · {date.today():%B %Y} · All example data is synthetic</p>
 
-<p>Every tool has its own idea of good, so the same numbers look different in Excel, Python, Power BI and a chat
-window, and most charts say nothing. This kit makes the right chart the easy chart in every tool you already use, and
-checks the rules before a chart leaves your hands. Which chart and why, templates and code that are already on-brand,
-and a playbook so AI assistants follow the same rules you do.</p>
+<p>Most charts get made at the end of the analysis, in whatever tool is open, starting from that tool's defaults. The
+know-how that makes a chart work gets rebuilt every time: which chart answers the question, what to grey out, what the
+title should say, which colors are ours. So the same numbers look different from one tool to the next.</p>
+
+<p>This kit writes that know-how down once and builds it into the tools you already use. You get a guide that says which chart
+and why, PowerPoint and Excel templates that start on-brand, themes for Power BI and code, a checklist to run before a
+chart goes out, and a playbook so AI assistants follow the same rules you do. It is what a consulting firm's chart
+practice gives its consultants, in one folder.</p>
 
 <div class="first">
 <p><b>Start here:</b> open <a href="guide/McKesson-DataViz-Guide.html">guide/McKesson-DataViz-Guide.html</a> in your
@@ -170,7 +174,7 @@ people is in <code>powerbi/powerbi-setup.md</code>.</p>
 <li>Bottom-left: “Source: system, date, population”.</li>
 </ol>
 
-<h2>For analysts and developers</h2>
+<h2>If you work in code</h2>
 <ul>
 <li><b>Python:</b> <code>pip install "mckviz @ git+{REPO_URL}@v{v}#subdirectory=python"</code>, then
 <code>import mckviz as mv; mv.use()</code>. {wheel}</li>
@@ -180,7 +184,7 @@ people is in <code>powerbi/powerbi-setup.md</code>.</p>
 <li>Code examples for every chart type, and the source of everything here: <a href="{REPO_URL}">{REPO_URL}</a>.</li>
 </ul>
 
-<h2>For AI assistants (Claude, Copilot and others)</h2>
+<h2>If you work with an AI assistant</h2>
 <ul>
 <li><b>Claude.ai:</b> in Settings, find <b>Skills</b> (under Capabilities) and upload <code>agents/mck-chart-skill.zip</code>. Claude then
 follows the McKesson chart workflow whenever you ask for a chart.</li>
