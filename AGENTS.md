@@ -117,7 +117,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 .\.venv\Scripts\python.exe tools\check_snippets.py              # every "# verified" cookbook block must pass
 .\.venv\Scripts\python.exe tools\lint_charts.py                 # mv.lint over the whole gallery: 0 errors
 .\.venv\Scripts\python.exe -m pytest python\tests               # mckviz tests
-.\.venv\Scripts\python.exe tools\make_bundle.py                 # release zip for SharePoint -> dist\release\ (after the builds above)
+.\.venv\Scripts\python.exe tools\make_bundle.py                 # release zip for a GitHub Release -> dist\release\ (after the builds above)
 ```
 
 ### Conventions
