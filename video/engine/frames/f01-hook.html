@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>F01 Hook</title>
+<link rel="stylesheet" href="frames.css">
+<style>
+.streak{height:10px;border-radius:5px;background:linear-gradient(90deg,transparent,rgba(217,241,78,.85))}
+#sheet .grid td.trunc{max-width:170px;overflow:hidden;text-overflow:clip}
+#sheet .grid td,#sheet .grid th{height:33px;padding:4px 12px}
+#sheet .bar{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--ui-line);font:16px Arial,sans-serif;color:#555}
+#sheet .bar .nm{border:1px solid #ccc;padding:3px 10px;width:70px}
+#sheet .bar .fx{font-style:italic;color:#999}
+#sheet .bar .v{border:1px solid #ccc;padding:3px 10px;flex:1}
+#sheet .tabs{display:flex;gap:2px;padding:0 16px;background:#F2F2F2;border-top:1px solid #DADADA;font:15px Arial,sans-serif;color:#555}
+#sheet .tabs span{padding:8px 16px}#sheet .tabs span.on{background:#fff;border-bottom:3px solid #2f7d4f;color:#222}
+.clock{font-family:Mono,monospace}
+</style>
+</head>
+<body>
+<section class="frame bg-deep bg-dots">
+
+  <!-- caption -->
+  <span class="kick" style="left:80px;top:180px">Tuesday</span>
+  <h1 class="cap xl" style="left:80px;top:270px;width:760px">POV: it's <span class="m">2:07&nbsp;PM.</span></h1>
+  <p style="left:80px;top:540px;width:640px;margin:0;font-size:38px;line-height:1.3;color:var(--sky);font-weight:500">Leadership sync at&nbsp;3:00.<br>The chart doesn't exist&nbsp;yet.</p>
+  <p class="sticker" style="left:80px;top:760px;margin:0;font-size:52px;rotate:-4deg"><span class="clock">53:00</span> left ⏱</p>
+
+  <!-- the attached spreadsheet, behind the toast -->
+  <div class="win" id="sheet" style="left:880px;top:380px;width:940px;height:600px;rotate:2deg">
+    <div class="tb"><i></i><i></i><i></i><span class="t">attrition_export_FINAL.xlsx</span><span class="r">Read-only</span></div>
+    <div class="bar"><span class="nm">C4</span><span class="fx">fx</span><span class="v">0.189</span></div>
+    <table class="grid" style="width:100%;flex:1">
+      <tr><th class="rn"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+      <tr><th class="rn">1</th><td>job_family</td><td>headcount</td><td>vol_attrition_pct</td><td>enterprise_rat</td><td></td></tr>
+      <tr><th class="rn">2</th><td>Sales</td><td class="n">2300</td><td class="n">10.6</td><td class="n">19.9</td><td></td></tr>
+      <tr><th class="rn">3</th><td>Pharmacy Technician</td><td class="n">6,200</td><td class="n">27.4</td><td class="n">19.9</td><td></td></tr>
+      <tr><th class="rn">4</th><td>Customer Care</td><td class="n">3100</td><td class="n sel">0.189</td><td class="n">19.9</td><td></td></tr>
+      <tr><th class="rn">5</th><td class="trunc">Distribution Center Assoc</td><td class="n">########</td><td class="n">24.1</td><td class="n">19.9</td><td></td></tr>
+      <tr><th class="rn">6</th><td>HR</td><td class="n">700</td><td class="n">8.1</td><td class="n">19.90</td><td></td></tr>
+      <tr><th class="rn">7</th><td>Software Engineering</td><td class="n">2600</td><td class="n">9.8</td><td class="n">19.9</td><td></td></tr>
+      <tr><th class="rn">8</th><td>Specialty Nursing</td><td class="n">1400</td><td class="n">14.2</td><td class="n">19.9</td><td></td></tr>
+      <tr><th class="rn">9</th><td>Finance</td><td class="n">1200</td><td class="n">7.4%</td><td class="n">19.9</td><td></td></tr>
+      <tr><th class="rn">10</th><td>Data &amp; Analytics</td><td class="n">850</td><td class="n">12.9</td><td class="n">19.9</td><td></td></tr>
+      <tr><th class="rn">11</th><td>Supply Chain Planning</td><td class="n">900</td><td class="n">11.8</td><td class="n">19.9</td><td></td></tr>
+    </table>
+    <div class="tabs"><span class="on">Sheet1</span><span>Sheet1 (2)</span><span>pivot_old</span><span>+</span></div>
+  </div>
+
+  <!-- motion streaks + toast slamming in -->
+  <i class="streak" style="left:620px;top:178px;width:200px"></i>
+  <i class="streak" style="left:680px;top:232px;width:150px;opacity:.6"></i>
+  <i class="streak" style="left:590px;top:286px;width:240px;opacity:.8"></i>
+  <div class="toast" style="left:860px;top:96px;width:960px;rotate:-2deg;z-index:3">
+    <span class="av" style="width:80px;height:80px;font-size:30px">DR</span>
+    <div style="flex:1">
+      <div class="app">Chat · now</div>
+      <div class="from"><b>Dana R.</b> · VP, Operations</div>
+      <div class="msg">can you make this <b>exec-ready</b> by 3? 🙏</div>
+      <div class="file" style="margin-top:18px;width:max-content">
+        <span class="ic" style="background:#2f7d4f">XLSX</span>
+        <div><b>attrition_export_FINAL.xlsx</b><span>11 rows · 4 columns · 14 KB</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="frames.js"></script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+{
+ "s-hook": {
+  "cues": [
+   0.0,
+   2.038,
+   5.46,
+   7.641,
+   10.978,
+   15.486,
+   21.942
+  ],
+  "dur": 23.917,
+  "hold": 0.3,
+  "chunks": [
+   "POV: you're Sam.",
+   "Management analyst. Fluent in Excel, PowerPoint,",
+   "and... \"per my last email.\"",
+   "It's two-oh-seven on a Tuesday. All quiet.",
+   "And then.",
+   "Dana, the VP of Operations. Leadership wants to see where we're losing people, and if it's getting better.",
+   "Exec-ready. By three."
+  ]
+ },
+ "s-data": {
+  "cues": [
+   0.0,
+   2.017,
+   4.484,
+   6.407,
+   9.448,
+   11.957
+  ],
+  "dur": 14.79,
+  "hold": 0.4,
+  "chunks": [
+   "So Sam opens the file.",
+   "And... it's a lot.",
+   "Numbers stored as text.",
+   "Percents, or decimals? Who knows.",
+   "The same team, listed twice.",
+   "And a column that's just... hashtags."
+  ]
+ },
+ "s-clean": {
+  "cues": [
+   0,
+   3.65,
+   6.05,
+   8.16,
+   9.88,
+   10.4
+  ],
+  "dur": 11.612,
+  "hold": 0.3,
+  "chunks": [
+   "So how will Sam spend the next fifty-three minutes?",
+   "First, twelve minutes of data cleanup.",
+   "Fine... that's the job.",
+   "Now, the hard part:",
+   "making it...",
+   "say something."
+  ]
+ },
+ "s-pain": {
+  "cues": [
+   0,
+   1.96,
+   4.31,
+   4.94,
+   5.56,
+   6.22,
+   7.23,
+   9.33,
+   11.27,
+   13.38,
+   14.36,
+   16.54,
+   16.85,
+   17.43,
+   18.16,
+   19.24,
+   19.95,
+   20.73,
+   23.34,
+   24.96
+  ],
+  "dur": 25.826,
+  "hold": 0.5,
+  "chunks": [
+   "Step one: pick a chart.",
+   "Which one actually tells this story?",
+   "Pie?",
+   "Pie?",
+   "A gauge?",
+   "No!",
+   "Step two: make it on-brand.",
+   "Ahh. Which blue is our blue, again?",
+   "Step three: build it in the deck.",
+   "Chart Title.",
+   "Copy. Paste. Resize.",
+   "Nudge. Nudge. Nudge...",
+   "Ugh.",
+   "Final.",
+   "Final, version seven.",
+   "Real final.",
+   "Version eight, incoming.",
+   "Step four: ask a chatbot for help.",
+   "And it makes everything...",
+   "purple."
+  ]
+ },
+ "s-out": {
+  "cues": [
+   0.0,
+   1.452,
+   4.923,
+   7.641
+  ],
+  "dur": 9.718,
+  "hold": 2.0,
+  "chunks": [
+   "Two fifty-two.",
+   "Eight minutes left. Charts finished: zero.",
+   "And her coffee? Cold.",
+   "Okay. Let's rewind."
+  ]
+ },
+ "s-turn": {
+  "cues": [
+   0.0,
+   2.802,
+   6.06,
+   8.519,
+   11.642,
+   12.837,
+   14.213
+  ],
+  "dur": 16.943,
+  "hold": 0.5,
+  "chunks": [
+   "Same Tuesday. Same two-oh-seven.",
+   "But this time, Sam has a secret weapon.",
+   "The Data Viz Starter Kit.",
+   "One visual language for everyone who makes charts:",
+   "business folks,",
+   "technical folks,",
+   "and the AI agents working alongside them."
+  ]
+ },
+ "s-consult": {
+  "cues": [
+   0.0,
+   3.186,
+   5.174,
+   8.358,
+   10.728,
+   15.21
+  ],
+  "dur": 18.631,
+  "hold": 0.4,
+  "chunks": [
+   "Live in PowerPoint and Excel? We've got you.",
+   "Start with what you want to say,",
+   "and the guide points you to the chart that says it best, and why.",
+   "Then the PowerPoint and Excel templates",
+   "make it on-brand from the first click, with native, editable charts.",
+   "So your time goes into the story, not the formatting."
+  ]
+ },
+ "s-notebook": {
+  "cues": [
+   0.0,
+   5.527,
+   7.649,
+   9.948,
+   11.948,
+   17.069,
+   19.501
+  ],
+  "dur": 24.679,
+  "hold": 0.4,
+  "chunks": [
+   "More the technical type? Python, R, Power BI: we've got you too.",
+   "Say your forecast model is great.",
+   "The chart? Not so much.",
+   "One line puts it on-brand.",
+   "The helpers make it easy to label the estimate, shade the range, and put a clear headline on top.",
+   "Lint checks it against the house rules.",
+   "No custom code. No fiddling. A forecast decision makers actually get."
+  ]
+ },
+ "s-agent": {
+  "cues": [
+   0.0,
+   4.029,
+   7.095,
+   11.053,
+   15.322,
+   17.12,
+   20.39
+  ],
+  "dur": 23.155,
+  "hold": 0.4,
+  "chunks": [
+   "Work with AI? Your favorite assistant can read the same playbook.",
+   "Maybe that's Copilot. Maybe it's Claude.",
+   "Paste a table, ask for five options that fit your storyline,",
+   "and get five on-brand charts, each headline computed from your data.",
+   "That one's coming soon.",
+   "But coding agents can use this repo to follow the same rules today,",
+   "and check their own work before handing it back."
+  ]
+ },
+ "s-wall": {
+  "cues": [
+   0,
+   1.6,
+   3.32,
+   8.42,
+   10.16,
+   11.84,
+   14.34
+  ],
+  "dur": 15.713,
+  "hold": 0.6,
+  "chunks": [
+   "But what if you need a different brand?",
+   "Here's the magic: the brand lives in one file.",
+   "Change a few lines, and it updates everywhere: PowerPoint, Excel, Python, R, Power BI.",
+   "CoverMyMeds.",
+   "Sarah Cannon.",
+   "The US Oncology Network.",
+   "Even dark mode."
+  ]
+ },
+ "s-hats": {
+  "cues": [
+   0.0,
+   3.151,
+   4.96,
+   6.615,
+   8.798
+  ],
+  "dur": 11.434,
+  "hold": 0.5,
+  "chunks": [
+   "Do you wear all three hats?",
+   "Consultant before lunch?",
+   "Analyst after lunch?",
+   "Agent wrangler by three?",
+   "Good news: one kit fits every hat."
+  ]
+ },
+ "s-sent": {
+  "cues": [
+   0.0,
+   2.214,
+   4.258
+  ],
+  "dur": 7.366,
+  "hold": 0.6,
+  "chunks": [
+   "Two thirty-five. Sent.",
+   "Twenty-five minutes to spare.",
+   "Dana loves it. And Sam's coffee is still hot."
+  ]
+ },
+ "s-why": {
+  "cues": [
+   0.0,
+   3.258,
+   7.361,
+   10.702,
+   13.406,
+   18.686,
+   24.677,
+   31.537,
+   36.222,
+   40.207
+  ],
+  "dur": 42.864,
+  "hold": 0.6,
+  "chunks": [
+   "Honestly? I always wanted something like this.",
+   "But before AI, I never had the time, or the patience.",
+   "So I built it, with AI as my partner.",
+   "So, what's actually in the kit?",
+   "A guide: which chart to use and when, how to keep it on-brand, and what to avoid.",
+   "Templates for PowerPoint and Excel, so anyone can build consulting-grade slides, fast.",
+   "Code libraries for Python, R, and Power BI, so charts come out of your code already on-brand.",
+   "And a playbook for agents, so AI follows the same rules you do.",
+   "Stuff I used to rebuild from scratch, every single time.",
+   "Now it's built once, for everyone."
+  ]
+ },
+ "s-close": {
+  "cues": [
+   0.0,
+   3.151,
+   7.112,
+   9.525
+  ],
+  "dur": 11.566,
+  "hold": 1.4,
+  "chunks": [
+   "So, what problem have you always wanted to solve,",
+   "but never had the time, or the patience?",
+   "Imagine what you could build.",
+   "Make the thing you wish existed."
+  ]
+ }
+}

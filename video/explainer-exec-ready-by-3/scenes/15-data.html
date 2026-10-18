@@ -1,0 +1,92 @@
+<section class="scene bg-sand bg-dots" id="s-data" data-min="16">
+  <!-- u = narrAt (.4) + cue. Voice: c0 .4 "So Sam opens the file." · c1 2.42 "And… it's a lot." · c2 4.88 "Numbers stored as text."
+       c3 6.81 "Percents (6.8), or decimals? (7.7) Who knows. (8.8)" · c4 9.85 "The same team (9.9), listed twice. (10.9)"
+       c5 12.36 "And a column that's just… (12.4) hashtags. (14.0)"
+       Grid geometry (stage px): columns rn 40–110 · A 110–580 · B 580–800 · C 800–1090 · D 1090–1340 · E 1340–1460 · F 1460–1640 · G 1640–1880;
+       column letters 312–360; spreadsheet row r starts at y = 360 + (r − 1) × 62. -->
+
+  <h2 class="cap sm a" style="--k:pop;--t:2.55s;--d:.4s;left:44px;top:42px">And… it's <span class="m">a lot.</span></h2>
+
+  <div class="win dt-xl a" data-sfx="zoom" style="--k:zoom;--t:.45s;--d:.45s;--e:cubic-bezier(.2,.9,.25,1.05);left:40px;top:150px;width:1840px;height:878px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">attrition_export_FINAL.xlsx</span><span class="r">Read-Only · Saved</span></div>
+    <div class="dt-rib"><span>File</span><span class="on">Home</span><span>Insert</span><span>Formulas</span><span>Data</span><span>View</span></div>
+    <div class="dt-fx"><span class="nm">B2</span><span class="f">fx</span><span class="v">6200</span></div>
+    <table class="grid dt-g">
+      <colgroup><col style="width:70px"><col style="width:470px"><col style="width:220px"><col style="width:290px"><col style="width:250px"><col style="width:120px"><col style="width:180px"><col style="width:240px"></colgroup>
+      <tr class="cl"><th></th><th>A</th><th class="hi">B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th></tr>
+      <tr><th>1</th><td>job_family</td><td>headcount</td><td>vol_attrition</td><td>enterprise_rate</td><td class="nar">as_of</td><td></td><td></td></tr>
+      <tr><th>2</th><td>Pharmacy Technician</td><td class="tx sel">6200</td><td class="n"><span class="v">27.4<i class="ring a" data-sfx="pop" style="--k:stamp;--t:6.85s;--d:.35s"></i></span></td><td class="n">19.9</td><td class="n hs">######</td><td></td><td></td></tr>
+      <tr><th>3</th><td>Distribution Center Assoc</td><td class="tx">5400</td><td class="n">24.1</td><td class="n">19.9</td><td class="n hs">######</td><td></td><td></td></tr>
+      <tr><th>4</th><td>Customer Care</td><td class="tx">3100</td><td class="n"><span class="v">0.189<i class="ring a" data-sfx="pop" data-sfx-semi="2" style="--k:stamp;--t:7.65s;--d:.35s"></i></span></td><td class="n">19.9</td><td class="n hs">######</td><td></td><td></td></tr>
+      <tr><th>5</th><td>Cust. Care</td><td class="tx">410</td><td class="n">0.212</td><td class="n">19.9</td><td class="n hs">######</td><td></td><td></td></tr>
+      <tr><th>6</th><td>Specialty Nursing</td><td class="n">1400</td><td class="n">14.2</td><td class="n">19.9</td><td class="n hs">######</td><td></td><td></td></tr>
+      <tr><th>7</th><td>Sales</td><td class="tx">2300</td><td class="n">10.6</td><td class="n">19.9</td><td class="n hs">######</td><td></td><td></td></tr>
+      <tr><th>8</th><td>Software Engineering</td><td class="n">2600</td><td class="n">9.8</td><td class="n">19.9</td><td class="n hs">######</td><td></td><td></td></tr>
+      <tr><th>9</th><td>HR</td><td class="tx">700</td><td class="n">8.1</td><td class="n">19.90</td><td class="n hs">######</td><td></td><td></td></tr>
+      <tr><th>10</th><td>Finance</td><td class="tx">1200</td><td class="n"><span class="v">7.4%<i class="ring a" data-sfx="pop" data-sfx-semi="4" style="--k:stamp;--t:8.15s;--d:.35s"></i></span></td><td class="n">19.9</td><td class="n hs">######</td><td></td><td></td></tr>
+    </table>
+    <div class="dt-tabs"><span class="on">Sheet1</span><span>Sheet1 (2)</span><span>pivot_old</span><span>+</span></div>
+  </div>
+  <!-- Excel's "number stored as text" smart tag, beside the selected cell -->
+  <span class="dt-warn a" style="--k:pop;--t:.9s;--d:.3s;left:538px;top:436px">!</span>
+
+  <!-- cue 2: stored as text -->
+  <i class="dt-box a" data-sfx="pop" style="--k:stamp;--t:4.95s;--d:.35s;left:572px;top:414px;width:236px;height:574px"></i>
+  <p class="sticker dt-st a" data-sfx="stamp" style="--k:stamp;--t:5.3s;--d:.4s;left:600px;top:230px;rotate:-3deg">stored as text ⚠</p>
+
+  <!-- cue 3: percents or decimals -->
+  <p class="sticker dt-st a" data-sfx="stamp" style="--k:stamp;--t:8.75s;--d:.4s;left:1452px;top:436px;rotate:3deg">27.4? 0.189? 7.4%?</p>
+
+  <!-- cue 4: same team, twice -->
+  <i class="dt-brk a" data-sfx="pop" style="--k:dt-wipe;--t:9.9s;--d:.35s;left:330px;top:558px;height:100px"></i>
+  <p class="sticker dt-st dt-two a" data-sfx="stamp" style="--k:stamp;--t:10.85s;--d:.4s;left:362px;top:560px;rotate:-3deg">same team,<br>twice?</p>
+
+  <!-- cue 5: the column of hashtags -->
+  <i class="dt-box a" data-sfx="pop" style="--k:stamp;--t:13.9s;--d:.35s;left:1334px;top:414px;width:132px;height:574px"></i>
+  <p class="sticker dt-st a" data-sfx="stamp" style="--k:stamp;--t:14.15s;--d:.4s;left:1120px;top:230px;rotate:3deg">########?!</p>
+</section>
+<style>
+  @keyframes dt-wipe{0%{opacity:0;clip-path:inset(-20px 100% -20px -20px)}1%{opacity:1}to{opacity:1;clip-path:inset(-20px -20px -20px -20px)}}
+  #s-data .dt-xl{rotate:0deg}
+  #s-data .dt-xl>.tb{background:#1E7145;border-color:#1E7145;color:rgba(255,255,255,.85);font-size:22px}
+  #s-data .dt-xl>.tb i{background:rgba(255,255,255,.4)}
+  #s-data .dt-xl>.tb .t{color:#fff;font-weight:600}
+  #s-data .dt-rib{flex:none;height:54px;display:flex;align-items:flex-end;gap:34px;padding:0 26px;background:#F3F3F3;border-bottom:1px solid #D6D6D6;font:22px Arial,sans-serif;color:#444}
+  #s-data .dt-rib span{padding-bottom:12px}
+  #s-data .dt-rib span.on{color:#1E7145;font-weight:700;border-bottom:4px solid #1E7145;padding-bottom:8px}
+  #s-data .dt-fx{flex:none;height:56px;display:flex;align-items:center;gap:14px;padding:0 16px;border-bottom:1px solid #D6D6D6;font:24px Arial,sans-serif;color:#333}
+  #s-data .dt-fx .nm{border:1px solid #C8C8C8;padding:4px 12px;width:100px}
+  #s-data .dt-fx .f{font-style:italic;color:#999}
+  #s-data .dt-fx .v{border:1px solid #C8C8C8;padding:4px 12px;flex:1}
+  #s-data .dt-g{table-layout:fixed;width:1840px;font-size:30px}
+  #s-data .dt-g td,#s-data .dt-g th{height:62px;padding:0 14px;position:relative;overflow:visible}
+  #s-data .dt-g th{font-size:22px}
+  #s-data .dt-g tr.cl th{height:48px}
+  #s-data .dt-g th.hi{background:#D3E7DB;color:#1E7145;font-weight:700}
+  #s-data .dt-g td.tx{text-align:left}
+  #s-data .dt-g td.tx::before{content:"";position:absolute;left:0;top:0;border-top:14px solid #1E9C55;border-right:14px solid transparent}
+  #s-data .dt-g td.sel{outline:4px solid #1E7145;outline-offset:-3px}
+  #s-data .dt-g td.nar,#s-data .dt-g td.hs{overflow:hidden;padding:0 8px}
+  #s-data .dt-g .v{position:relative;display:inline-block}
+  #s-data .ring{position:absolute;left:-24px;right:-24px;top:-12px;bottom:-12px;border:6px solid var(--lime);border-radius:50%;box-shadow:0 0 0 3px var(--navy),inset 0 0 0 2px var(--navy)}
+  #s-data .dt-tabs{flex:none;height:44px;display:flex;gap:2px;padding:0 20px;background:#F3F3F3;border-top:1px solid #D6D6D6;font:22px Arial,sans-serif;color:#555}
+  #s-data .dt-tabs span{padding:8px 18px}
+  #s-data .dt-tabs span.on{background:#fff;border-bottom:4px solid #1E7145;color:#1E7145;font-weight:700}
+  #s-data .dt-warn{width:34px;height:34px;color:#3a2a00;font:700 22px/34px Arial,sans-serif;text-align:center;isolation:isolate}
+  #s-data .dt-warn::before{content:"";position:absolute;inset:4px;background:#F2C230;rotate:45deg;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.25);z-index:-1}
+  #s-data .dt-box{border:6px solid var(--lime);border-radius:34px;box-shadow:0 0 0 3px var(--navy),inset 0 0 0 2px var(--navy)}
+  #s-data .dt-brk{width:26px;border:7px solid var(--lime);border-left:0;border-radius:0 12px 12px 0;box-shadow:3px 0 0 0 var(--navy)}
+  #s-data .dt-st{font-size:38px;z-index:2}
+  #s-data .dt-two{font-size:30px;line-height:1.12;white-space:normal;text-align:left;padding:.25em .5em}
+</style>
+<script>
+SCENES["s-data"] = {
+  // small, in the bottom-right corner, over the empty columns F–G; feet on y 1062
+  sam: [[0, {x: 1614, y: 1062 - 405 * .9, s: .9, mood: "focus", pose: "rest", props: []}],
+        [2.5, {mood: "deadpan"}],
+        [10.9, {pose: "shrug"}],
+        [12.3, {pose: "rest"}]],
+  clock: u => H(14, 8),
+  narrAt: .4,
+};
+</script>

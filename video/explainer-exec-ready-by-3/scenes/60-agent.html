@@ -1,0 +1,355 @@
+<section class="scene bg-deep bg-dots" id="s-agent" data-min="25">
+
+  <!-- ============ A · one playbook, any assistant (0 – 7.45) ============ -->
+  <span class="kick lime a x" data-sfx="whoosh" style="--k:slam;--t:.05s;--t2:7.4s;--k2:xwhipL;--d2:.3s;left:80px;top:56px">✦ If you work with AI</span>
+  <h2 class="cap md inv a x" style="--k:up;--t:1.5s;--d:.5s;--t2:7.4s;--k2:xwhipL;--d2:.32s;left:80px;top:168px;white-space:nowrap">Your assistant reads <span class="m">the same playbook.</span></h2>
+
+  <div class="ag-glow a x" style="--k:fade;--t:.7s;--d:.8s;--t2:7.4s;--k2:xfade;left:660px;top:330px"></div>
+  <div class="ag-bookw a x" data-sfx="thunk sparkle" style="--k:drop;--t:.65s;--d:.55s;--t2:7.42s;--k2:ag-bookout;--d2:.35s;left:790px;top:330px">
+    <svg class="ag-book" width="340" height="460" viewBox="0 0 340 460" aria-label="mck-chart playbook">
+      <ellipse cx="170" cy="446" rx="150" ry="10" fill="rgba(0,0,0,.35)"/>
+      <rect x="44" y="24" width="270" height="404" rx="12" fill="#EDEAE2"/>
+      <g stroke="#CFCAC0" stroke-width="2"><line x1="300" y1="40" x2="300" y2="414"/><line x1="292" y1="40" x2="292" y2="414"/></g>
+      <rect x="22" y="14" width="272" height="408" rx="14" fill="var(--mck-azure-dark)"/>
+      <rect x="22" y="14" width="34" height="408" rx="10" fill="rgba(0,0,0,.2)"/>
+      <path d="M252 14 h26 v76 l-13 -12 l-13 12 z" fill="var(--lime)"/>
+      <text x="160" y="128" text-anchor="middle" font-family="LF" font-weight="700" font-size="26" letter-spacing="5" fill="#fff">PLAYBOOK</text>
+      <rect x="62" y="150" width="202" height="70" rx="10" fill="var(--lime)"/>
+      <text x="163" y="197" text-anchor="middle" font-family="Mono" font-weight="700" font-size="38" fill="var(--navy)">mck-chart</text>
+      <g transform="translate(84 272)">
+        <rect x="0" y="0" width="34" height="110" fill="rgba(255,255,255,.45)"/>
+        <rect x="46" y="30" width="34" height="80" fill="rgba(255,255,255,.45)"/>
+        <rect x="92" y="-20" width="34" height="130" fill="#fff"/>
+        <rect x="138" y="50" width="34" height="60" fill="rgba(255,255,255,.45)"/>
+        <rect x="-10" y="110" width="192" height="4" fill="#fff"/>
+      </g>
+    </svg>
+  </div>
+  <span class="ag-tw a x" style="--k:ag-twk;--t:1.05s;--d:1s;--t2:7.4s;--k2:xfade;left:720px;top:360px;font-size:52px;color:var(--lime)">✦</span>
+  <span class="ag-tw a x" style="--k:ag-twk;--t:1.25s;--d:1s;--t2:7.4s;--k2:xfade;left:1150px;top:420px;font-size:40px;color:var(--sky)">✦</span>
+  <span class="ag-tw a x" style="--k:ag-twk;--t:1.45s;--d:1s;--t2:7.4s;--k2:xfade;left:1120px;top:760px;font-size:34px;color:#fff">✦</span>
+
+  <!-- the two assistants -->
+  <svg class="ag-link a x" style="--k:wipe;--t:5.0s;--d:.4s;--t2:7.4s;--k2:xfade;left:640px;top:560px" width="150" height="40" viewBox="0 0 150 40"><path d="M4 20 H136" stroke="var(--sky)" stroke-width="4" stroke-dasharray="10 9" fill="none"/><path d="M126 9 L142 20 L126 31" stroke="var(--sky)" stroke-width="4" fill="none"/></svg>
+  <svg class="ag-link a x" style="--k:ag-wipeR;--t:6.35s;--d:.4s;--t2:7.4s;--k2:xfade;left:1130px;top:560px" width="150" height="40" viewBox="0 0 150 40"><path d="M146 20 H14" stroke="var(--sky)" stroke-width="4" stroke-dasharray="10 9" fill="none"/><path d="M24 9 L8 20 L24 31" stroke="var(--sky)" stroke-width="4" fill="none"/></svg>
+  <div class="ag-as a x" data-sfx="pop" style="--k:slam;--t:4.75s;--d:.5s;--t2:7.4s;--k2:xwhipL;--d2:.3s;right:1290px;top:540px"><span class="gl cop"></span>Copilot</div>
+  <div class="ag-as a x" data-sfx="pop" data-sfx-semi="5" style="--k:slam;--t:6.15s;--d:.5s;--t2:7.4s;--k2:xwhipR;--d2:.3s;left:1290px;top:540px"><span class="gl cla"></span>Claude</div>
+  <p class="ag-note a x" style="--k:fade;--t:6.6s;--d:.4s;--t2:7.4s;--k2:xfade;left:0;width:1920px;top:880px">…or whichever assistant you use</p>
+
+  <!-- ============ B · the chat: paste, ask, five options (7.5 – 17.4) ============ -->
+  <h2 class="cap md inv a x" data-sfx="whoosh" style="--k:slam;--t:11.55s;--d:.5s;--t2:17.38s;--k2:xwhipL;--d2:.32s;left:80px;top:38px;white-space:nowrap"><span class="m">5 options.</span> All on-brand.</h2>
+
+  <div class="win ag-chat a x" data-sfx="whoosh" style="--k:whipR;--t:7.5s;--d:.55s;--e:cubic-bezier(.2,.9,.25,1.04);--t2:17.4s;--k2:xwhipL;--d2:.38s;left:60px;top:150px;width:1800px;height:890px">
+    <div class="chat-hd"><span class="ag-av"></span><div><b>Your AI assistant</b><span>Attrition storyline for the leadership sync</span></div>
+      <span class="ag-hdr"><span class="chip"><span class="gl cop"></span>Copilot</span><span class="chip"><span class="gl cla"></span>Claude</span><span class="chip skill">● mck-chart skill</span></span></div>
+    <div class="body">
+      <!-- empty state: the big composer -->
+      <p class="greet a x" style="--k:up;--t:7.85s;--d:.45s;--t2:10.8s;--k2:xout;--d2:.16s"><b>✦</b> What are we building today?</p>
+      <div class="big a x" style="--k:pop;--t:7.95s;--d:.45s;--t2:10.85s;--k2:ag-tobub;--d2:.2s">
+        <div class="pasted a" data-sfx="pop" style="--k:ag-paste;--t:8.35s;--d:.45s">
+          <table class="dt">
+            <tr><th>job_family</th><th class="n">headcount</th><th class="n">vol_attrition_pct</th></tr>
+            <tr><td>Pharmacy Technician</td><td class="n">6,200</td><td class="n">27.4</td></tr>
+            <tr><td>Distribution Center Associate</td><td class="n">11,800</td><td class="n">24.1</td></tr>
+            <tr><td>Customer Care</td><td class="n">3,100</td><td class="n">18.9</td></tr>
+            <tr class="more"><td colspan="3">+ 7 more rows</td></tr>
+          </table>
+          <span class="flash a x" style="--k:fade;--d:.06s;--t:8.35s;--t2:8.43s;--k2:xfade;--d2:.4s"></span>
+        </div>
+        <p class="typed"><span id="ag-typed"></span><span class="caret"></span></p>
+        <div class="bar-row"><span class="plus">＋</span><span class="chip">mck-chart skill</span><span class="send" style="--t:10.6s">↑</span></div>
+        <span class="kbd a x" style="--k:pop;--t:8.1s;--d:.3s;--t2:8.85s;--k2:xfade">⌘ V</span>
+      </div>
+
+      <!-- the sent message -->
+      <div class="row me sent a" style="--k:ag-frombelow;--t:10.9s;--d:.45s">
+        <div class="bub me ask">
+          <table class="dt">
+            <tr><th>job_family</th><th class="n">headcount</th><th class="n">vol_attrition_pct</th></tr>
+            <tr><td>Pharmacy Technician</td><td class="n">6,200</td><td class="n">27.4</td></tr>
+            <tr><td>Distribution Center Associate</td><td class="n">11,800</td><td class="n">24.1</td></tr>
+            <tr class="more"><td colspan="3">+ 8 more rows</td></tr>
+          </table>
+          <p class="pr"></p>
+        </div>
+      </div>
+
+      <!-- the reply (Spark sits beside it as the avatar) -->
+      <div class="dots a x" style="--k:pop;--t:11.1s;--d:.3s;--t2:11.6s;--k2:xcut;--d2:.01s"><i></i><i></i><i></i></div>
+      <p class="reply a" style="--k:left;--t:11.6s;--d:.4s">Here are 5 options. Every headline is computed from your data.</p>
+      <div class="opts" id="ag-opts"></div>
+
+      <div class="small a" style="--k:fade;--t:11s;--d:.4s"><span>Reply…</span><span class="send">↑</span></div>
+    </div>
+    <span class="ag-dim a" style="--k:ag-dimin;--t:15.8s;--d:.4s"></span>
+  </div>
+
+  <!-- coming soon -->
+  <div class="ag-soon a x" data-sfx="stamp sparkle" style="--k:stamp;--t:15.85s;--d:.45s;--t2:17.4s;--k2:xwhipL;--d2:.38s;left:960px;top:645px">
+    <div class="in"><b>Coming soon</b><span>✦ Chat with the kit · in the works</span></div>
+  </div>
+
+  <!-- ============ C · coding agents, today (17.5 – end) ============ -->
+  <h2 class="cap md inv a" data-sfx="whoosh" style="--k:slam;--t:17.6s;--d:.5s;left:80px;top:38px;white-space:nowrap">Coding agents: <span class="m">available today.</span></h2>
+
+  <!-- task -->
+  <div class="card ag-task a" data-sfx="thunk" style="--k:slam;--t:17.75s;--d:.5s;left:80px;top:170px;width:550px">
+    <div class="lbl">Task · WI-2481</div>
+    <h3>Build the attrition section for the leadership dashboard</h3>
+    <div class="who2">Assigned to <span class="ag-av sm"></span><b>Coding agent</b></div>
+    <div class="file"><span class="ic" style="background:var(--mck-green-base)">CSV</span><div><b>attrition_by_job_family.csv</b><span>10 job families · FY26 · synthetic</span></div></div>
+  </div>
+
+  <!-- pull request -->
+  <div class="card ag-pr a" data-sfx="thunk" style="--k:slam;--t:22.35s;--d:.5s;left:80px;top:560px;width:550px">
+    <div class="lbl">Pull request #142</div>
+    <h3>Add attrition section: ranked bar, headline from data</h3>
+    <div class="st">
+      <span class="chip go a x" style="--k:cut;--t:22.35s;--t2:23.15s;--k2:xcut;--d2:.01s">● Ready for review</span>
+      <span class="chip ok a" data-sfx="stamp" style="--k:stamp;--t:23.15s;--d:.4s">✓ Approved</span>
+    </div>
+    <div class="row2"><div class="shot prev"><img src="assets/opt1.png" alt=""></div>
+      <div class="checks"><span>✓ lint: 0 errors</span><span>✓ alt text</span><span>✓ source line</span></div></div>
+  </div>
+
+  <!-- the coding agent's terminal -->
+  <div class="win dark ag-term a" style="--k:up;--t:17.85s;--d:.5s;left:670px;top:170px;width:680px;height:830px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">Coding agent</span><span class="r mono">~/leadership-dashboard</span></div>
+    <div class="term">
+      <div class="ln"><span class="pr">❯</span> <span class="type" data-sfx="type" style="--t:18.05s;--d:.5s">Build the attrition section for the</span></div>
+      <div class="ln">  <span class="type" style="--t:18.55s;--d:.3s">leadership dashboard</span></div>
+      <div class="gap"></div>
+      <div class="ln a" data-sfx="tick" style="--k:left;--t:18.95s;--d:.3s"><span class="tool">⏺ Read</span> <span class="fn">AGENTS.md</span></div>
+      <div class="ln a" data-sfx="pop" style="--k:left;--t:19.25s;--d:.3s"><span class="tool">⏺ Skill</span> <span class="fn">mck-chart</span></div>
+      <div class="ln dim a" style="--k:fade;--t:19.45s;--d:.3s">  question → chart → headline → lint</div>
+      <div class="gap"></div>
+      <div class="ag-ck a" style="--k:fade;--t:19.7s;--d:.3s"><div class="ck"><b><i class="pend">○</i><i class="ok a" data-sfx="check" style="--k:stamp;--t:20.95s;--d:.3s">✓</i></b><span class="lit" style="--t:20.95s">Question</span></div><div class="det a" style="--k:left;--t:21.0s;--d:.3s">Where is attrition concentrated?</div></div>
+      <div class="ag-ck a" style="--k:fade;--t:19.78s;--d:.3s"><div class="ck"><b><i class="pend">○</i><i class="ok a" data-sfx="check" style="--k:stamp;--t:21.4s;--d:.3s">✓</i></b><span class="lit" style="--t:21.4s">Chart type</span></div><div class="det a" style="--k:left;--t:21.45s;--d:.3s">Ranked bar · cookbook/bar.md</div></div>
+      <div class="ag-ck a" style="--k:fade;--t:19.86s;--d:.3s"><div class="ck"><b><i class="pend">○</i><i class="ok a" data-sfx="check" style="--k:stamp;--t:21.85s;--d:.3s">✓</i></b><span class="lit" style="--t:21.85s">Headline from data</span></div><div class="det a" style="--k:left;--t:21.9s;--d:.3s">“…lose about 1 in 4 people a year”</div></div>
+      <div class="ag-ck a" style="--k:fade;--t:19.94s;--d:.3s"><div class="ck"><b><i class="pend">○</i><i class="ok a" data-sfx="check" style="--k:stamp;--t:22.3s;--d:.3s">✓</i></b><span class="lit" style="--t:22.3s">Lint: mv.lint(fig)</span></div><div class="det a" style="--k:left;--t:22.35s;--d:.3s"><span style="color:var(--mck-mint-base)">0 errors</span> · checklist done</div></div>
+      <div class="gap"></div>
+      <div class="ln a" style="--k:left;--t:22.5s;--d:.3s"><span class="tool">⏺</span> Opened PR #142 · <span style="color:var(--lime)">Ready for review</span></div>
+      <div class="ln a" style="--k:fade;--t:22.65s;--d:.2s"><span class="pr">❯</span><span class="caret"></span></div>
+    </div>
+  </div>
+
+  <!-- the playbook's rules fly out of the mck-chart toolkit -->
+  <span class="ag-rule a" style="--k:ag-out;--t:19.35s;--d:.55s;--ox:60px;--oy:520px;left:1395px;top:250px;rotate:-4deg">Insight headline</span>
+  <span class="ag-rule a" style="--k:ag-out;--t:19.5s;--d:.55s;--ox:-200px;--oy:480px;left:1590px;top:330px;rotate:3deg">Bars start at zero</span>
+  <span class="ag-rule a" style="--k:ag-out;--t:19.65s;--d:.55s;--ox:40px;--oy:420px;left:1420px;top:420px;rotate:2deg">Source line</span>
+  <span class="ag-rule a" style="--k:ag-out;--t:19.8s;--d:.55s;--ox:-220px;--oy:380px;left:1560px;top:510px;rotate:-3deg">No group under 10</span>
+
+  <!-- the mck-chart toolkit (stands on the floor at y = 1000) -->
+  <svg class="ag-box a" data-sfx="pop" style="--k:drop;--t:17.95s;--d:.5s;left:1380px;top:790px" width="210" height="210" viewBox="0 0 210 210" aria-label="mck-chart toolkit">
+    <ellipse cx="105" cy="202" rx="98" ry="8" fill="rgba(0,0,0,.3)"/>
+    <g class="lid" style="--t:19.25s">
+      <rect x="70" y="10" width="14" height="70" rx="3" fill="var(--sky)" transform="rotate(-12 77 45)"/>
+      <rect x="112" y="18" width="12" height="62" rx="3" fill="var(--teal)" transform="rotate(10 118 49)"/>
+      <rect x="92" y="4" width="16" height="74" rx="3" fill="var(--lime)" transform="rotate(-2 100 40)"/>
+    </g>
+    <path d="M70 62 v-22 a6 6 0 0 1 6-6 h58 a6 6 0 0 1 6 6 v22" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+    <rect x="8" y="58" width="194" height="40" rx="8" fill="var(--mck-azure-dark)"/>
+    <rect x="8" y="92" width="194" height="106" rx="10" fill="var(--blue)"/>
+    <rect x="8" y="92" width="194" height="10" fill="rgba(0,0,0,.18)"/>
+    <rect x="94" y="84" width="22" height="18" rx="4" fill="#fff" opacity=".9"/>
+    <rect x="22" y="120" width="166" height="56" rx="8" fill="var(--lime)"/>
+    <text x="105" y="146" text-anchor="middle" font-family="Mono" font-weight="700" font-size="25" fill="var(--navy)">mck-chart</text>
+    <text x="105" y="168" text-anchor="middle" font-family="LF" font-weight="600" font-size="17" fill="var(--navy)">toolkit</text>
+  </svg>
+
+  <!-- sparkle burst for the thumbs-up -->
+  <span class="ag-tw a" style="--k:ag-twk;--t:23.25s;--d:.9s;left:1540px;top:700px;font-size:46px;color:var(--lime)">✦</span>
+  <span class="ag-tw a" style="--k:ag-twk;--t:23.35s;--d:.9s;left:1830px;top:660px;font-size:36px;color:var(--sky)">✦</span>
+  <span class="ag-tw a" style="--k:ag-twk;--t:23.45s;--d:.9s;left:1640px;top:620px;font-size:30px;color:#fff">✦</span>
+  <span class="ag-tw a" style="--k:ag-twk;--t:23.55s;--d:.9s;left:1860px;top:820px;font-size:32px;color:var(--lime)">✦</span>
+</section>
+
+<style>
+/* ---------- A · playbook + assistants ---------- */
+#s-agent .ag-glow{width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(102,196,255,.32),rgba(217,241,78,.08) 45%,transparent 68%)}
+#s-agent.on .ag-glow{animation:fade .8s ease-out var(--t) both,ag-pulse 2.4s ease-in-out var(--t) infinite alternate,xfade .3s ease-in var(--t2) forwards}
+@keyframes ag-pulse{from{scale:.94}to{scale:1.06}}
+#s-agent .ag-book{display:block;overflow:visible;filter:drop-shadow(0 24px 40px rgba(0,0,0,.35))}
+@keyframes ag-bookout{to{opacity:0;transform:scale(.4) translateY(-200px)}}
+#s-agent .ag-tw{line-height:1;text-shadow:0 0 18px rgba(217,241,78,.6)}
+@keyframes ag-twk{0%{opacity:0;transform:scale(.2) rotate(-40deg)}40%{opacity:1;transform:scale(1.25) rotate(10deg)}100%{opacity:0;transform:scale(.6) rotate(30deg)}}
+#s-agent .ag-as{display:flex;align-items:center;gap:20px;background:#fff;color:var(--navy);font-weight:700;font-size:48px;
+  padding:14px 38px 14px 14px;border-radius:60px;box-shadow:0 18px 44px rgba(0,0,0,.35);white-space:nowrap}
+#s-agent .gl{flex:none;display:inline-block;width:66px;height:66px;border-radius:50%;background-repeat:no-repeat;background-position:center;background-size:56% 56%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z' fill='white'/%3E%3Ccircle cx='8' cy='10.5' r='1.5' fill='%23143359'/%3E%3Ccircle cx='12' cy='10.5' r='1.5' fill='%23143359'/%3E%3Ccircle cx='16' cy='10.5' r='1.5' fill='%23143359'/%3E%3C/svg%3E")}
+#s-agent .gl.cop{background-color:var(--teal)}
+#s-agent .gl.cla{background-color:var(--claude)}
+#s-agent .ag-link{overflow:visible}
+@keyframes ag-wipeR{from{opacity:1;clip-path:inset(-20px -20px -20px 100%)}to{opacity:1;clip-path:inset(-20px -20px -20px -20px)}}
+#s-agent .ag-note{text-align:center;font-size:30px;font-style:italic;color:#B8C7DC}
+
+/* ---------- B · chat ---------- */
+#s-agent .ag-chat{color:var(--navy)}
+#s-agent .ag-chat .chat-hd span{font-size:21px}
+#s-agent .ag-av{flex:none;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--lime));position:relative}
+#s-agent .ag-av::after{content:"✦";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--navy);font-size:28px;font-weight:700}
+#s-agent .ag-av.sm{width:36px;height:36px}#s-agent .ag-av.sm::after{font-size:18px}
+#s-agent .ag-hdr{margin-left:auto;display:flex;gap:12px;align-items:center}
+#s-agent .ag-hdr .chip{font-size:21px;color:var(--navy);padding:6px 16px 6px 6px}
+#s-agent .ag-hdr .chip .gl{width:32px;height:32px}
+#s-agent .ag-hdr .chip.skill{padding:6px 16px;background:var(--navy);color:var(--lime)}
+#s-agent .ag-chat .body{position:relative;flex:1}
+#s-agent .ag-chat .body>*{position:absolute;margin:0}
+#s-agent .greet{left:0;right:0;top:46px;text-align:center;font-size:46px;font-weight:300;color:var(--navy)}
+#s-agent .greet b{color:var(--blue);font-weight:700}
+#s-agent .big{left:370px;width:1060px;top:130px;background:#fff;border:2px solid var(--ui-line);border-radius:28px;
+  box-shadow:0 18px 50px rgba(11,50,102,.12);padding:22px 26px 18px}
+#s-agent .pasted{position:relative;display:inline-block;border-radius:12px;border:1.5px solid var(--ui-line);overflow:hidden}
+#s-agent .pasted .dt{font-size:21px}
+#s-agent .flash{position:absolute;inset:0;background:#fff}
+#s-agent .typed{margin:18px 2px 0;font-size:28px;line-height:1.38;color:var(--navy);min-height:118px}
+#s-agent .typed .caret{background:var(--navy);width:3px;height:1.05em;margin-left:1px}
+#s-agent .bar-row{display:flex;align-items:center;gap:14px;margin-top:8px}
+#s-agent .bar-row .chip{font-size:21px}
+#s-agent .plus{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--ui-line);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--muted)}
+#s-agent .send{margin-left:auto;width:50px;height:50px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}
+#s-agent.on .big .send{animation:ag-sendpulse .5s ease-out var(--t) both}
+@keyframes ag-sendpulse{0%{transform:none}40%{transform:scale(.8);box-shadow:0 0 0 0 rgba(217,241,78,.8)}100%{transform:scale(1.12);background:var(--blue);box-shadow:0 0 0 18px rgba(217,241,78,0)}}
+#s-agent .kbd{position:absolute;right:-30px;top:-34px;background:var(--navy);color:#fff;font:700 32px LF;padding:10px 18px;border-radius:12px;box-shadow:0 10px 24px rgba(11,50,102,.3)}
+@keyframes ag-paste{0%{opacity:0;transform:translateY(-30px) scale(.7)}60%{opacity:1;transform:scale(1.05)}100%{opacity:1;transform:none}}
+@keyframes ag-tobub{to{opacity:0;transform:translateY(-140px) scale(.85)}}
+@keyframes ag-frombelow{from{opacity:0;transform:translateY(260px) scale(.92)}to{opacity:1;transform:none}}
+#s-agent .sent{right:28px;top:18px}
+#s-agent .ask{display:flex;gap:26px;align-items:flex-start;padding:14px 22px 14px 14px;max-width:1500px}
+#s-agent .ask .dt{flex:none;white-space:nowrap;font-size:19px}
+#s-agent .ask .dt td,#s-agent .ask .dt th{padding:4px 11px}
+#s-agent .ask p{margin:0;width:660px;font-size:24px}
+#s-agent .dots{left:150px;top:206px;display:flex;gap:9px;background:var(--ui-bg);padding:14px 18px;border-radius:20px}
+#s-agent .dots i{width:12px;height:12px;border-radius:50%;background:var(--blue);animation:ag-dot .6s ease-in-out infinite}
+#s-agent .dots i:nth-child(2){animation-delay:.15s}#s-agent .dots i:nth-child(3){animation-delay:.3s}
+@keyframes ag-dot{0%,100%{transform:translateY(3px);opacity:.45}50%{transform:translateY(-5px);opacity:1}}
+#s-agent .reply{left:150px;top:208px;font-size:29px;color:var(--navy)}
+#s-agent .opts{left:28px;right:28px;top:276px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+#s-agent .optw{position:relative;height:378px}
+#s-agent .optw .opt{position:relative;height:100%;box-shadow:0 8px 22px rgba(11,50,102,.08)}
+#s-agent .opt .shot{height:auto;aspect-ratio:16/9;padding:0}
+#s-agent .opt .meta{padding:12px 15px 14px}
+#s-agent .opt .lb{font-size:22px}
+#s-agent .opt .hl{font-size:20px;line-height:1.28}
+#s-agent .opt .hl span{background:linear-gradient(rgba(217,241,78,.75),rgba(217,241,78,.75)) no-repeat 0 100%/0% 40%}
+#s-agent.on .opt .hl span{animation:ag-mark .7s ease-out var(--t) both}
+@keyframes ag-mark{to{background-size:100% 40%}}
+#s-agent .opt .ft{position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:8px}
+#s-agent .lint0{font:700 20px Mono,monospace;color:var(--mck-green-dark);background:var(--mck-green-light);padding:4px 10px;border-radius:8px}
+#s-agent .small{left:28px;right:28px;bottom:22px;height:62px;border:1.5px solid var(--ui-line);border-radius:31px;display:flex;align-items:center;padding:0 9px 0 26px;font-size:22px;color:#9a9a9a}
+#s-agent .small .send{width:44px;height:44px;font-size:22px;background:#D9D6CE}
+#s-agent .ag-dim{left:0;top:0;width:100%;height:100%;position:absolute;background:rgba(11,30,60,.42);pointer-events:none}
+@keyframes ag-dimin{from{opacity:0}to{opacity:1}}
+@keyframes ag-card{0%{opacity:0;transform:translateY(90px) scale(.7) rotate(-3deg)}65%{opacity:1;transform:translateY(-8px) scale(1.03)}100%{opacity:1;transform:none}}
+#s-agent .ag-soon{width:0;height:0;z-index:4}
+#s-agent .ag-soon .in{position:absolute;left:0;top:0;transform:translate(-50%,-50%) rotate(-6deg);background:var(--lime);color:var(--navy);
+  border:7px solid var(--navy);outline:4px dashed rgba(20,51,89,.45);outline-offset:-20px;border-radius:30px;padding:30px 64px 28px;
+  box-shadow:0 30px 70px rgba(0,0,0,.45);text-align:center;white-space:nowrap}
+#s-agent .ag-soon b{display:block;font-size:112px;line-height:1;letter-spacing:.02em;text-transform:uppercase}
+#s-agent .ag-soon span{display:block;font-size:32px;font-weight:600;margin-top:12px}
+
+/* ---------- C · coding agent ---------- */
+#s-agent .card .lbl{font-size:20px}
+#s-agent .card h3{font-size:30px}
+#s-agent .who2{display:flex;align-items:center;gap:12px;font-size:23px;color:var(--muted);margin-top:16px}
+#s-agent .who2 b{color:var(--navy)}
+#s-agent .ag-task .file{margin-top:16px}
+#s-agent .ag-task .file b{font-size:22px}
+#s-agent .ag-task .file span{font-size:20px}
+#s-agent .ag-pr h3{font-size:28px;line-height:1.2}
+#s-agent .ag-pr .st{position:relative;height:48px;margin-top:14px}
+#s-agent .ag-pr .st .chip{position:absolute;left:0;top:0;font-size:22px;padding:6px 16px}
+#s-agent .ag-pr .st .chip.ok{background:var(--lime);color:var(--navy);font-size:28px;font-weight:700;padding:6px 22px;box-shadow:0 0 0 5px rgba(217,241,78,.35)}
+#s-agent .ag-pr .row2{display:flex;gap:18px;align-items:center;margin-top:16px}
+#s-agent .ag-pr .prev{flex:none;width:270px;aspect-ratio:16/9;border:1px solid var(--ui-line);border-radius:10px}
+#s-agent .ag-pr .checks{display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:22px;color:var(--mck-green-dark)}
+#s-agent .ag-term .tb .r{font-size:20px}
+#s-agent .term{font-size:25px;line-height:1.46;padding:22px 26px}
+#s-agent .term .ln{white-space:pre}
+#s-agent .term .ck{margin-top:8px}
+#s-agent .term .ck b{position:relative;font:700 25px LF,sans-serif;width:26px}
+#s-agent .term .ck b i{font-style:normal}
+#s-agent .term .ck b .pend{color:#53627c}
+#s-agent .term .ck b .ok{position:absolute;left:0;top:0;color:var(--mck-mint-base)}
+#s-agent .term .ck .lit{color:#7f8ea8}
+#s-agent.on .term .ck .lit{animation:ag-lit .3s ease-out var(--t) both}
+@keyframes ag-lit{from{color:#7f8ea8}to{color:#fff}}
+#s-agent .term .det{padding-left:40px;color:#9fb0cc;white-space:pre}
+#s-agent .term .gap{height:16px}
+#s-agent .term .caret{background:var(--sky)}
+#s-agent .ag-rule{background:#fff;color:var(--navy);font-weight:600;font-size:26px;padding:10px 18px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.3);white-space:nowrap}
+#s-agent .ag-rule::before{content:"✓ ";color:var(--mck-green-base)}
+@keyframes ag-out{0%{opacity:0;transform:translate(var(--ox),var(--oy)) scale(.2) rotate(-20deg)}60%{opacity:1}100%{opacity:1;transform:none}}
+#s-agent.on .ag-rule{animation:ag-out var(--d) cubic-bezier(.2,.9,.3,1.2) var(--t) both,ag-bob 2.2s ease-in-out calc(var(--t) + .6s) infinite alternate}
+@keyframes ag-bob{to{translate:0 -8px}}
+#s-agent .ag-box .lid{transform-box:view-box;transform-origin:105px 60px}
+#s-agent.on .ag-box .lid{animation:ag-lid .5s ease-out var(--t) both}
+@keyframes ag-lid{0%{transform:none}40%{transform:translateY(-18px) rotate(-6deg)}100%{transform:none}}
+</style>
+
+<script>
+(() => {
+  const esc = t => String(t).replace(/[&<>]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
+  const K = (window.KIT && window.KIT.options) || {};
+  const opts = K.options || [];
+  const LBL = ["Ranked bar", "Deviation dots", "Slope", "Heat table", "Big number"];
+  const root = document.getElementById("s-agent");
+  const prompt = K.prompt || "I'm trying to show which job families are driving attrition. Can you give me 5 options I could pop into this exec's deck right now to fit this storyline?";
+  root.querySelector(".sent .pr").textContent = prompt;
+
+  // five option cards: real thumbnails + real headlines, cascading with rising pops while "five on-brand charts" is spoken
+  root.querySelector("#ag-opts").innerHTML = [0, 1, 2, 3, 4].map(i => {
+    const o = opts[i] || {}, t = 11.85 + i * .3;
+    return `<div class="optw a" data-sfx="pop" data-sfx-semi="${[0, 2, 4, 5, 7][i]}" style="--k:ag-card;--t:${t.toFixed(2)}s;--d:.45s">
+      <div class="opt"><div class="shot"><img src="assets/${o.file || `opt${i + 1}.png`}" alt=""></div>
+        <div class="meta"><div class="lb">${i + 1} · ${LBL[i]}</div><div class="hl"><span style="--t:${(13.45 + i * .12).toFixed(2)}s">${esc(o.headline || "")}</span></div></div>
+        <div class="ft"><span class="lint0 a" style="--k:stamp;--t:${(14.3 + i * .1).toFixed(2)}s;--d:.35s">✓ lint: 0 errors</span></div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // the prompt types fast (pure function of u)
+  const typed = root.querySelector("#ag-typed"), T0 = 8.75, T1 = 10.5;
+  let last = -1;
+
+  // Spark: actor box 220x240, feet at y = 203. Stand him on a floor G with y = G - 203 * s.
+  const foot = (G, s) => Math.round(G - 203 * s);
+  const SA = 1.3, GA = 960;                      // A: beside the playbook
+  const SB = .55;                                // B: the chat avatar, beside the reply
+  const SC = 1.4, GC = 1000;                     // C: at the toolkit
+  const spark = [
+    [0, {x: 1530, y: 1200, s: SA, pose: "stand", dark: true, snap: true}],
+    [4.35, {y: foot(GA, SA), pose: "wave", snap: false}],
+    [6.15, {y: foot(GA, SA) - 26}],
+    [6.4, {y: foot(GA, SA)}],
+    [7.7, {x: 92, y: 398, s: SB, pose: "stand", dark: false}],
+    [11.1, {pose: "think"}],
+    [13.1, {pose: "thumbs", y: 384}],
+    [13.35, {y: 398}],
+    [15.9, {pose: "wave"}],
+    [17.4, {x: -320, pose: "stand"}],
+    [18.1, {x: 2050, y: foot(GC, SC), s: SC, pose: "walk", walking: true, fx: -1, dark: true, snap: true}],
+  ];
+  const X0 = 2050, X1 = 1585, U0 = 18.15, U1 = 19.15;
+  for (let u = U0; u <= U1 + 1e-6; u += 1 / 30) {
+    const p = (u - U0) / (U1 - U0), e = 1 - Math.pow(1 - p, 1.6);
+    spark.push([+u.toFixed(3), {x: Math.round(X0 + (X1 - X0) * e)}]);
+  }
+  spark.push([U1 + .05, {x: X1, walking: false, pose: "read", snap: false}]);
+  spark.push([23.15, {pose: "thumbs", y: foot(GC, SC) - 30}]);
+  spark.push([23.4, {y: foot(GC, SC)}]);
+  for (let u = 23.9, k = 0; u < 27; u += .6, k++) spark.push([+u.toFixed(2), {y: k % 2 ? foot(GC, SC) : foot(GC, SC) - 12}]);
+
+  SCENES["s-agent"] = {
+    narrAt: .5,
+    spark,
+    clock: u => H(14, u < 7.5 ? 25 : u < 11.5 ? 26 : u < 17.5 ? 27 : u < 20.9 ? 28 : u < 23.1 ? 29 : 30),
+    sfx: [[T0, "type", {dur: T1 - T0}], [10.6, "send"], [11.1, "blip"], [14.3, "check"],
+          [18.25, "step"], [18.55, "step"], [18.85, "step"], [19.1, "step"], [23.15, "ding"], [23.2, "sparkle"]],
+    frame(u) {
+      const n = Math.round(Math.max(0, Math.min(1, (u - T0) / (T1 - T0))) * prompt.length);
+      if (n !== last) { typed.textContent = prompt.slice(0, n); last = n; }
+    },
+  };
+})();
+</script>

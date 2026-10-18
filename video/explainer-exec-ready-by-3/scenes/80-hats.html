@@ -1,0 +1,34 @@
+<section class="scene bg-white bg-dots" id="s-hats" data-min="12">
+  <!-- cue 0 (u .4): the question -->
+  <h2 class="cap md a" style="--k:left;--t:.4s;left:100px;top:110px;width:760px">Do you wear <span class="m">all three hats?</span></h2>
+  <!-- cues 1–3: one hat per line, stacking up on Sam -->
+  <div class="hrow a" data-sfx="pop" style="--k:right;--t:3.55s;left:1130px;top:300px"><span class="kick">💼 PPT</span><b>Consultant</b> before lunch?</div>
+  <div class="hrow a" data-sfx="pop" data-sfx-semi="3" style="--k:right;--t:5.36s;left:1130px;top:430px"><span class="kick" style="background:var(--teal)">&lt;/&gt; PY</span><b>Analyst</b> after lunch?</div>
+  <div class="hrow a" data-sfx="pop" data-sfx-semi="7" style="--k:right;--t:7.02s;left:1130px;top:560px"><span class="kick hk-ai">✦ AI</span><b>Agent wrangler</b> by&nbsp;3?</div>
+  <!-- cue 4 (u 9.2): the payoff -->
+  <div class="a payoff" data-sfx="stamp sparkle" style="--k:stamp;--t:9.2s;left:1080px;top:740px">
+    <span class="sticker">One kit. Every hat.</span></div>
+</section>
+<style>
+#s-hats .hrow{font-size:50px;line-height:1;color:var(--navy);white-space:nowrap;display:flex;align-items:center;gap:20px;font-weight:400}
+#s-hats .hrow b{font-weight:700}
+#s-hats .hrow .kick{font-size:26px;letter-spacing:.06em}
+#s-hats .hk-ai{background:linear-gradient(120deg,#D97757,#7B61FF 60%,#66C4FF);box-shadow:0 0 22px rgba(123,97,255,.45)}
+#s-hats .payoff .sticker{display:inline-block;font-size:84px;rotate:-3deg;padding:.18em .5em}
+/* the hat tower wobbles once all three are on */
+#stage:has(#s-hats.on) #sam.wobble svg .hat{transform-origin:150px 80px;animation:hatwob 1.1s ease-in-out infinite}
+@keyframes hatwob{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2.5deg)}}
+</style>
+<script>
+SCENES["s-hats"] = {
+  narrAt: .4,
+  sam: [[0, {x: 640, y: 1080 - 405 * 1.5, s: 1.5, mood: "happy", pose: "wave"}],
+        [3.55, {hats: 1, pose: "point", mood: "focus"}], [5.36, {hats: 2, mood: "happy", pose: "rest"}],
+        [7.02, {hats: 3, mood: "ooh", pose: "shrug"}], [9.2, {mood: "proud", pose: "cheer"}]],
+  spark: [[0, {x: 2000, y: 1080 - 203 * .8 - 10, s: .8, pose: "walk", walking: true, fx: -1}],
+          [7.02, {x: 1720}], [7.8, {pose: "wave", walking: false}], [9.2, {pose: "thumbs"}]],
+  sfx: [[3.55, "boing"], [5.36, "boing"], [7.02, "boing"]],
+  frame(u) { $("sam").classList.toggle("wobble", u >= 7.4); },
+  reset() { $("sam").classList.remove("wobble"); },
+};
+</script>

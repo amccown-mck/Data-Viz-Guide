@@ -1,0 +1,83 @@
+{
+  "note": "Real mv.lint output from mckviz (repo version). Data is synthetic. Cells ran in one namespace, in order, like a Jupyter kernel; nb_before.png is cell 1's figure saved as the inline backend shows it.",
+  "cells": {
+    "cell1_before": "import pandas as pd\nimport matplotlib.pyplot as plt\n\ndf = pd.read_csv(\"attrition_by_job_family.csv\")\ndf.plot.bar(x=\"job_family\", y=\"vol_attrition_pct\", figsize=(10, 5))\nplt.title(\"Attrition by job family\")\nplt.show()",
+    "cell2_kit": "import mckviz as mv; mv.use()                      # the one line: McKesson fonts, colors, style\n\ndf = df.sort_values(\"vol_attrition_pct\")\ntop, ent = df.tail(2), df.enterprise_rate_pct.iloc[0]\nfig, ax = plt.subplots(figsize=(10, 5.2))\nbars = ax.barh(df.job_family, df.vol_attrition_pct, height=0.67,\n               color=mv.highlight(df.job_family, focus=top.job_family))\nmv.label_bars(ax, bars, fmt=\"{:.1f}%\")\nax.axvline(ent, color=mv.colors.total, lw=0.75, ls=\"--\")\nax.text(ent, len(df) - 0.4, f\"Enterprise {ent}%\", ha=\"center\", fontsize=9,\n        color=mv.colors.annotation, backgroundcolor=\"white\")\nmv.clean_axes(ax, keep=(\"left\",), grid=None); ax.set_xticks([])\nfor t in ax.get_yticklabels():\n    if t.get_text() in set(top.job_family): t.set(fontweight=\"bold\", color=mv.colors.headline)\nmv.titles(fig, f\"Two frontline job families lose about 1 in {100 / top.vol_attrition_pct.mean():.0f} \"\n               f\"people a year, well above the {ent}% enterprise rate\", \"Voluntary attrition by job family, FY26 (%)\")\nmv.source(fig, \"Source: Synthetic HRIS data for illustration only; FY26, all job families\",\n          footnote=\"Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months\")",
+    "cell3_lint_and_save": "mv.lint(fig)                                   # house rules: 0 errors before it ships\nmv.save(fig, \"nb_after.png\", dpi=200)          # lays out headline, subtitle and source"
+  },
+  "draft": {
+    "what_is_missing": "Label-style headline with no finding or number, and no source line (mv.source omitted)",
+    "cell2_draft": "import mckviz as mv; mv.use()                      # the one line: McKesson fonts, colors, style\n\ndf = df.sort_values(\"vol_attrition_pct\")\ntop, ent = df.tail(2), df.enterprise_rate_pct.iloc[0]\nfig, ax = plt.subplots(figsize=(10, 5.2))\nbars = ax.barh(df.job_family, df.vol_attrition_pct, height=0.67,\n               color=mv.highlight(df.job_family, focus=top.job_family))\nmv.label_bars(ax, bars, fmt=\"{:.1f}%\")\nax.axvline(ent, color=mv.colors.total, lw=0.75, ls=\"--\")\nax.text(ent, len(df) - 0.4, f\"Enterprise {ent}%\", ha=\"center\", fontsize=9,\n        color=mv.colors.annotation, backgroundcolor=\"white\")\nmv.clean_axes(ax, keep=(\"left\",), grid=None); ax.set_xticks([])\nfor t in ax.get_yticklabels():\n    if t.get_text() in set(top.job_family): t.set(fontweight=\"bold\", color=mv.colors.headline)\nmv.titles(fig, \"Attrition by job family\", \"Voluntary attrition by job family, FY26 (%)\")",
+    "cell3_draft": "mv.lint(fig)",
+    "lint_printed": "ERROR  source: no \"Source:\" line (mv.source / pl_finish(source_text=...))\nWARN   headline: \"Attrition by job family\" reads like a label; state the finding as a sentence\nINFO   headline: no number in the headline; the best ones quantify the finding",
+    "findings": [
+      {
+        "level": "error",
+        "rule": "source",
+        "message": "no \"Source:\" line (mv.source / pl_finish(source_text=...))",
+        "printed": "ERROR  source: no \"Source:\" line (mv.source / pl_finish(source_text=...))"
+      },
+      {
+        "level": "warn",
+        "rule": "headline",
+        "message": "\"Attrition by job family\" reads like a label; state the finding as a sentence",
+        "printed": "WARN   headline: \"Attrition by job family\" reads like a label; state the finding as a sentence"
+      },
+      {
+        "level": "info",
+        "rule": "headline",
+        "message": "no number in the headline; the best ones quantify the finding",
+        "printed": "INFO   headline: no number in the headline; the best ones quantify the finding"
+      }
+    ],
+    "errors": 1
+  },
+  "final": {
+    "headline": "Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate",
+    "lint_printed": "lint: no findings",
+    "findings": [],
+    "errors": 0
+  },
+  "before_default_chart": {
+    "note": "mv.lint run on the default matplotlib figure from cell 1 (bonus)",
+    "findings": [
+      {
+        "level": "error",
+        "rule": "headline",
+        "message": "no headline: add an insight sentence (mv.titles / mv.pl_finish)",
+        "printed": "ERROR  headline: no headline: add an insight sentence (mv.titles / mv.pl_finish)"
+      },
+      {
+        "level": "error",
+        "rule": "subtitle",
+        "message": "no subtitle: state metric, unit, scope and period",
+        "printed": "ERROR  subtitle: no subtitle: state metric, unit, scope and period"
+      },
+      {
+        "level": "error",
+        "rule": "source",
+        "message": "no \"Source:\" line (mv.source / pl_finish(source_text=...))",
+        "printed": "ERROR  source: no \"Source:\" line (mv.source / pl_finish(source_text=...))"
+      },
+      {
+        "level": "warn",
+        "rule": "no-rotated-labels",
+        "message": "rotated tick labels; use horizontal bars or shorter labels",
+        "printed": "WARN   no-rotated-labels: rotated tick labels; use horizontal bars or shorter labels"
+      },
+      {
+        "level": "warn",
+        "rule": "palette",
+        "message": "colors not in tokens/tokens.json: #1F77B4 (use mv.colors / mv.CATEGORICAL)",
+        "printed": "WARN   palette: colors not in tokens/tokens.json: #1F77B4 (use mv.colors / mv.CATEGORICAL)"
+      },
+      {
+        "level": "info",
+        "rule": "direct-labels",
+        "message": "legend with 1 entries; label the series directly where labels fit",
+        "printed": "INFO   direct-labels: legend with 1 entries; label the series directly where labels fit"
+      }
+    ],
+    "errors": 3
+  }
+}

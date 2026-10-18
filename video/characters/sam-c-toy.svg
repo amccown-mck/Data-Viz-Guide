@@ -1,0 +1,139 @@
+<svg class="sam sam-c mood-neutral pose-rest" viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sam">
+<defs>
+<radialGradient id="sc-skin" cx="42%" cy="34%" r="70%"><stop offset="0" stop-color="#FAD3B6"/><stop offset=".6" stop-color="#EDB08A"/><stop offset="1" stop-color="#D88E68"/></radialGradient>
+<radialGradient id="sc-skinS" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#F8CBAA"/><stop offset="1" stop-color="#D99470"/></radialGradient>
+<radialGradient id="sc-hair" cx="40%" cy="22%" r="85%"><stop offset="0" stop-color="#5B3B3C"/><stop offset=".55" stop-color="#33222A"/><stop offset="1" stop-color="#1C1218"/></radialGradient>
+<linearGradient id="sc-cardi" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#2E8BC4"/><stop offset=".55" stop-color="#005A8C"/><stop offset="1" stop-color="#03466F"/></linearGradient>
+<linearGradient id="sc-sleeve" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2A86BE"/><stop offset=".6" stop-color="#005A8C"/><stop offset="1" stop-color="#044A74"/></linearGradient>
+<linearGradient id="sc-pants" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D3CFC4"/><stop offset="1" stop-color="#9E9A8F"/></linearGradient>
+<clipPath id="sc-rimclip"><rect x="168" y="0" width="140" height="180"/></clipPath>
+<clipPath id="sc-hairclip"><path d="M66 136 C60 60 104 30 150 30 C196 30 240 60 234 136 L238 206 C240 232 222 242 206 232 L194 224 L106 224 L94 232 C78 242 60 232 62 206 Z"/></clipPath>
+<linearGradient id="sc-shoe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAF79A"/><stop offset="1" stop-color="#B9D12E"/></linearGradient>
+<radialGradient id="sc-eye" cx="45%" cy="35%" r="70%"><stop offset="0" stop-color="#3A4E73"/><stop offset="1" stop-color="#0E1B33"/></radialGradient>
+<radialGradient id="sc-star" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#F5FFB0"/><stop offset="1" stop-color="#C8E02E"/></radialGradient>
+<radialGradient id="sc-nose" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#F7C6A4"/><stop offset="1" stop-color="#D98D68"/></radialGradient>
+<radialGradient id="sc-drop" cx="40%" cy="40%" r="70%"><stop offset="0" stop-color="#D9F2FF"/><stop offset="1" stop-color="#66C4FF"/></radialGradient>
+<linearGradient id="sc-lid" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EEF2F6"/><stop offset=".5" stop-color="#CDD5DE"/><stop offset="1" stop-color="#A9B4C1"/></linearGradient>
+<linearGradient id="sc-mug" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#F1EEE8"/><stop offset="1" stop-color="#D6D1C6"/></linearGradient>
+<linearGradient id="sc-desk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3F1EC"/><stop offset="1" stop-color="#DEDBD1"/></linearGradient>
+<filter id="sc-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+<filter id="sc-soft2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.5"/></filter>
+<filter id="sc-fx" x="-15%" y="-15%" width="135%" height="135%" color-interpolation-filters="sRGB">
+  <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="b"/><feOffset in="b" dx="0" dy="6" result="ob"/>
+  <feFlood class="shadow-flood" flood-color="#143359" flood-opacity=".22" result="fc"/>
+  <feComposite in="fc" in2="ob" operator="in" result="sh"/>
+  <feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge>
+</filter>
+<clipPath id="sc-headclip"><path d="M80 128 C80 74 110 58 150 58 C190 58 220 74 220 128 C220 180 194 206 150 206 C106 206 80 180 80 128 Z"/></clipPath>
+</defs>
+<style>
+.sam .hand-open{display:none}
+.sam.pose-wave .arm-l .hand-open,.sam.pose-shrug .hand-open{display:inline}
+.sam.pose-wave .arm-l .hand-fist,.sam.pose-shrug .hand-fist{display:none}
+.sam .m{display:none}
+.sam.mood-neutral .m-neutral,.sam.mood-happy .m-happy,.sam.mood-stressed .m-stressed,
+.sam.mood-ooh .m-ooh,.sam.mood-proud .m-proud,.sam.mood-focus .m-focus,.sam.mood-shrug .m-shrug{display:inline}
+.sam .prop{display:none}
+.sam.with-laptop .prop-laptop,.sam.with-coffee .prop-coffee{display:inline}
+.sam .head{transform-box:view-box;transform-origin:150px 210px}
+.sam.no-fx .body{filter:none}
+.sam.pose-shrug .head{transform:rotate(-6deg)}
+.sam.mood-ooh .head{transform:rotate(4deg) translateY(-2px)}
+.sam.mood-stressed .head{transform:translateY(3px)}
+.sam .arm-l{transform-box:view-box;transform-origin:106px 238px;transform:rotate(var(--lu));transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.sam .arm-l .fore{transform-box:view-box;transform-origin:106px 280px;transform:rotate(var(--lf));transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.sam .arm-r{transform-box:view-box;transform-origin:194px 238px;transform:rotate(var(--ru));transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.sam .arm-r .fore{transform-box:view-box;transform-origin:194px 280px;transform:rotate(var(--rf));transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.sam .prop-coffee{transform-box:view-box;transform-origin:194px 324px;transform:rotate(calc(-1 * (var(--ru) + var(--rf))))}
+.sam{--lu:14deg;--lf:-8deg;--ru:-14deg;--rf:8deg}
+.sam.pose-type{--lu:10.2deg;--lf:-52.3deg;--ru:-10.2deg;--rf:52.3deg}
+.sam.pose-coffee{--lu:14deg;--lf:-8deg;--ru:-50.6deg;--rf:117.4deg}
+.sam.pose-wave{--lu:150.8deg;--lf:1.7deg;--ru:-14deg;--rf:8deg}
+.sam.pose-shrug{--lu:47.2deg;--lf:109.8deg;--ru:-47.2deg;--rf:-109.8deg}
+.sam.pose-cheeks{--lu:115.1deg;--lf:111.6deg;--ru:-115.1deg;--rf:-111.6deg}
+.sam-c .rim{opacity:0} .sam-c.on-dark .rim{opacity:1}
+.sam-c.on-dark .shadow-flood{flood-color:#000;flood-opacity:.35}</style>
+<ellipse cx="150" cy="404" rx="80" ry="10" fill="#143359" opacity=".22" filter="url(#sc-soft)"/>
+<g class="body" filter="url(#sc-fx)">
+  <g class="legs">
+    <rect x="113" y="326" width="32" height="62" rx="14" fill="url(#sc-pants)"/>
+    <rect x="155" y="326" width="32" height="62" rx="14" fill="url(#sc-pants)"/>
+    <path d="M104 396 Q102 378 122 378 L140 378 Q150 378 150 390 L150 398 Q150 402 145 402 L109 402 Q104 402 104 396 Z" fill="url(#sc-shoe)"/>
+    <path d="M196 396 Q198 378 178 378 L160 378 Q150 378 150 390 L150 398 Q150 402 155 402 L191 402 Q196 402 196 396 Z" fill="url(#sc-shoe)"/>
+    <rect x="104" y="396" width="46" height="6" rx="3" fill="#fff"/><rect x="150" y="396" width="46" height="6" rx="3" fill="#fff"/>
+    <ellipse cx="118" cy="384" rx="7" ry="3" fill="#fff" opacity=".6"/><ellipse cx="182" cy="384" rx="7" ry="3" fill="#fff" opacity=".6"/>
+  </g>
+  <path class="hair-back" d="M66 136 C60 60 104 30 150 30 C196 30 240 60 234 136 L238 206 C240 232 222 242 206 232 L194 224 L106 224 L94 232 C78 242 60 232 62 206 Z" fill="url(#sc-hair)"/>
+  <rect x="134" y="186" width="32" height="36" rx="12" fill="#D38E6A"/>
+  <path class="torso" d="M118 212 L182 212 C200 214 208 226 209 242 L212 326 C212 338 206 344 196 344 L104 344 C94 344 88 338 88 326 L91 242 C92 226 100 214 118 212 Z" fill="url(#sc-cardi)"/>
+  <path d="M126 212 L150 262 L174 212 Z" fill="#F6F4EF"/>
+  <ellipse cx="150" cy="218" rx="22" ry="8" fill="#B87556" opacity=".55" filter="url(#sc-soft2)"/>
+  <path d="M150 262 L150 344" stroke="#03466F" stroke-width="3"/>
+  <circle cx="159" cy="282" r="4" fill="#EFEDE7"/><circle cx="159" cy="306" r="4" fill="#EFEDE7"/><circle cx="159" cy="330" r="4" fill="#EFEDE7"/>
+  <path d="M104 236 C100 260 100 300 102 330" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" opacity=".14"/>
+  <g class="head">
+    <circle cx="80" cy="146" r="14" fill="url(#sc-skinS)"/><circle cx="220" cy="146" r="14" fill="url(#sc-skinS)"/>
+    <path class="face" d="M80 128 C80 74 110 58 150 58 C190 58 220 74 220 128 C220 180 194 206 150 206 C106 206 80 180 80 128 Z" fill="url(#sc-skin)"/>
+    <g clip-path="url(#sc-headclip)"><path d="M96 100 C128 94 168 84 186 66 C206 86 218 108 226 136 L232 40 L70 40 Z" fill="#7A3E33" opacity=".35" filter="url(#sc-soft2)"/></g>
+    <ellipse cx="116" cy="102" rx="16" ry="6" fill="#fff" opacity=".0"/>
+    <g class="eyes m m-neutral m-happy"><ellipse cx="126" cy="142" rx="7.800000000000001" ry="9.6" fill="url(#sc-eye)"/><ellipse cx="128.6" cy="138.4" rx="2.8" ry="3.2" fill="#fff"/><circle cx="123.6" cy="146" r="1.3" fill="#fff" opacity=".8"/><ellipse cx="174" cy="142" rx="7.800000000000001" ry="9.6" fill="url(#sc-eye)"/><ellipse cx="176.6" cy="138.4" rx="2.8" ry="3.2" fill="#fff"/><circle cx="171.6" cy="146" r="1.3" fill="#fff" opacity=".8"/></g><g class="eyes m m-shrug"><ellipse cx="130" cy="141" rx="7.800000000000001" ry="9.6" fill="url(#sc-eye)"/><ellipse cx="132.6" cy="137.4" rx="2.8" ry="3.2" fill="#fff"/><circle cx="127.6" cy="145" r="1.3" fill="#fff" opacity=".8"/><ellipse cx="178" cy="141" rx="7.800000000000001" ry="9.6" fill="url(#sc-eye)"/><ellipse cx="180.6" cy="137.4" rx="2.8" ry="3.2" fill="#fff"/><circle cx="175.6" cy="145" r="1.3" fill="#fff" opacity=".8"/></g><g class="eyes m m-focus"><ellipse cx="126" cy="146" rx="7.0" ry="8.8" fill="url(#sc-eye)"/><ellipse cx="128.6" cy="142.4" rx="2.8" ry="3.2" fill="#fff"/><circle cx="123.6" cy="150" r="1.3" fill="#fff" opacity=".8"/><ellipse cx="174" cy="146" rx="7.0" ry="8.8" fill="url(#sc-eye)"/><ellipse cx="176.6" cy="142.4" rx="2.8" ry="3.2" fill="#fff"/><circle cx="171.6" cy="150" r="1.3" fill="#fff" opacity=".8"/></g><g class="eyes m m-stressed"><circle cx="126" cy="142" r="9.5" fill="#fff"/><circle cx="127" cy="145.5" r="4.2" fill="#143359"/><circle cx="128.2" cy="144.2" r="1.3" fill="#fff"/><path d="M118 157 Q126 161 134 157" fill="none" stroke="#D68F69" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /><circle cx="174" cy="142" r="9.5" fill="#fff"/><circle cx="175" cy="145.5" r="4.2" fill="#143359"/><circle cx="176.2" cy="144.2" r="1.3" fill="#fff"/><path d="M166 157 Q174 161 182 157" fill="none" stroke="#D68F69" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></g><g class="eyes m m-ooh"><path d="M126.0,128.5 L129.8,136.8 L138.8,137.8 L132.1,144.0 L133.9,152.9 L126.0,148.4 L118.1,152.9 L119.9,144.0 L113.2,137.8 L122.2,136.8 Z" fill="url(#sc-star)" stroke="#143359" stroke-width="2.4" stroke-linejoin="round"/><ellipse cx="123" cy="138" rx="2.4" ry="1.6" fill="#fff" opacity=".9"/><path d="M174.0,128.5 L177.8,136.8 L186.8,137.8 L180.1,144.0 L181.9,152.9 L174.0,148.4 L166.1,152.9 L167.9,144.0 L161.2,137.8 L170.2,136.8 Z" fill="url(#sc-star)" stroke="#143359" stroke-width="2.4" stroke-linejoin="round"/><ellipse cx="171" cy="138" rx="2.4" ry="1.6" fill="#fff" opacity=".9"/></g><g class="eyes m m-proud"><path d="M117 145 Q126 133 135 145" fill="none" stroke="#143359" stroke-width="5.3999999999999995" stroke-linecap="round" stroke-linejoin="round" /><path d="M165 145 Q174 133 183 145" fill="none" stroke="#143359" stroke-width="5.3999999999999995" stroke-linecap="round" stroke-linejoin="round" /></g><g class="cheeks m m-happy m-ooh m-proud m-neutral m-shrug m-focus"><ellipse cx="106" cy="170" rx="11" ry="6.5" fill="#F2836B" opacity="0.5"/><ellipse cx="194" cy="170" rx="11" ry="6.5" fill="#F2836B" opacity="0.5"/></g><ellipse cx="150" cy="158" rx="6" ry="4.4" fill="url(#sc-nose)"/><g class="mouth m m-neutral"><path d="M139 174 Q150 182 161 174" fill="none" stroke="#143359" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round" /></g><g class="mouth m m-focus"><path d="M142 177 Q150 179 156 176" fill="none" stroke="#143359" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round" /><path d="M154 177 q5 1 5 6 q-1 4 -5 2 z" fill="#F0806C"/></g><g class="mouth m m-happy"><path d="M137 171 Q150 172 163 171 Q161 187 150 187 Q139 187 137 171 Z" fill="#5E2230"/><path d="M143 183 Q150 178 157 183 Q150 188 143 183 Z" fill="#F0806C"/></g><g class="mouth m m-stressed"><path d="M136 179 q3.5 -5 7 0 t7 0 t7 0 t7 0" fill="none" stroke="#143359" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round" /></g><g class="mouth m m-ooh"><ellipse cx="150" cy="180" rx="8" ry="10" fill="#5E2230"/><ellipse cx="150" cy="186" rx="5" ry="3.2" fill="#F0806C"/></g><g class="mouth m m-proud"><path d="M131 168 Q150 170 169 168 Q167 192 150 192 Q133 192 131 168 Z" fill="#5E2230"/><path d="M134 169 Q150 171 166 169 L165 174 Q150 176 135 174 Z" fill="#fff"/><path d="M141 186 Q150 179 159 186 Q150 192 141 186 Z" fill="#F0806C"/></g><g class="mouth m m-shrug"><path d="M140 178 L156 175" fill="none" stroke="#143359" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round" /></g>
+    <g class="glasses" fill="none">
+      <rect x="104" y="123" width="44" height="38" rx="17" fill="#fff" fill-opacity=".14" stroke="#143359" stroke-width="5.5"/>
+      <rect x="152" y="123" width="44" height="38" rx="17" fill="#fff" fill-opacity=".14" stroke="#143359" stroke-width="5.5"/>
+      <path d="M147 139 Q150 135 153 139" stroke="#143359" stroke-width="5"/>
+      <path d="M104 136 L84 131 M196 136 L216 131" stroke="#143359" stroke-width="5" stroke-linecap="round"/>
+      <path d="M112 128 Q122 124 134 127" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>
+      <path d="M160 128 Q170 124 182 127" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>
+    </g>
+    <path class="hair-front" d="M78 142 C68 84 102 42 152 42 C202 42 234 78 225 136 C222 108 210 80 186 62 C166 80 130 86 100 92 C88 104 82 124 78 142 Z" fill="url(#sc-hair)"/>
+    <path d="M150 50 C172 50 192 58 204 72" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".14"/>
+    <path d="M160 52 C174 53 186 58 194 65" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".45"/>
+    <g class="rim" clip-path="url(#sc-rimclip)"><path d="M66 136 C60 60 104 30 150 30 C196 30 240 60 234 136 L238 206 C240 232 222 242 206 232 L194 224 L106 224 L94 232 C78 242 60 232 62 206 Z" clip-path="url(#sc-hairclip)" stroke="#66C4FF" stroke-width="7" fill="none" opacity=".45"/></g>
+    <g class="clip"><rect x="98" y="80" width="26" height="9" rx="4.5" fill="url(#sc-star)" transform="rotate(-24 111 84)"/><rect x="102" y="81" width="14" height="2.5" rx="1.2" fill="#fff" opacity=".7" transform="rotate(-24 111 84)"/></g>
+    <g class="brows m m-neutral m-focus"><path d="M110 110 Q122 103 136 106" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M164 106 Q178 103 190 110" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /></g><g class="brows m m-happy m-proud"><path d="M111 106 Q123 99 136 102" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M164 102 Q177 99 189 106" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /></g><g class="brows m m-stressed"><path d="M109 112 Q124 108 138 99" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M162 99 Q176 108 191 112" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /></g><g class="brows m m-ooh"><path d="M111 102 Q123 92 137 97" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M163 97 Q177 92 189 102" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /></g><g class="brows m m-shrug"><path d="M111 101 Q123 93 137 98" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M164 108 L190 108" fill="none" stroke="#2B1D22" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round" /></g>
+    <g class="fx-sweat m m-stressed"><path d="M214 92 C214 92 202 108 202 115 a12 12 0 0 0 24 0 C226 108 214 92 214 92 Z" fill="url(#sc-drop)"/><ellipse cx="209" cy="113" rx="3" ry="4.5" fill="#fff" opacity=".85"/></g><g class="fx-stress m m-stressed"><path d="M70 70 l-12 -10 M66 86 l-16 -2 M78 58 l-6 -14" fill="none" stroke="#EF8200" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></g><g class="fx-sparkles m m-ooh m-proud"><path d="M58,57 Q61.64,66.36 71,70 Q61.64,73.64 58,83 Q54.36,73.64 45,70 Q54.36,66.36 58,57 Z" fill="#D9F14E"/><path d="M242,42 Q246.48,53.519999999999996 258,58 Q246.48,62.480000000000004 242,74 Q237.52,62.480000000000004 226,58 Q237.52,53.519999999999996 242,42 Z" fill="#D9F14E"/><path d="M250,112 Q252.24,117.76 258,120 Q252.24,122.24 250,128 Q247.76,122.24 242,120 Q247.76,117.76 250,112 Z" fill="#D9F14E"/><path d="M72,109 Q73.96,114.04 79,116 Q73.96,117.96 72,123 Q70.04,117.96 65,116 Q70.04,114.04 72,109 Z" fill="#66C4FF"/></g>
+  </g>
+  <g class="arm arm-l">
+  <path d="M90.0,238 A16.0,16.0 0 0 1 122.0,238 L122.0,280 A16.0,16.0 0 0 1 90.0,280 Z" fill="url(#sc-sleeve)"/>
+  <g class="fore"><path d="M91.5,280 A14.5,14.5 0 0 1 120.5,280 L120.5,314 A14.5,14.5 0 0 1 91.5,314 Z" fill="url(#sc-sleeve)"/>
+    <rect x="91.5" y="302" width="29" height="11" rx="5.5" fill="#044A74"/>
+    <path d="M99 272 L99 298" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".18"/>
+    
+    <g class="hand-fist"><circle class="hand" cx="106" cy="324" r="13.5" fill="url(#sc-skinS)"/>
+    <ellipse cx="102" cy="319" rx="4.5" ry="3" fill="#fff" opacity=".35"/></g>
+    <g class="hand-open"><path d="M112 318 Q126 316 124 328 Q122 333 114 330 Z" fill="url(#sc-skinS)"/><path d="M95 316 Q94 344 106 344 Q118 344 117 316 Z" fill="url(#sc-skinS)"/><path d="M102 343 L102 335 M110 343 L110 335" stroke="#C98260" stroke-width="2.4" stroke-linecap="round"/></g>
+  </g></g>
+  <g class="arm arm-r">
+  <path d="M178.0,238 A16.0,16.0 0 0 1 210.0,238 L210.0,280 A16.0,16.0 0 0 1 178.0,280 Z" fill="url(#sc-sleeve)"/>
+  <g class="fore"><path d="M179.5,280 A14.5,14.5 0 0 1 208.5,280 L208.5,314 A14.5,14.5 0 0 1 179.5,314 Z" fill="url(#sc-sleeve)"/>
+    <rect x="179.5" y="302" width="29" height="11" rx="5.5" fill="#044A74"/>
+    <path d="M187 272 L187 298" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".18"/>
+    <g class="prop prop-coffee">
+    <g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".85" filter="url(#sc-soft2)">
+      <path d="M164 288 q-6 -8 0 -16 t0 -16"/><path d="M178 290 q-6 -8 0 -16 t0 -14"/></g>
+    <g fill="none" stroke="#B4B0A5" stroke-width="3" stroke-linecap="round" opacity=".7">
+      <path d="M164 288 q-6 -8 0 -16 t0 -16"/><path d="M178 290 q-6 -8 0 -16 t0 -14"/></g>
+    <path d="M186 308 q17 0 17 13 t-17 13" fill="none" stroke="#E4E0D8" stroke-width="7"/>
+    <rect x="152" y="296" width="38" height="46" rx="10" fill="url(#sc-mug)"/>
+    <rect x="152" y="309" width="38" height="12" fill="#D9F14E"/>
+    <ellipse cx="171" cy="299" rx="17" ry="4" fill="#6B4434"/>
+    <rect x="158" y="302" width="5" height="34" rx="2.5" fill="#fff" opacity=".8"/>
+  </g>
+    <g class="hand-fist"><circle class="hand" cx="194" cy="324" r="13.5" fill="url(#sc-skinS)"/>
+    <ellipse cx="190" cy="319" rx="4.5" ry="3" fill="#fff" opacity=".35"/></g>
+    <g class="hand-open"><path d="M188 318 Q174 316 176 328 Q178 333 186 330 Z" fill="url(#sc-skinS)"/><path d="M183 316 Q182 344 194 344 Q206 344 205 316 Z" fill="url(#sc-skinS)"/><path d="M190 343 L190 335 M198 343 L198 335" stroke="#C98260" stroke-width="2.4" stroke-linecap="round"/></g>
+  </g></g>
+  <g class="prop prop-laptop">
+  <rect x="0" y="352" width="300" height="68" fill="url(#sc-desk)"/>
+  <rect x="0" y="352" width="300" height="4" fill="#fff" opacity=".7"/>
+  <path d="M62 264 Q62 254 72 254 L228 254 Q238 254 238 264 L242 352 L58 352 Z" fill="url(#sc-lid)"/>
+  <path d="M72 260 L120 260" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+  <circle cx="150" cy="302" r="20" fill="#D9F14E"/>
+  <circle cx="150" cy="302" r="20" fill="url(#sc-star)" opacity=".6"/>
+  <path d="M141 311 v-8 M150 311 v-16 M159 311 v-11" stroke="#143359" stroke-width="4" stroke-linecap="round"/>
+  <rect x="42" y="346" width="216" height="12" rx="6" fill="#9DA8B5"/>
+  <rect x="50" y="347" width="200" height="3" rx="1.5" fill="#fff" opacity=".5"/>
+  <ellipse cx="150" cy="364" rx="104" ry="6" fill="#143359" opacity=".12" filter="url(#sc-soft2)"/>
+</g>
+</g>
+</svg>

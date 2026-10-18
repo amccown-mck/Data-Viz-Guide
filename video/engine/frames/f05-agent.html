@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>F05 Agent</title>
+<link rel="stylesheet" href="frames.css">
+<style>
+.term{font-size:22px;line-height:1.48;padding:22px 26px}
+.term .ln{white-space:pre}
+.term .ck{margin-top:6px}
+.term .ck b{font:700 22px LF,sans-serif}
+.term .cur{display:inline-block;width:.6em;height:1.1em;background:var(--sky);vertical-align:-.2em;margin-left:4px}
+.term .ck span{color:#fff}
+.term .det{padding-left:36px;color:#9fb0cc;white-space:pre}
+.term .gap{height:14px}
+.who2{display:flex;align-items:center;gap:12px;font-size:19px;color:var(--muted)}
+.who2 .av{width:34px;height:34px}
+.who2 b{color:var(--navy)}
+.rule{position:absolute;background:#fff;color:var(--navy);font-weight:600;font-size:22px;padding:10px 18px;border-radius:12px;
+  box-shadow:0 10px 26px rgba(0,0,0,.25);white-space:nowrap}
+.rule::before{content:"✓ ";color:var(--mck-green-base)}
+</style>
+</head>
+<body>
+<section class="frame bg-deep bg-dots">
+  <h1 class="cap md" style="left:80px;top:66px;width:1760px">Even the agent <span class="m">knows the rules.</span></h1>
+
+  <!-- task -->
+  <div class="card" style="left:80px;top:220px;width:440px">
+    <div class="lbl">Task · WI-2481</div>
+    <h3>Build the attrition section for the leadership dashboard</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+      <span class="chip blue">Workforce Innovation</span><span class="chip">Due today, 3:00</span></div>
+    <div class="who2" style="margin-top:18px">Assigned to <span class="av claude"></span><b>Claude</b></div>
+  </div>
+
+  <!-- pull request -->
+  <div class="card" style="left:80px;top:530px;width:440px;height:470px">
+    <div class="lbl">Pull request #142</div>
+    <h3 style="font-size:25px">Add attrition section: ranked bar, headline from data</h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+      <span class="chip go">● Ready for review</span><span class="chip">mv.lint: 0 errors</span></div>
+    <div class="shot" style="margin-top:16px;width:384px;aspect-ratio:16/9;border:1px solid var(--ui-line);border-radius:10px"><img data-src="../assets/opt1.png" alt=""></div>
+    <div class="who2" style="margin-top:14px"><span class="av claude"></span><b>Claude</b> opened · 3 files changed</div>
+  </div>
+
+  <!-- coding agent terminal -->
+  <div class="win dark" style="left:560px;top:220px;width:600px;height:780px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">Claude Code</span><span class="r mono" style="font-size:17px">~/leadership-dashboard</span></div>
+    <div class="term">
+      <div class="ln"><span class="pr">❯</span> Build the attrition section for the</div>
+      <div class="ln">  leadership dashboard</div>
+      <div class="gap"></div>
+      <div class="ln"><span class="tool">⏺ Read</span> <span class="fn">AGENTS.md</span></div>
+      <div class="ln"><span class="tool">⏺ Skill</span> <span class="fn">mck-chart</span></div>
+      <div class="ln dim">  question → chart → build → headline → QA</div>
+      <div class="gap"></div>
+      <div class="ck"><b>✓</b><span>Question</span></div>
+      <div class="det">Where is attrition concentrated?</div>
+      <div class="ck"><b>✓</b><span>Chart type</span></div>
+      <div class="det">Ranked bar · cookbook/bar.md</div>
+      <div class="ck"><b>✓</b><span>Build with tokens</span></div>
+      <div class="det">mv.highlight(), no hex values</div>
+      <div class="ck"><b>✓</b><span>Headline from data</span></div>
+      <div class="det">“…lose about 1 in 4 people a year”</div>
+      <div class="ck"><b>✓</b><span>QA: mv.lint</span></div>
+      <div class="det"><span style="color:var(--mck-mint-base)">0 errors</span> · checklist done</div>
+      <div class="gap"></div>
+      <div class="ln"><span class="tool">⏺</span> Opened PR #142 · <span style="color:var(--lime)">Ready for review</span></div>
+      <div class="gap"></div>
+      <div class="ln"><span class="pr">❯</span><span class="cur"></span></div>
+    </div>
+  </div>
+
+  <!-- rules floating out of the toolkit -->
+  <span class="rule" style="left:1210px;top:236px;rotate:-4deg">Insight headline</span>
+  <span class="rule" style="left:1500px;top:262px;rotate:3deg">Bars start at zero</span>
+  <span class="rule" style="left:1250px;top:330px;rotate:2deg">Source line</span>
+  <span class="rule" style="left:1470px;top:360px;rotate:-3deg">No group under 10</span>
+
+  <!-- mascot slot (420x520) + toolbox prop -->
+  <div class="slot" style="left:1200px;top:480px;width:420px;height:520px">mascot · 420×520</div>
+  <svg style="left:1630px;top:790px" width="210" height="210" viewBox="0 0 210 210" aria-label="mck-chart skill toolbox">
+    <ellipse cx="105" cy="202" rx="98" ry="8" fill="rgba(0,0,0,.25)"/>
+    <rect x="70" y="10" width="14" height="70" rx="3" fill="var(--sky)" transform="rotate(-12 77 45)"/>
+    <rect x="112" y="18" width="12" height="62" rx="3" fill="var(--teal)" transform="rotate(10 118 49)"/>
+    <path d="M70 62 v-22 a6 6 0 0 1 6-6 h58 a6 6 0 0 1 6 6 v22" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>
+    <rect x="8" y="58" width="194" height="40" rx="8" fill="var(--mck-azure-dark)"/>
+    <rect x="8" y="92" width="194" height="106" rx="10" fill="var(--blue)"/>
+    <rect x="8" y="92" width="194" height="10" fill="rgba(0,0,0,.18)"/>
+    <rect x="26" y="122" width="158" height="52" rx="8" fill="var(--lime)"/>
+    <text x="105" y="146" text-anchor="middle" font-family="LF" font-weight="700" font-size="20" fill="var(--navy)">mck-chart</text>
+    <text x="105" y="166" text-anchor="middle" font-family="LF" font-weight="600" font-size="15" fill="var(--navy)">skill</text>
+  </svg>
+</section>
+<script src="frames.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!-- The score's cue sheet: which music section plays at each story beat, and the hits that land on them.
+     Times are reference u (seconds into the scene, scratch-voice timing); c(id, i, d) = narration chunk i of scene id, plus d.
+     Sections are defined in SCORE (video/engine/shell.html). Hits: impact, thump, revcym {dur}, tension, downer, sting, sparkle. -->
+<script>
+(() => {
+  const c = (id, i, d = 0) => (SCENES[id]?.narrAt ?? .5) + ((window.REFCUES || {})[id]?.cues[i] ?? 0) + d;
+  const cue = (id, music, hits = []) => { if (SCENES[id]) Object.assign(SCENES[id], {music, hits}); };
+  const at = (id, name, dflt) => ((SCENES[id]?.music || []).find(m => m[1] === name) || [dflt])[0];
+
+  // Act 1: a calm Tuesday, then the ping
+  cue("s-hook", [[0, "intro"], [c("s-hook", 4, .3), "suspense"], [c("s-hook", 5), "pulse"]],
+                [[c("s-hook", 4, .3), "tension"]]);
+  cue("s-data", [[0, "pulse"]]);
+  cue("s-clean", [[0, "question"], [c("s-clean", 1), "lapse"], [c("s-clean", 3), "lull"]],
+                 [[c("s-clean", 1, -.6), "revcym", {dur: .6}], [c("s-clean", 3), "thump"], [c("s-clean", 4), "revcym", {dur: 2.4}]]);
+  // Act 2: the painful journey builds step by step, then deflates
+  cue("s-pain", [[0, "tense1"], [c("s-pain", 6), "tense2"], [c("s-pain", 8), "tense3"], [c("s-pain", 17), "tense4"], [c("s-pain", 19), "deflate"]],
+                [[c("s-pain", 0), "thump"], [c("s-pain", 6), "thump"], [c("s-pain", 8), "thump"], [c("s-pain", 17), "thump"],
+                 [c("s-pain", 18), "revcym", {dur: 1.4}], [c("s-pain", 19), "downer"]]);
+  cue("s-out", [[0, "doom"], [at("s-out", "hush", c("s-out", 3)), "hush"]], [[0, "tension"]]);
+  // Act 3: take two. Hope, a drum roll, and the drop on the title
+  const drop = at("s-turn", "power", c("s-turn", 2));
+  cue("s-turn", [[0, "hope"], [c("s-turn", 1), "build"], [drop, "power"]], [[drop, "impact"], [c("s-turn", 6), "sparkle"]]);
+  cue("s-consult", [[0, "biz"]]);
+  cue("s-notebook", [[0, "tech"]], [[c("s-notebook", 3), "sparkle"], [c("s-notebook", 6), "sting"]]);
+  cue("s-agent", [[0, "ai"]], [[c("s-agent", 4), "thump"], [c("s-agent", 5), "impact"]]);
+  // the brand swap modulates up with every brand, goes dark, then lands home
+  cue("s-wall", [[0, "wall0"], [c("s-wall", 2), "wallup"], [c("s-wall", 3), "wall1"], [c("s-wall", 4), "wall2"], [c("s-wall", 5), "wall3"],
+                 [c("s-wall", 6), "dark"], [16.35, "power"]],
+                [[c("s-wall", 1), "sparkle"], [c("s-wall", 3), "impact"], [c("s-wall", 4), "thump"], [c("s-wall", 5), "thump"], [c("s-wall", 6), "downer"], [16.35, "impact"]]);
+  cue("s-hats", [[0, "bounce"]], [[c("s-hats", 4), "sting"]]);
+  cue("s-sent", [[0, "triumph"]], [[c("s-sent", 0), "impact"], [c("s-sent", 2), "sparkle"]]);
+  // Act 4: the why, the question, and the finale
+  cue("s-why", [[0, "why"], [c("s-why", 3), "kit"], [c("s-why", 8), "why"], [c("s-why", 9), "whyswell"]],
+               [[c("s-why", 2), "sparkle"], [c("s-why", 3, -1), "revcym", {dur: 1}], [c("s-why", 9), "thump"]]);
+  cue("s-close", [[0, "closeq"], [c("s-close", 2), "imagine"], [c("s-close", 3), "finale"]],
+                 [[c("s-close", 3, -1), "revcym", {dur: 1}], [c("s-close", 3), "impact"]]);
+})();
+</script>

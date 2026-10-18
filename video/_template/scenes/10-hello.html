@@ -1,0 +1,21 @@
+<!-- The smallest scene that builds. Copy it, rename the file (NN-name.html, filename order = play order) and the id (s-…).
+     Everything is a pure function of time: --t is seconds into the scene, --k the entrance keyframe. See ../../engine/CONTRACT.md. -->
+<section class="scene bg-sand" id="s-hello" data-min="6">
+  <h2 class="cap a" data-sfx="whoosh" style="--k:slam;--t:.4;left:120px;top:140px;width:1400px">Hello from the <span class="m">video kit</span>.</h2>
+  <p class="a" style="--k:up;--t:1.6;left:120px;top:330px;width:1000px;font-size:40px;color:var(--mck-text-primary)">
+    One file per scene. The narration (<code>audio/lines.tsv</code>) sets the beats, the engine does the rest.
+  </p>
+  <div class="sticker a" data-sfx="stamp" style="--k:stamp;--t:3;left:900px;top:640px">build · review · export</div>
+</section>
+<style>
+  #s-hello code{font-family:Mono,monospace;font-size:34px}   /* always scope your CSS under #<scene-id> */
+</style>
+<script>
+SCENES["s-hello"] = {
+  sam:   [[0, {x: 1480, y: 520, s: .9, mood: "happy", pose: "wave"}], [3, {mood: "proud", pose: "cheer"}]],
+  spark: [[1.6, {x: 1300, y: 760, s: 1, pose: "wave"}]],
+  clock: u => H(14, 7),      // the story clock, minutes after midnight; null to hide it
+  narrAt: .5,                // when this scene's voiceover starts (fill audio/lines.tsv, then run voice/make_scratch.py)
+  sfx:   [[1.6, "pop"]],
+};
+</script>

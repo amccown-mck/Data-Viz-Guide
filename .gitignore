@@ -238,3 +238,29 @@ dist/office/*-Official.pptx
 
 # macOS Finder
 .DS_Store
+
+# Video kit (video/): generated builds, renders, voice intermediates, exports and local tooling.
+# Source stays tracked: engine, scenes, lines.tsv, the final *.voice.m4a clips, chart assets, characters, voice scripts.
+video/*/explainer.html
+video/*/preview-*.html
+video/*/narration.js
+video/*/stills/
+video/*/audio/chunks/
+video/*/audio/samples/
+video/*/audio/*.m4a
+!video/*/audio/*.voice.m4a
+video/*/audio/timings-scratch.json
+video/*/assets/raw/
+video/*/assets/_nbwork/
+video/*/tokenwall/still-*.png
+video/engine/frames/png/
+video/characters/*.png
+video/characters/*.html
+video/voice/.tts/
+video/archive/
+# contact sheets and exports (the export is manual, from Chrome; the mp4 is over GitHub's file limit)
+video/**/*-sheet.png
+*.mp4
+*.webm
+*.mov
+video/**/*.wav

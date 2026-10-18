@@ -1,0 +1,44 @@
+<section class="scene bg-deep" id="s-close" data-min="20">
+  <!-- cue 0 (u .6) + cue 1 (u 3.75): the question, then a long hold to sit with it -->
+  <p class="cap inv a x" style="--t:.6s;--t2:7.5s;--k2:xfade;left:150px;top:190px;width:1700px;font-size:84px;font-weight:600">What problem have you always<br>wanted to solve,</p>
+  <p class="cap inv a x" style="--t:3.75s;--t2:7.55s;--k2:xfade;left:150px;top:440px;width:1700px;font-size:84px;font-weight:600">but never had <span style="color:var(--lime)">the time</span>, or <span style="color:var(--lime)">the patience</span>?</p>
+  <!-- cue 2 (u 7.71): imagine -->
+  <h2 class="cap xl inv a" data-sfx="sparkle" style="--k:pop;--t:7.71s;left:0;width:1920px;top:250px;font-size:130px;text-align:center;white-space:nowrap">Imagine what <span style="color:var(--lime)">you</span> could build.</h2>
+  <!-- cue 3 (u 10.13): the closing line (?close=a|b|c|d to compare options) -->
+  <div class="a" data-sfx="stamp powerup" style="--k:stamp;--t:10.13s;left:0;width:1920px;top:520px;text-align:center"><span class="sticker" id="close-line" style="font-size:96px;display:inline-block;rotate:-2deg">Make the thing you wish existed.</span></div>
+  <!-- the play-out: confetti, a dance, and the name -->
+  <div class="confetti" id="close-confetti" style="left:0;top:0;width:1920px;height:1080px"></div>
+  <p class="a" data-sfx="whoosh" style="--k:up;--t:13.2s;left:0;width:1920px;top:800px;text-align:center;font-size:58px;font-weight:700;color:#fff;letter-spacing:-.01em">Data Viz Starter Kit</p>
+  <p class="a" style="--k:fade;--t:13.8s;left:0;width:1920px;top:880px;text-align:center"><span class="kick" style="background:transparent;border:2px solid var(--sky);color:var(--sky);font-size:24px">McKesson Edition · v1.1</span></p>
+</section>
+<style>
+#s-close .confetti{pointer-events:none;overflow:hidden}
+#s-close .confetti i{position:absolute;top:-40px;width:16px;height:26px;border-radius:3px;opacity:0}
+#s-close.on .confetti i{animation:cf-fall var(--d) cubic-bezier(.3,.1,.6,1) var(--t) both}
+@keyframes cf-fall{0%{opacity:1;transform:translate(0,0) rotate(var(--r))}100%{opacity:1;transform:translate(var(--dx),1180px) rotate(calc(var(--r) + 540deg))}}
+</style>
+<script>
+(() => {
+  // Closing-line options to compare (the narration's last chunk should match the one picked).
+  const CLOSE = {a: "Now go build it.", b: "Build what matters.", c: "Make the thing you wish existed.", d: "Your turn."};
+  const k = new URLSearchParams(location.search).get("close");
+  if (CLOSE[k]) document.getElementById("close-line").textContent = CLOSE[k];
+})();
+(() => {   // confetti: seekable CSS (each piece has its own --t, so the engine re-times it with the voice)
+  const box = document.getElementById("close-confetti"), cols = ["#D9F14E", "#66C4FF", "#FFFFFF", "#00AF9D", "#D97757", "#7B61FF"];
+  let h = "";
+  for (let i = 0; i < 70; i++) {
+    const x = (i * 137.5) % 1920, d = 2.6 + (i * 7 % 10) / 6, t = 10.13 + (i % 14) * .09 + (i > 34 ? 3.2 : 0), r = (i * 53) % 360;
+    h += `<i style="left:${x.toFixed(0)}px;--t:${t.toFixed(2)}s;--d:${d.toFixed(2)}s;--r:${r}deg;--dx:${((i * 29) % 200) - 100}px;background:${cols[i % cols.length]}"></i>`;
+  }
+  box.innerHTML = h;
+})();
+const DANCE = [];   // a little dance through the play-out, two beats per move
+for (let i = 0; i < 16; i++) DANCE.push([10.13 + i * 1.07, i % 2 ? {pose: "wave", mood: "happy"} : {pose: "cheer", mood: "proud"}]);
+SCENES["s-close"] = {
+  narrAt: .6,
+  sam: [[0, {x: 50, y: 1080 - 405 * 1, s: 1, mood: "ooh", pose: "rest", dark: true}], [7.71, {mood: "happy", pose: "cheeks"}], ...DANCE],
+  spark: [[0, {x: 1600, y: 1080 - 203 * 1.05 - 14, s: 1.05, pose: "think", dark: true}], [7.71, {pose: "wave"}],
+          ...DANCE.map(([u, d], i) => [u + .535, {pose: i % 2 ? "thumbs" : "wave"}])],
+};
+</script>

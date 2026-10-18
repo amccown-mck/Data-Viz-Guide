@@ -1,0 +1,103 @@
+<section class="scene bg-deep bg-dots" id="s-clean" data-min="12.8">
+  <!-- u = narrAt (.4) + cue. Voice: c0 .4 "So how will Sam spend the next fifty-three minutes? (53 min ≈ 2.1)"
+       c1 4.05 "First (4.1), twelve minutes of cleanup (4.8). Fine (6.5). That's the job (7.1)."
+       c2 8.56 "Now (8.6), the hard part (9.2):" · c3 10.28 "making it (10.3) say something (10.9)."
+       Small sheet geometry (stage px): rn 70–126 · A 126–506 · B 506–696 · C 696–906 · D 906–1126 · E 1126–1246 (1296 once widened);
+       column letters 248–288; row r starts at y = 288 + (r − 1) × 52. -->
+
+  <!-- 1 · the question card (0 → 4.05) -->
+  <span class="kick lime a x" style="--k:pop;--t:.25s;--d:.35s;--t2:4.0s;--k2:xcut;--d2:.01s;left:124px;top:250px">Quick question</span>
+  <h2 class="cap xl inv cl-q a x" data-sfx="whoosh" style="--k:up;--t:.45s;--d:.45s;--t2:4.0s;--k2:xcut;--d2:.01s;left:120px;top:350px;width:1300px">How will Sam spend the&nbsp;next</h2>
+  <h2 class="cap xl inv a x" data-sfx="stamp" style="--k:slam;--t:2.1s;--d:.45s;--t2:4.0s;--k2:xcut;--d2:.01s;left:120px;top:620px"><span class="m">53 minutes</span>?</h2>
+
+  <!-- 2 · the time-lapse (4.05 → 8.5) -->
+  <div class="cl-prog a x" style="--k:cl-in;--t:4.05s;--d:.05s;--t2:8.5s;--k2:xcut;--d2:.01s;left:70px;top:58px;width:1300px">
+    <div class="lb"><span>⏩ Cleaning data</span><b>12 min</b></div>
+    <div class="tr"><i style="--t:4.1s;--d:2.3s"></i></div>
+  </div>
+  <div class="win cl-sheet a x" data-sfx="whoosh" style="--k:up;--t:4.05s;--d:.35s;--t2:8.5s;--k2:xcut;--d2:.01s;left:70px;top:200px;width:1300px;height:620px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">attrition_export_FINAL.xlsx</span></div>
+    <table class="grid cl-g">
+      <colgroup><col style="width:56px"><col style="width:380px"><col style="width:190px"><col style="width:210px"><col style="width:220px"><col class="ecol"><col></colgroup>
+      <tr class="cl"><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+      <tr><th>1</th><td>job_family</td><td>headcount</td><td>vol_attrition</td><td>enterprise_rate</td><td>as_of</td><td></td></tr>
+      <tr><th>2</th><td>Pharmacy Technician</td><td class="hc tx"><b>6200</b><em>6,200</em></td><td class="pc"><b>27.4</b><em>27.4%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr><th>3</th><td>Distribution Center Assoc</td><td class="hc tx"><b>5400</b><em>5,400</em></td><td class="pc"><b>24.1</b><em>24.1%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr><th>4</th><td>Customer Care</td><td class="hc tx"><b>3100</b><em class="m3a">3,100</em><em class="m3b">3,510</em></td><td class="pc"><b>0.189</b><em class="m3a">18.9%</em><em class="m3b">19.2%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr class="dup"><th>5</th><td>Cust. Care</td><td class="hc tx"><b>410</b><em>410</em></td><td class="pc"><b>0.212</b><em>21.2%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr><th class="rn">6</th><td>Specialty Nursing</td><td class="hc num"><b>1400</b><em>1,400</em></td><td class="pc"><b>14.2</b><em>14.2%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr><th class="rn">7</th><td>Sales</td><td class="hc tx"><b>2300</b><em>2,300</em></td><td class="pc"><b>10.6</b><em>10.6%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr><th class="rn">8</th><td>Software Engineering</td><td class="hc num"><b>2600</b><em>2,600</em></td><td class="pc"><b>9.8</b><em>9.8%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr><th class="rn">9</th><td>HR</td><td class="hc tx"><b>700</b><em>700</em></td><td class="pc"><b>8.1</b><em>8.1%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr><th class="rn">10</th><td>Finance</td><td class="hc tx"><b>1200</b><em>1,200</em></td><td class="pc"><b>7.4%</b><em>7.4%</em></td><td class="n">19.9%</td><td class="as"><b>######</b><em>9/30/2026</em></td><td></td></tr>
+      <tr><th class="rn">11</th><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+  </div>
+  <!-- each fix flashes its cells -->
+  <i class="cl-fl a" data-sfx="check" style="--k:cl-flash;--t:4.55s;--d:.45s;left:506px;top:340px;width:190px;height:468px"></i>
+  <i class="cl-fl a" data-sfx="check" style="--k:cl-flash;--t:5.05s;--d:.45s;left:696px;top:340px;width:210px;height:468px"></i>
+  <i class="cl-fl a" data-sfx="check" style="--k:cl-flash;--t:5.55s;--d:.45s;left:126px;top:444px;width:1120px;height:104px"></i>
+  <i class="cl-fl a" data-sfx="check" style="--k:cl-flash;--t:6.05s;--d:.45s;left:1126px;top:340px;width:170px;height:468px"></i>
+  <p class="sticker cl-ok a x" data-sfx="stamp" style="--k:stamp;--t:6.5s;--d:.4s;--t2:8.5s;--k2:xcut;--d2:.01s;left:360px;top:400px">✓ Data ready</p>
+
+  <!-- 3 · the hard part (8.56 →) -->
+  <h2 class="cap xl inv a" data-sfx="whoosh" style="--k:slam;--t:8.56s;--d:.45s;left:120px;top:250px">Now, the hard&nbsp;part:</h2>
+  <h2 class="cap xl inv a" style="--k:up;--t:10.28s;--d:.4s;left:120px;top:395px">making it</h2>
+  <h2 class="cap xl a" data-sfx="pop" style="--k:cl-wipe;--t:10.85s;--d:.5s;left:120px;top:530px"><span class="m">say something.</span></h2>
+</section>
+<style>
+  @keyframes cl-in{0%{opacity:0}1%,100%{opacity:1}}
+  @keyframes cl-wipe{0%{opacity:0;clip-path:inset(-40px 100% -40px -40px)}1%{opacity:1}to{opacity:1;clip-path:inset(-40px -40px -40px -40px)}}
+  @keyframes cl-flash{0%{opacity:0}25%{opacity:.6}100%{opacity:0}}
+  #s-clean .cl-prog .lb{display:flex;align-items:baseline;justify-content:space-between;color:#fff;font-size:40px;font-weight:700}
+  #s-clean .cl-prog .lb b{color:var(--lime);font-family:Mono,monospace;font-weight:400;font-size:40px}
+  #s-clean .cl-prog .tr{margin-top:14px;height:24px;border-radius:12px;background:rgba(255,255,255,.14);overflow:hidden}
+  #s-clean .cl-prog .tr i{display:block;height:100%;background:var(--lime);border-radius:12px;transform-origin:left;transform:scaleX(0)}
+  #s-clean.on .cl-prog .tr i{animation:cl-fill var(--d) linear var(--t) both}
+  @keyframes cl-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  #s-clean .cl-sheet>.tb{background:#1E7145;border-color:#1E7145;font-size:21px}
+  #s-clean .cl-sheet>.tb i{background:rgba(255,255,255,.4)}
+  #s-clean .cl-sheet>.tb .t{color:#fff;font-weight:600}
+  #s-clean .cl-g{table-layout:fixed;width:1300px;font-size:26px}
+  #s-clean .cl-g td,#s-clean .cl-g th{height:52px;padding:0 12px;position:relative;overflow:hidden}
+  #s-clean .cl-g th{font-size:22px}
+  #s-clean .cl-g tr.cl th{height:40px}
+  #s-clean .cl-g .ecol{width:120px}
+  #s-clean .cl-g td em{font-style:normal;display:none}
+  #s-clean .cl-g td b{font-weight:400}
+  #s-clean .cl-g .hc,#s-clean .cl-g .pc,#s-clean .cl-g .as{text-align:right}
+  #s-clean .cl-g .hc.tx{text-align:left}
+  #s-clean .cl-g .hc.tx::before{content:"";position:absolute;left:0;top:0;border-top:12px solid #1E9C55;border-right:12px solid transparent}
+  #s-clean .cl-g .as{padding:0 8px}
+  /* fixes, switched on by frame(u) */
+  #s-clean .s1 .hc b{display:none}#s-clean .s1 .hc em{display:inline}#s-clean .s1 .cl-g .hc.tx{text-align:right}#s-clean .s1 .cl-g .hc.tx::before{display:none}
+  #s-clean .s2 .pc b{display:none}#s-clean .s2 .pc em{display:inline}
+  #s-clean :not(.s3)>table .m3b,#s-clean .s3 .m3a{display:none!important}
+  #s-clean .s3 .dup{display:none}
+  #s-clean .s3 .rn{font-size:0}#s-clean .s3 .rn::after{content:attr(data-n);font-size:22px}
+  #s-clean .s4 .ecol{width:170px}#s-clean .s4 .as b{display:none}#s-clean .s4 .as em{display:inline}
+  #s-clean .cl-fl{background:var(--lime);mix-blend-mode:multiply;border-radius:6px}
+  #s-clean .cl-ok{font-size:110px;rotate:-6deg;z-index:3}
+</style>
+<script>
+(() => {
+  // once the duplicate row goes, rows below renumber
+  document.querySelectorAll("#s-clean .cl-g th.rn").forEach(th => th.dataset.n = +th.textContent - 1);
+  const FIX = [4.55, 5.05, 5.55, 6.05];        // text → numbers, % format, merge duplicate, widen as_of
+  const T0 = 4.1, T1 = 6.4;                     // the clock races 2:08 → 2:19
+  SCENES["s-clean"] = {
+    sam: [[0, {x: 1450, y: 1040 - 405 * 1.3, s: 1.3, mood: "neutral", pose: "rest", props: [], dark: true, snap: true}],
+          [4.05, {x: 1460, y: 1080 - 420 * 1.2, s: 1.2, mood: "focus", pose: "type", props: ["laptop"], snap: false}],
+          [6.5, {mood: "shrug", pose: "shrug"}],
+          [8.56, {x: 1450, y: 1040 - 405 * 1.3, s: 1.3, mood: "focus", pose: "rest", props: [], snap: true}],
+          [8.7, {snap: false}]],
+    clock: u => u < T0 ? H(14, 8) : u < T1 ? H(14, 8 + Math.floor((u - T0) / (T1 - T0) * 11)) : H(14, 19),
+    sfx: [[4.1, "ticktock", {dur: 2.3}]],
+    narrAt: .4,
+    frame(u) {
+      const el = document.querySelector("#s-clean .cl-sheet");
+      if (el) FIX.forEach((t, i) => el.classList.toggle("s" + (i + 1), u >= t));
+    },
+  };
+})();
+</script>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>F04 Notebook</title>
+<link rel="stylesheet" href="frames.css">
+<style>
+.cell{grid-template-columns:64px 1fr}
+.cell .in{font-size:24px;line-height:1.42}
+.narrow .cell .in{font-size:19px}
+.fold{display:inline-block;margin-top:4px;font:18px Mono,monospace;color:#6e7781;background:#EEF0F3;border-radius:6px;padding:2px 10px}
+.sub{margin:0;font-size:36px;line-height:1.3;color:var(--text)}
+.sub code{font-family:Mono,monospace;font-size:.92em;color:var(--navy);background:#fff;border-radius:6px;padding:0 .25em}
+.lintout{display:flex;flex-direction:column;gap:6px;font-size:22px}
+.lintout .big{font:700 46px LF,sans-serif;margin:6px 0 4px;color:var(--mck-green-dark);display:flex;align-items:center;gap:12px}
+.lintout .big i{font-style:normal;width:54px;height:54px;border-radius:50%;background:var(--mck-green-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px}
+.thumbsent{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-top:12px;background:#fff}
+.react{position:absolute;right:-14px;bottom:-18px;background:#fff;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,.15);padding:2px 10px;font-size:24px}
+</style>
+</head>
+<body>
+
+<!-- A · default matplotlib -->
+<section class="frame bg-sand bg-dots">
+  <div class="win" style="left:80px;top:80px;width:1120px;height:920px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">attrition.ipynb</span></div>
+    <div class="nb-tb"><i></i><i></i><i></i><span style="margin-left:8px">▶ Run all</span><span class="k">Python 3.12</span></div>
+    <div class="nb">
+      <div class="cell on"><div class="p">[1]:</div><div class="in code" data-cell="cell1_before"></div>
+        <div class="out"><div class="shot" style="width:880px;aspect-ratio:16/9"><img data-src="../assets/nb_before.png" alt=""></div></div></div>
+    </div>
+  </div>
+  <span class="kick" style="left:1270px;top:300px">Cell 1</span>
+  <h1 class="cap md" style="left:1270px;top:380px;width:580px">Plain <span class="m">matplotlib.</span></h1>
+  <p class="sub" style="left:1270px;top:600px;width:560px">“Attrition by job family.” Legend. Sideways labels. No story.</p>
+</section>
+
+<!-- B · one line -->
+<section class="frame bg-sand bg-dots">
+  <div class="win" style="left:80px;top:80px;width:1120px;height:920px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">attrition.ipynb</span></div>
+    <div class="nb-tb"><i></i><i></i><i></i><span style="margin-left:8px">▶ Run all</span><span class="k">Python 3.12</span></div>
+    <div class="nb">
+      <div class="cell on"><div class="p">[2]:</div><div class="in code" data-cell="cell2_kit" data-lines="5" data-mark="mv.use()"></div>
+        <div class="out"><div class="shot" style="width:880px;aspect-ratio:16/9"><img data-src="../assets/nb_after.png" alt=""></div></div></div>
+    </div>
+  </div>
+  <span class="kick" style="left:1270px;top:300px">Cell 2</span>
+  <h1 class="cap xl" style="left:1270px;top:380px;width:580px">One <span class="m">line.</span></h1>
+  <p class="sub" style="left:1270px;top:540px;width:560px"><code>mv.use()</code> sets the fonts, colors and house style. The helpers label it and write the&nbsp;headline.</p>
+</section>
+
+<!-- C · lint + share -->
+<section class="frame bg-sand bg-dots">
+  <div class="win narrow" style="left:80px;top:80px;width:1000px;height:920px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">attrition.ipynb</span></div>
+    <div class="nb-tb"><i></i><i></i><i></i><span style="margin-left:8px">▶ Run all</span><span class="k">Python 3.12</span></div>
+    <div class="nb">
+      <div class="cell"><div class="p">[2]:</div><div class="out" style="margin-top:0"><div class="shot" style="width:800px;aspect-ratio:16/9"><img data-src="../assets/nb_after.png" alt=""></div></div></div>
+      <div class="cell on"><div class="p">[3]:</div><div class="in code" data-cell="cell3_lint_and_save"></div>
+        <div class="out lintout">
+          <div class="big"><i>✓</i>0 errors</div>
+          <div class="mono" id="lintline" style="color:#57606a">lint: no findings</div>
+          <div class="mono" style="color:#57606a">saved attrition.png · 1920×1080</div>
+        </div></div>
+    </div>
+  </div>
+  <h1 class="cap" style="left:1130px;top:80px;width:710px"><span class="m">Share-ready.</span></h1>
+  <div class="win" style="left:1130px;top:250px;width:710px;height:750px">
+    <div class="chat-hd"><span class="av">DR</span><div><b>Dana R.</b><span>VP, Operations</span></div><span class="mono" style="margin-left:auto;font-size:20px;color:var(--muted)">2:43 PM</span></div>
+    <div class="msgs">
+      <div class="row me"><div class="bub me" style="width:560px;position:relative">Here's where attrition is concentrated 👇
+        <div class="thumbsent"><img data-src="../assets/nb_after.png" alt="" style="width:100%;height:100%;object-fit:contain;display:block"></div>
+        <span class="react">🙌</span></div></div>
+      <div class="row"><span class="av" style="width:44px;height:44px;font-size:17px">DR</span><div class="bub them">This is exactly what I needed. Using it at&nbsp;3!</div></div>
+    </div>
+    <div class="composer">Message Dana R.<span class="send">↑</span></div>
+  </div>
+</section>
+
+<!-- B-alt · literally one line: same default plot, plus mv.use() (nb_one_line.png) -->
+<section class="frame bg-sand bg-dots">
+  <div class="win" style="left:80px;top:80px;width:1120px;height:920px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">attrition.ipynb</span></div>
+    <div class="nb-tb"><i></i><i></i><i></i><span style="margin-left:8px">▶ Run all</span><span class="k">Python 3.12</span></div>
+    <div class="nb">
+      <div class="cell on"><div class="p">[1]:</div><div class="in code" data-cell="oneline" data-mark="mv.use()"></div>
+        <div class="out"><div class="shot" style="width:780px;aspect-ratio:16/9"><img data-src="../assets/nb_one_line.png" alt=""></div></div></div>
+    </div>
+  </div>
+  <span class="kick" style="left:1270px;top:300px">Cell 1, again</span>
+  <h1 class="cap xl" style="left:1270px;top:380px;width:580px">One <span class="m">line.</span></h1>
+  <p class="sub" style="left:1270px;top:540px;width:560px">Add <code>mv.use()</code>. Same plot, now in McKesson fonts and&nbsp;colors.</p>
+</section>
+
+<script src="frames.js"></script>
+<script>
+const FALLBACK={
+  cell1_before:'import pandas as pd\nimport matplotlib.pyplot as plt\n\ndf = pd.read_csv("attrition_by_job_family.csv")\ndf.plot.bar(x="job_family", y="vol_attrition_pct", figsize=(10, 5))\nplt.title("Attrition by job family")\nplt.show()',
+  cell2_kit:'import mckviz as mv; mv.use()   # the one line: McKesson fonts, colors, style\n\ndf = df.sort_values("vol_attrition_pct")\ntop, ent = df.tail(2), df.enterprise_rate_pct.iloc[0]\nfig, ax = plt.subplots(figsize=(10, 5.2))\nbars = ax.barh(df.job_family, df.vol_attrition_pct)\nmv.titles(fig, headline, subtitle)\nmv.source(fig, "Source: ...")',
+  cell3_lint_and_save:'mv.lint(fig)                   # house rules: 0 errors before it ships\nmv.save(fig, "attrition.png", dpi=200)'
+};
+(async()=>{
+  const j=await loadJSON("../assets/nb_lint.json");
+  const cells=Object.assign({},FALLBACK,(j&&j.cells)||{});
+  cells.oneline="import mckviz as mv; mv.use()\n"+cells.cell1_before.replace(/^import pandas as pd\n/,"import pandas as pd\n");
+  document.querySelectorAll("[data-cell]").forEach(el=>{
+    let code=cells[el.dataset.cell]||"";
+    // the notebook saves to a friendlier name in the video
+    code=code.replace('"nb_after.png"','"attrition.png"');
+    let lines=code.split("\n"), more=0;
+    const n=+el.dataset.lines||0;
+    if(n&&lines.length>n){more=lines.length-n;lines=lines.slice(0,n);}
+    let html=pyHL(lines.join("\n"));
+    if(el.dataset.mark==="mv.use()") html=html.replace('mv.<span class="tk-f">use</span>()','<span class="m">mv.use()</span>');
+    el.innerHTML=html+(more?`\n<span class="fold">⋯ ${more} more lines</span>`:"");
+  });
+  if(j&&j.final&&j.final.lint_printed) document.getElementById("lintline").textContent=j.final.lint_printed;
+})();
+</script>
+</body>
+</html>

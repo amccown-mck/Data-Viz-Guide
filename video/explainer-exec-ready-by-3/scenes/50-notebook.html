@@ -1,0 +1,245 @@
+<section class="scene bg-sand bg-dots" id="s-notebook" data-min="24">
+  <span class="kick a" data-sfx="whoosh" style="--k:slam;--t:.05s;left:60px;top:40px">&lt;/&gt; If you're the technical type</span>
+
+  <!-- ===== cue 0: three tools, one look ===== -->
+  <h2 class="cap md a x" style="--k:up;--t:.45s;--t2:5.9s;--k2:xwhipL;--d2:.45s;left:80px;top:150px;width:1500px">More the <span class="m">technical</span> type?</h2>
+  <div class="fc-tools a x" style="--k:cut;--t:0s;--t2:5.95s;--k2:xwhipL;--d2:.45s;left:80px;top:320px;width:1760px;height:400px">
+    <div class="fc-card" style="--t0:.9s;--t1:2.0s">
+      <div class="fc-hd"><b>Python</b><span>forecast.ipynb</span></div>
+      <div class="fc-code"><span class="tk-k">import</span> mckviz <span class="tk-k">as</span> mv
+<span class="fc-hi">mv.<span class="tk-f">use</span>()</span></div>
+      <div class="fc-ft">one line</div>
+    </div>
+    <div class="fc-card" style="--t0:1.0s;--t1:2.85s">
+      <div class="fc-hd"><b>R</b><span>forecast.R</span></div>
+      <div class="fc-code"><span class="tk-f">source</span>(<span class="tk-s">"dist/r/theme_mck.R"</span>)
+<span class="tk-f">ggplot</span>(df, <span class="tk-f">aes</span>(q, rate)) +
+  <span class="tk-f">geom_line</span>() + <span class="fc-hi"><span class="tk-f">theme_mck</span>()</span></div>
+      <div class="fc-ft">one function</div>
+    </div>
+    <div class="fc-card" style="--t0:1.1s;--t1:3.4s">
+      <div class="fc-hd"><b>Power BI</b><span>View › Themes › Browse</span></div>
+      <div class="fc-code fc-json">{ <span class="tk-s">"name"</span>: <span class="fc-hi"><span class="tk-s">"McKesson Data Viz"</span></span>,
+  <span class="tk-s">"dataColors"</span>: [
+    <i style="background:#005A8C"></i><span class="tk-s">"#005A8C"</span>, <i style="background:#143359"></i><span class="tk-s">"#143359"</span>,
+    <i style="background:#009EFF"></i><span class="tk-s">"#009EFF"</span>, … ] }</div>
+      <div class="fc-ft">one import</div>
+    </div>
+  </div>
+  <span class="sticker a x" data-sfx="stamp" style="--k:stamp;--t:4.45s;--t2:5.9s;--k2:xwhipL;--d2:.45s;left:80px;top:812px;font-size:46px">We've got you too.</span>
+
+  <!-- ===== cue 1 to 5: the notebook ===== -->
+  <div class="fc-shell a x" data-sfx="whoosh" style="--k:whipR;--t:5.95s;--d:.55s;--t2:19.85s;--k2:xwhipL;--d2:.4s;left:50px;top:120px;width:1240px;height:940px">
+    <div class="win fc-win">
+      <div class="tb"><i></i><i></i><i></i><span class="t">attrition_forecast.ipynb</span></div>
+      <div class="nb-tb"><i></i><i></i><i></i><span style="margin-left:8px">▶ Run all</span><span class="k">Python 3.12</span></div>
+      <div class="nb">
+        <div class="fc-view"><div class="fc-scroll fc-s1" style="--t:8.05s"><div class="fc-scroll fc-s2" style="--t:12.35s"><div class="fc-scroll fc-s3" style="--t:17.4s">
+
+          <!-- [1] the model -->
+          <div class="cell on fc-c1">
+            <div class="p"><span class="a x" style="--k:cut;--t:0s;--t2:6.6s;--k2:xcut;--d2:.01s">[ ]:</span><span class="a x" style="--k:fade;--d:.01s;--t:6.6s;--t2:7.15s;--k2:xcut;--d2:.01s">[*]:</span><span class="a" style="--k:fade;--d:.01s;--t:7.15s">[1]:</span></div>
+            <div class="in code" data-fc="c1"></div>
+            <div class="out fc-table a" data-sfx="pop" style="--k:up;--t:7.15s;--d:.35s" data-fc="c1out"></div>
+          </div>
+
+          <!-- [2] the default chart, then + mv.use() -->
+          <div class="cell on fc-c2 a" style="--k:fade;--t:7.9s;--d:.2s">
+            <div class="p"><span class="a x" style="--k:cut;--t:0s;--t2:8.3s;--k2:xcut;--d2:.01s">[ ]:</span><span class="a x" style="--k:fade;--d:.01s;--t:8.3s;--t2:8.6s;--k2:xcut;--d2:.01s">[*]:</span><span class="a x" style="--k:fade;--d:.01s;--t:8.6s;--t2:11.15s;--k2:xcut;--d2:.01s">[2]:</span><span class="a x" style="--k:fade;--d:.01s;--t:11.15s;--t2:11.35s;--k2:xcut;--d2:.01s">[*]:</span><span class="a" style="--k:fade;--d:.01s;--t:11.35s">[3]:</span></div>
+            <div class="in code"><div class="fc-nl" style="--t:10.45s"><span class="type" data-sfx="type" style="--t:10.5s;--d:.55s"><span class="tk-k">import</span> mckviz <span class="tk-k">as</span> mv; <span class="fc-usem" style="--t:11.1s">mv.<span class="tk-f">use</span>()</span></span></div><span data-fc="c2"></span></div>
+            <div class="out"><div class="fc-shot fc-o2">
+              <img class="a" src="assets/fc_before.png" alt="" style="--k:fcSnap;--t:8.6s;--d:.45s">
+              <img class="a fc-top" src="assets/fc_one_line.png" alt="" style="--k:fcSnap;--t:11.35s;--d:.5s">
+              <i class="fc-flash a" style="--k:fcFlash;--t:11.32s;--d:.45s"></i>
+              <span class="sticker navy fc-tag a x" data-sfx="pop" style="--k:pop;--t:9.0s;--d:.35s;--t2:10.4s;--k2:xfade;left:540px;top:-6px">generic title</span>
+              <span class="sticker navy fc-tag a x" data-sfx="pop" data-sfx-semi="3" style="--k:pop;--t:9.25s;--d:.35s;--t2:10.4s;--k2:xfade;left:600px;top:120px">legend box</span>
+              <span class="sticker navy fc-tag a x" data-sfx="pop" data-sfx-semi="6" style="--k:pop;--t:9.5s;--d:.35s;--t2:10.4s;--k2:xfade;left:120px;top:322px">sideways labels</span>
+            </div></div>
+          </div>
+
+          <!-- [3] the helpers -->
+          <div class="cell on fc-c3 a" style="--k:fade;--t:12.3s;--d:.2s">
+            <div class="p"><span class="a x" style="--k:cut;--t:0s;--t2:12.6s;--k2:xcut;--d2:.01s">[ ]:</span><span class="a x" style="--k:fade;--d:.01s;--t:12.6s;--t2:12.85s;--k2:xcut;--d2:.01s">[*]:</span><span class="a" style="--k:fade;--d:.01s;--t:12.85s">[4]:</span></div>
+            <div class="in code" data-fc="c3"></div>
+            <div class="out"><div class="fc-shot fc-o3">
+              <img class="a" src="assets/fc_after.png" alt="" style="--k:fcSnap;--t:12.85s;--d:.5s">
+              <i class="fc-flash a" style="--k:fcFlash;--t:12.82s;--d:.45s"></i>
+              <i class="fc-box a x" data-sfx="sparkle" style="--k:pop;--t:13.4s;--d:.35s;--t2:17.4s;--k2:xfade;left:704px;top:303px;width:140px;height:34px"></i>
+              <span class="sticker fc-tag a x" style="--k:pop;--t:13.45s;--d:.35s;--t2:17.4s;--k2:xfade;left:716px;top:344px">estimate</span>
+              <i class="fc-box a x" data-sfx="sparkle" style="--k:pop;--t:14.7s;--d:.35s;--t2:17.4s;--k2:xfade;left:510px;top:240px;width:190px;height:106px"></i>
+              <span class="sticker fc-tag a x" style="--k:pop;--t:14.75s;--d:.35s;--t2:17.4s;--k2:xfade;left:560px;top:186px">range</span>
+              <i class="fc-box a x" data-sfx="sparkle" style="--k:pop;--t:15.8s;--d:.35s;--t2:17.4s;--k2:xfade;left:12px;top:14px;width:498px;height:70px"></i>
+              <span class="sticker fc-tag a x" style="--k:pop;--t:15.85s;--d:.35s;--t2:17.4s;--k2:xfade;left:524px;top:30px">headline</span>
+            </div></div>
+          </div>
+
+          <!-- [4] lint -->
+          <div class="cell on fc-c4 a" style="--k:fade;--t:17.45s;--d:.2s">
+            <div class="p"><span class="a x" style="--k:cut;--t:0s;--t2:17.95s;--k2:xcut;--d2:.01s">[ ]:</span><span class="a x" style="--k:fade;--d:.01s;--t:17.95s;--t2:18.15s;--k2:xcut;--d2:.01s">[*]:</span><span class="a" style="--k:fade;--d:.01s;--t:18.15s">[5]:</span></div>
+            <div class="in code"><span class="type" data-sfx="type" style="--t:17.6s;--d:.3s">mv.<span class="tk-f">lint</span>(fig)</span></div>
+            <div class="out fc-lint">
+              <div class="fc-big a" data-sfx="check" style="--k:pop;--t:18.15s;--d:.4s"><i>✓</i>0 errors<span class="re" data-fc="lintline"></span></div>
+            </div>
+          </div>
+
+        </div></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- right column, beat by beat -->
+  <h2 class="cap md a x" style="--k:up;--t:6.1s;--t2:7.95s;--d2:.15s;left:1320px;top:240px;width:560px">Great <span class="m">model.</span></h2>
+  <p class="fc-sub a x" style="--k:fade;--t:6.5s;--t2:7.95s;--d2:.15s;left:1322px;top:370px;width:540px">Trend, seasonality and an 80%&nbsp;interval.</p>
+
+  <h2 class="cap md a x" data-sfx="scratch" style="--k:slam;--t:8.9s;--t2:10.35s;--d2:.15s;left:1320px;top:240px;width:560px">Great model.<br><span class="m">Meh chart.</span></h2>
+
+  <h2 class="cap xl a x" data-sfx="stamp" style="--k:slam;--t:10.5s;--t2:12.3s;--d2:.15s;left:1320px;top:230px;width:560px">One <span class="m">line.</span></h2>
+  <p class="fc-sub a x" style="--k:up;--t:10.8s;--t2:12.3s;--d2:.15s;left:1322px;top:400px;width:540px"><code>mv.use()</code> = McKesson fonts, colors and house&nbsp;style</p>
+
+  <h2 class="cap sm a x" style="--k:up;--t:12.45s;--t2:17.35s;--d2:.15s;left:1320px;top:230px;width:560px">The helpers do <span class="m">the&nbsp;rest.</span></h2>
+  <div class="fc-rows a x" style="--k:cut;--t:12.4s;--t2:17.35s;--k2:xfade;--d2:.15s;left:1320px;top:420px;width:560px">
+    <div class="fc-row a" style="--k:left;--t:13.4s;--d:.4s"><i>✓</i><span>Estimate, <b>labelled</b></span></div>
+    <div class="fc-row a" style="--k:left;--t:14.7s;--d:.4s"><i>✓</i><span>Range, <b>shown</b></span></div>
+    <div class="fc-row a" style="--k:left;--t:15.8s;--d:.4s"><i>✓</i><span>Headline, <b>from the numbers</b></span></div>
+  </div>
+
+  <h2 class="cap sm a x" style="--k:up;--t:17.5s;--t2:19.85s;--k2:xwhipR;--d2:.4s;left:1320px;top:230px;width:560px">Checked against the <span class="m">house rules.</span></h2>
+  <div class="fc-rules a x" style="--k:cut;--t:17.5s;--t2:19.85s;--k2:xwhipR;--d2:.4s;left:1320px;top:470px;width:560px">
+    <span class="a" style="--k:pop;--t:18.2s;--d:.3s">✓ headline</span><span class="a" style="--k:pop;--t:18.32s;--d:.3s">✓ subtitle</span>
+    <span class="a" style="--k:pop;--t:18.44s;--d:.3s">✓ source line</span><span class="a" style="--k:pop;--t:18.56s;--d:.3s">✓ house colors</span>
+    <span class="a" style="--k:pop;--t:18.68s;--d:.3s">✓ direct labels</span><span class="a" style="--k:pop;--t:18.8s;--d:.3s">✓ text size</span>
+  </div>
+
+  <!-- ===== cue 6: the finished chart, large ===== -->
+  <div class="fc-final a" data-sfx="zoom" style="--k:zoom;--t:19.95s;--d:.55s;left:60px;top:150px;width:1290px">
+    <img src="assets/fc_after.png" alt="Attrition should keep falling, to about 15% by FY28, but even the best case misses the 12% goal">
+  </div>
+  <span class="sticker a" data-sfx="stamp" style="--k:stamp;--t:20.05s;left:1400px;top:200px;font-size:40px">No custom code.</span>
+  <span class="sticker a" data-sfx="stamp" style="--k:stamp;--t:21.3s;left:1400px;top:290px;font-size:40px">No fiddling.</span>
+  <h2 class="cap a" style="--k:up;--t:22.3s;left:1400px;top:420px;width:480px;font-size:58px;line-height:1.08">A forecast decision makers <span class="m">actually&nbsp;get.</span></h2>
+</section>
+<style>
+/* cue 0: the tool cards */
+#s-notebook .fc-tools{display:flex;gap:40px}
+#s-notebook .fc-card{flex:1;display:flex;flex-direction:column;background:#0F1B2E;border-radius:18px;box-shadow:var(--shadow);
+  padding:0 0 26px;overflow:hidden;opacity:0;outline:5px solid transparent;outline-offset:4px}
+#s-notebook.on .fc-card{animation:fcCardIn .45s cubic-bezier(.2,.9,.3,1.2) var(--t0) both,fcCardLit .35s ease-out var(--t1) forwards}
+@keyframes fcCardIn{from{opacity:0;transform:translateY(60px)}to{opacity:.32;transform:scale(.96)}}
+@keyframes fcCardLit{from{opacity:.32;transform:scale(.96)}60%{transform:scale(1.04)}to{opacity:1;transform:translateY(-10px);outline-color:var(--lime)}}
+#s-notebook .fc-hd{display:flex;align-items:baseline;gap:16px;padding:22px 28px 18px;background:#16243B;border-bottom:1px solid #22324d}
+#s-notebook .fc-hd b{font-size:40px;color:#fff;font-weight:700}
+#s-notebook .fc-hd span{font-size:22px;color:#8ea0bd;margin-left:auto;white-space:nowrap}
+#s-notebook .fc-code{flex:1;font:26px/1.5 Mono,monospace;color:#d6deeb;white-space:pre;padding:24px 28px 0}
+#s-notebook .fc-code .tk-k{color:#ff7b72}#s-notebook .fc-code .tk-f{color:#d2a8ff}#s-notebook .fc-code .tk-s{color:#a5d6ff}
+#s-notebook .fc-json{font-size:23px}
+#s-notebook .fc-json i{display:inline-block;width:16px;height:16px;margin-right:6px;vertical-align:-1px;border:1px solid rgba(255,255,255,.35)}
+#s-notebook .fc-hi{background:rgba(204,255,0,.16);box-shadow:0 0 0 3px rgba(204,255,0,.16);border-radius:5px}
+#s-notebook .fc-ft{margin:0 28px;align-self:flex-start;font-size:26px;font-weight:700;color:var(--navy);background:var(--lime);border-radius:30px;padding:6px 18px}
+
+/* the notebook */
+#s-notebook .fc-shell{display:flex}
+#s-notebook .fc-win{width:100%;height:100%}
+#s-notebook .fc-view{flex:1;min-height:0;overflow:hidden}
+#s-notebook .fc-scroll{display:flex;flex-direction:column;gap:18px}
+#s-notebook.on .fc-s1{animation:fcS1 .55s cubic-bezier(.6,0,.2,1) var(--t) both}
+#s-notebook.on .fc-s2{animation:fcS2 .55s cubic-bezier(.6,0,.2,1) var(--t) both}
+#s-notebook.on .fc-s3{animation:fcS3 .45s cubic-bezier(.6,0,.2,1) var(--t) both}
+@keyframes fcS1{from{transform:none}to{transform:translateY(-398px)}}
+@keyframes fcS2{from{transform:none}to{transform:translateY(-813px)}}
+@keyframes fcS3{from{transform:none}to{transform:translateY(-158px)}}
+#s-notebook .cell{grid-template-columns:64px 1fr;flex:none}
+#s-notebook .cell .p{position:relative}
+#s-notebook .cell .p>span{position:absolute;right:0;top:14px}
+#s-notebook .cell .in{font-size:22px;line-height:1.38;padding:12px 18px;overflow:hidden}
+#s-notebook .fc-c1{height:380px}
+#s-notebook .fc-c2{height:795px}
+#s-notebook .fc-c3{height:730px}
+#s-notebook .fc-table{white-space:pre;font-size:22px;line-height:1.3;color:#24292f;background:#fff;border-left:4px solid var(--mck-green-base);padding:4px 14px;width:max-content}
+#s-notebook .fc-nl{height:0;overflow:hidden}
+#s-notebook.on .fc-nl{animation:fcLine .25s ease-out var(--t) both}
+@keyframes fcLine{from{height:0}to{height:1.38em}}
+#s-notebook .fc-usem,#s-notebook .fc-mark{border-radius:5px}
+#s-notebook.on .fc-usem,#s-notebook.on .fc-mark{animation:fcMark .3s ease-out var(--t) both}
+@keyframes fcMark{from{background:transparent;box-shadow:none}to{background:var(--lime);box-shadow:0 0 0 3px var(--lime)}}
+#s-notebook .fc-usem .tk-f,#s-notebook .fc-mark .tk-f{color:inherit}
+#s-notebook .fc-fold{display:inline-block;font:20px Mono,monospace;color:#57606a;background:#EEF0F3;border-radius:6px;padding:0 10px}
+#s-notebook .fc-shot{position:relative;width:860px;background:#fff}
+#s-notebook .fc-o2{width:840px;height:482px}
+#s-notebook .fc-o3{height:566px}
+#s-notebook .fc-shot img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;object-position:left top}
+#s-notebook .fc-shot .fc-flash{position:absolute;inset:0;background:#fff;box-shadow:inset 0 0 0 6px var(--lime)}
+@keyframes fcFlash{0%{opacity:0}25%{opacity:.95}100%{opacity:0}}
+@keyframes fcSnap{0%{opacity:0;transform:scale(.92)}45%{opacity:1;transform:scale(1.035)}100%{opacity:1;transform:none}}
+#s-notebook .fc-tag{position:absolute;font-size:24px;font-family:LF,sans-serif;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+#s-notebook .fc-box{position:absolute;border:4px solid var(--lime);border-radius:9px;box-shadow:0 0 0 3px rgba(20,51,89,.85),0 8px 22px rgba(20,51,89,.25)}
+#s-notebook .fc-lint{margin-top:8px}
+#s-notebook .fc-big{font:700 50px LF,sans-serif;color:var(--mck-green-dark);display:flex;align-items:center;gap:14px;height:70px}
+#s-notebook .fc-big i{font-style:normal;width:52px;height:52px;border-radius:50%;background:var(--mck-green-base);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px}
+#s-notebook .fc-big .re{font:400 22px Mono,monospace;color:#57606a;margin-left:18px}
+
+/* right column */
+#s-notebook .fc-sub{font-size:36px;line-height:1.3;color:var(--text);font-weight:400}
+#s-notebook .fc-sub code{font-family:Mono,monospace;font-size:.95em;color:var(--navy);background:#fff;border-radius:6px;padding:0 .25em}
+#s-notebook .fc-rows{display:flex;flex-direction:column;gap:26px}
+#s-notebook .fc-row{display:flex;align-items:center;gap:18px;font-size:38px;color:var(--navy)}
+#s-notebook .fc-row i{flex:none;font-style:normal;width:54px;height:54px;border-radius:50%;background:var(--lime);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700}
+#s-notebook .fc-rows b{font-weight:700}
+#s-notebook .fc-rules{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#s-notebook .fc-rules span{font-size:30px;font-weight:600;color:var(--mck-green-dark);background:#fff;border-radius:40px;padding:10px 20px;box-shadow:0 6px 16px rgba(11,50,102,.10)}
+
+/* the finale */
+#s-notebook .fc-final{background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+#s-notebook .fc-final img{display:block;width:100%}
+</style>
+<script>
+addEventListener("DOMContentLoaded", () => {
+  const sc = document.getElementById("s-notebook"); if (!sc) return;
+  // From assets/fc_lint.json (made by assets/make_forecast.py); inlined because the build only ships options + nb into KIT.
+  const FC = (window.KIT && KIT.fc) || {
+    cells: {
+      cell1_model: "import pandas as pd\nfrom attrition_model import TrendSeasonal          # your great model\n\ndf = pd.read_csv(\"attrition_quarterly.csv\")       # FY22-FY26 actuals\nmodel = TrendSeasonal(seasonal=4).fit(df.rate)\nfc = model.forecast(steps=8, interval=0.80)       # FY27-FY28\nfc.tail(3).round(1)",
+      cell2_before: "import matplotlib.pyplot as plt\n\nplt.figure(figsize=(10, 4.4))\nplt.plot(df.quarter, df.rate, label=\"actual\")\nplt.plot(fc.quarter, fc[\"mean\"], label=\"forecast\")\nplt.fill_between(fc.quarter, fc.lower, fc.upper, alpha=0.3, label=\"80% PI\")\nplt.xticks(rotation=90); plt.legend(); plt.title(\"Attrition forecast\")\nplt.show()",
+      cell3_shown: {
+        estimate: "mv.label_line_ends(ax, fmt=\"{:.1f}%\")",
+        range: "mv.callout(ax, (27, hi), \"80% range\", f\"{pct(lo)}–{pct(hi)}\", xytext=(6, 14), arrow=False)",
+        headline: "mv.titles(fig, f\"Attrition should keep falling, to about {pct(end, 0)} by FY28, \"",
+      },
+      cell3_lines: 27,
+    },
+    model_output: "   quarter   t  mean  lower  upper\n6  FY28 Q2  25  16.3   15.2   17.3\n7  FY28 Q3  26  15.3   14.2   16.4\n8  FY28 Q4  27  14.7   13.5   15.8",
+    after: {lint_printed: "lint: no findings"},
+  };
+  const put = (k, html) => sc.querySelectorAll(`[data-fc="${k}"]`).forEach(e => e.innerHTML = html);
+  const c = FC.cells;
+  put("c1", pyHL(c.cell1_model));
+  put("c1out", esc(FC.model_output));
+  put("c2", pyHL(c.cell2_before));
+  // cell 3: the plotting lines fold away; the three helper lines light up as the narration names them
+  const when = {estimate: 13.4, range: 14.7, headline: 15.8};
+  const shown = ["estimate", "range", "headline"];
+  put("c3", `<span class="fc-fold">⋯ ${c.cell3_lines - shown.length} lines: actuals solid, estimate dashed, range shaded, in house colors</span>\n` +
+    shown.map(k => pyHL(c.cell3_shown[k]).replace(/mv\.<span class="tk-f">(\w+)<\/span>/,
+      m => `<span class="fc-mark" style="--t:${when[k]}s">${m}</span>`)).join("\n"));
+  put("lintline", esc(FC.after.lint_printed));
+});
+SCENES["s-notebook"] = {
+  sam: [
+    [0, {x: 1690, y: 858, s: .5, mood: "happy", pose: "wave", props: []}],
+    [2.0, {mood: "proud", pose: "rest"}],
+    [6.0, {mood: "focus", pose: "type", props: ["laptop"]}],
+    [8.9, {mood: "deadpan"}],
+    [10.5, {mood: "focus"}],
+    [11.4, {mood: "ooh", pose: "cheeks", props: []}],
+    [12.7, {mood: "happy", pose: "type", props: ["laptop"]}],
+    [18.15, {mood: "proud", pose: "rest", props: []}],
+    [20.0, {x: 1660, y: 809, s: .62, mood: "proud", pose: "rest"}],
+    [22.3, {mood: "happy", pose: "cheer"}],
+  ],
+  clock: u => H(14, 17 + Math.min(7, Math.floor(u / 3.3))),
+  sfx: [[2.0, "pop"], [2.85, "pop", {semi: 3}], [3.4, "pop", {semi: 7}],
+        [6.6, "blip"], [8.3, "blip"], [8.6, "pop"], [11.15, "blip"], [11.35, "snap"],
+        [12.6, "blip"], [12.85, "pop"], [17.95, "blip"],
+        [18.2, "tick"], [18.32, "tick"], [18.44, "tick"], [18.56, "tick"], [18.68, "tick"], [18.8, "tick"]],
+  narrAt: .5,
+};
+</script>

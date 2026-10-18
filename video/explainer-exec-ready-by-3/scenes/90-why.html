@@ -1,0 +1,62 @@
+<section class="scene bg-navy" id="s-why" data-min="44">
+  <!-- Cues (narrAt .6): c0 .6 always wanted · c1 3.86 before AI · c2 7.96 so I built it · c3 11.30 what's in the kit?
+       c4 14.01 a guide · c5 19.29 templates · c6 25.28 code libraries · c7 32.14 agents · c8 36.82 rebuilt every time · c9 40.81 built once -->
+
+  <!-- ① the why -->
+  <p class="cap inv a x" style="--t:.7s;--t2:7.75s;--k2:xfade;left:130px;top:200px;font-size:92px">I always wanted something like this.</p>
+  <p class="cap inv a x" style="--t:3.86s;--t2:7.8s;--k2:xfade;left:130px;top:360px;font-size:76px;font-weight:600"><span style="color:var(--lime)">Before AI,</span> I never had the time.</p>
+  <p class="a x" style="--k:pop;--t:5.9s;--t2:7.85s;--k2:xfade;left:130px;top:490px;font-size:56px;font-style:italic;color:var(--sky);rotate:-2deg">(Or, honestly, the patience.)</p>
+  <p class="cap inv a x" style="--t:7.96s;--t2:11.1s;--k2:xfade;left:130px;top:250px;font-size:96px;font-weight:600">So I built it,</p>
+  <p class="cap inv a x" data-sfx="sparkle" style="--t:8.8s;--t2:11.15s;--k2:xfade;left:130px;top:370px;font-size:96px;font-weight:600">with <span style="color:var(--lime)">AI as my partner.</span></p>
+
+  <!-- ② what's in the kit: one card per part, each with what it does for you -->
+  <div class="a x" style="--k:left;--t:11.3s;--t2:40.6s;--k2:xfade;left:130px;top:90px"><span class="kick lime">What's in the kit</span></div>
+  <h2 class="cap inv a x" style="--k:up;--t:11.4s;--t2:40.6s;--k2:xfade;left:130px;top:160px;font-size:72px">So, what's <span class="m">actually</span> in it?</h2>
+  <div class="kit">
+    <div class="part a x" data-sfx="pop" style="--k:pop;--t:14.01s;--t2:40.65s;--k2:xfade">
+      <div class="shot"><img src="assets/guide/chooser.png" alt="" style="object-position:20% 20%"></div>
+      <b><i>📘</i> A guide</b><span>Which chart to use and when, how to keep it on-brand, and what to avoid.</span></div>
+    <div class="part a x" data-sfx="pop" data-sfx-semi="2" style="--k:pop;--t:19.29s;--t2:40.7s;--k2:xfade">
+      <div class="shot"><img src="assets/opt1.png" alt=""></div>
+      <b><i>📊</i> Templates</b><span>PowerPoint and Excel, so anyone can build consulting-grade slides, fast.</span></div>
+    <div class="part a x" data-sfx="pop" data-sfx-semi="4" style="--k:pop;--t:25.28s;--t2:40.75s;--k2:xfade">
+      <div class="shot code"><code><em>import</em> mckviz <em>as</em> mv<br>mv.use()<br><u># Python · R · Power BI</u></code></div>
+      <b><i class="mono">&lt;/&gt;</i> Code libraries</b><span>Python, R and Power BI, so charts come out of your code already on-brand.</span></div>
+    <div class="part ai a x" data-sfx="pop" data-sfx-semi="7" style="--k:pop;--t:32.14s;--t2:40.8s;--k2:xfade">
+      <div class="shot list"><p>✓ Question</p><p>✓ Chart type</p><p>✓ Headline</p><p>✓ Lint</p></div>
+      <b><i>✦</i> A playbook for agents</b><span>So Copilot, Claude and other agents follow the same rules you do.</span></div>
+  </div>
+  <!-- ③ rebuilt every time → built once -->
+  <p class="a x again" data-sfx="stamp" style="--k:stamp;--t:37s;--t2:40.6s;--k2:xfade;left:0;width:1920px;top:930px;text-align:center"><span class="sticker">↻ rebuilt from scratch. every. single. time.</span></p>
+  <h2 class="cap xl inv a" data-sfx="sparkle" style="--k:pop;--t:40.81s;left:130px;top:300px;font-size:120px;line-height:1.05">Now it's <span class="m">built once.</span></h2>
+  <p class="cap inv a" style="--k:up;--t:42.1s;left:136px;top:470px;font-size:72px;font-weight:600;color:var(--sky)">For everyone.</p>
+</section>
+<style>
+#s-why .kit{left:130px;top:300px;width:1660px;display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+#s-why .part{position:relative;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.18);border-radius:22px;padding:18px 22px 26px;color:#fff;height:580px}
+#s-why .shot{height:230px;border-radius:12px;overflow:hidden;background:#fff;margin-bottom:22px}
+#s-why .shot img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
+#s-why .shot.code{background:#0E1B2E;display:flex;align-items:center;padding:0 22px}
+#s-why .shot.code code{font-family:Mono,monospace;font-size:27px;line-height:1.55;color:#E6EDF5}
+#s-why .shot.code em{font-style:normal;color:#FF8A80} #s-why .shot.code u{text-decoration:none;color:#7F98B8;font-size:22px}
+#s-why .shot.list{background:#0E1B2E;padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+#s-why .shot.list p{margin:0;font-size:30px;font-weight:600;color:var(--lime)}
+#s-why .part b{display:block;font-size:38px;line-height:1.1;margin-bottom:14px}
+#s-why .part b i{font-style:normal;color:var(--lime);margin-right:6px}
+#s-why .part span{display:block;font-size:27px;line-height:1.35;color:var(--skyl)}
+#s-why .part.ai{border:2px solid transparent;background:linear-gradient(#1B3866,#1B3866) padding-box,linear-gradient(120deg,#D97757,#7B61FF 55%,#66C4FF) border-box;box-shadow:0 0 40px rgba(123,97,255,.35)}
+#s-why .again .sticker{display:inline-block;font-size:50px;rotate:-2deg}
+</style>
+<script>
+SCENES["s-why"] = {
+  narrAt: .6,
+  sam: [[0, {x: 1500, y: 1080 - 405 * .85, s: .85, mood: "happy", pose: "rest", dark: true}],
+        [3.86, {mood: "shrug", pose: "shrug"}], [7.96, {x: 1180, y: 1080 - 405 * 1.05, s: 1.05, mood: "proud", pose: "wave"}],
+        [11.3, {x: 2250, snap: false}],
+        [40.81, {x: 1180, y: 1080 - 405 * 1.05, s: 1.05, mood: "proud", pose: "cheer"}]],
+  spark: [[0, {x: 2200, y: 1080 - 203 * .9 - 12, s: .9, pose: "walk", walking: true, fx: -1, dark: true}],
+          [7.96, {x: 1560}], [8.8, {pose: "wave", walking: false}], [9.6, {pose: "thumbs"}],
+          [11.3, {x: 2300, pose: "walk", walking: true, fx: 1}],
+          [40.81, {x: 1560, pose: "thumbs", walking: false, fx: -1}]],
+};
+</script>

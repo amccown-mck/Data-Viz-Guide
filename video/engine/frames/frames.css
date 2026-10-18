@@ -1,0 +1,186 @@
+/* Style frames for the kit explainer: shared components.
+   Every frame is a 1920x1080 .frame. Lift these classes into the animated video as-is.
+   Brand colors come from the kit's generated tokens. */
+@import url("../../../dist/web/mck-viz.css");
+
+@font-face{font-family:"LF";src:url(../../../dist/guide/fonts/LibreFranklin-Light.ttf);font-weight:300}
+@font-face{font-family:"LF";src:url(../../../dist/guide/fonts/LibreFranklin-Regular.ttf);font-weight:400}
+@font-face{font-family:"LF";src:url(../../../dist/guide/fonts/LibreFranklin-Medium.ttf);font-weight:500}
+@font-face{font-family:"LF";src:url(../../../dist/guide/fonts/LibreFranklin-SemiBold.ttf);font-weight:600}
+@font-face{font-family:"LF";src:url(../../../dist/guide/fonts/LibreFranklin-Bold.ttf);font-weight:700}
+@font-face{font-family:"LF";src:url(../../../dist/guide/fonts/LibreFranklin-Italic.ttf);font-weight:400;font-style:italic}
+@font-face{font-family:"Mono";src:url(../../../dist/guide/fonts/Inconsolata-Regular.ttf)}
+
+:root{
+  --blue:var(--mck-blue);--navy:var(--mck-navy);--deep:var(--mck-deep-navy);
+  --sand:var(--mck-sand-light);--sand2:var(--mck-sand);--grey:var(--mck-chart-context);
+  --sky:var(--mck-azure-mid);--skyl:var(--mck-sky-light);--teal:var(--mck-teal-base);
+  --mint:var(--mck-mint-base);--lime:var(--mck-lime-base);--limel:var(--mck-lime-mid);
+  --text:var(--mck-text-primary);--muted:var(--mck-text-muted);
+  --claude:#D97757;                     /* placeholder avatar until the mascot lands */
+  --ui-line:#E3E1DA;--ui-bg:#F7F6F2;
+  --shadow:0 30px 80px rgba(11,50,102,.22),0 6px 18px rgba(11,50,102,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#1a1a1a}
+body{font-family:LF,sans-serif;color:var(--navy);-webkit-font-smoothing:antialiased}
+.mono{font-family:Mono,monospace}
+
+/* ---------- frame + section switch (?s=N) ---------- */
+.frame{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--sand)}
+.frame>*{position:absolute}
+html:not(.one) .frame+.frame{margin-top:40px}
+.bg-sand{background:var(--sand)}.bg-white{background:#fff}
+.bg-deep{background:var(--deep);color:#fff}
+.bg-dots{background-image:radial-gradient(rgba(20,51,89,.09) 2px,transparent 2.5px);background-size:36px 36px}
+.bg-deep.bg-dots{background-image:radial-gradient(rgba(255,255,255,.07) 2px,transparent 2.5px)}
+
+/* ---------- captions (TikTok style) ---------- */
+.cap{font-weight:700;font-size:96px;line-height:1.02;letter-spacing:-.025em;color:var(--navy);margin:0}
+.cap.xl{font-size:110px}.cap.md{font-size:80px}.cap.sm{font-size:72px}
+.bg-deep .cap,.cap.inv{color:#fff}
+.m{background:var(--lime);color:var(--navy);padding:0 .14em;margin:0 -.04em;border-radius:.1em;
+   -webkit-box-decoration-break:clone;box-decoration-break:clone}
+.kick{display:inline-block;font-weight:700;font-size:28px;letter-spacing:.12em;text-transform:uppercase;
+  padding:10px 20px;border-radius:40px;background:var(--navy);color:#fff}
+.bg-deep .kick{background:var(--lime);color:var(--navy)}
+.sticker{background:var(--lime);color:var(--navy);font-weight:700;padding:.2em .55em;border-radius:.3em;
+  box-shadow:0 14px 36px rgba(0,0,0,.22);white-space:nowrap}
+.sticker.navy{background:var(--navy);color:#fff}
+.spark{color:var(--lime);font-size:64px;line-height:1}
+
+/* ---------- placeholder for an asset that isn't there yet ---------- */
+.ph{width:100%;height:100%;background:repeating-linear-gradient(135deg,#E9E7E1 0 14px,#E1DED6 14px 28px);
+  border:2px dashed #B4B0A5;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#737373;
+  font:600 20px/1.2 Mono,monospace;text-align:center;padding:10px}
+.ph span{background:rgba(255,255,255,.85);padding:6px 12px;border-radius:6px}
+.shot{background:#fff;overflow:hidden}
+.shot img{display:block;width:100%;height:100%;object-fit:contain}
+
+/* ---------- generic app window ---------- */
+.win{background:#fff;border-radius:18px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.win>.tb{flex:none;height:52px;background:var(--ui-bg);border-bottom:1px solid var(--ui-line);display:flex;align-items:center;
+  gap:9px;padding:0 20px;font-size:19px;color:var(--muted)}
+.win>.tb i{width:14px;height:14px;border-radius:50%;background:#D6D3CB}
+.win>.tb .t{margin-left:16px;font-weight:500;color:#5b5b5b}
+.win>.tb .r{margin-left:auto}
+.win.dark{background:#0F1B2E}
+.win.dark>.tb{background:#16243B;border-color:#22324d;color:#8ea0bd}
+.win.dark>.tb i{background:#2c3d5a}.win.dark>.tb .t{color:#c7d3e6}
+
+/* ---------- avatars ---------- */
+.av{flex:none;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:22px;color:#fff;background:var(--teal)}
+.av.claude{background:var(--claude)}
+.av.claude svg{width:58%;height:58%;fill:#fff}
+.av.bot{background:#9b9ba7}
+.av.me{background:var(--blue)}
+
+/* ---------- chat (generic messenger + Claude) ---------- */
+.chat-hd{flex:none;display:flex;align-items:center;gap:16px;padding:18px 28px;border-bottom:1px solid var(--ui-line)}
+.chat-hd b{font-size:24px;display:block}.chat-hd span{font-size:18px;color:var(--muted)}
+.msgs{flex:1;padding:24px 32px;display:flex;flex-direction:column;gap:20px;overflow:hidden}
+.row{display:flex;gap:16px;align-items:flex-start}
+.row.me{justify-content:flex-end}
+.bub{border-radius:22px;padding:18px 24px;font-size:24px;line-height:1.35;max-width:1000px}
+.bub.me{background:var(--blue);color:#fff;border-bottom-right-radius:6px}
+.bub.them{background:var(--sand);color:var(--navy);border-bottom-left-radius:6px}
+.bub.plain{background:none;padding:6px 0 0;color:var(--navy)}
+.who{font-size:17px;color:var(--muted);margin-bottom:6px}.who b{color:var(--navy)}
+.composer{flex:none;margin:0 28px 22px;height:62px;border:1.5px solid var(--ui-line);border-radius:31px;display:flex;align-items:center;
+  padding:0 10px 0 26px;font-size:21px;color:#9a9a9a}
+.composer .send{margin-left:auto;width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px}
+
+/* toast notification */
+.toast{background:#fff;border-radius:24px;box-shadow:var(--shadow);padding:26px 30px;display:flex;gap:20px}
+.toast .app{font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px}
+.toast .from{font-size:24px;color:var(--muted)}.toast .from b{color:var(--navy)}
+.toast .msg{font-size:38px;line-height:1.25;color:var(--navy);margin-top:4px;font-weight:500}
+
+/* file attachment chip */
+.file{color:var(--navy);display:flex;align-items:center;gap:14px;border:1.5px solid var(--ui-line);border-radius:14px;padding:12px 16px;background:#fff}
+.file .ic{width:40px;height:48px;border-radius:5px;display:flex;align-items:flex-end;justify-content:center;
+  color:#fff;font:700 13px/1 LF;padding-bottom:7px}
+.file b{font-size:20px;display:block}.file span{font-size:16px;color:var(--muted)}
+
+/* raw spreadsheet grid */
+.grid{border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:19px;color:#222;background:#fff}
+.grid td,.grid th{border:1px solid #DADADA;padding:6px 12px;white-space:nowrap;height:36px}
+.grid th{background:#F2F2F2;color:#666;font-weight:400;font-size:16px;text-align:center}
+.grid td.n{text-align:right}
+.grid th.rn{width:44px}
+.grid td.sel{outline:3px solid #2f7d4f;outline-offset:-2px}
+
+/* small data table inside a bubble */
+.dt{border-collapse:collapse;font-size:18px;background:rgba(255,255,255,.96);color:var(--text);border-radius:10px;overflow:hidden}
+.dt th{background:var(--sand2);color:var(--navy);font-weight:600;text-align:left;padding:7px 12px}
+.dt td{padding:5px 12px;border-top:1px solid #ECEAE4}
+.dt td.n,.dt th.n{text-align:right;font-variant-numeric:tabular-nums}
+.dt tr.more td{color:var(--muted);font-style:italic}
+
+/* option card (Claude's reply) */
+.opt{background:#fff;border:1.5px solid var(--ui-line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.opt .shot{height:168px;border-bottom:1px solid var(--ui-line);padding:8px}
+.opt .meta{padding:12px 14px 14px}
+.opt .lb{font-weight:700;font-size:19px;color:var(--blue)}
+.opt .hl{font-size:16.5px;line-height:1.3;color:var(--navy);margin-top:5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.opt.pick{border:3px solid var(--navy);box-shadow:0 0 0 6px var(--lime)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:17px;border-radius:10px;padding:8px 14px;background:var(--navy);color:#fff}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--ui-line)}
+
+/* ---------- slide editor (generic "Slides") ---------- */
+.ribbon{flex:none;background:#fff;border-bottom:1px solid var(--ui-line)}
+.ribbon .tabs{display:flex;gap:34px;padding:12px 28px 0;font-size:18px;color:#666}
+.ribbon .tabs span.on{color:var(--navy);font-weight:600;border-bottom:3px solid var(--navy);padding-bottom:9px}
+.ribbon .tools{display:flex;gap:12px;padding:12px 28px 14px;align-items:center}
+.ribbon .tools i{display:block;height:38px;border-radius:8px;background:var(--ui-bg);border:1px solid var(--ui-line)}
+.ribbon .tools .sep{width:1px;height:38px;background:var(--ui-line);margin:0 6px}
+.editor{flex:1;display:flex;min-height:0;background:#ECEAE4}
+.rail{flex:none;width:230px;background:#F4F3EF;border-right:1px solid var(--ui-line);padding:20px 18px;display:flex;flex-direction:column;gap:18px}
+.rail .th{display:flex;gap:10px;font-size:15px;color:var(--muted)}
+.rail .th div{flex:1;aspect-ratio:16/9;background:#fff;border:1px solid var(--ui-line);border-radius:4px;padding:8px}
+.rail .th.on div{outline:3px solid var(--navy);outline-offset:2px}
+.rail .th div i{display:block;height:5px;background:var(--sand2);border-radius:2px;margin-bottom:5px}
+.canvas{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
+.slide{background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.12);position:relative;font-family:LF,sans-serif}
+
+/* ---------- notebook ---------- */
+.nb-tb{flex:none;display:flex;gap:10px;align-items:center;padding:10px 24px;border-bottom:1px solid var(--ui-line);font-size:16px;color:var(--muted)}
+.nb-tb i{display:block;width:30px;height:26px;border-radius:6px;background:var(--ui-bg);border:1px solid var(--ui-line)}
+.nb-tb .k{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nb-tb .k::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--mck-green-base)}
+.nb{flex:1;padding:22px 30px;display:flex;flex-direction:column;gap:18px;overflow:hidden;background:#fff}
+.cell{display:grid;grid-template-columns:76px 1fr;column-gap:12px}
+.cell .p{font-family:Mono,monospace;font-size:19px;color:#8a96a8;text-align:right;padding-top:14px}
+.cell .in{background:#F6F7F9;border:1px solid #E6E8EC;border-left:4px solid #E6E8EC;border-radius:8px;padding:12px 18px;
+  font-family:Mono,monospace;font-size:24px;line-height:1.42;color:#24292f;white-space:pre}
+.cell.on .in{border-left-color:var(--blue);border-color:#c9d8e6;background:#F5F9FC}
+.cell .out{grid-column:2;margin-top:10px;font-family:Mono,monospace;font-size:22px;color:#333}
+.cell .out .shot{border:1px solid #EEE;border-radius:6px}
+.tk-k{color:#cf222e}.tk-f{color:#8250df}.tk-s{color:#0a3069}.tk-c{color:#6e7781;font-style:italic}.tk-n{color:#0550ae}
+.code .m{padding:.04em .16em;border-radius:5px}
+.ok{color:var(--mck-green-dark);font-weight:700}
+
+/* ---------- terminal (coding agent) ---------- */
+.term{flex:1;padding:24px 30px;font-family:Mono,monospace;font-size:24px;line-height:1.5;color:#d6deeb;overflow:hidden}
+.term .pr{color:var(--lime)}
+.term .dim{color:#7f8ea8}
+.term .tool{color:var(--sky)}
+.term .fn{color:#fff;background:rgba(102,196,255,.16);padding:0 .3em;border-radius:4px}
+.term .ck{display:flex;gap:14px;align-items:baseline}
+.term .ck b{color:var(--mck-mint-base);font-weight:400;width:22px;flex:none}
+.term .ck.run b{color:var(--lime)}
+.term .ck em{font-style:normal;color:#9fb0cc;margin-left:auto;padding-left:20px;font-size:20px}
+
+/* task / PR cards */
+.card{background:#fff;border-radius:18px;box-shadow:var(--shadow);padding:26px 28px;color:var(--navy)}
+.card .lbl{font-size:16px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card h3{margin:10px 0 0;font-size:30px;line-height:1.2}
+.chip{display:inline-flex;align-items:center;gap:8px;font-size:17px;font-weight:600;padding:6px 14px;border-radius:20px;background:var(--sand);color:var(--navy)}
+.chip.go{background:var(--mck-green-light);color:var(--mck-green-dark)}
+.chip.blue{background:var(--skyl);color:var(--deep)}
+
+/* mascot slot guide (hide with ?guides=0) */
+.slot{border:3px dashed rgba(255,255,255,.22);border-radius:28px;display:flex;align-items:flex-start;justify-content:center;
+  padding-top:24px;font:600 18px Mono,monospace;color:rgba(255,255,255,.35)}
+.noguides .slot{border-color:transparent;color:transparent}

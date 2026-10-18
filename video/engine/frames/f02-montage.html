@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>F02 Montage</title>
+<link rel="stylesheet" href="frames.css">
+<style>
+.num{font:700 26px/1 Mono,monospace;color:var(--muted);letter-spacing:.06em}
+.bg-deep .num{color:var(--sky)}
+
+/* 1 · color picker */
+.picker{padding:28px 32px;display:flex;flex-direction:column;gap:22px;font-family:-apple-system,"Helvetica Neue",Arial,sans-serif}
+.picker .top{display:flex;gap:24px;align-items:center}
+.picker .cur{width:140px;height:96px;border-radius:12px;background:var(--mck-blue);box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
+.picker .hex{font:600 34px Mono,monospace;color:#333;border:2px solid #ccc;border-radius:10px;padding:10px 18px}
+.picker .hex u{text-decoration:none;background:#FFE7A3;color:#7a5600;border-radius:4px;padding:0 4px}
+.picker .lbl{font-size:18px;color:#888}
+.sw{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.sw div{border-radius:12px;overflow:hidden;border:1px solid #e3e3e3;background:#fff}
+.sw div i{display:block;height:92px}
+.sw div b{display:block;font:600 16px -apple-system,Arial,sans-serif;color:#333;padding:8px 10px 0;white-space:nowrap}
+.sw div span{display:block;font:15px Mono,monospace;color:#888;padding:2px 10px 10px}
+.sw div.hov{outline:4px solid var(--navy);outline-offset:3px}
+.cursor{width:48px;height:60px}
+
+/* 2 · default chart */
+.xl{font-family:Calibri,Carlito,Arial,sans-serif}
+.xl-rib{flex:none;display:flex;gap:30px;padding:12px 26px;font-size:18px;color:#555;border-bottom:1px solid #ddd;background:#fafafa}
+.xl-rib span.on{color:#1d6b3f;font-weight:700;border-bottom:3px solid #1d6b3f;padding-bottom:6px}
+.xl-cells{flex:1;position:relative;background:#fff;
+  background-image:linear-gradient(#e6e6e6 1px,transparent 1px),linear-gradient(90deg,#e6e6e6 1px,transparent 1px);background-size:120px 30px}
+.xchart{position:absolute;background:#fff;border:1px solid #bfbfbf;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:22px 28px 18px;display:flex;flex-direction:column}
+.xchart .tt{align-self:center;font-size:40px;color:#595959;position:relative;padding:4px 14px;border:1.5px solid #7f7f7f}
+.xchart .tt .h{position:absolute;width:10px;height:10px;background:#fff;border:1.5px solid #7f7f7f}
+.xchart .caretx{display:inline-block;width:3px;height:42px;background:#222;vertical-align:-8px;margin-left:2px}
+.xplot{flex:1;display:flex;margin-top:22px;gap:10px;min-height:0}
+.xy{display:flex;flex-direction:column;justify-content:space-between;font-size:17px;color:#595959;text-align:right;padding-bottom:120px;margin-top:-10px}
+.xbars{flex:1;position:relative;display:flex;align-items:flex-end;gap:16px;padding:0 10px;margin-bottom:130px;border-bottom:1px solid #bfbfbf;
+  background:repeating-linear-gradient(to top,#d9d9d9 0 1px,transparent 1px 20%)}
+.xbars div{flex:1;background:#4472C4;position:relative}
+.xbars div span{position:absolute;top:calc(100% + 10px);right:50%;transform-origin:right top;transform:rotate(-45deg);font-size:15px;color:#595959;white-space:nowrap}
+.xleg{align-self:center;font-size:17px;color:#595959;display:flex;align-items:center;gap:8px}
+.xleg i{width:14px;height:14px;background:#4472C4}
+
+/* 3 · file list */
+.fl{width:100%;border-collapse:collapse;font:22px -apple-system,"Helvetica Neue",Arial,sans-serif;color:#333}
+.fl th{text-align:left;font-weight:500;font-size:17px;color:#888;padding:12px 24px;border-bottom:1px solid #eee}
+.fl td{padding:0 24px;height:60px;border-bottom:1px solid #f3f3f3;white-space:nowrap}
+.fl td .nm{display:flex;align-items:center;gap:16px}
+.fl .ic{width:30px;height:36px;border-radius:4px;background:#E8875E;position:relative;flex:none}
+.fl .ic::after{content:"";position:absolute;left:7px;right:7px;top:10px;height:12px;border:2px solid #fff;border-radius:2px}
+.fl tr.sel td{background:var(--mck-azure-dark);color:#fff}
+.fl tr.ghost td{color:#b5b5b5}.fl tr.ghost .ic{background:#ddd}
+.fl td.d{color:#888}.fl tr.sel td.d{color:#cfe3ff}
+
+/* 4 · neon chatbot */
+.neon{border-radius:16px;overflow:hidden;background:radial-gradient(120% 90% at 20% 0,#4a1f86,#170a33 70%);padding:28px 32px 22px;
+  font-family:"Avenir Next","Trebuchet MS",sans-serif;color:#fff;position:relative}
+.neon .t{font-size:34px;font-weight:800;text-align:center;text-shadow:0 0 18px #e879f9,0 0 4px #f0abfc}
+.neon .p{height:330px;display:flex;align-items:flex-end;gap:16px;margin-top:22px;padding:0 6px;border-bottom:2px solid rgba(232,121,249,.5)}
+.neon .p div{flex:1;border-radius:12px 12px 3px 3px;background:linear-gradient(#f472b6,#a855f7 60%,#6d28d9);box-shadow:0 0 22px #c084fc,inset 0 2px 0 rgba(255,255,255,.5)}
+.neon .x{display:flex;gap:16px;padding:10px 6px 0;font-size:14px;color:#e9d5ff}
+.neon .x span{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.neon .sp{position:absolute;color:#fde68a;text-shadow:0 0 12px #fbbf24}
+</style>
+</head>
+<body>
+
+<!-- 1 · Which blue is OUR blue? -->
+<section class="frame bg-sand bg-dots">
+  <span class="num" style="left:80px;top:96px">01 / 04</span>
+  <h1 class="cap" style="left:80px;top:330px;width:740px">Which blue is <span class="m">OUR</span> blue?</h1>
+  <p style="left:80px;top:600px;width:640px;margin:0;font-size:36px;line-height:1.3;color:var(--text)">12 saved. 0 sure.</p>
+  <div class="win" style="left:880px;top:170px;width:960px;height:705px;rotate:1.5deg">
+    <div class="tb"><i></i><i></i><i></i><span class="t">Colors</span></div>
+    <div class="picker">
+      <div class="top"><div class="cur"></div>
+        <div><div class="lbl">Hex color</div><div class="hex">#00<u>5?</u>8<u>?</u></div></div>
+        <div class="lbl" style="margin-left:auto;text-align:right">Custom colors<br><b style="color:#333">12 saved</b></div></div>
+      <div class="sw">
+        <div><i style="background:#005A8C"></i><b>Blue</b><span>#005A8C</span></div>
+        <div><i style="background:#00598B"></i><b>Blue (1)</b><span>#00598B</span></div>
+        <div><i style="background:#015C8F"></i><b>Corporate blue</b><span>#015C8F</span></div>
+        <div><i style="background:#0A5A8C"></i><b>Blue, old deck</b><span>#0A5A8C</span></div>
+        <div class="hov"><i style="background:#005B8E"></i><b>Logo blue?</b><span>#005B8E</span></div>
+        <div><i style="background:#04578A"></i><b>Blue FINAL</b><span>#04578A</span></div>
+        <div><i style="background:#00608F"></i><b>Dana's blue</b><span>#00608F</span></div>
+        <div><i style="background:#0B5A87"></i><b>Web blue</b><span>#0B5A87</span></div>
+        <div><i style="background:#005494"></i><b>Blue 2019</b><span>#005494</span></div>
+        <div><i style="background:#14598A"></i><b>Blue (darker)</b><span>#14598A</span></div>
+        <div><i style="background:#00508C"></i><b>Navy-ish</b><span>#00508C</span></div>
+        <div><i style="background:#0F5F92"></i><b>Blue (lighter)</b><span>#0F5F92</span></div>
+      </div>
+    </div>
+  </div>
+  <svg class="cursor" style="left:1060px;top:560px;z-index:4" viewBox="0 0 24 30"><path d="M2 2 L2 24 L8 18 L12 28 L16 26 L12 17 L20 17 Z" fill="#fff" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <p class="sticker" style="left:1690px;top:70px;margin:0;font-size:64px;rotate:8deg;z-index:4">?!</p>
+</section>
+
+<!-- 2 · Chart Title. -->
+<section class="frame bg-white bg-dots">
+  <span class="num" style="left:80px;top:96px">02 / 04</span>
+  <h1 class="cap xl" style="left:80px;top:330px;width:700px">Chart <span class="m">Title.</span></h1>
+  <p style="left:80px;top:600px;width:640px;margin:0;font-size:36px;line-height:1.3;color:var(--text)">The most-shipped headline in corporate&nbsp;history.</p>
+  <div class="win xl" style="left:820px;top:110px;width:1020px;height:860px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">Book1.xlsx</span></div>
+    <div class="xl-rib"><span>Home</span><span>Insert</span><span>Formulas</span><span>Data</span><span class="on">Chart Design</span><span>Format</span></div>
+    <div class="xl-cells">
+      <div class="xchart" style="left:60px;top:40px;width:880px;height:700px">
+        <div class="tt">Chart Title<span class="caretx"></span>
+          <i class="h" style="left:-6px;top:-6px"></i><i class="h" style="right:-6px;top:-6px"></i><i class="h" style="left:-6px;bottom:-6px"></i><i class="h" style="right:-6px;bottom:-6px"></i></div>
+        <div class="xplot">
+          <div class="xy"><span>30</span><span>25</span><span>20</span><span>15</span><span>10</span><span>5</span><span>0</span></div>
+          <div class="xbars">
+            <div style="height:35.3%"><span>Sales</span></div><div style="height:91.3%"><span>Pharmacy Tech…</span></div>
+            <div style="height:63%"><span>Customer Care</span></div><div style="height:80.3%"><span>Distribution…</span></div>
+            <div style="height:27%"><span>HR</span></div><div style="height:32.7%"><span>Software Eng…</span></div>
+            <div style="height:47.3%"><span>Specialty Nur…</span></div><div style="height:24.7%"><span>Finance</span></div>
+            <div style="height:43%"><span>Data &amp; Analyt…</span></div><div style="height:39.3%"><span>Supply Chain…</span></div>
+          </div>
+        </div>
+        <div class="xleg"><i></i>Series1</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · final_v7_REAL_final.pptx -->
+<section class="frame bg-sand bg-dots">
+  <span class="num" style="left:80px;top:96px">03 / 04</span>
+  <h1 class="cap" style="left:80px;top:150px;width:1760px">final_v7_<span class="m">REAL</span>_final.pptx</h1>
+  <div class="win" style="left:80px;top:340px;width:1760px;height:640px">
+    <div class="tb"><i></i><i></i><i></i><span class="t">Documents ›  Leadership sync ›  Attrition</span><span class="r">8 items</span></div>
+    <table class="fl">
+      <tr><th style="width:62%">Name</th><th>Date modified</th><th>Size</th></tr>
+      <tr><td><span class="nm"><i class="ic"></i>Attrition_deck.pptx</span></td><td class="d">Mon 9:12 AM</td><td class="d">4.1 MB</td></tr>
+      <tr><td><span class="nm"><i class="ic"></i>Attrition_deck_v2.pptx</span></td><td class="d">Mon 4:40 PM</td><td class="d">4.3 MB</td></tr>
+      <tr><td><span class="nm"><i class="ic"></i>Attrition_deck_final.pptx</span></td><td class="d">Yesterday 11:03 AM</td><td class="d">4.3 MB</td></tr>
+      <tr><td><span class="nm"><i class="ic"></i>Attrition_deck_FINAL (Dana edits).pptx</span></td><td class="d">Yesterday 6:58 PM</td><td class="d">5.0 MB</td></tr>
+      <tr><td><span class="nm"><i class="ic"></i>final_v5 (1).pptx</span></td><td class="d">Today 8:15 AM</td><td class="d">5.0 MB</td></tr>
+      <tr><td><span class="nm"><i class="ic"></i>final_v6_fixed colors_USE THIS.pptx</span></td><td class="d">Today 1:22 PM</td><td class="d">5.2 MB</td></tr>
+      <tr class="sel"><td><span class="nm"><i class="ic"></i>final_v7_REAL_final.pptx</span></td><td class="d">Today 2:06 PM</td><td class="d">5.2 MB</td></tr>
+      <tr class="ghost"><td><span class="nm"><i class="ic"></i>~$final_v7_REAL_final.pptx</span></td><td class="d">Today 2:06 PM</td><td class="d">1 KB</td></tr>
+    </table>
+  </div>
+  <p class="sticker navy" style="left:1420px;top:250px;margin:0;font-size:40px;rotate:-5deg;z-index:3">v8 incoming 😬</p>
+</section>
+
+<!-- 4 · And the chatbot made it… purple. -->
+<section class="frame bg-sand bg-dots">
+  <span class="num" style="left:80px;top:96px">04 / 04</span>
+  <h1 class="cap" style="left:80px;top:300px;width:720px">And the chatbot made it… <span class="m">purple.</span></h1>
+  <div class="win" style="left:860px;top:110px;width:980px;height:860px">
+    <div class="chat-hd"><span class="av bot">AI</span><div><b>Some chatbot</b><span>Generic assistant</span></div></div>
+    <div class="msgs">
+      <div class="row me"><div class="bub me">make this chart look professional</div></div>
+      <div class="row"><span class="av bot" style="width:44px;height:44px;font-size:16px">AI</span>
+        <div style="flex:1"><div class="bub them" style="margin-bottom:16px;width:max-content">Here's a <b>stunning</b> visualization! 🚀✨</div>
+          <div class="neon">
+            <div class="t">📊✨ Attrition Insights ✨📈</div>
+            <div class="p"><div style="height:91%"></div><div style="height:80%"></div><div style="height:63%"></div><div style="height:47%"></div><div style="height:43%"></div><div style="height:39%"></div><div style="height:35%"></div><div style="height:33%"></div><div style="height:27%"></div><div style="height:25%"></div></div>
+            <div class="x"><span>Pharm…</span><span>Distri…</span><span>Custo…</span><span>Speci…</span><span>Data…</span><span>Suppl…</span><span>Sales</span><span>Softw…</span><span>HR</span><span>Fina…</span></div>
+            <span class="sp" style="right:40px;top:90px;font-size:44px">✦</span>
+            <span class="sp" style="left:300px;top:120px;font-size:28px">✦</span>
+            <span class="sp" style="right:200px;top:190px;font-size:22px">✦</span>
+          </div>
+        </div></div>
+    </div>
+    <div class="composer">Ask anything<span class="send">↑</span></div>
+  </div>
+  <span class="spark" style="left:1780px;top:80px;font-size:80px;color:#a855f7">✦</span>
+  <span class="spark" style="left:820px;top:880px;font-size:54px;color:#e879f9">✦</span>
+</section>
+
+<script src="frames.js"></script>
+</body>
+</html>
