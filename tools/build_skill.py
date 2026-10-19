@@ -42,6 +42,7 @@ The folder is gitignored; the zip is what people upload.
 from __future__ import annotations
 
 import base64
+import json
 import re
 import shutil
 import subprocess
@@ -125,6 +126,7 @@ def fill(text: str, mode: str) -> str:
     text = re.sub(r"<!-- ([a-z]+(?:,[a-z]+)*) -->\n(.*?)<!-- /\1 -->\n?",
                   lambda m: m.group(2) if mode in m.group(1).split(",") else "", text, flags=re.S)
     values = {"version": VERSION, "repo_url": REPO_URL, **MODES[mode]}
+    values["description"] = json.dumps(values["description"], ensure_ascii=False)  # quoted: valid YAML with any ':'
     text = re.sub(r"\{\{(\w+)\}\}", lambda m: values[m.group(1)], text)
     return re.sub(r"\n{3,}", "\n\n", text)
 
@@ -326,11 +328,17 @@ def check_copilot() -> None:
     skill = (COPILOT_OUT / "SKILL.md").read_text(encoding="utf-8")
     if len(skill) >= COPILOT_MAX["instructions"]:
         problems.append(f"SKILL.md is {len(skill):,} characters (must be under {COPILOT_MAX['instructions']:,})")
-    desc = re.search(r"^description: (.+)$", skill, re.M)
-    if not re.search(r"^name: \S+$", skill, re.M) or not desc:
-        problems.append("SKILL.md front matter needs a name and a description")
-    elif len(desc.group(1)) > COPILOT_MAX["description"]:
-        problems.append(f"description is {len(desc.group(1))} characters (max {COPILOT_MAX['description']})")
+    # Agent Builder parses the front matter as YAML and rejects a plain value with ": " in it. No YAML parser here, so
+    # hold it to a form that is always valid: a plain lowercase name and a JSON (double-quoted YAML) description.
+    front = re.match(r"---\nname: ([a-z0-9-]+)\ndescription: (\".*\")\n---\n", skill)
+    try:
+        desc = json.loads(front.group(2)) if front else None
+    except json.JSONDecodeError:
+        desc = None
+    if desc is None:
+        problems.append('SKILL.md front matter must be exactly "name: <lowercase-name>" and "description: "<quoted>""')
+    elif len(desc) > COPILOT_MAX["description"]:
+        problems.append(f"description is {len(desc)} characters (max {COPILOT_MAX['description']})")
     if problems:
         raise SystemExit("tools/build_skill.py: the Copilot edition breaks Agent Builder's skill rules:\n  "
                          + "\n  ".join(problems))
