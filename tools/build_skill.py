@@ -8,7 +8,8 @@
     python tools/build_skill.py --copilot  writes only the Copilot zip (upload in Agent Builder: Configure > Skills
                                            > Add); needs no uv. See docs/copilot-agent-setup.md
 
-Source: agents/skill/SKILL.template.md, agents/skill/scripts/ and agents/skill/copilot/scripts/. A block between
+Source: agents/skill/SKILL.template.md, agents/skill/scripts/ and agents/skill/copilot/ (its files land at the same
+paths in the Copilot edition). A block between
 <!-- portable --> and <!-- /portable --> appears only in the portable skill, <!-- repo --> only in the repo copy,
 <!-- copilot --> only in the Copilot edition; <!-- portable,repo --> in both of those. Placeholders: {{version}},
 {{repo_url}}, {{description}}, {{docs}} (references/ or docs/), {{web_css}}, {{web_plotly}}, {{web_vega}},
@@ -32,9 +33,11 @@ assets/fonts, ...), so the snippets run with the skill folder as the working dir
 
 The Copilot edition has the same references/ and SKILL.md workflow, built for Agent Builder's skill rules (SKILL.md at
 the zip root, a fixed list of file types, no pip and no network in the sandbox; COPILOT_* below), and fails the build
-when it breaks one. mckviz ships as source with scripts/mck_setup.py, which assembles it in a temp folder:
-    scripts/mckviz_src/         the package code and tokens; mckviz.mplstyle and VERSION as .txt
-    scripts/mckviz_geodata/     the map data
+when it breaks one (Agent Builder also rejects anything but script types under scripts/). mckviz ships as source with
+scripts/mck_setup.py, which assembles it in a temp folder:
+    scripts/mckviz_src/         the package code (.py only)
+    assets/mckviz/              the tokens and Plotly template; mckviz.mplstyle and VERSION as .txt; a README
+    assets/geodata/             the map data
     assets/fonts/               the Libre Franklin weights the type roles use, base64 in .ttf.b64.txt, and the OFL
     assets/data/, assets/powerbi/   as in the portable skill (web, R and Office theme files can't ship)
 The folder is gitignored; the zip is what people upload.
@@ -85,10 +88,10 @@ ZIP = OUT.parent / "mck-chart.zip"
 COPILOT_OUT = ROOT / "dist" / "skills" / "mck-chart-copilot"
 COPILOT_ZIP = COPILOT_OUT.parent / "mck-chart-copilot.zip"
 # Agent Builder skill rules (preview, 2026-09): learn.microsoft.com/microsoft-365/copilot/extensibility/declarative-agent-skills
+COPILOT_SCRIPT_TYPES = {".py", ".js", ".mjs", ".cjs", ".ts", ".mts", ".sh", ".bash"}   # the only types under scripts/
 COPILOT_TYPES = {".json", ".xml", ".yaml", ".yml", ".ini", ".config", ".utf8", ".docx", ".doc", ".docm", ".pdf", ".txt",
                  ".rtf", ".md", ".ppt", ".pptx", ".ppsm", ".xlsx", ".xls", ".xlsm", ".csv", ".tsv", ".html", ".htm",
-                 ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".log",
-                 ".py", ".js", ".mjs", ".cjs", ".ts", ".mts", ".sh", ".bash"}
+                 ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".log", *COPILOT_SCRIPT_TYPES}
 COPILOT_MAX = {"instructions": 20_000, "description": 1024, "parts": 3, "files": 350, "file_mb": 25, "zip_mb": 50}
 COPILOT_FONTS = ("Light", "Regular", "Medium", "SemiBold", "Bold")   # the weights the type roles use (300-700)
 COPILOT_ASSETS = ("data", "powerbi")        # portable assets/ folders whose file types a Copilot skill can carry
@@ -293,16 +296,18 @@ def build_copilot() -> Path:
         (fonts / f"{ttf.name}.b64.txt").write_bytes(base64.encodebytes(ttf.read_bytes()))
     shutil.copyfile(FONTS / "OFL.txt", fonts / "OFL.txt")
 
-    scripts = COPILOT_OUT / "scripts"
-    shutil.copytree(SRC / "copilot" / "scripts", scripts, ignore=shutil.ignore_patterns("__pycache__"))
-    for p in scripts.iterdir():
-        p.write_text(fill(p.read_text(encoding="utf-8"), "copilot"), encoding="utf-8", newline="\n")
+    for src in (SRC / "copilot").rglob("*"):                 # scripts/mck_setup.py, assets/mckviz/README.md
+        if src.is_file() and "__pycache__" not in src.parts:
+            dest = COPILOT_OUT / src.relative_to(SRC / "copilot")
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_text(fill(src.read_text(encoding="utf-8"), "copilot"), encoding="utf-8", newline="\n")
     pkg = ROOT / "python" / "mckviz"
-    (scripts / "mckviz_src").mkdir()
-    for f in [*pkg.glob("*.py"), *pkg.glob("*.json"), pkg / "mckviz.mplstyle", pkg / "VERSION"]:
+    shutil.copytree(pkg, COPILOT_OUT / "scripts" / "mckviz_src", ignore=lambda d, names: [   # the code only
+        n for n in names if not n.endswith(".py")])
+    for f in [*pkg.glob("*.json"), pkg / "mckviz.mplstyle", pkg / "VERSION"]:   # data, next to the README
         name = f.name if f.suffix in COPILOT_TYPES else f"{f.name}.txt"   # mck_setup.py renames these back
-        shutil.copyfile(f, scripts / "mckviz_src" / name)
-    shutil.copytree(pkg / "geodata", scripts / "mckviz_geodata", ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copyfile(f, COPILOT_OUT / "assets" / "mckviz" / name)
+    shutil.copytree(pkg / "geodata", COPILOT_OUT / "assets" / "geodata", ignore=shutil.ignore_patterns("__pycache__"))
 
     shutil.copytree(OUT / "references", COPILOT_OUT / "references")  # after assets/, so links can check what ships
     for p in (COPILOT_OUT / "references").rglob("*.md"):
@@ -321,6 +326,9 @@ def check_copilot() -> None:
         rel = p.relative_to(COPILOT_OUT)
         if p.suffix.lower() not in COPILOT_TYPES:
             problems.append(f"{rel.as_posix()}: {p.suffix or 'no extension'} is not a skill file type")
+        elif rel.parts[0] == "scripts" and p.suffix.lower() not in COPILOT_SCRIPT_TYPES:
+            problems.append(f"{rel.as_posix()}: only script types ({', '.join(sorted(COPILOT_SCRIPT_TYPES))}) may sit "
+                            "under scripts/")
         if len(rel.parts) > COPILOT_MAX["parts"]:
             problems.append(f"{rel.as_posix()}: nested deeper than {COPILOT_MAX['parts']} levels")
         if p.stat().st_size > COPILOT_MAX["file_mb"] * 1e6:

@@ -7,11 +7,12 @@
 or `python scripts/mck_setup.py` in a shell, then `sys.path.insert(0, MCKVIZ_PATH)` (it prints the path) and
 `import mckviz as mv; mv.use()`.
 
-Copilot skills carry only some file types (.py, .json, .md, .txt and a few others) and the sandbox has no pip and no
-network, so the package ships as source: scripts/mckviz_src/ (the code, the tokens, and mckviz.mplstyle.txt and
-VERSION.txt, renamed back here), scripts/mckviz_geodata/ (the map data) and assets/fonts/*.ttf.b64.txt (Libre
-Franklin, base64-encoded, decoded back here). This script puts the package together in a temp folder, puts that
-folder first on sys.path, imports it and applies the style. The last line says whether the font loaded.
+Copilot skills carry only some file types (.py, .json, .md, .txt and a few others), only script types under scripts/,
+and the sandbox has no pip and no network, so the package ships in pieces: scripts/mckviz_src/ (the code),
+assets/mckviz/ (the tokens and Plotly template, and mckviz.mplstyle.txt and VERSION.txt, renamed back here),
+assets/geodata/ (the map data) and assets/fonts/*.ttf.b64.txt (Libre Franklin, base64-encoded, decoded back here).
+This script puts the package together in a temp folder, puts that folder first on sys.path, imports it and applies
+the style. The last line says whether the font loaded.
 """
 from __future__ import annotations
 
@@ -24,8 +25,9 @@ import warnings
 from pathlib import Path
 
 SKILL_DIR = Path(__file__).resolve().parents[1]
-SRC = SKILL_DIR / "scripts" / "mckviz_src"
-GEO = SKILL_DIR / "scripts" / "mckviz_geodata"
+CODE = SKILL_DIR / "scripts" / "mckviz_src"
+DATA = SKILL_DIR / "assets" / "mckviz"
+GEO = SKILL_DIR / "assets" / "geodata"
 FONTS = SKILL_DIR / "assets" / "fonts"
 VERSION = "{{version}}"
 MCKVIZ_PATH = Path(tempfile.gettempdir()) / f"mckviz-{VERSION}"
@@ -37,8 +39,8 @@ def assemble(root: Path = MCKVIZ_PATH) -> Path:
     pkg = root / "mckviz"
     shutil.rmtree(pkg, ignore_errors=True)
     pkg.mkdir(parents=True)
-    for f in SRC.iterdir():                                   # mckviz.mplstyle.txt -> mckviz.mplstyle, VERSION.txt -> VERSION
-        if f.is_file():
+    for f in [*CODE.glob("*.py"), *DATA.iterdir()]:           # mckviz.mplstyle.txt -> mckviz.mplstyle, VERSION.txt -> VERSION
+        if f.is_file() and f.name != "README.md":
             shutil.copyfile(f, pkg / (f.name[:-4] if f.name.endswith(".txt") else f.name))
     shutil.copytree(GEO, pkg / "geodata")
     (pkg / "fonts").mkdir()
