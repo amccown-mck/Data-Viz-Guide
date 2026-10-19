@@ -16,7 +16,7 @@ What it leaves out: the web and R themes and the PowerPoint template. Copilot sh
 2. **Name and description**: for example "McKesson Chart Coach: turns your data into an executive-ready chart, or reviews one you have".
 3. **Instructions**: paste the block below. The skill holds the detail, so the instructions stay short (the limit is 8,000 characters).
 4. **Skills**: select **Add**, then **Upload skill**, and upload `mck-chart-copilot.zip` (the whole zip, not `SKILL.md` on its own).
-5. **Capabilities**: turn on **Code interpreter** (Agent Builder may call it data analysis; the skill draws charts in Python). Turn **Image generation off**, so the agent never draws a picture *of* a chart.
+5. **Knowledge settings** (the gear next to Knowledge): turn on **Create documents, charts, and code** (the Python sandbox the skill draws in). Turn **Create images off**, so the agent never draws a picture *of* a chart. Leave **People data** off.
 6. **Knowledge**: leave the uploaded files empty for now. During the preview, an agent can't have both skills and uploaded (embedded) files.
 7. Test it in the preview pane (see [Try it](#try-it)), then select **Create** and share it.
 
@@ -55,7 +55,7 @@ In the preview pane, check each of these before you share:
 - **Your own data.** Paste a small table with one group under 10 people. That group should be merged into "Other" or dropped, with a footnote saying so.
 - **Review.** Paste a screenshot of an old chart and ask for a review. You should get a ranked list of fixes, then an offer to redraw it.
 
-**If the chart comes back as an interactive "Chart" card** (a `</>` icon, rounded bars, gridlines, an axis instead of labels on the bars, a "Y" axis title, no source line), the agent used Copilot's built-in chart instead of the skill's Python. Check that Code interpreter is on and that the instructions above are pasted, then ask: *"Run scripts/mck_setup.py from the mck-chart skill and show me exactly what it prints."* The answer tells you whether Python runs and where the skill's files are; send it to whoever maintains the kit.
+**If the chart comes back as an interactive "Chart" card** (a `</>` icon, rounded bars, gridlines, an axis instead of labels on the bars, a "Y" axis title, no source line), the agent used Copilot's built-in chart instead of the skill's Python. Check that **Create documents, charts, and code** is on and that the instructions above are pasted, then ask: *"Run scripts/mck_setup.py from the mck-chart skill and show me exactly what it prints."* The answer tells you whether Python runs and where the skill's files are; send it to whoever maintains the kit.
 
 If the agent can't run the script at all, it falls back to building with the colors from `references/rules.md` and says so in its reply. Note what happened (the sandbox message) and open an issue on the repo.
 
