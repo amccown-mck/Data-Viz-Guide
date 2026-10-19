@@ -6,6 +6,9 @@ The version lives in one place, the `VERSION` file at the repo root. `tokens/bui
 
 ## [Unreleased]
 
+### Added
+- **Microsoft 365 Copilot edition of the `mck-chart` skill** (2026-10-19), for a chart agent built in Agent Builder that a team opens from Copilot chat. Agent Builder takes a skill as a `.zip` with `SKILL.md` at its root, carries only some file types and runs scripts in a sandbox with no pip and no network, so the Claude skill zip can't be uploaded as it is. `python tools/build_skill.py --copilot` writes `dist/skills/mck-chart-copilot.zip` (0.9 MB) from the same template and references. `mckviz` ships as source, with `mckviz.mplstyle`, `VERSION` and the five Libre Franklin weights in use stored as text, and `scripts/mck_setup.py` puts the package back together in a temp folder and applies the style, with no install. The Copilot `SKILL.md` adds a "Reviewing a chart" section and Copilot-specific build, hand-back and setup steps (a PNG in chat, native Office steps for decks, Power BI DAX). The build fails if the edition breaks an Agent Builder limit (file types, depth, file count and size, instructions under 20,000 characters). `docs/copilot-agent-setup.md` covers setting up the agent: instructions to paste, conversation starters, capabilities, what to test before sharing. The release bundle carries both (`agents/mck-chart-copilot-skill.zip`, `agents/copilot-agent-setup.md`).
+
 ## [1.2.0] - 2026-10-18
 
 Positioning as the Data Viz Starter Kit, a self-contained agent skill, the video kit and the demo, new `mckviz` helpers and lint rules, and the MIT license.

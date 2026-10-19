@@ -266,3 +266,5 @@ video/**/*-sheet.png
 video/**/*.wav
 # The mckviz wheel inside the portable skill (built by tools/build_skill.py --zip and tools/make_bundle.py)
 dist/skills/mck-chart/assets/python/*.whl
+# The Microsoft 365 Copilot edition of the skill (tools/build_skill.py builds it; its zip is what gets uploaded)
+dist/skills/mck-chart-copilot/

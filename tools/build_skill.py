@@ -1,13 +1,18 @@
-"""Build the portable agent skill (dist/skills/mck-chart/) and the repo's own copy (.github/skills/mck-chart/SKILL.md).
+"""Build the portable agent skill (dist/skills/mck-chart/), its Microsoft 365 Copilot edition
+(dist/skills/mck-chart-copilot/) and the repo's own copy (.github/skills/mck-chart/SKILL.md).
 
     python tools/build_skill.py            (tokens/build.py runs it too; tools/make_bundle.py zips it)
     python tools/build_skill.py --zip      also builds the mckviz wheel into assets/python/ (needs uv) and writes
-                                           dist/skills/mck-chart.zip (upload to Claude.ai as a custom skill)
+                                           dist/skills/mck-chart.zip (upload to Claude.ai as a custom skill) and
+                                           dist/skills/mck-chart-copilot.zip
+    python tools/build_skill.py --copilot  writes only the Copilot zip (upload in Agent Builder: Configure > Skills
+                                           > Add); needs no uv. See docs/copilot-agent-setup.md
 
-Source: agents/skill/SKILL.template.md and agents/skill/scripts/. Blocks between <!-- portable --> and
-<!-- /portable --> appear only in the portable skill, <!-- repo --> blocks only in the repo copy. Placeholders:
-{{version}}, {{repo_url}}, {{docs}} (references/ or docs/), {{web_css}}, {{web_plotly}}, {{web_vega}}, {{chart_card}},
-{{themes}}, {{pptx_theme}}, {{generated_note}}.
+Source: agents/skill/SKILL.template.md, agents/skill/scripts/ and agents/skill/copilot/scripts/. A block between
+<!-- portable --> and <!-- /portable --> appears only in the portable skill, <!-- repo --> only in the repo copy,
+<!-- copilot --> only in the Copilot edition; <!-- portable,repo --> in both of those. Placeholders: {{version}},
+{{repo_url}}, {{description}}, {{docs}} (references/ or docs/), {{web_css}}, {{web_plotly}}, {{web_vega}},
+{{chart_card}}, {{themes}}, {{pptx_theme}}, {{generated_note}}.
 
 The portable skill is self-contained, so it works dropped into ~/.claude/skills/, a repo's .claude/skills/ or
 .github/skills/, or zipped and uploaded to Claude.ai as a custom skill, in a sandbox that cannot reach GitHub:
@@ -24,9 +29,19 @@ The portable skill is self-contained, so it works dropped into ~/.claude/skills/
 Links between included docs keep working; links to other kit files point at GitHub. In the copied cookbook pages,
 repo paths become skill paths (examples/data/ -> assets/data/, dist/web/ -> assets/web/, fonts/LibreFranklin ->
 assets/fonts, ...), so the snippets run with the skill folder as the working directory.
+
+The Copilot edition has the same references/ and SKILL.md workflow, built for Agent Builder's skill rules (SKILL.md at
+the zip root, a fixed list of file types, no pip and no network in the sandbox; COPILOT_* below), and fails the build
+when it breaks one. mckviz ships as source with scripts/mck_setup.py, which assembles it in a temp folder:
+    scripts/mckviz_src/         the package code and tokens; mckviz.mplstyle and VERSION as .txt
+    scripts/mckviz_geodata/     the map data
+    assets/fonts/               the Libre Franklin weights the type roles use, base64 in .ttf.b64.txt, and the OFL
+    assets/data/, assets/powerbi/   as in the portable skill (web, R and Office theme files can't ship)
+The folder is gitignored; the zip is what people upload.
 """
 from __future__ import annotations
 
+import base64
 import re
 import shutil
 import subprocess
@@ -66,14 +81,38 @@ COOKBOOK_PATHS = {"examples/data/": "assets/data/", "dist/web/": "assets/web/", 
                   "dist/office/McKesson-DataViz-Charts": "office/McKesson-DataViz-Charts", "dist/office": "assets/office"}
 ZIP = OUT.parent / "mck-chart.zip"
 
+COPILOT_OUT = ROOT / "dist" / "skills" / "mck-chart-copilot"
+COPILOT_ZIP = COPILOT_OUT.parent / "mck-chart-copilot.zip"
+# Agent Builder skill rules (preview, 2026-09): learn.microsoft.com/microsoft-365/copilot/extensibility/declarative-agent-skills
+COPILOT_TYPES = {".json", ".xml", ".yaml", ".yml", ".ini", ".config", ".utf8", ".docx", ".doc", ".docm", ".pdf", ".txt",
+                 ".rtf", ".md", ".ppt", ".pptx", ".ppsm", ".xlsx", ".xls", ".xlsm", ".csv", ".tsv", ".html", ".htm",
+                 ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".log",
+                 ".py", ".js", ".mjs", ".cjs", ".ts", ".mts", ".sh", ".bash"}
+COPILOT_MAX = {"instructions": 20_000, "description": 1024, "parts": 3, "files": 350, "file_mb": 25, "zip_mb": 50}
+COPILOT_FONTS = ("Light", "Regular", "Medium", "SemiBold", "Bold")   # the weights the type roles use (300-700)
+COPILOT_ASSETS = ("data", "powerbi")        # portable assets/ folders whose file types a Copilot skill can carry
+
+DESCRIPTION = ("Make a McKesson-standard chart or table from data, going from question to chart type, build with mckviz "
+               "(or the web, Office, Power BI or R theme), insight headline, and QA checklist. Use whenever the user asks "
+               "for a chart, graph, plot, visualization, scorecard or exhibit for McKesson, or for Workforce Innovation "
+               "work (people analytics, workforce intelligence or planning / SWP data).")
 MODES = {
-    "portable": {"docs": "references/", "web_css": "`assets/web/mck-viz.css`",
+    "copilot": {"docs": "references/",
+                "description": "Make or review a McKesson-standard chart or table: question, chart type, build with "
+                               "mckviz in the Python sandbox, insight headline, and QA checklist, plus Excel, "
+                               "PowerPoint and Power BI steps when the chart must be native. Use whenever the user asks "
+                               "for a chart, graph, plot, visualization, scorecard or exhibit for McKesson, asks for "
+                               "feedback on one, or works with Workforce Innovation data (people analytics, workforce "
+                               "intelligence or planning / SWP).",
+                "generated_note": "GENERATED by tools/build_skill.py from agents/skill/ in the data-viz-guide repo "
+                                  "(Microsoft 365 Copilot edition)."},
+    "portable": {"docs": "references/", "description": DESCRIPTION, "web_css": "`assets/web/mck-viz.css`",
                  "web_plotly": "`assets/web/mck-plotly-template.js`", "web_vega": "`assets/web/vega-lite-config.json`",
                  "chart_card": " (starter: `assets/html/chart-card.html`)",
                  "pptx_theme": "`assets/office/pptxgenjs-theme.js`",
                  "themes": "the theme files in `assets/` (Office files: see Setup below)",
                  "generated_note": "GENERATED by tools/build_skill.py from agents/skill/ in the data-viz-guide repo."},
-    "repo": {"docs": "docs/", "web_css": "`dist/web/mck-viz.css`", "web_plotly": "`mck-plotly-template.js`",
+    "repo": {"docs": "docs/", "description": DESCRIPTION, "web_css": "`dist/web/mck-viz.css`", "web_plotly": "`mck-plotly-template.js`",
              "web_vega": "`vega-lite-config.json`", "chart_card": " (starter: `templates/html/chart-card.html`)",
              "pptx_theme": "`dist/office/pptxgenjs-theme.js`", "themes": "the themes in `dist/`",
              "generated_note": "GENERATED by tools/build_skill.py from agents/skill/SKILL.template.md - edit that, then "
@@ -82,9 +121,9 @@ MODES = {
 
 
 def fill(text: str, mode: str) -> str:
-    other = "repo" if mode == "portable" else "portable"
-    text = re.sub(rf"<!-- {other} -->\n.*?<!-- /{other} -->\n?", "", text, flags=re.S)
-    text = re.sub(rf"<!-- /?{mode} -->\n", "", text)
+    """Keep the <!-- mode --> blocks (or <!-- a,b --> blocks naming the mode), drop the others, fill placeholders."""
+    text = re.sub(r"<!-- ([a-z]+(?:,[a-z]+)*) -->\n(.*?)<!-- /\1 -->\n?",
+                  lambda m: m.group(2) if mode in m.group(1).split(",") else "", text, flags=re.S)
     values = {"version": VERSION, "repo_url": REPO_URL, **MODES[mode]}
     text = re.sub(r"\{\{(\w+)\}\}", lambda m: values[m.group(1)], text)
     return re.sub(r"\n{3,}", "\n\n", text)
@@ -218,7 +257,98 @@ def build(wheel: bool = False) -> Path:
     n = sum(1 for p in OUT.rglob("*") if p.is_file())
     print(f"  wrote dist/skills/mck-chart/ ({n} files{', with ' + whl.name if whl else ''}) "
           "and .github/skills/mck-chart/SKILL.md")
+    build_copilot()
     return OUT
+
+
+def copilot_links(md: str, dest: Path) -> str:
+    """Links into assets/ that the Copilot edition can't carry (web, R, Office themes, TTFs) point at GitHub."""
+    def fix(m):
+        target, anchor = m.group(1), m.group(2) or ""
+        resolved = (dest.parent / target).resolve()
+        if not target or re.match(r"[a-z]+:", target) or resolved.exists() or not resolved.is_relative_to(COPILOT_OUT):
+            return m.group(0)
+        rel = resolved.relative_to(COPILOT_OUT).as_posix().removeprefix("assets/")
+        repo = ASSETS.get(rel) or next((d + rel[len(s):] for d, s in SHIPPED_DIRS.items() if rel.startswith(s + "/")),
+                                       None)
+        return f"]({REPO_URL}/blob/main/{repo}{anchor})" if repo else f"]({REPO_URL}/releases{anchor})"
+    return re.sub(r"\]\(([^)\s#]*)(#[^)\s]*)?\)", fix, md)
+
+
+def build_copilot() -> Path:
+    """The Microsoft 365 Copilot edition, from the portable skill just built (see the module docstring)."""
+    if COPILOT_OUT.exists():
+        shutil.rmtree(COPILOT_OUT)
+    COPILOT_OUT.mkdir(parents=True)
+    tpl = (SRC / "SKILL.template.md").read_text(encoding="utf-8")
+    (COPILOT_OUT / "SKILL.md").write_text(fill(tpl, "copilot"), encoding="utf-8", newline="\n")
+    for folder in COPILOT_ASSETS:
+        shutil.copytree(OUT / "assets" / folder, COPILOT_OUT / "assets" / folder)
+    fonts = COPILOT_OUT / "assets" / "fonts"
+    fonts.mkdir()
+    for weight in COPILOT_FONTS:
+        ttf = FONTS / f"LibreFranklin-{weight}.ttf"
+        (fonts / f"{ttf.name}.b64.txt").write_bytes(base64.encodebytes(ttf.read_bytes()))
+    shutil.copyfile(FONTS / "OFL.txt", fonts / "OFL.txt")
+
+    scripts = COPILOT_OUT / "scripts"
+    shutil.copytree(SRC / "copilot" / "scripts", scripts, ignore=shutil.ignore_patterns("__pycache__"))
+    for p in scripts.iterdir():
+        p.write_text(fill(p.read_text(encoding="utf-8"), "copilot"), encoding="utf-8", newline="\n")
+    pkg = ROOT / "python" / "mckviz"
+    (scripts / "mckviz_src").mkdir()
+    for f in [*pkg.glob("*.py"), *pkg.glob("*.json"), pkg / "mckviz.mplstyle", pkg / "VERSION"]:
+        name = f.name if f.suffix in COPILOT_TYPES else f"{f.name}.txt"   # mck_setup.py renames these back
+        shutil.copyfile(f, scripts / "mckviz_src" / name)
+    shutil.copytree(pkg / "geodata", scripts / "mckviz_geodata", ignore=shutil.ignore_patterns("__pycache__"))
+
+    shutil.copytree(OUT / "references", COPILOT_OUT / "references")  # after assets/, so links can check what ships
+    for p in (COPILOT_OUT / "references").rglob("*.md"):
+        p.write_text(copilot_links(p.read_text(encoding="utf-8"), p), encoding="utf-8", newline="\n")
+    check_copilot()
+    n = sum(1 for p in COPILOT_OUT.rglob("*") if p.is_file())
+    print(f"  wrote dist/skills/mck-chart-copilot/ ({n} files)")
+    return COPILOT_OUT
+
+
+def check_copilot() -> None:
+    """Fail the build when the Copilot edition breaks an Agent Builder skill rule (COPILOT_TYPES, COPILOT_MAX)."""
+    files = [p for p in COPILOT_OUT.rglob("*") if p.is_file()]
+    problems = [f"{len(files)} files (max {COPILOT_MAX['files']})"] if len(files) > COPILOT_MAX["files"] else []
+    for p in files:
+        rel = p.relative_to(COPILOT_OUT)
+        if p.suffix.lower() not in COPILOT_TYPES:
+            problems.append(f"{rel.as_posix()}: {p.suffix or 'no extension'} is not a skill file type")
+        if len(rel.parts) > COPILOT_MAX["parts"]:
+            problems.append(f"{rel.as_posix()}: nested deeper than {COPILOT_MAX['parts']} levels")
+        if p.stat().st_size > COPILOT_MAX["file_mb"] * 1e6:
+            problems.append(f"{rel.as_posix()}: over {COPILOT_MAX['file_mb']} MB")
+    skill = (COPILOT_OUT / "SKILL.md").read_text(encoding="utf-8")
+    if len(skill) >= COPILOT_MAX["instructions"]:
+        problems.append(f"SKILL.md is {len(skill):,} characters (must be under {COPILOT_MAX['instructions']:,})")
+    desc = re.search(r"^description: (.+)$", skill, re.M)
+    if not re.search(r"^name: \S+$", skill, re.M) or not desc:
+        problems.append("SKILL.md front matter needs a name and a description")
+    elif len(desc.group(1)) > COPILOT_MAX["description"]:
+        problems.append(f"description is {len(desc.group(1))} characters (max {COPILOT_MAX['description']})")
+    if problems:
+        raise SystemExit("tools/build_skill.py: the Copilot edition breaks Agent Builder's skill rules:\n  "
+                         + "\n  ".join(problems))
+
+
+def zip_copilot(dest: Path = COPILOT_ZIP) -> Path:
+    """A zip with SKILL.md at its root: the layout Agent Builder expects."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as z:
+        for p in sorted(COPILOT_OUT.rglob("*")):
+            if p.is_file():
+                z.write(p, p.relative_to(COPILOT_OUT).as_posix())
+    mb = dest.stat().st_size / 1e6
+    if mb > COPILOT_MAX["zip_mb"]:
+        raise SystemExit(f"{dest} is {mb:.1f} MB, over the {COPILOT_MAX['zip_mb']} MB limit for an Agent Builder skill")
+    shown = dest.relative_to(ROOT).as_posix() if dest.is_relative_to(ROOT) else dest.name
+    print(f"  wrote {shown} ({mb:.1f} MB)")
+    return dest
 
 
 def zip_skill(dest: Path = ZIP) -> Path:
@@ -240,3 +370,5 @@ if __name__ == "__main__":
     build(wheel="--zip" in sys.argv)
     if "--zip" in sys.argv:
         zip_skill()
+    if "--zip" in sys.argv or "--copilot" in sys.argv:
+        zip_copilot()

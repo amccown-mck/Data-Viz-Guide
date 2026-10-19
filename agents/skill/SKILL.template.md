@@ -1,6 +1,6 @@
 ---
 name: mck-chart
-description: Make a McKesson-standard chart or table from data, going from question to chart type, build with mckviz (or the web, Office, Power BI or R theme), insight headline, and QA checklist. Use whenever the user asks for a chart, graph, plot, visualization, scorecard or exhibit for McKesson, or for Workforce Innovation work (people analytics, workforce intelligence or planning / SWP data).
+description: {{description}}
 ---
 <!-- {{generated_note}} -->
 # McKesson chart workflow
@@ -8,6 +8,9 @@ description: Make a McKesson-standard chart or table from data, going from quest
 <!-- portable -->
 This skill is the Data Viz Starter Kit, McKesson Edition (v{{version}}), for any repo or tool. Everything it refers to is in this folder: `references/rules.md` (the house rules on one page), `references/choosing-a-chart.md`, `references/principles.md`, `references/qa-checklist.md`, one page per chart type in `references/cookbook/`, and theme files in `assets/`. Setup for each platform is in [Setup](#setup) at the end.
 <!-- /portable -->
+<!-- copilot -->
+This skill is the Data Viz Starter Kit, McKesson Edition (v{{version}}), Microsoft 365 Copilot edition. Everything it refers to is in this skill: `references/rules.md` (the house rules on one page, with the hex value of every color role), `references/choosing-a-chart.md`, `references/principles.md`, `references/qa-checklist.md`, one page per chart type in `references/cookbook/`, and synthetic sample data in `assets/data/`. Charts are drawn in the Python sandbox with `mckviz`, which ships in this skill as source: **load it first** with `scripts/mck_setup.py` (see [Setup](#setup)). The user usually pastes a table, uploads a spreadsheet, or shares a chart and asks for feedback on it (see [Reviewing a chart](#reviewing-a-chart)).
+<!-- /copilot -->
 <!-- repo -->
 This is the in-repo copy of the skill; the full rules are in `AGENTS.md`. A portable copy that works in any repo (and zips for Claude.ai) is generated into `dist/skills/mck-chart/` by `python tools/build_skill.py`.
 <!-- /repo -->
@@ -47,10 +50,17 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
 - Start from the cookbook snippet for the platform the user needs:
   - **Python:** `import mckviz as mv; mv.use(); C = mv.colors` (`mv.use()` styles matplotlib and activates the "mck" Plotly template). Use `mv.fmt_num` for numbers (K/M/B, %, true minus), `mv.signed(v, decimals=1)` for a signed delta in a headline (its default is 0 decimals: pass the decimals the chart labels use, so "+2.0" in the headline matches "+2.0 hrs" on the bar) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `{{docs}}cookbook/maps.md`).
     - **matplotlib** for slides, PNG, PDF and print: `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, `mv.label_bars` / `mv.label_line_ends` for labels.
+<!-- copilot -->
+    - Copilot shows images, not interactive HTML: draw with matplotlib and save a PNG with `mv.save(fig, "<name>.png", dpi=200)`, then show it in the reply. Use Plotly only when the user asks for an interactive HTML file to download, and only if `import plotly` works in the sandbox.
+  - **Excel / PowerPoint:** a deck that leaves the team needs a **native, editable chart**, not a picture. Give the PNG for a draft or a quick look, then the cookbook page's Excel / PowerPoint steps with the user's numbers, labels and focus filled in, and the headline, subtitle and source written out ready to paste. The colors for those steps are the hex values in `references/rules.md`. The PowerPoint template, the starter deck (native charts on the template grid) and the chart workbook are in the release bundle ({{repo_url}}/releases); `references/office-setup.md` covers the theme and the font.
+  - **Power BI:** follow the cookbook page's Power BI section. The report theme is `assets/powerbi/mckesson-dataviz-theme.json` (also in the release bundle) and `references/powerbi-setup.md` has the steps. Write the DAX for the highlight measure and the minimum-n rule (`IF([Headcount] < 10, BLANK(), ...)`) when the user needs it.
+<!-- /copilot -->
+<!-- portable,repo -->
     - **Plotly** when the output is interactive or HTML: `mv.pl_highlight` for colors, `mv.pl_finish(fig, headline, subtitle, source_text)` for the frame, then `fig.write_html(...)`.
   - **HTML:** the chart-card pattern with {{web_css}} plus {{web_plotly}} or {{web_vega}}{{chart_card}}.
   - **Excel / PowerPoint:** build a **native, editable chart**, never a pasted picture, when a pptx tool is available. In Claude.ai, or any environment with a pptx skill (pptxgenjs), use it with the theme and chart options in {{pptx_theme}} (`MCK.theme`, `MCK.text.*` on the slide grid, `MCK.barChart` with `MCK.pointColors(labels, focus)`) and the recipe in `{{docs}}office-setup.md` ("A native chart from code with pptxgenjs"): the headline in the title placeholder at 26 pt Bold McKesson Blue, the subtitle and source as text, and the benchmark line and bold focus labels as shapes over the pinned plot area. Without a pptx tool, start from the starter deck (`McKesson-DataViz-Starter.pptx`, native charts on the template grid) and follow the cookbook page's Excel / PowerPoint section by hand, or render a PNG with matplotlib and place it on the slide as the last resort.
   - **Power BI, R:** follow the cookbook page's section for that platform, using {{themes}}.
+<!-- /portable,repo -->
 - **No hex literals.** Use color roles only: context grey, focus blue, navy accent (the one exception), light blue for a uniform series, navy totals and benchmarks. Orange only when it means "worse" (below target, shrinking, a shortfall), green only when it means "better", both with ▲▼ or words. Red/amber/green only as status colors (`mv.STATUS`) with a symbol and word, never for data series.
 - Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.
 - When a chart shows a **derived measure** (leavers = headcount × attrition rate, hours freed = FTE × share, cost = headcount × average pay), say so in the footnote and call the result an estimate ("Estimated leavers = headcount × voluntary attrition rate"). Never present a derived count as a recorded one.
@@ -75,6 +85,16 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
 
 ## Hand-back
 Give the user the output (file path, or code plus the rendered image), the chart brief, and the alt text. Mention any assumptions about the data (definitions, exclusions, suppressed groups), every placeholder left in the chart (source, as-of date, period), and which install path the build used (mckviz, or the no-package fallback and its font).
+<!-- copilot -->
+In Copilot, show the PNG in the reply and offer it as a download. Show the code only if the user asks for it.
+
+## Reviewing a chart
+When the user shares a chart (an image, a slide, a dashboard screenshot) and asks for feedback:
+- Say what question the chart seems to answer and who it is for. If you can't tell, that is the first finding.
+- Check it against `references/rules.md`, `references/qa-checklist.md` and the cookbook page for its chart type. Rank the issues by how much they hurt the reading: a misleading scale or the wrong chart type first, then the headline (is it a finding, and does the chart prove it?), the highlight, labels and legend, color meaning, people-data rules (groups under 10), and the source line.
+- For each issue, give the fix in one line. Keep what already works.
+- Offer to redraw it. Build from the user's data when they can share it; values read off an image are approximate, so say so and ask the user to confirm them before the redraw goes in a deck.
+<!-- /copilot -->
 <!-- portable -->
 
 ## Setup
@@ -87,3 +107,17 @@ Give the user the output (file path, or code plus the rendered image), the chart
 - **Excel / PowerPoint:** the template (`assets/office/McKesson-DataViz.potx`), the theme color and font XML (`assets/office/Theme Colors/`, `Theme Fonts/`), the pptxgenjs theme (`assets/office/pptxgenjs-theme.js`) and the fonts (`assets/fonts/`) are in this folder. The starter deck and chart workbook are in the release bundle (`DataViz-Starter-Kit-McKesson-Edition-v{{version}}.zip`) or at {{repo_url}}.
 - **Cookbook snippets run from this folder:** paths such as `assets/data/workforce_mix.csv` (synthetic sample data) and `assets/web/mck-viz.css` are relative to the skill folder, so `cd` here first, or replace the path with the user's file and keep the structure. Outputs go to `out/`.
 <!-- /portable -->
+<!-- copilot -->
+
+## Setup
+- **Load mckviz** at the start of the first chart in a conversation. The sandbox can't install packages or reach the internet, so the package ships here as source, and `scripts/mck_setup.py` assembles it in a temp folder (it restores the font and the matplotlib style, which ship as text) and applies the style. Run it from the folder this SKILL.md is in:
+  ```python
+  import runpy
+  setup = runpy.run_path("<this skill's folder>/scripts/mck_setup.py", run_name="__main__")   # prints what loaded
+  mv, C, SKILL_DIR = setup["mv"], setup["C"], setup["SKILL_DIR"]
+  ```
+  Later code in the same session can `import mckviz as mv` directly. If the sandbox starts a fresh process for each run, `mck_setup.py` printed `MCKVIZ_PATH=...`: put `import sys; sys.path.insert(0, MCKVIZ_PATH)` before `import mckviz as mv; mv.use()`. Check the last line it prints: if Libre Franklin did not load, list the fallback font under QA exceptions.
+- **If mckviz won't load** (matplotlib is missing, or the script can't run), build without the package: take the color roles from `references/rules.md` and define them once as named constants, and go through `references/qa-checklist.md` by hand in place of `mv.lint`. If no code can run at all, give the user the chart spec (type, sort, which bar is blue, labels, headline, subtitle, source) and the cookbook page's Excel / PowerPoint steps. Say in the hand-back which path you used.
+- **Data:** read the user's upload in the sandbox (pandas). Cookbook paths such as `assets/data/workforce_mix.csv` (synthetic sample data) are relative to `SKILL_DIR`; when a snippet reads one, swap in the user's data and keep the structure.
+- **Not in this edition:** Copilot skills can't carry the web themes (CSS), the R theme, the PowerPoint template (.potx) or the font files as they are, so files that cookbook pages name under `assets/web/`, `assets/html/`, `assets/r/` and `assets/office/` aren't here. They're in the release bundle ({{repo_url}}/releases), which is where the user gets the Office template and the font.
+<!-- /copilot -->

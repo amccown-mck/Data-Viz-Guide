@@ -43,12 +43,13 @@ Making any chart, whatever the tool: [docs/principles.md](docs/principles.md) â†
 
 ## For agents
 
-Three ways to give an AI assistant the chart rules, from fullest to lightest:
+Four ways to give an AI assistant the chart rules, from fullest to lightest:
 
 | Option | What it is | Use it when |
 |---|---|---|
 | **This repo's [AGENTS.md](AGENTS.md)** | Full instructions, read automatically by Claude Code (via `CLAUDE.md`), GitHub Copilot (via `.github/copilot-instructions.md`), Cursor, Codex and others, plus the in-repo [`mck-chart` skill](.github/skills/mck-chart/SKILL.md) | You work **in this repo**, on charts or on the kit itself |
 | **The portable skill** [dist/skills/mck-chart/](dist/skills/mck-chart/SKILL.md) | A self-contained skill folder: the workflow, the one-page rules, the chart chooser, principles, QA checklist, every cookbook page, theme files and an environment check. The agent loads the detail only when it makes a chart | You make charts **in another repo or tool**: copy the folder to `~/.claude/skills/` (all your projects), a repo's `.claude/skills/` or `.github/skills/`, or upload `agents/mck-chart-skill.zip` from the release bundle to Claude.ai as a custom skill |
+| **The Microsoft 365 Copilot edition** of the skill, `mck-chart-copilot.zip` (`python tools/build_skill.py --copilot`, or `agents/mck-chart-copilot-skill.zip` in the release bundle) | The same workflow and references, built for Agent Builder's skill rules: `mckviz` and the font ship in a form the Copilot sandbox can load with no install | You want a **Copilot agent** your team can open from Copilot chat: follow [docs/copilot-agent-setup.md](docs/copilot-agent-setup.md) |
 | **The single rules file** [dist/agents/mck-viz-rules.md](dist/agents/mck-viz-rules.md) | One self-contained page: workflow, color roles with hex values, type, honest scales, people-data rules, QA checklist | The tool takes one instructions file (`AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, `.cursor/rules/`), or you paste it into a chat |
 
 In Python, pair any of them with the `mckviz` package (`pip install` from the tag), so agents check their own charts with `mv.lint(fig)`.

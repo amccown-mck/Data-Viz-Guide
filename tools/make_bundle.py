@@ -18,7 +18,8 @@ dist/ now and says so if something is missing. Layout inside the zip:
                                chart-card starters (online and offline, with vendor/plotly.min.js), R theme
       python/                  the mckviz wheel (pip install it offline) and how to install from GitHub
       agents/                  the one-file rules, the portable mck-chart skill (folder and Claude.ai zip, both
-                               with the same wheel inside, so the skill works where GitHub is unreachable)
+                               with the same wheel inside, so the skill works where GitHub is unreachable), and the
+                               Microsoft 365 Copilot edition (zip for Agent Builder) with its set-up page
 
 dist/office/McKesson-DataViz-Starter-Official.pptx (built locally from the internal brand template, never committed)
 is included when it exists.
@@ -68,6 +69,7 @@ FILES = {
     "web/vega-lite-config.json": "dist/web/vega-lite-config.json",
     "web/theme_mck.R": "dist/r/theme_mck.R",
     "agents/mck-viz-rules.md": "dist/agents/mck-viz-rules.md",
+    "agents/copilot-agent-setup.md": "docs/copilot-agent-setup.md",
 }
 OPTIONAL = {"office/McKesson-DataViz-Starter-Official.pptx": "dist/office/McKesson-DataViz-Starter-Official.pptx"}
 
@@ -189,6 +191,9 @@ people is in <code>powerbi/powerbi-setup.md</code>.</p>
 <ul>
 <li><b>Claude.ai:</b> in Settings, find <b>Skills</b> (under Capabilities) and upload <code>agents/mck-chart-skill.zip</code>. Claude then
 follows the McKesson chart workflow whenever you ask for a chart.</li>
+<li><b>Microsoft 365 Copilot:</b> build a chart agent in Agent Builder (<b>Configure › Skills › Add</b>) with
+<code>agents/mck-chart-copilot-skill.zip</code>, then share the agent with your team. Steps, instructions to paste and
+conversation starters: <code>agents/copilot-agent-setup.md</code>.</li>
 <li><b>Claude Code:</b> copy the folder <code>agents/mck-chart/</code> into <code>~/.claude/skills/</code> (every project)
 or into a repo's <code>.claude/skills/</code>. <b>GitHub Copilot:</b> into the repo's <code>.github/skills/</code>.</li>
 <li><b>Any other assistant:</b> paste or attach <code>agents/mck-viz-rules.md</code>, the rules on one page.</li>
@@ -234,6 +239,7 @@ def main() -> None:
                 shutil.copy2(f, fonts / f.name)
         shutil.copytree(build_skill.OUT, stage / "agents" / "mck-chart")
         build_skill.zip_skill(stage / "agents" / "mck-chart-skill.zip")
+        build_skill.zip_copilot(stage / "agents" / "mck-chart-copilot-skill.zip")
         (stage / "python").mkdir(exist_ok=True)
         wheel = None
         if with_wheel:                                      # the same wheel the skill carries
