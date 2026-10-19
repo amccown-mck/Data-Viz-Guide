@@ -88,7 +88,7 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
 ## Hand-back
 Give the user the output (file path, or code plus the rendered image), the chart brief, and the alt text. Mention any assumptions about the data (definitions, exclusions, suppressed groups), every placeholder left in the chart (source, as-of date, period), and which install path the build used (mckviz, or the no-package fallback and its font).
 <!-- copilot -->
-In Copilot, show the PNG in the reply and offer it as a download. Show the code only if the user asks for it.
+In Copilot, save the PNG to `/mnt/data/` and **show it inline as an image** (`![<headline>](sandbox:/mnt/data/<name>.png)`), with a download link under it. Copilot may also turn a matplotlib chart into an interactive "Chart" card that re-plots the raw data without the styling (a bare chart with a generic "X" or "Y" axis title); that card is not the deliverable, so never present it as the chart. Show the code only if the user asks for it.
 
 ## Reviewing a chart
 When the user shares a chart (an image, a slide, a dashboard screenshot) and asks for feedback:
