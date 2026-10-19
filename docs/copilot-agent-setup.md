@@ -26,6 +26,8 @@ You are the McKesson Chart Coach for Workforce Innovation. You help colleagues t
 
 For any request to make, fix or review a chart, graph, table, scorecard or exhibit, use the mck-chart skill and follow its workflow in order: question, chart type, build, headline, QA. Load mckviz with the skill's setup script before drawing.
 
+Draw every chart in Python with mckviz and show the PNG it saves. Never use Copilot's built-in chart card: it can't follow the McKesson style. If Python can't run, say so plainly instead of drawing the chart another way.
+
 Always:
 - Compute every number in a headline from the data. Never estimate from a picture without saying so.
 - Grey for context, McKesson Blue for what the headline names. Orange only for "worse", green only for "better".
@@ -52,6 +54,8 @@ In the preview pane, check each of these before you share:
 - **The chart is in house style.** Grey bars with the two highest in blue, labels on the bar ends, a headline that is a full sentence with a number, and a source line.
 - **Your own data.** Paste a small table with one group under 10 people. That group should be merged into "Other" or dropped, with a footnote saying so.
 - **Review.** Paste a screenshot of an old chart and ask for a review. You should get a ranked list of fixes, then an offer to redraw it.
+
+**If the chart comes back as an interactive "Chart" card** (a `</>` icon, rounded bars, gridlines, an axis instead of labels on the bars, a "Y" axis title, no source line), the agent used Copilot's built-in chart instead of the skill's Python. Check that Code interpreter is on and that the instructions above are pasted, then ask: *"Run scripts/mck_setup.py from the mck-chart skill and show me exactly what it prints."* The answer tells you whether Python runs and where the skill's files are; send it to whoever maintains the kit.
 
 If the agent can't run the script at all, it falls back to building with the colors from `references/rules.md` and says so in its reply. Note what happened (the sandbox message) and open an issue on the repo.
 

@@ -46,6 +46,7 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
   - **HTML:** the chart-card pattern with `dist/web/mck-viz.css` plus `mck-plotly-template.js` or `vega-lite-config.json` (starter: `templates/html/chart-card.html`).
   - **Excel / PowerPoint:** build a **native, editable chart**, never a pasted picture, when a pptx tool is available. In Claude.ai, or any environment with a pptx skill (pptxgenjs), use it with the theme and chart options in `dist/office/pptxgenjs-theme.js` (`MCK.theme`, `MCK.text.*` on the slide grid, `MCK.barChart` with `MCK.pointColors(labels, focus)`) and the recipe in `docs/office-setup.md` ("A native chart from code with pptxgenjs"): the headline in the title placeholder at 26 pt Bold McKesson Blue, the subtitle and source as text, and the benchmark line and bold focus labels as shapes over the pinned plot area. Without a pptx tool, start from the starter deck (`McKesson-DataViz-Starter.pptx`, native charts on the template grid) and follow the cookbook page's Excel / PowerPoint section by hand, or render a PNG with matplotlib and place it on the slide as the last resort.
   - **Power BI, R:** follow the cookbook page's section for that platform, using the themes in `dist/`.
+- **At most two highlighted items**, and they are what the headline names. When more qualify (three functions below a line), highlight the two the headline is about and keep the rest grey, or make the one exception the navy accent.
 - **No hex literals.** Use color roles only: context grey, focus blue, navy accent (the one exception), light blue for a uniform series, navy totals and benchmarks. Orange only when it means "worse" (below target, shrinking, a shortfall), green only when it means "better", both with ▲▼ or words. Red/amber/green only as status colors (`mv.STATUS`) with a symbol and word, never for data series.
 - Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.
 - When a chart shows a **derived measure** (leavers = headcount × attrition rate, hours freed = FTE × share, cost = headcount × average pay), say so in the footnote and call the result an estimate ("Estimated leavers = headcount × voluntary attrition rate"). Never present a derived count as a recorded one.
@@ -63,6 +64,7 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
 - Python: run `mv.lint(fig)` (for HTML chart cards, pass `headline=`, `subtitle=`, `source=`). Fix every error and read the warnings.
 - Render the chart and **look at it**: open the PNG, or screenshot the HTML at desktop width and at 390 px.
 - Go through `docs/qa-checklist.md` and the cookbook page's "QA specifics". Fix what fails. For anything you can't fix, name it in the brief under "QA exceptions".
+- Write `QA: pass` only when `mv.lint` ran with no errors and you looked at the render. Otherwise say what was and wasn't checked (`QA: checklist by hand; mv.lint not run because ...`).
 - Write alt text: the headline plus 2–3 key numbers.
 - If you edited cookbook code in this repo, run `python tools/check_snippets.py docs/cookbook/<page>.md`.
 
