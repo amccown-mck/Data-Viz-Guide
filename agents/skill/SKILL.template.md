@@ -112,13 +112,14 @@ When the user shares a chart (an image, a slide, a dashboard screenshot) and ask
 <!-- copilot -->
 
 ## Setup
-- **Load mckviz** at the start of the first chart in a conversation. The sandbox can't install packages or reach the internet, so the package ships here as source, and `scripts/mck_setup.py` assembles it in a temp folder (it restores the font and the matplotlib style, which ship as text) and applies the style. Run it from the folder this SKILL.md is in:
+- **Load mckviz at the top of every chart script.** The sandbox can't install packages or reach the internet, so the package ships here as source, and `scripts/mck_setup.py` assembles it in a temp folder (it restores the font and the matplotlib style, which ship as text) and applies the style. In Microsoft 365 Copilot this skill sits under `/home/oai/skills/` (for example `/home/oai/skills/appCatalog/<id>/mck-chart/`), and each command runs in a fresh process, so start every script with:
   ```python
-  import runpy
-  setup = runpy.run_path("<this skill's folder>/scripts/mck_setup.py", run_name="__main__")   # prints what loaded
+  import glob, runpy
+  setup_py = glob.glob("/home/oai/skills/**/mck-chart/scripts/mck_setup.py", recursive=True)[0]
+  setup = runpy.run_path(setup_py, run_name="__main__")      # prints what loaded; takes a second
   mv, C, SKILL_DIR = setup["mv"], setup["C"], setup["SKILL_DIR"]
   ```
-  Later code in the same session can `import mckviz as mv` directly. If the sandbox starts a fresh process for each run, `mck_setup.py` printed `MCKVIZ_PATH=...`: put `import sys; sys.path.insert(0, MCKVIZ_PATH)` before `import mckviz as mv; mv.use()`. Check the last line it prints: if Libre Franklin did not load, list the fallback font under QA exceptions.
+  If the glob finds nothing, search for `mck_setup.py` (`find / -name mck_setup.py 2>/dev/null`) and use that path. Check the last line it prints: if Libre Franklin did not load, list the fallback font under QA exceptions.
 - **If mckviz won't load** (matplotlib is missing, or the script can't run), build without the package: take the color roles from `references/rules.md` and define them once as named constants, and go through `references/qa-checklist.md` by hand in place of `mv.lint`. If no code can run at all, give the user the chart spec (type, sort, which bar is blue, labels, headline, subtitle, source) and the cookbook page's Excel / PowerPoint steps. Say in the hand-back which path you used.
 - **Data:** read the user's upload in the sandbox (pandas). Cookbook paths such as `assets/data/workforce_mix.csv` (synthetic sample data) are relative to `SKILL_DIR`; when a snippet reads one, swap in the user's data and keep the structure.
 - **Not in this edition:** Copilot skills can't carry the web themes (CSS), the R theme, the PowerPoint template (.potx) or the font files as they are, so files that cookbook pages name under `assets/web/`, `assets/html/`, `assets/r/` and `assets/office/` aren't here. They're in the release bundle ({{repo_url}}/releases), which is where the user gets the Office template and the font.
