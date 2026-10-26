@@ -62,12 +62,13 @@ def load():
     importlib.invalidate_caches()
     mv = importlib.import_module("mckviz")
     import matplotlib as mpl
+    from matplotlib.figure import Figure
 
     # Copilot's sandbox patches matplotlib at startup (/opt/python_setup/matplotlib_patch_for_interactive_chart_*.py):
     # it sets its own style (a Microsoft palette, edges on every bar, rounded legends, outward ticks), and its savefig
     # writes a JSON spec beside each PNG that Copilot shows as an interactive chart card instead of our image. Start
     # from matplotlib's defaults so none of that style survives mv.use(); mv.save renders without the patched savefig.
-    patched = "patched" in getattr(mpl.figure.Figure.savefig, "__qualname__", "")
+    patched = "patched" in getattr(Figure.savefig, "__qualname__", "")
     mpl.rcdefaults()
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
