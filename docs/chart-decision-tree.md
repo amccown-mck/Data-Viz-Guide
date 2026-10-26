@@ -57,6 +57,13 @@ Many rows, one per person or team, with a measure (compa-ratio, span of control,
 - **Avoid:** An average with no spread
 - **Color:** Focus (default)
 
+**What share of each group is beyond a threshold (below 0.90, over the span limit, under 1 year)?** (share beyond a threshold) *(when there is people fall into 3 to 8 groups)*
+
+- **Start with:** [Sorted bar of each group's share beyond the threshold, with its n](cookbook/distribution.md) (`mv.share_bar`)
+- **Option** when people fall into 3 to 8 groups, and only if the headline is about the spread or the outliers, not only the share: [Strip plot by group, the zone beyond the threshold shaded](cookbook/distribution.md) (`mv.strip`)
+- **Avoid:** A count of people beyond the line with no group size
+- **Color:** Focus (default)
+
 <a id="cat-measure"></a>
 ### Categories × one measure
 

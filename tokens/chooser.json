@@ -129,6 +129,27 @@
           ],
           "avoid": "An average with no spread",
           "color": "focus"
+        },
+        {
+          "ask": "What share of each group is beyond a threshold (below 0.90, over the span limit, under 1 year)?",
+          "type": "share beyond a threshold",
+          "needs": "has_groups",
+          "start": {
+            "chart": "Sorted bar of each group's share beyond the threshold, with its n",
+            "page": "distribution",
+            "helper": "mv.share_bar"
+          },
+          "further": [
+            {
+              "when": "has_groups",
+              "chart": "Strip plot by group, the zone beyond the threshold shaded",
+              "page": "distribution",
+              "helper": "mv.strip",
+              "only_if": "the headline is about the spread or the outliers, not only the share"
+            }
+          ],
+          "avoid": "A count of people beyond the line with no group size",
+          "color": "focus"
         }
       ]
     },

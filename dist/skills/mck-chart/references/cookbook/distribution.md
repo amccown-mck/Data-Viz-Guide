@@ -82,7 +82,36 @@ mv.save(fig, "out/distribution-strip.png", dpi=200)
 ```
 - **Box plot only** (many groups, up to 20, or tens of thousands of people): `mv.strip(..., dots=False)` draws filled boxes with whiskers at the 10th and 90th percentiles. Footnote them ("Box = middle 50%; whiskers = 10th–90th percentile"). It never uses the default 1.5 × IQR whiskers, which few readers can interpret.
 - **One group** (the start chart for a single spread): pass `{"All people managers": values}` for one row, or draw a histogram (below).
+- **Calmer or fuller:** by default only the focus group gets a box and the others a median tick (`box="focus"`); `box=True` boxes every group for readers comparing spreads.
 - **Beeswarm** (dots that don't overlap): replace the random jitter with a swarm layout, such as the `stripplot`/`swarmplot` functions in seaborn, then recolor them with `mv.highlight`. Beeswarms work up to ~300 dots per row. Above that, keep the jitter.
+
+#### Share beyond a threshold (the executive view)
+When the headline is a share ("one in four pharmacy technicians is paid below 0.90"), a sorted bar of each group's share says it faster than the spread. `mv.share_bar` computes the shares from the same per-person rows, sorts them, and prints the share and each group's n at the bar end. Keep the strip plot for when the headline is about the spread or the outliers, or as a second view.
+
+```python
+# verified runnable (from the repo root)
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import pandas as pd
+
+import mckviz as mv
+
+mv.use()
+df = pd.read_csv("assets/data/compa_ratio_individuals.csv")      # one row per employee: job_family, compa_ratio
+
+fig, ax = plt.subplots(figsize=(10, 4.6))
+ns = mv.share_bar(ax, df, "job_family", "compa_ratio", below=0.90, focus={"Pharmacy Technician"},
+                  ref="overall", ref_label="All job families")   # dashed line at the share across all groups
+focus = ns.order[0]
+ratio = ns.shares[focus] / max(v for g, v in ns.shares.items() if g != focus)
+mv.titles(fig, f"One in four pharmacy technicians is paid below 0.90 of range midpoint, about {ratio:.0f}x any "
+               "other job family",
+          "Employees paid below 0.90 of salary-range midpoint, by job family, Mar 2026 (% of employees)")
+mv.source(fig, "Source: Synthetic data for illustration only")
+mv.lint(fig, strict=True)
+mv.save(fig, "out/distribution-share.png", dpi=200)
+```
 
 ### Python — Plotly / HTML
 ```python

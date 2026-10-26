@@ -1596,12 +1596,12 @@ def sankey(ax, flows, *, focus: Iterable[str] = (), worse: Iterable[str] = (), a
 
 # ------------------------------------------------------------------ STRIP / BOX (distributions)
 def strip(ax, data, group: str | None = None, value: str | None = None, *, focus: Iterable[str] = (),
-          order: Sequence[str] | None = None, dots: bool = True, box: bool = True, share=None,
+          order: Sequence[str] | None = None, dots: bool = True, box: bool | str = "focus", share=None,
           share_label: str | None = None, zone: tuple[float, float] | None = None, zone_label: str | None = None,
           ref: float | None = None, ref_label: str | None = None, min_n: int = 10, xfmt: str | None = None,
           jitter: float = 0.28, seed: int = 1):
-    """The spread across people, one row per group: every person a dot (grey, the focus group blue), a navy box
-    for the middle 50% with the median, the n and an optional share at the end of each row.
+    """The spread across people, one row per group: every person a dot (faint grey, the focus group blue), a navy
+    box for the focus group's middle 50% and a median tick on every row, the n and an optional share at the row end.
 
         df = pd.read_csv("examples/data/compa_ratio_individuals.csv")     # job_family, compa_ratio, one row a person
         mv.strip(ax, df, "job_family", "compa_ratio", focus={"Pharmacy Technician"}, share=("below", 0.90),
@@ -1609,10 +1609,12 @@ def strip(ax, data, group: str | None = None, value: str | None = None, *, focus
 
     data: a DataFrame with `group` and `value` columns, or {group: values}. order: groups top to bottom; default by
         median, highest at the top. focus: at most two groups, in blue with bold navy names.
-    dots / box: a strip plot with boxes (default); dots=False draws box plots with 10th-90th percentile whiskers,
-        for many groups or tens of thousands of people. Footnote the box once ("Box = middle 50%; line = median").
+    dots / box: box="focus" (default) boxes the focus groups only, the calm executive view; box=True boxes every
+        group, for readers comparing spreads; box=False, median ticks only. dots=False draws box plots with
+        10th-90th percentile whiskers, for many groups or tens of thousands of people. Footnote the box once
+        ("Box = middle 50%; line = median").
     share: ("below", x) or ("above", x) prints each group's share beyond x at the row end, under `share_label`
-        (default "Below x"). zone: (low, high) shaded behind the data (None for the axis edge), named by zone_label.
+        (default "% below" or "% above"; name the threshold once, in zone_label or the subtitle). zone: (low, high) shaded behind the data (None for the axis edge), named by zone_label.
         ref: a dashed reference line (the midpoint, the limit), named by ref_label.
     Groups under min_n are left out and listed in `.suppressed` for the footnote. Returns SimpleNamespace(order,
     stats={group: dict(n, median, share)}, suppressed, labels).
@@ -1676,8 +1678,11 @@ def strip(ax, data, group: str | None = None, value: str | None = None, *, focus
         hot = g in focus
         if dots:
             ax.scatter(v, y + rng.uniform(-jitter, jitter, len(v)), s=7, color=C.focus if hot else C.context,
-                       alpha=0.45, lw=0, zorder=2)
-        if box or not dots:
+                       alpha=0.5 if hot else 0.3, lw=0, zorder=2)
+        boxed = box is True or (box == "focus" and hot)
+        if dots and not boxed:                                 # context rows: just a median tick
+            ax.plot([np.median(v)] * 2, [y - 0.3, y + 0.3], color=C.headline, lw=2, zorder=3, solid_capstyle="butt")
+        if boxed or not dots:
             q1, med, q3 = np.percentile(v, [25, 50, 75])
             h = 0.34 if dots else 0.22
             face = "none" if dots else (C.focus if hot else C.context)
@@ -1700,7 +1705,7 @@ def strip(ax, data, group: str | None = None, value: str | None = None, *, focus
                                  textcoords="offset points", va="center", ha="left", fontsize=SMALL,
                                  color=C.text_muted))
     if share is not None:
-        head = share_label or f"{side.capitalize()} {xfmt.format(x=cut) if xfmt else f'{cut:g}'}"
+        head = share_label or f"% {side}"
         texts.append(ax.annotate(head, (1, top_y), xycoords=("axes fraction", "data"), xytext=(6, 0),
                                  textcoords="offset points", va="bottom", ha="left", fontsize=SMALL,
                                  color=C.text_muted))
@@ -1715,3 +1720,74 @@ def strip(ax, data, group: str | None = None, value: str | None = None, *, focus
         t.set_color(C.text)
     _bold_ticks(ax.get_yticklabels(), focus)
     return SimpleNamespace(order=names, stats=stats, suppressed=suppressed, labels=texts)
+
+
+# ------------------------------------------------------------------ SHARE BEYOND A THRESHOLD
+def share_bar(ax, data, group: str | None = None, value: str | None = None, *, below: float | None = None,
+              above: float | None = None, focus: Iterable[str] = (), ref: float | str | None = None,
+              ref_label: str | None = None, min_n: int = 10, decimals: int = 0):
+    """The share of each group beyond a threshold, from one row per person: a sorted bar per group (grey, the focus
+    group blue), the share at the bar end and each group's n beside it. The executive view of "who is paid below
+    0.90?"; mv.strip shows the whole spread behind it.
+
+        df = pd.read_csv("examples/data/compa_ratio_individuals.csv")     # job_family, compa_ratio, one row a person
+        mv.share_bar(ax, df, "job_family", "compa_ratio", below=0.90, focus={"Pharmacy Technician"})
+
+    data: a DataFrame with `group` and `value` columns, or {group: values}. Pass exactly one of below= / above=
+        (strictly below or above the threshold). focus: at most two groups. ref: an optional reference share in
+        percent, drawn as a navy dashed line and named by ref_label; ref="overall" draws the share across all the
+        groups shown, labeled with that share ("All groups 12%"; ref_label replaces "All groups").
+    Groups under min_n people are left out and listed in `.suppressed`. Returns SimpleNamespace(order, shares
+    {group: percent}, counts {group: people beyond}, n {group: people}, overall (percent), suppressed, bars).
+    """
+    if (below is None) == (above is None):
+        raise ValueError("pass exactly one of below= or above=")
+    if hasattr(data, "groupby"):
+        if group is None or value is None:
+            raise ValueError("pass the group and value column names with a DataFrame")
+        groups = {str(k): np.asarray(v.dropna(), float) for k, v in data.groupby(group, sort=False)[value]}
+    else:
+        groups = {str(k): np.asarray(list(v), float) for k, v in dict(data).items()}
+    suppressed = sorted(g for g, v in groups.items() if len(v) < min_n)
+    groups = {g: v for g, v in groups.items() if len(v) >= min_n}
+    if not groups:
+        raise ValueError(f"every group has fewer than {min_n} people")
+    focus = {str(f) for f in focus}
+    if len(focus) > 2:
+        raise ValueError("highlight at most two groups")
+    beyond = {g: int(np.sum(v < below if below is not None else v > above)) for g, v in groups.items()}
+    n = {g: len(v) for g, v in groups.items()}
+    shares = {g: 100 * beyond[g] / n[g] for g in groups}
+    overall = 100 * sum(beyond.values()) / sum(n.values())
+    if isinstance(ref, str):
+        if ref != "overall":
+            raise ValueError('ref is a share in percent or "overall"')
+        ref, ref_label = overall, f"{ref_label or 'All groups'} {overall:.{decimals}f}%"   # the number, computed
+    order = sorted(groups, key=lambda g: -shares[g])           # largest share on top
+    y = np.arange(len(order))[::-1]
+    vals = [shares[g] for g in order]
+    bars = ax.barh(y, vals, height=BAND, color=[C.focus if g in focus else C.context for g in order], zorder=2)
+    top = max(vals + [ref or 0]) or 1
+    for yy, g, v in zip(y, order, vals):
+        hot = g in focus
+        t = ax.annotate(f"{v:.{decimals}f}%", (v, yy), xytext=(4, 0), textcoords="offset points", va="center",
+                        ha="left", fontsize=LABEL, color=C.headline if hot else C.text, fontweight=600 if hot else 500)
+        ax.annotate(f"n={n[g]:,}", (v, yy), xytext=(4 + _text_width_pt(ax, t.get_text(), LABEL, 600) + 6, 0),
+                    textcoords="offset points", va="center", ha="left", fontsize=SMALL, color=C.text_muted)
+    if ref is not None:
+        ax.axvline(ref, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=3)
+        if ref_label:
+            ax.annotate(ref_label, (ref, y[0] + BAND / 2), xytext=(0, 4), textcoords="offset points", ha="center",
+                        va="bottom", fontsize=SMALL, color=C.annotation, annotation_clip=False,
+                        bbox=dict(fc="white", ec="none", pad=1))
+    ax.set_xlim(0, top * 1.25)
+    ax.set_ylim(-0.6, len(order) - 0.4)
+    ax.set_yticks(y, order)
+    ax.set_xticks([])
+    _plain(ax, keep=("left",))
+    for t in ax.get_yticklabels():
+        t.set_fontsize(TICK)
+        t.set_color(C.text)
+    _bold_ticks(ax.get_yticklabels(), focus)
+    return SimpleNamespace(order=order, shares=shares, counts=beyond, n=n, overall=overall, suppressed=suppressed,
+                           bars=bars)

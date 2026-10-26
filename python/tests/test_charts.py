@@ -153,7 +153,14 @@ def _strip(ax):
                     ref=1.0, ref_label="Range midpoint", xfmt="{x:.2f}")
 
 
-BUILDERS = {"strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
+def _share_bar(ax):
+    import pandas as pd
+
+    return mv.share_bar(ax, pd.read_csv(DATA / "compa_ratio_individuals.csv"), "job_family", "compa_ratio",
+                        below=0.90, focus={"Pharmacy Technician"}, ref="overall", ref_label="All job families")
+
+
+BUILDERS = {"share_bar": _share_bar, "strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
             "dumbbell": _dumbbell, "heat": _heat, "heat_sequential": _heat_seq, "kpi_card": _kpi,
             "kpi_row": _kpi_row, "ring": _ring, "tracker": _tracker, "roadmap": _roadmap,
             "status_column": _status_column, "rank_slope": _rank_slope, "diverging_bars": _diverging,
@@ -477,3 +484,32 @@ def test_strip_suppresses_small_groups_and_limits_groups():
     assert len(mv.strip(ax, {str(i): range(20) for i in range(9)}, dots=False).order) == 9   # boxes go to 20
     with pytest.raises(ValueError, match="at most two"):
         mv.strip(ax, {"A": range(40), "B": range(30), "C": range(30)}, focus={"A", "B", "C"})
+
+
+def test_share_bar_computes_shares_from_people_and_sorts():
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ns = _share_bar(ax)
+    assert ns.order[0] == "Pharmacy Technician" and round(ns.shares["Pharmacy Technician"], 1) == 25.5
+    assert [ns.shares[g] for g in ns.order] == sorted(ns.shares.values(), reverse=True)
+    assert ns.counts["Pharmacy Technician"] == 158 and ns.n["Pharmacy Technician"] == 620
+    assert round(ns.overall, 1) == round(100 * sum(ns.counts.values()) / sum(ns.n.values()), 1)
+    texts = {t.get_text() for t in ax.texts}
+    assert {"25%", "n=620", f"All job families {ns.overall:.0f}%"} <= texts
+    assert hexes(ns.bars)[0] == C.focus.upper() and set(hexes(ns.bars)[1:]) == {C.context.upper()}
+
+
+def test_share_bar_needs_one_threshold_and_suppresses_small_groups():
+    fig, ax = plt.subplots()
+    with pytest.raises(ValueError, match="exactly one"):
+        mv.share_bar(ax, {"A": range(20)})
+    ns = mv.share_bar(ax, {"A": range(40), "B": range(30), "Tiny": range(5)}, above=25)
+    assert ns.suppressed == ["Tiny"] and ns.order == ["A", "B"]
+
+
+def test_strip_boxes_only_the_focus_group_by_default():
+    from matplotlib.patches import Rectangle
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    _strip(ax)
+    assert len([p for p in ax.patches if isinstance(p, Rectangle) and p.get_fill() is False
+                or isinstance(p, Rectangle) and p.get_facecolor()[3] == 0]) == 1

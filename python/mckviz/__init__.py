@@ -540,7 +540,7 @@ def pl_highlight(labels: Iterable, focus=None, accent=None, base: str | None = N
 from .lint import Finding, LintError, lint  # noqa: E402  (needs the names above)
 from .charts import (STATUS_ORDER, big, delta_label, diverging_bars, dumbbell, heat, hstack, key_strip,  # noqa: E402
                      kpi_card, kpi_row, label_points, multiples, rank_slope, ring, roadmap, sdot, small, status,
-                     sankey, status_column, status_key, strip, tracker, waterfall)
+                     sankey, share_bar, status_column, status_key, strip, tracker, waterfall)
 from .page import Option, options_page, page_pdf  # noqa: E402
 from .chooser import suggest  # noqa: E402
 from .table import Col, table  # noqa: E402
