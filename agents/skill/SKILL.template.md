@@ -69,7 +69,7 @@ mv.options_page("<topic>-options.html", title="<Topic>: four ways to show it", o
 - With four or more options, make one a **blended table** (`mv.table`: inline bars, one heat column, a change column, bold focus rows, a weighted total), so every reader can find their own row; put it last, as the reference view.
 - Hand back the page, a one-line brief per option, and how to use it: open it in a browser, "Save as PDF" for a handout, Download or Copy under each chart for PowerPoint.
 <!-- copilot -->
-- In Copilot, write the page to `/mnt/data/`, run `plt.close("all")` after `mv.options_page`, and give a download link to the .html. Don't show every chart inline: list the options with their headlines instead.
+- In Copilot, write the page to `/mnt/data/`, run `plt.close("all")` after `mv.options_page`, then `pdf = mv.page_pdf(path)`. Copilot opens linked files in the OneDrive viewer, where a PDF reads and forwards cleanly but an .html's "Open in app" fails until it is downloaded. So link the **PDF first** ("to read, share or print"), then the **.html** with one line: "For the Download and Copy buttons (charts into PowerPoint), select Download (↓) at the top left of the preview, then open the file in your browser." If `page_pdf` returns None, link the .html with that line and point to its Save as PDF button. Don't show every chart inline: list the options with their headlines instead.
 <!-- /copilot -->
 
 ## 3. Build

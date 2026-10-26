@@ -89,3 +89,31 @@ def test_bad_input_is_refused(tmp_path):
     bare = mv.Option(fig, name="Bare", question="Q?", how_to_read="R.", strength="S.", tradeoff="T.")
     with pytest.raises(ValueError, match="mv.titles"):
         build(tmp_path, [option(1), bare])
+
+
+def test_pdf_is_skipped_without_weasyprint(tmp_path, monkeypatch):
+    import sys
+
+    monkeypatch.setitem(sys.modules, "weasyprint", None)                     # import fails, as on most Windows PCs
+    path = mv.options_page(tmp_path / "views.html", "Two groups: two ways to show it", [option(1), option(2)])
+    assert mv.page_pdf(path) is None and not path.with_suffix(".pdf").exists()
+
+
+def test_pdf_is_written_beside_the_page(tmp_path, monkeypatch):
+    import sys
+    import types
+
+    calls = {}
+
+    class HTML:                                                               # stands in for weasyprint.HTML
+        def __init__(self, filename):
+            calls["src"] = filename
+
+        def write_pdf(self, target):
+            open(target, "wb").write(b"%PDF-1.7")
+
+    monkeypatch.setitem(sys.modules, "weasyprint", types.SimpleNamespace(HTML=HTML))
+    path = mv.options_page(tmp_path / "views.html", "Two groups: two ways to show it", [option(1), option(2)])
+    pdf = mv.page_pdf(path)
+    assert pdf == path.with_suffix(".pdf") and pdf.read_bytes().startswith(b"%PDF")
+    assert calls["src"] == str(path)

@@ -13,7 +13,8 @@ show it. Each option states the question it answers, how to read it, its strengt
         label="Internal · For leadership discussion")
 
 Everything is inside the one file (the charts as PNG, Libre Franklin, styles from the tokens), so it can be emailed
-or put on SharePoint and opened offline. "Save as PDF" prints one option per landscape page, and each chart has
+or put on SharePoint and opened offline. `mv.page_pdf(path)` writes the same page as a PDF where weasyprint is
+installed (Copilot's sandbox). "Save as PDF" prints one option per landscape page, and each chart has
 Download and Copy buttons for PowerPoint. Pass matplotlib figures built with mv.titles / mv.source: the page takes
 each option's headline from its figure and lays the figure out the way mv.save does.
 """
@@ -261,3 +262,27 @@ def options_page(path: str | Path, title: str, options: Sequence[Option], *, led
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(html, encoding="utf-8", newline="\n")
     return path
+
+
+def page_pdf(path: str | Path) -> Path | None:
+    """Print an options page to a PDF beside it (one option per landscape page) and return its path.
+
+    Copilot opens a linked .html in the OneDrive viewer, where "Open in app" fails until the file is downloaded; a PDF
+    opens there directly and can be forwarded as it is. Hand back the PDF to read and share, and the .html for the
+    Download and Copy buttons. Uses weasyprint (in Copilot's sandbox); returns None where it isn't installed or its
+    native libraries are missing (most Windows machines), so callers can fall back to the page's Save as PDF button.
+    """
+    try:
+        from weasyprint import HTML
+    except Exception:  # noqa: BLE001  (ImportError, or OSError when Pango/GTK is missing)
+        return None
+    path = Path(path)
+    pdf = path.with_suffix(".pdf")
+    try:
+        HTML(filename=str(path)).write_pdf(str(pdf))
+    except Exception as exc:  # noqa: BLE001  (the .html still works: hand it back with its Save as PDF button)
+        import warnings
+
+        warnings.warn(f"page_pdf: weasyprint could not print {path.name}: {exc}", stacklevel=2)
+        return None
+    return pdf
