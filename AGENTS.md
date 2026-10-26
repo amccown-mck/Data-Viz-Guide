@@ -129,3 +129,9 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 - **Never commit** the McKinsey source images or the brand PDFs. They stay in OneDrive (`Desktop\McK-Data-Viz\`).
 - **Platform priority:** HTML and Python first, then Excel and PowerPoint, then Power BI. R is a nice-to-have.
 - Update `ROADMAP.md` when you finish a step, and commit after each step.
+
+### The Copilot agent consumes this repo
+The Microsoft 365 Copilot agent "WI Data Storytelling Agent" (https://github.com/amccown-mck/WI-Data-Storytelling-Agent, private) ships the Copilot edition of the `mck-chart` skill, built from this repo and pinned to a commit. This repo stays the single source for everything about charts, so the guide (for people) and the skill (for agents) never drift apart; the agent repo never edits the skill. Its `docs/keeping-in-sync.md` has the loop. What it means here:
+- **Experiments on a feature branch** (`feat/<name>`). The agent's private copy can run a branch build while it is tried in Copilot; its shared copy accepts only a build from `main`.
+- **Before merging to `main`:** the human guide (`guide/pages/`, `docs/`) says the same as the skill, the CHANGELOG has an entry, and the tests and `tools/check_snippets.py` pass.
+- **Copilot sandbox specifics** go in the Copilot edition (`agents/skill/copilot/`, `<!-- copilot -->` blocks); the evidence (probes of the sandbox) is in the agent repo's `docs/sandbox-probe.md`.
