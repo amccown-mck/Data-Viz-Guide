@@ -52,8 +52,8 @@ Many rows, one per person or team, with a measure (compa-ratio, span of control,
 
 **How spread out is it? What's typical? Where are the outliers?** (distribution)
 
-- **Start with:** [Strip plot or histogram](cookbook/distribution.md)
-- **Go further** when people fall into 3 to 8 groups: [Strip or box plot by group, the focus group in blue](cookbook/distribution.md)
+- **Start with:** [Strip plot or histogram](cookbook/distribution.md) (`mv.strip (one group), or ax.hist`)
+- **Go further** when people fall into 3 to 8 groups: [Strip or box plot by group, the focus group in blue](cookbook/distribution.md) (`mv.strip`)
 - **Avoid:** An average with no spread
 - **Color:** Focus (default)
 
@@ -193,7 +193,7 @@ From and to columns with a count: internal moves, pipeline stages.
 
 **Where do people go, and how many?** (relationships and flows)
 
-- **Start with:** [Sankey](cookbook/sankey.md)
+- **Start with:** [Sankey](cookbook/sankey.md) (`mv.sankey`)
 - **Avoid:** A color per stage
 - **Color:** Focus (default); Ordered steps when the stages are a process in order
 

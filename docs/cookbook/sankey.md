@@ -45,10 +45,40 @@
 ## Build it
 
 ### Python — matplotlib + `mckviz`
-Not recommended for Sankeys. `matplotlib.sankey` draws engineering-style single-node diagrams with straight arrows, which breaks the "organic bands" rule. Use the Plotly route below. For a static PNG/SVG, export the Plotly figure with `fig.write_image("sankey.svg")`. This needs `kaleido` and a local Chrome. You can also screenshot the HTML card.
+Primary route for slides, PNG and PDF. `mv.sankey` draws the spec in one call: curved semi-transparent bands on one shared scale, thin navy nodes, each node's name and total beside it, and grey context with the headline's flows in color. It refuses flows under 10 people. Columns come from the flows, so list each stage's main path first and the exits last to keep them at the bottom edge. Don't use `matplotlib.sankey`: it draws engineering-style single-node diagrams with straight arrows.
+
+```python
+# verified runnable (from the repo root)
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import pandas as pd
+
+import mckviz as mv
+
+mv.use()
+flows = pd.read_csv("examples/data/reskilling_pipeline.csv")    # from_stage, to_stage, people, transfer
+completed = flows.people[flows.to_stage == "Completed"].sum()
+not_placed = flows.people[flows.transfer == "not_placed"].sum()
+assert not_placed / completed > 0.5                              # the headline's claim, from the data
+
+fig, ax = plt.subplots(figsize=(10, 5.6))
+# One color per transfer TYPE, reused at every step: progressed blue, the leak the headline names orange
+# (it is a loss), everything else grey. Pass-through nodes are labeled above, so the next column stays clear.
+mv.sankey(ax, flows, focus={"progressed"}, worse={"not_placed"},
+          stages=("Nominated", "Enrolled", "Completed", "Outcome"))
+mv.titles(fig, "Half of reskilling graduates are not redeployed: placement, not training, is the biggest leak",
+          "Data & AI reskilling academy, FY25–FY26 cohorts (people)")
+mv.source(fig, "Source: Synthetic data for illustration only",
+          footnote="Blue = progressed to the next stage; orange = completed but not placed in a data role.")
+mv.lint(fig, strict=True)
+mv.save(fig, "out/sankey-reskilling.png", dpi=200)
+```
+
+`focus=`, `worse=` and `accent=` take transfer kinds (the optional fourth column) or node names, so `focus={"DC Associate"}` colors every flow in or out of that job family. The function returns the node positions (`.nodes`) for any extra annotation.
 
 ### Python — Plotly / HTML
-Primary route. In this example the headline names the "not placed" leak, a loss, so it is the one flow in orange (`C.negative`). The `snap` arrangement lets Plotly place nodes. It may stack the exits at the top. That's fine as long as no bands cross needlessly.
+For interactive web pages, where hover shows each flow. In this example the headline names the "not placed" leak, a loss, so it is the one flow in orange (`C.negative`). The `snap` arrangement lets Plotly place nodes. It may stack the exits at the top. That's fine as long as no bands cross needlessly.
 
 ```python
 # verified runnable (from the repo root)

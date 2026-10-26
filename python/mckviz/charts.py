@@ -1436,3 +1436,282 @@ def multiples(fig, data, *, x: Sequence | None = None, ncols: int = 3, order: st
 __all__ = ["waterfall", "hstack", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
            "kpi_row", "delta_label", "sdot", "status", "status_key", "status_column", "tracker", "roadmap",
            "multiples", "STATUS_ORDER"]
+
+
+# ------------------------------------------------------------------ SANKEY
+def _rows(data, width: int) -> list[tuple]:
+    if hasattr(data, "itertuples"):
+        return [tuple(r[:width]) for r in data.itertuples(index=False, name=None)]
+    return [tuple(r) for r in data]
+
+
+def sankey(ax, flows, *, focus: Iterable[str] = (), worse: Iterable[str] = (), accent: str | None = None,
+           stages: Sequence[str] | None = None, fmt="{:,.0f}", min_n: float = 10, gap: float = 0.05,
+           alpha: float = 0.55):
+    """Flows of people between stages: curved bands on one shared scale, thin navy nodes, names and totals beside
+    them, grey context with the headline's flows in color.
+
+        flows = pd.read_csv("examples/data/reskilling_pipeline.csv")    # from_stage, to_stage, people, transfer
+        mv.sankey(ax, flows, focus={"progressed"}, worse={"not_placed"},
+                  stages=("Nominated", "Enrolled", "Completed", "Outcome"))
+
+    flows: rows of (source, target, value) or (source, target, value, kind), or a DataFrame whose first three or four
+        columns are those. Columns come from the flows (a node sits one column right of its furthest source); within
+        a column, nodes keep the order they first appear in, so list exits last to keep them at the bottom edge.
+    focus / worse: kinds or node names whose flows are blue / orange (orange only when the flow is a loss: dropped,
+        not placed, left). accent: one kind or node name in navy, the exception next to a blue group. With none of
+        these, the first kind (or the largest flow) is the focus. Everything else is grey.
+    stages: bold column headers, left to right. min_n: every flow must be at least this (merge smaller flows into
+        "Other"). Returns SimpleNamespace(nodes={name: (x, y0, y1)}, sizes, columns, bands, labels).
+    """
+    from matplotlib.patches import Rectangle
+
+    rows = []
+    for r in _rows(flows, 4):
+        if len(r) < 3:
+            raise ValueError("each flow needs a source, a target and a value")
+        s, t, v = str(r[0]), str(r[1]), float(r[2])
+        kind = str(r[3]) if len(r) > 3 and r[3] is not None else None
+        if v <= 0:
+            raise ValueError(f"flow {s} -> {t} is {v:g}; drop empty flows")
+        if v < min_n:
+            raise ValueError(f"flow {s} -> {t} is {v:g} (n<{min_n:g}): merge it into 'Other' and footnote it")
+        rows.append((s, t, v, kind))
+    if not rows:
+        raise ValueError("no flows")
+    names = list(dict.fromkeys(n for s, t, *_ in rows for n in (s, t)))
+    depth = {n: 0 for n in names}
+    for _ in range(len(names) + 1):                           # longest path from a source; a cycle never settles
+        changed = False
+        for s, t, *_ in rows:
+            if depth[t] < depth[s] + 1:
+                depth[t], changed = depth[s] + 1, True
+        if not changed:
+            break
+    else:
+        raise ValueError("the flows loop back on themselves; a Sankey needs stages that run one way")
+    inflow = {n: sum(v for s, t, v, _ in rows if t == n) for n in names}
+    outflow = {n: sum(v for s, t, v, _ in rows if s == n) for n in names}
+    size = {n: max(inflow[n], outflow[n]) for n in names}
+    ncol = max(depth.values()) + 1
+    columns = [[n for n in names if depth[n] == c] for c in range(ncol)]
+    if stages is not None and len(stages) != ncol:
+        raise ValueError(f"{len(stages)} stage names for {ncol} columns")
+
+    focus, worse = {str(x) for x in focus}, {str(x) for x in worse}
+    kinds = list(dict.fromkeys(k for *_, k in rows if k is not None))
+    if not focus and not worse and accent is None:
+        focus = {kinds[0]} if kinds else {max(rows, key=lambda r: r[2])[0]}
+    marked = focus | worse | ({str(accent)} if accent is not None else set())
+
+    def tone(row):
+        s, t, _, k = row
+        if accent is not None and str(accent) in (k, s, t):
+            return "accent"
+        return "worse" if {k, s, t} & worse else "focus" if {k, s, t} & focus else "context"
+    fill = {"accent": C.accent, "worse": C.negative, "focus": C.focus, "context": C.context}
+
+    # Room for the outer labels inside the axes, so nothing runs off the figure.
+    fig = ax.figure
+    ax_pt = ax.get_window_extent(fig.canvas.get_renderer()).width * 72 / fig.dpi
+    label = {n: f"{n}  {fmt.format(size[n]) if isinstance(fmt, str) else fmt(size[n])}" for n in names}
+    hot = {n for n in names if n in marked}
+
+    def width(n):
+        return _text_width_pt(ax, label[n], TICK, 600 if n in hot else 400) / ax_pt + 0.012
+    node_w = 0.012
+    left = max(width(n) for n in columns[0]) if ncol > 1 else 0
+    right = max(width(n) for n in columns[-1])
+    xs = [left + (1 - left - right - node_w) * (c / (ncol - 1) if ncol > 1 else 0) for c in range(ncol)]
+
+    scale = min((1 - gap * (len(col) - 1)) / sum(size[n] for n in col) for col in columns)
+    nodes = {}
+    for c, col in enumerate(columns):
+        total = scale * sum(size[n] for n in col) + gap * (len(col) - 1)
+        y = 1 - (1 - total) / 2                               # each column centered on the same midline
+        for n in col:
+            h = scale * size[n]
+            nodes[n] = (xs[c], y - h, y)
+            y -= h + gap
+
+    mid = {n: (y0 + y1) / 2 for n, (_, y0, y1) in nodes.items()}
+    out_at = {n: nodes[n][2] for n in names}                  # next free y on each side of a node, top down
+    in_at = {n: nodes[n][2] for n in names}
+    slots: dict[int, dict[str, tuple[float, float]]] = {}
+    for n in names:
+        for i in sorted([i for i, r in enumerate(rows) if r[0] == n], key=lambda i: -mid[rows[i][1]]):
+            h = scale * rows[i][2]
+            slots.setdefault(i, {})["out"] = (out_at[n] - h, out_at[n])
+            out_at[n] -= h
+        for i in sorted([i for i, r in enumerate(rows) if r[1] == n], key=lambda i: -mid[rows[i][0]]):
+            h = scale * rows[i][2]
+            slots.setdefault(i, {})["in"] = (in_at[n] - h, in_at[n])
+            in_at[n] -= h
+
+    rank = {"context": 0, "focus": 1, "worse": 2, "accent": 3}
+    bands = []
+    t = np.linspace(0, 1, 64)
+    e = t * t * (3 - 2 * t)                                   # smoothstep: flat at both nodes, curved between
+    for i in sorted(range(len(rows)), key=lambda i: rank[tone(rows[i])]):    # highlights drawn over the grey
+        s, tg, _, _ = rows[i]
+        (a0, a1), (b0, b1) = slots[i]["out"], slots[i]["in"]
+        x0, x1 = nodes[s][0] + node_w, nodes[tg][0]
+        bands.append(ax.fill_between(x0 + (x1 - x0) * t, a0 + (b0 - a0) * e, a1 + (b1 - a1) * e,
+                                     color=fill[tone(rows[i])], alpha=alpha, lw=0, zorder=2))
+    texts = []
+    ax_h = ax.get_window_extent(fig.canvas.get_renderer()).height * 72 / fig.dpi
+    text_h = TICK * 1.25 / ax_h                               # one label line, in axes units
+    top = 1.0
+    for c, col in enumerate(columns):
+        for n in col:
+            x, y0, y1 = nodes[n]
+            ax.add_patch(Rectangle((x, y0), node_w, y1 - y0, color=C.total, lw=0, zorder=3))
+            kw = dict(fontsize=TICK, color=C.headline if n in hot else C.text, fontweight=600 if n in hot else 400,
+                      zorder=4)
+            if inflow[n] and outflow[n]:                      # pass-through: above the node, in the gap between
+                texts.append(ax.text(x + node_w / 2, y1 + 0.008, label[n], ha="center", va="bottom",   # nodes, so
+                                     path_effects=halo(), **kw))                         # the next column stays clear
+                top = max(top, y1 + 0.008 + text_h)
+            else:                                             # where flows start, left; where they end, right
+                first = not inflow[n] and ncol > 1
+                texts.append(ax.text(x - 0.006 if first else x + node_w + 0.006, (y0 + y1) / 2, label[n],
+                                     ha="right" if first else "left", va="center", **kw))
+    if stages is not None:
+        for c, st in enumerate(stages):
+            if c == 0:
+                x, ha = 0.0, "left"                           # flush with the outer labels
+            elif c == ncol - 1:
+                x, ha = 1.0, "right"
+            else:
+                x, ha = xs[c] + node_w / 2, "center"
+            texts.append(ax.text(x, top + 0.03, st, ha=ha, va="bottom", fontsize=TICK, fontweight=600,
+                                 color=C.text))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, top + (0.03 + text_h if stages is not None else 0.01))
+    ax.set_xticks([])
+    ax.set_yticks([])
+    _plain(ax)
+    return SimpleNamespace(nodes=nodes, sizes=size, columns=columns, bands=bands, labels=texts)
+
+
+# ------------------------------------------------------------------ STRIP / BOX (distributions)
+def strip(ax, data, group: str | None = None, value: str | None = None, *, focus: Iterable[str] = (),
+          order: Sequence[str] | None = None, dots: bool = True, box: bool = True, share=None,
+          share_label: str | None = None, zone: tuple[float, float] | None = None, zone_label: str | None = None,
+          ref: float | None = None, ref_label: str | None = None, min_n: int = 10, xfmt: str | None = None,
+          jitter: float = 0.28, seed: int = 1):
+    """The spread across people, one row per group: every person a dot (grey, the focus group blue), a navy box
+    for the middle 50% with the median, the n and an optional share at the end of each row.
+
+        df = pd.read_csv("examples/data/compa_ratio_individuals.csv")     # job_family, compa_ratio, one row a person
+        mv.strip(ax, df, "job_family", "compa_ratio", focus={"Pharmacy Technician"}, share=("below", 0.90),
+                 zone=(None, 0.90), zone_label="Below 0.90", ref=1.0, ref_label="Range midpoint", xfmt="{x:.2f}")
+
+    data: a DataFrame with `group` and `value` columns, or {group: values}. order: groups top to bottom; default by
+        median, highest at the top. focus: at most two groups, in blue with bold navy names.
+    dots / box: a strip plot with boxes (default); dots=False draws box plots with 10th-90th percentile whiskers,
+        for many groups or tens of thousands of people. Footnote the box once ("Box = middle 50%; line = median").
+    share: ("below", x) or ("above", x) prints each group's share beyond x at the row end, under `share_label`
+        (default "Below x"). zone: (low, high) shaded behind the data (None for the axis edge), named by zone_label.
+        ref: a dashed reference line (the midpoint, the limit), named by ref_label.
+    Groups under min_n are left out and listed in `.suppressed` for the footnote. Returns SimpleNamespace(order,
+    stats={group: dict(n, median, share)}, suppressed, labels).
+    """
+    from matplotlib.patches import Rectangle
+    from matplotlib.ticker import StrMethodFormatter
+
+    if hasattr(data, "groupby"):
+        if group is None or value is None:
+            raise ValueError("pass the group and value column names with a DataFrame")
+        groups = {str(k): np.asarray(v.dropna(), float) for k, v in data.groupby(group, sort=False)[value]}
+    else:
+        groups = {str(k): np.asarray(list(v), float) for k, v in dict(data).items()}
+    suppressed = sorted(g for g, v in groups.items() if len(v) < min_n)
+    groups = {g: v for g, v in groups.items() if len(v) >= min_n}
+    if not groups:
+        raise ValueError(f"every group has fewer than {min_n} people")
+    focus = {str(f) for f in focus}
+    if len(focus) > 2:
+        raise ValueError("highlight at most two groups")
+    if len(groups) > (8 if dots else 20):
+        raise ValueError(f"{len(groups)} groups: at most 8 for a strip plot (dots=True), 20 for box plots")
+    if share is not None:
+        side, cut = share
+        if side not in ("below", "above"):
+            raise ValueError('share is ("below", x) or ("above", x)')
+    names = list(order) if order is not None else sorted(groups, key=lambda g: -np.median(groups[g]))
+    names = [g for g in names if g in groups]
+    stats = {}
+    for g in names:
+        v = groups[g]
+        sh = None if share is None else 100 * float(np.mean(v < cut if side == "below" else v > cut))
+        stats[g] = {"n": len(v), "median": float(np.median(v)), "share": sh}
+
+    lo = min(float(v.min()) for v in groups.values())
+    hi = max(float(v.max()) for v in groups.values())
+    extra = [x for x in ((zone or (None, None)) + (ref,)) if x is not None]
+    lo, hi = min([lo] + extra), max([hi] + extra)
+    pad = (hi - lo) * 0.04 or 1
+    lo, hi = lo - pad, hi + pad
+    n_rows = len(names)
+    rng = np.random.default_rng(seed)                         # fixed jitter: the chart is reproducible
+    top_y = n_rows - 0.45
+    texts = []
+    if zone is not None:
+        z0 = lo if zone[0] is None else zone[0]
+        z1 = hi if zone[1] is None else zone[1]
+        ax.axvspan(z0, z1, color=C.surface_subtle, lw=0, zorder=0)
+        if zone_label:
+            texts.append(ax.text(z0 + (hi - lo) * 0.005, top_y, zone_label, fontsize=SMALL, color=C.annotation,
+                                 fontweight=600, va="bottom"))
+    if ref is not None:
+        ax.axvline(ref, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=1)
+        if ref_label:
+            texts.append(ax.text(ref, top_y, ref_label, fontsize=SMALL, color=C.annotation, ha="center", va="bottom",
+                                 bbox=dict(fc="white", ec="none", pad=1), zorder=4))
+    fig = ax.figure
+    for i, g in enumerate(names):
+        y = n_rows - 1 - i                                     # first group on top
+        v = groups[g]
+        hot = g in focus
+        if dots:
+            ax.scatter(v, y + rng.uniform(-jitter, jitter, len(v)), s=7, color=C.focus if hot else C.context,
+                       alpha=0.45, lw=0, zorder=2)
+        if box or not dots:
+            q1, med, q3 = np.percentile(v, [25, 50, 75])
+            h = 0.34 if dots else 0.22
+            face = "none" if dots else (C.focus if hot else C.context)
+            ax.add_patch(Rectangle((q1, y - h), q3 - q1, 2 * h, fc=face, ec=C.headline, lw=1, zorder=3,
+                                   alpha=1 if dots else 0.55))
+            ax.plot([med, med], [y - h, y + h], color=C.headline, lw=2.25, zorder=3, solid_capstyle="butt")
+            if not dots:                                       # whiskers: 10th to 90th percentile, never 1.5 x IQR
+                p10, p90 = np.percentile(v, [10, 90])
+                ax.plot([p10, q1], [y, y], color=C.headline, lw=1, zorder=3)
+                ax.plot([q3, p90], [y, y], color=C.headline, lw=1, zorder=3)
+        s = stats[g]
+        dx = 6
+        if s["share"] is not None:
+            txt = f"{s['share']:.0f}%"
+            texts.append(ax.annotate(txt, (1, y), xycoords=("axes fraction", "data"), xytext=(dx, 0),
+                                     textcoords="offset points", va="center", ha="left", fontsize=LABEL,
+                                     color=C.headline if hot else C.text, fontweight=600 if hot else 500))
+            dx += _text_width_pt(ax, "100%", LABEL, 600) + 6
+        texts.append(ax.annotate(f"n={s['n']:,}", (1, y), xycoords=("axes fraction", "data"), xytext=(dx, 0),
+                                 textcoords="offset points", va="center", ha="left", fontsize=SMALL,
+                                 color=C.text_muted))
+    if share is not None:
+        head = share_label or f"{side.capitalize()} {xfmt.format(x=cut) if xfmt else f'{cut:g}'}"
+        texts.append(ax.annotate(head, (1, top_y), xycoords=("axes fraction", "data"), xytext=(6, 0),
+                                 textcoords="offset points", va="bottom", ha="left", fontsize=SMALL,
+                                 color=C.text_muted))
+    ax.set_yticks(range(n_rows), names[::-1])
+    ax.set_ylim(-0.6, n_rows - 0.1)
+    ax.set_xlim(lo, hi)
+    if xfmt:
+        ax.xaxis.set_major_formatter(StrMethodFormatter(xfmt))
+    _plain(ax, keep=("bottom",))
+    for t in ax.get_yticklabels():
+        t.set_fontsize(TICK)
+        t.set_color(C.text)
+    _bold_ticks(ax.get_yticklabels(), focus)
+    return SimpleNamespace(order=names, stats=stats, suppressed=suppressed, labels=texts)

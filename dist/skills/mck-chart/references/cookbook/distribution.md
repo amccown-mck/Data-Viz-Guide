@@ -52,72 +52,36 @@
 ## Build it
 
 ### Python — matplotlib + `mckviz`
+`mv.strip` draws the spec in one call: every person a dot (grey, the focus group blue), a navy box for the middle 50% with the median, groups sorted by median, the shaded zone and the dashed reference line named in place, and each group's share and n at the row end. Groups under 10 people are left out and listed in `.suppressed` for the footnote.
+
 ```python
 # verified runnable (from the repo root)
-import tempfile
-from pathlib import Path
-
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from matplotlib.patches import Rectangle
-from matplotlib.ticker import StrMethodFormatter
 
 import mckviz as mv
 
 mv.use()
-C = mv.colors
-
-df = pd.read_csv(Path("assets/data/compa_ratio_individuals.csv"))
-stats = df.groupby("job_family").compa_ratio.agg(n="size", median="median", low=lambda s: (s < 0.9).mean() * 100)
-stats = stats[stats.n >= 10]                                          # never plot groups under the minimum n
-order = stats.sort_values("median", ascending=False).index            # lowest median at the bottom
-focus = stats.low.idxmax()
-rng = np.random.default_rng(1)                                        # fixed jitter: the chart is reproducible
+df = pd.read_csv("assets/data/compa_ratio_individuals.csv")      # one row per employee: job_family, compa_ratio
+below = (df.compa_ratio < 0.90).groupby(df.job_family).mean() * 100
+focus = below.idxmax()
+ratio = below[focus] / below.drop(focus).max()                     # the headline's multiplier, from the data
 
 fig, ax = plt.subplots(figsize=(10, 5.6))
-top = len(order) - 0.45
-ax.axvspan(0.68, 0.90, color=C.surface_subtle, lw=0, zorder=0)       # the zone the headline is about
-ax.text(0.685, top, "Below 0.90", fontsize=9, color=C.annotation, fontweight="bold", va="bottom")
-ax.axvline(1.0, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=1)
-ax.text(1.0, top, "Range midpoint", fontsize=9, color=C.annotation, ha="center", va="bottom",
-        bbox=dict(fc="white", ec="none", pad=1), zorder=4)
-for y, fam in enumerate(order):
-    x = df.compa_ratio[df.job_family == fam]
-    col = C.focus if fam == focus else C.context
-    ax.scatter(x, y + rng.uniform(-0.28, 0.28, len(x)), s=7, color=col, alpha=0.45, lw=0, zorder=2)
-    q1, med, q3 = x.quantile([0.25, 0.5, 0.75])                       # box = middle 50%, thick line = median
-    ax.add_patch(Rectangle((q1, y - 0.34), q3 - q1, 0.68, fill=False, ec=C.headline, lw=1, zorder=3))
-    ax.plot([med, med], [y - 0.34, y + 0.34], color=C.headline, lw=2.25, zorder=3)
-    s = stats.loc[fam]
-    ax.text(1.235, y, f"{s.low:.0f}%", va="center", ha="right", fontsize=10,
-            color=C.headline if fam == focus else C.text, fontweight="bold" if fam == focus else "medium")
-    ax.text(1.25, y, f"n={int(s.n):,}", va="center", ha="left", fontsize=8, color=C.text_muted)
-ax.text(1.235, top, "Below 0.90", fontsize=9, ha="right", va="bottom", color=C.text_muted)
-
-ax.set_yticks(range(len(order)), order)
-ax.set_ylim(-0.6, len(order) - 0.1)
-ax.set_xlim(0.68, 1.30)                                               # wide enough that no one is clipped
-ax.set_xticks(np.arange(0.7, 1.21, 0.1))
-ax.xaxis.set_major_formatter(StrMethodFormatter("{x:.2f}"))
-mv.clean_axes(ax, keep=("bottom",), grid=None)
-ax.tick_params(length=0)
-for lbl in ax.get_yticklabels():
-    if lbl.get_text() == focus:
-        lbl.set_fontweight("bold")
-        lbl.set_color(C.headline)
-
-ratio = stats.low[focus] / stats.drop(focus).low.max()                # recompute the headline's multiplier
+ns = mv.strip(ax, df, "job_family", "compa_ratio", focus={focus}, share=("below", 0.90),
+              zone=(None, 0.90), zone_label="Below 0.90", ref=1.0, ref_label="Range midpoint", xfmt="{x:.2f}")
 mv.titles(fig, f"One in four pharmacy technicians is paid below 0.90 of range midpoint, about {ratio:.0f}x the share "
                "in any other job family",
           "Compa-ratio (base pay ÷ salary-range midpoint) by job family, U.S. regular employees, Mar 2026")
 mv.source(fig, "Source: Synthetic data for illustration only",
           footnote="Each dot is one employee. Box = middle 50% of employees; thick line = median.")
-mv.save(fig, Path(tempfile.gettempdir()) / "ck_distribution_strip.png", dpi=200)
+mv.lint(fig, strict=True)
+mv.save(fig, "out/distribution-strip.png", dpi=200)
 ```
-- **Box plot only** (many groups or large n): drop the `scatter` call and add whiskers at the 10th and 90th percentiles with `ax.plot([p10, q1], [y, y])` and `ax.plot([q3, p90], [y, y])`. Footnote them ("whiskers = 10th–90th percentile"). Don't use the default 1.5 × IQR whiskers, which few readers can interpret.
+- **Box plot only** (many groups, up to 20, or tens of thousands of people): `mv.strip(..., dots=False)` draws filled boxes with whiskers at the 10th and 90th percentiles. Footnote them ("Box = middle 50%; whiskers = 10th–90th percentile"). It never uses the default 1.5 × IQR whiskers, which few readers can interpret.
+- **One group** (the start chart for a single spread): pass `{"All people managers": values}` for one row, or draw a histogram (below).
 - **Beeswarm** (dots that don't overlap): replace the random jitter with a swarm layout, such as the `stripplot`/`swarmplot` functions in seaborn, then recolor them with `mv.highlight`. Beeswarms work up to ~300 dots per row. Above that, keep the jitter.
 
 ### Python — Plotly / HTML

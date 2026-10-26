@@ -138,7 +138,22 @@ def _rank_slope(ax):
     return mv.rank_slope(ax, ["Data", "Sales", "Ops"], [3, 1, 2], [1, 2, 3], focus={"Data"}, headers=("2023", "2026"))
 
 
-BUILDERS = {"waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
+def _sankey(ax):
+    import pandas as pd
+
+    return mv.sankey(ax, pd.read_csv(DATA / "reskilling_pipeline.csv"), focus={"progressed"}, worse={"not_placed"},
+                     stages=("Nominated", "Enrolled", "Completed", "Outcome"))
+
+
+def _strip(ax):
+    import pandas as pd
+
+    return mv.strip(ax, pd.read_csv(DATA / "compa_ratio_individuals.csv"), "job_family", "compa_ratio",
+                    focus={"Pharmacy Technician"}, share=("below", 0.90), zone=(None, 0.90), zone_label="Below 0.90",
+                    ref=1.0, ref_label="Range midpoint", xfmt="{x:.2f}")
+
+
+BUILDERS = {"strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
             "dumbbell": _dumbbell, "heat": _heat, "heat_sequential": _heat_seq, "kpi_card": _kpi,
             "kpi_row": _kpi_row, "ring": _ring, "tracker": _tracker, "roadmap": _roadmap,
             "status_column": _status_column, "rank_slope": _rank_slope, "diverging_bars": _diverging,
@@ -412,3 +427,53 @@ def test_dumbbell_focus_bolds_the_named_row():
     mv.dumbbell(ax, ["A", "B", "C"], [10, 20, 30], [11, 19, 31], flag_below=None, focus=["B"])
     weights = [t.get_fontweight() for t in ax.get_yticklabels()]
     assert weights[1] == 600 and weights[0] != 600 and weights[2] != 600
+
+
+def test_sankey_conserves_flow_and_colors_by_kind():
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ns = _sankey(ax)
+    assert ns.columns == [["Nominated"], ["Enrolled", "Declined"], ["Completed", "Withdrew"],
+                          ["Redeployed to data role", "Returned to prior role", "Left McKesson"]]
+    assert ns.sizes["Nominated"] == 1200 and ns.sizes["Completed"] == 840               # max(inflow, outflow)
+    h = {n: y1 - y0 for n, (_, y0, y1) in ns.nodes.items()}
+    assert h["Enrolled"] / h["Nominated"] == pytest.approx(1010 / 1200)                 # one shared scale
+    tones = {to_hex(b.get_facecolor()[0]).upper() for b in ns.bands}
+    assert tones == {C.focus.upper(), C.context.upper(), C.negative.upper()}
+    assert [to_hex(b.get_facecolor()[0]).upper() for b in ns.bands][0] == C.context.upper()   # grey drawn first
+    texts = {t.get_text() for t in ns.labels}
+    assert {"Completed  840", "Left McKesson  80", "Outcome"} <= texts
+
+
+def test_sankey_refuses_small_flows_and_loops():
+    fig, ax = plt.subplots()
+    with pytest.raises(ValueError, match="n<10"):
+        mv.sankey(ax, [("A", "B", 40), ("A", "C", 6)])
+    with pytest.raises(ValueError, match="loop"):
+        mv.sankey(ax, [("A", "B", 40), ("B", "A", 20)])
+    with pytest.raises(ValueError, match="stage names"):
+        mv.sankey(ax, [("A", "B", 40)], stages=("One", "Two", "Three"))
+
+
+def test_strip_orders_by_median_shows_n_and_share():
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ns = _strip(ax)
+    medians = [ns.stats[g]["median"] for g in ns.order]
+    assert medians == sorted(medians, reverse=True)                                   # highest median on top
+    assert ns.order[-1] == "Pharmacy Technician" and round(ns.stats["Pharmacy Technician"]["share"]) == 25
+    texts = {t.get_text() for t in ns.labels}
+    assert {"25%", "n=620", "Below 0.90", "Range midpoint"} <= texts
+    dots = [c for c in ax.collections if c.get_offsets().shape[0] == 620]
+    assert to_hex(dots[0].get_facecolor()[0]).upper() == C.focus.upper()
+    top = min(ax.get_yticklabels(), key=lambda t: t.get_position()[1])
+    assert top.get_text() == "Pharmacy Technician" and top.get_fontweight() in (600, "semibold")
+
+
+def test_strip_suppresses_small_groups_and_limits_groups():
+    fig, ax = plt.subplots()
+    ns = mv.strip(ax, {"A": range(40), "B": range(30), "Tiny": range(6)})
+    assert ns.suppressed == ["Tiny"] and "Tiny" not in ns.order
+    with pytest.raises(ValueError, match="at most 8"):
+        mv.strip(ax, {str(i): range(20) for i in range(9)})
+    assert len(mv.strip(ax, {str(i): range(20) for i in range(9)}, dots=False).order) == 9   # boxes go to 20
+    with pytest.raises(ValueError, match="at most two"):
+        mv.strip(ax, {"A": range(40), "B": range(30), "C": range(30)}, focus={"A", "B", "C"})

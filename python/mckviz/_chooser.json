@@ -117,14 +117,14 @@
           "start": {
             "chart": "Strip plot or histogram",
             "page": "distribution",
-            "helper": null
+            "helper": "mv.strip (one group), or ax.hist"
           },
           "further": [
             {
               "when": "has_groups",
               "chart": "Strip or box plot by group, the focus group in blue",
               "page": "distribution",
-              "helper": null
+              "helper": "mv.strip"
             }
           ],
           "avoid": "An average with no spread",
@@ -550,7 +550,7 @@
           "start": {
             "chart": "Sankey",
             "page": "sankey",
-            "helper": null
+            "helper": "mv.sankey"
           },
           "further": [],
           "avoid": "A color per stage",
