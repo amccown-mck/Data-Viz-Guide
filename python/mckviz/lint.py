@@ -311,9 +311,12 @@ def _x_repeats(xdata) -> bool:
 
 
 def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
+    import numpy as np
     from matplotlib.container import BarContainer
     from matplotlib.patches import Wedge
     from matplotlib.text import Text
+
+    from . import colors
 
     fur = getattr(fig, "_mck", {}) or {}
     head = headline or (fur["head"].get_text() if fur.get("head") is not None else None) \
@@ -353,6 +356,26 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
                                                             "labels (\"Q2\", \"Q2\") used as x? give each period its "
                                                             "own value and abbreviate in the tick text"))
                     break
+
+        # Lines drawn by hand: the habits mv.line avoids (markers on every point, an off-palette reference line,
+        # a y-axis title where the subtitle carries the unit)
+        data_lines = [ln for ln in ax.get_lines() if ln.get_visible() and len(ln.get_xdata(orig=False)) >= 5
+                      and ln.get_linestyle() not in ("None", "none", "")]
+        if any(str(ln.get_marker()) not in ("None", "none", "", " ") for ln in data_lines):
+            out.append(Finding("warn", "line-markers", "markers on every point of a line make it heavy; drop them "
+                                                       "(a dot only on a labelled point). mv.line draws the house line"))
+        for ln in ax.get_lines():
+            y = np.asarray(ln.get_ydata(orig=False), float)
+            ref = (len(y) == 2 and y[0] == y[1] and ln.get_linestyle() not in ("-", "solid")
+                   and tuple(ln.get_xdata(orig=False)) == (0, 1))          # an axhline, dashed: target or benchmark
+            h = _hex(ln.get_color())
+            if ref and h and not _near(h, {colors.total.upper()}):
+                out.append(Finding("warn", "reference-line", "a dashed reference line that isn't navy: draw targets and "
+                                                             "benchmarks in C.total, 0.75 pt (mv.line(target=...))"))
+                break
+        if data_lines and ax.get_ylabel().strip():
+            out.append(Finding("warn", "axis-title", "a y-axis title on a line chart: put the unit in the subtitle "
+                                                     "and drop the title (mv.line does)"))
 
         # Bars: zero baseline, labels vs. value axis
         bars = [c for c in ax.containers if isinstance(c, BarContainer)]
@@ -400,6 +423,12 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
                     (a.get_shared_x_axes().joined(a, b) or a.get_shared_y_axes().joined(a, b)):
                 out.append(Finding("warn", "no-dual-axis", "twin axes found; prefer two aligned charts or an index to 100"))
 
+    pale = sorted({" ".join(t.get_text().split())[:30] for t in fig.findobj(Text)
+                   if t.get_visible() and t.get_text().strip() and (_hex(t.get_color()) or "").upper() in
+                   {colors.context.upper(), colors.context_light.upper()}})
+    if pale:
+        out.append(Finding("warn", "text-contrast", f"text in context grey ({'; '.join(pale[:3])}) fails 4.5:1 "
+                                                    "contrast; use C.text_muted for context labels"))
     small = sorted({round(t.get_fontsize(), 1) for t in fig.findobj(Text)
                     if t.get_visible() and t.get_text().strip() and t.get_fontsize() < MIN_FONT_PT})
     if small:

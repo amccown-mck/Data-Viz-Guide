@@ -361,3 +361,26 @@ def test_text_past_the_figure_edge_is_flagged():
     fig.axes[0].text(0.5, 0.5, "A note that is far too long for the plot " * 4, transform=fig.axes[0].transAxes)
     assert "off-canvas" in rules(mv.lint(fig, quiet=True), "warn")
     plt.close(fig)
+
+
+def test_hand_built_line_habits_are_flagged_and_mv_line_is_clean():
+    q = ["Q1 '25", "Q2", "Q3", "Q4", "Q1 '26", "Q2", "Q3", "Q4"]
+    data = {"Pharmacy Operations": [11.8, 12.4, 13.1, 14.0, 14.9, 15.8, 16.4, 17.1],
+            "Supply Chain": [9.6, 9.9, 9.4, 9.8, 10.1, 9.7, 10.0, 9.9]}
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for name, color in zip(data, (mv.colors.focus, mv.colors.context)):
+        ax.plot(range(8), data[name], marker="o", lw=3, color=color)       # markers on every point
+    ax.axhline(12, color=mv.colors.axis, ls="--")                           # a grey target
+    ax.set_ylabel("Attrition (%)")                                          # an axis title
+    ax.text(7.2, 9.9, "Supply Chain", color=mv.colors.context)              # label in context grey
+    mv.titles(fig, "Pharmacy Operations attrition rose 5.3 points to 17.1%", "Quarterly attrition, 2025-2026 (%)")
+    mv.source(fig, "Source: Synthetic data for illustration only")
+    assert {"line-markers", "reference-line", "axis-title", "text-contrast"} <= rules(mv.lint(fig, quiet=True), "warn")
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    mv.line(ax, q, data, focus={"Pharmacy Operations"}, target=12, target_label="Target 12%")
+    mv.titles(fig, "Pharmacy Operations attrition rose 5.3 points to 17.1%", "Quarterly attrition, 2025-2026 (%)")
+    mv.source(fig, "Source: Synthetic data for illustration only")
+    assert not rules(mv.lint(fig, quiet=True), "warn") & {"line-markers", "reference-line", "axis-title", "text-contrast"}
+    plt.close(fig)

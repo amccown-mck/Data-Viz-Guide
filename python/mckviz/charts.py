@@ -1888,10 +1888,6 @@ def line(ax, x, series, *, focus: Iterable[str] = (), accent: str | None = None,
                     textcoords="offset points", va="top", fontsize=SMALL, color=C.text_muted)
     if target is not None:
         ax.axhline(target, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=2)
-        if target_label:
-            ax.annotate(target_label, (0, target), xycoords=("axes fraction", "data"), xytext=(2, 3),
-                        textcoords="offset points", va="bottom", fontsize=SMALL, color=C.annotation,
-                        path_effects=halo())
     clean_axes(ax)
     step = max(1, math.ceil(n / 20))                          # thin only long runs (monthly over years)
     ax.set_xticks(xs[::step], labels_x[::step])
@@ -1940,6 +1936,23 @@ def line(ax, x, series, *, focus: Iterable[str] = (), accent: str | None = None,
                              va="center", ha="left", fontsize=LABEL, linespacing=1.15,
                              color=color[nm] if nm in strong else C.text_muted,
                              fontweight=600 if nm in strong else 400, path_effects=halo(), zorder=4))
+    if target is not None and target_label:                   # at the end and side of the line furthest from data
+        ty = ax.transData.transform((0, target))[1] * to_pt
+        th = SMALL * 1.2
+        best = None
+        for side, near in (("left", (0, 1)), ("right", (n - 2, n - 1))):
+            pts = [ax.transData.transform((i, data[nm][i]))[1] * to_pt for nm in names for i in near
+                   if 0 <= i < n and np.isfinite(data[nm][i])]
+            for up in (True, False):
+                lo_, hi_ = (ty + 3, ty + 3 + th) if up else (ty - 3 - th, ty - 3)
+                clear = min((0.0 if lo_ <= p <= hi_ else min(abs(p - lo_), abs(p - hi_)) for p in pts), default=99)
+                if best is None or clear > best[0]:
+                    best = (clear, side, up)
+        _, side, up = best
+        texts.append(ax.annotate(target_label, (0 if side == "left" else n - 1, target),
+                                 xytext=(2 if side == "left" else -2, 3 if up else -3), textcoords="offset points",
+                                 ha=side, va="bottom" if up else "top", fontsize=SMALL, color=C.annotation,
+                                 path_effects=halo(), zorder=4))
     return SimpleNamespace(lines=lines, labels=texts, colors=color)
 
 
