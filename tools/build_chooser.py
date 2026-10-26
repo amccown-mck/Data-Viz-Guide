@@ -58,10 +58,13 @@ def markdown(tree: dict) -> str:
            "In Python, `mv.suggest(df)` reads the table, places it in this tree, checks every condition against the "
            "data and prints the result. Check how it read the columns, and pass `category=`, `measure=`, `size=` or "
            "`time=` when a guess is wrong.", "",
-           "**Start with** is right when no condition holds: it is the chart most readers decode fastest. When a "
-           "condition holds, the richer chart usually says more; use it when it answers the question better, and say "
-           "which condition you used in the chart brief:", "",
-           "```", "Path:   <shape> -> <question type> -> <chart> (start, or go further: <condition>)",
+           "**Start with** is the answer most of the time: it is the chart most readers decode fastest, and for a "
+           "ranking that is a sorted bar. Two kinds of branch lead away from it. **Go further** is a rule: when its "
+           "condition holds, the start chart would mislead or stop reading well, so switch. **Option** is an "
+           "enrichment: its condition makes the richer chart possible, not required; take it only when the headline "
+           "depends on what the start chart can't show, or on an options page that compares views. Say which you used "
+           "in the chart brief:", "",
+           "```", "Path:   <shape> -> <question type> -> <chart> (start, go further: <condition>, or option: <why the headline needs it>)",
            "Color:  <pattern> (<why>)", "```", "",
            "## 1. What is in the data?", "", "| Shape | Looks like |", "|---|---|"]
     for s in tree["shapes"]:
@@ -78,7 +81,11 @@ def markdown(tree: dict) -> str:
             for f in q["further"]:
                 h = f" (`{f['helper']}`)" if f.get("helper") else ""
                 why = f": {f['why']}" if f.get("why") else ""
-                out.append(f"- **Go further** when {trig[f['when']]}: [{f['chart']}](cookbook/{f['page']}.md){h}{why}")
+                if f.get("only_if"):
+                    out.append(f"- **Option** when {trig[f['when']]}, and only if {f['only_if']}: "
+                               f"[{f['chart']}](cookbook/{f['page']}.md){h}{why}")
+                else:
+                    out.append(f"- **Go further** when {trig[f['when']]}: [{f['chart']}](cookbook/{f['page']}.md){h}{why}")
             out.append(f"- **Avoid:** {q['avoid']}")
             col = f"- **Color:** {colors[q['color']]['name']}"
             for sw in q.get("color_switch", []):

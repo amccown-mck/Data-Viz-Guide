@@ -60,6 +60,7 @@ class Further:
     holds: bool
     evidence: str = ""
     why: str = ""
+    only_if: str = ""    # set: an optional enrichment, taken only when the headline needs it
 
 
 @dataclass
@@ -101,11 +102,15 @@ class Suggestion:
             for leaf in s.leaves:
                 out.append(f"   Q: {leaf.ask}  ({leaf.type})")
                 out.append(f"      Start with: {leaf.start['chart']}  -> cookbook/{leaf.start['page']}.md"
-                           + (f"  ({leaf.start['helper']})" if leaf.start.get("helper") else ""))
+                           + (f"  ({leaf.start['helper']})" if leaf.start.get("helper") else "")
+                           + ("  <- the answer here" if not any(f.holds and not f.only_if for f in leaf.further)
+                              else ""))
                 for f in [f for f in leaf.further if f.holds]:
-                    out.append(f"      Go further: {f.chart}  -> cookbook/{f.page}.md"
+                    label = "Option" if f.only_if else "Go further"
+                    out.append(f"      {label}: {f.chart}  -> cookbook/{f.page}.md"
                                + (f"  ({f.helper})" if f.helper else ""))
-                    out.append(f"         because {f.evidence or f.when}")
+                    out.append(f"         possible because {f.evidence or f.when}; only if {f.only_if}" if f.only_if
+                               else f"         because {f.evidence or f.when}")
                 others = [f.chart for f in leaf.further if not f.holds]
                 if others:
                     out.append(f"      (not indicated here: {'; '.join(others)})")
@@ -117,8 +122,9 @@ class Suggestion:
             out.append("This data can't support:")
             out += [f"  - {c}" for c in self.cannot]
         out.append("")
-        out.append("Record the choice in the chart brief:  Path: <shape> -> <question type> -> <chart> (start or "
-                   "go further: <condition>);  Color: <pattern>")
+        out.append("The start chart is the answer unless a Go further applies; an Option is for when the headline needs it.")
+        out.append("Record the choice in the chart brief:  Path: <shape> -> <question type> -> <chart> (start, "
+                   "go further: <condition>, or option: <why the headline needs it>);  Color: <pattern>")
         return "\n".join(out)
 
     __repr__ = __str__
@@ -208,7 +214,8 @@ def _leaves(shape_id: str, facts: dict[str, tuple[bool, str]]) -> list[Leaf]:
         further = []
         for f in q["further"]:
             holds, ev = facts.get(f["when"], (False, ""))
-            further.append(Further(f["chart"], f["page"], f.get("helper"), trig[f["when"]], holds, ev, f.get("why", "")))
+            further.append(Further(f["chart"], f["page"], f.get("helper"), trig[f["when"]], holds, ev, f.get("why", ""),
+                                   f.get("only_if", "")))
         switch = []
         for sw in q.get("color_switch", []):
             cond = trig.get(sw["when"], sw["when"])

@@ -5,10 +5,10 @@ Choose a chart in three steps, in this order. The tree starts from **what is in 
 
 In Python, `mv.suggest(df)` reads the table, places it in this tree, checks every condition against the data and prints the result. Check how it read the columns, and pass `category=`, `measure=`, `size=` or `time=` when a guess is wrong.
 
-**Start with** is right when no condition holds: it is the chart most readers decode fastest. When a condition holds, the richer chart usually says more; use it when it answers the question better, and say which condition you used in the chart brief:
+**Start with** is the answer most of the time: it is the chart most readers decode fastest, and for a ranking that is a sorted bar. Two kinds of branch lead away from it. **Go further** is a rule: when its condition holds, the start chart would mislead or stop reading well, so switch. **Option** is an enrichment: its condition makes the richer chart possible, not required; take it only when the headline depends on what the start chart can't show, or on an options page that compares views. Say which you used in the chart brief:
 
 ```
-Path:   <shape> -> <question type> -> <chart> (start, or go further: <condition>)
+Path:   <shape> -> <question type> -> <chart> (start, go further: <condition>, or option: <why the headline needs it>)
 Color:  <pattern> (<why>)
 ```
 
@@ -68,7 +68,7 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 - **Go further** when values bunched far from zero (the smallest is more than half the largest): [Dot plot](cookbook/dot-plot-dumbbell.md): bars must start at zero, which hides small differences
 - **Go further** when the largest value is more than 20 times the smallest: [Proportional bubbles, or split the chart](cookbook/bubble-chart.md)
 - **Go further** when more than 12 categories: [Sorted bar with the tail grouped into Other](cookbook/bar.md)
-- **Go further** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest): [Bubble strip: position = the measure, bubble area = the count](cookbook/distribution.md): shows how close the categories are and how many people each one covers
+- **Option** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest), and only if the headline is about how many people each one covers, not only the rate: [Bubble strip: position = the measure, bubble area = the count](cookbook/distribution.md): shows how close the categories are and how many people each one covers
 - **Go further** when more than 20 categories: [Bubble strip with only the outliers and largest named](cookbook/distribution.md)
 - **Avoid:** Rainbow, 3D or cut-off bars
 - **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out; Uniform + accent when every item is part of the story and one is the exception
@@ -83,7 +83,7 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 **Where is the most of it in absolute terms (rate × people)?** (magnitude (derived count)) *(when there is the measure is a rate or share and there is a count column, so rate × count gives an absolute amount)*
 
 - **Start with:** [Sorted bar of the derived count, footnoted as an estimate](cookbook/bar.md) (`ax.barh + mv.highlight`)
-- **Go further** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest): [Treemap: tile area = the count, shade = the rate](cookbook/treemap.md): people and the rate in one picture
+- **Option** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest), and only if the headline is about the volume and the rate together: [Treemap: tile area = the count, shade = the rate](cookbook/treemap.md): people and the rate in one picture
 - **Avoid:** A derived count presented as a recorded one
 - **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out
 
@@ -126,10 +126,10 @@ Before and after (rank_2023 and rank_2026, FY25 and FY26) or us and them (intern
 **What changed for each, or how big is each gap?** (change / comparison)
 
 - **Start with:** [Dumbbell (before grey, after blue)](cookbook/dot-plot-dumbbell.md) (`mv.dumbbell`)
-- **Go further** when the values are ranks: [Slope chart of the ranks](cookbook/slope-bump.md) (`mv.rank_slope`)
-- **Go further** when 6 or fewer categories: [Slope chart](cookbook/slope-bump.md) (`mv.rank_slope`)
+- **Option** when the values are ranks, and only if the headline is about who moved up or down the ranking: [Slope chart of the ranks](cookbook/slope-bump.md) (`mv.rank_slope`)
+- **Option** when 6 or fewer categories, and only if the headline is about the direction of change more than the size of each value: [Slope chart](cookbook/slope-bump.md) (`mv.rank_slope`)
 - **Go further** when the difference itself is the story (a gap column, or the pair is us vs. a benchmark): [Diverging bars of the difference](cookbook/bar.md) (`mv.diverging_bars`)
-- **Go further** when a target or goal to compare against: [Dumbbell with a target line](cookbook/dot-plot-dumbbell.md) (`mv.dumbbell`)
+- **Option** when a target or goal to compare against, and only if the headline is about the gap to the target: [Dumbbell with a target line](cookbook/dot-plot-dumbbell.md) (`mv.dumbbell`)
 - **Avoid:** Two separate bar charts the reader must compare
 - **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out
 
@@ -155,7 +155,7 @@ One row per category with two or more measures in different units (a scorecard; 
 
 - **Start with:** [Blended table (scorecard): inline bars, one or two heat columns, a change column](cookbook/tables.md) (`mv.table`)
 - **Go further** when more than 12 categories: [Parallel coordinates, the focus line in blue](cookbook/parallel-coordinates.md)
-- **Go further** when a benchmark: a column that is the same on every row, one named target / benchmark / average, or a Total row: [Blended table with the gap to the benchmark as a diverging column](cookbook/tables.md) (`mv.table(..., mv.Col(..., 'heat', scale='diverging'))`)
+- **Option** when a benchmark: a column that is the same on every row, one named target / benchmark / average, or a Total row, and only if readers need each score against the benchmark, not only the scores: [Blended table with the gap to the benchmark as a diverging column](cookbook/tables.md) (`mv.table(..., mv.Col(..., 'heat', scale='diverging'))`)
 - **Avoid:** A clustered bar per measure
 - **Color:** Sequential
 
@@ -241,7 +241,7 @@ Grey first, then color only the point. Pick the pattern from what the color has 
 |---|---|---|
 | **Focus (default)** | The headline names one or two items: everything grey, those items McKesson Blue. Highlight at most two; bold the matching labels. | `mv.highlight(labels, focus=...); a stack: mv.hstack(..., story=...)` |
 | **Uniform + accent** | Every item belongs to the same story and one exception must pop: the series light blue, the exception navy. | `mv.highlight(labels, accent=..., base=C.focus_light); a stack: mv.hstack(..., accent=..., uniform=True)` |
-| **Focus + accent** | The headline names a group and one member that stands out: grey context, the group McKesson Blue, the standout navy ("Four support roles are above 50% exposure, led by Claims & Billing"). Use it whenever the headline has a "led by" or "most of all" clause, not only for rare exceptions. | `mv.highlight(labels, focus=..., accent=...); a stack: mv.hstack(..., story=..., accent=...)` |
+| **Focus + accent** | The headline names a group and one member that stands out above the rest of it: grey context, the group McKesson Blue, the standout navy ("Four support roles are above 50% exposure, led by Claims & Billing"). Use it for a "led by" or "most of all" clause. Two items the headline names as equals ("two job families") stay Focus: both blue. | `mv.highlight(labels, focus=..., accent=...); a stack: mv.hstack(..., story=..., accent=...)` |
 | **Story segment + greys** | Focus applied to a stack: the one part that is the story blue on the baseline, the other parts in context greys. | `mv.hstack(..., story=...)` |
 | **Categorical** | Every series or part matters and must be told apart: at most 6, always in the fixed order (blue, navy, bright blue, teal, mint, orange); prefer 4 or fewer. | `mv.categorical(n), or mv.hstack(..., colors=mv.categorical(n))` |
 | **Sequential** | One ordered measure or ordered bands (low to high, bands of a rate): light to dark in one hue. Darker means more. | `mv.SEQUENTIAL['blue'], mv.sequential_cmap()` |
