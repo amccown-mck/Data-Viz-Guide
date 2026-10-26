@@ -12,7 +12,7 @@ Work through the five steps in order. Keep a short **chart brief** as you go and
 ```
 Question:     <one sentence the chart answers>
 Mode:         explanatory | exploratory          Medium: slide | report | web | mobile | dashboard
-Path:         <shape> -> <question type> -> <chart> (start, or go further: <condition that holds>)
+Path:         <shape> -> <question type> -> <chart> (start, go further: <condition>, or option: <why>)
 Chart:        <type> (docs/cookbook/<page>.md)
 Color:        <pattern> (<why>)   Focus: <what is blue>   Accent: <optional single navy exception>
 Headline:     <insight sentence, numbers computed from data>
@@ -21,6 +21,11 @@ Source:       Source: <system>, as of <date>; <population>
 Min n check:  <smallest group shown> (must be ≥ 10)
 QA:           pass | exceptions: <list>
 ```
+
+**Task guides.** This page covers every chart. When the request is one of these, also read the guide before you build; it adds to the steps below and doesn't replace them:
+- **Several options or a storyline** ("show me a few ways", "N options", "pros and cons for a meeting"): `.github/skills/mck-chart/references/options.md`, how to pick the angles and the options page.
+- **Feedback on a chart the user shares:** `.github/skills/mck-chart/references/review.md`.
+- **A native chart in Excel, PowerPoint or Power BI, or HTML or R:** `.github/skills/mck-chart/references/native-formats.md`.
 
 ## 1. Question
 - Restate the request as **one question** ("Which job families lose the most people, and how far above the enterprise rate?"). If the data can't answer it, say so before you build anything.
@@ -35,42 +40,12 @@ QA:           pass | exceptions: <list>
 - Write the **Path** and **Color** lines in the brief, then **read** `docs/principles.md` and `docs/cookbook/<page>.md`. Note the page's spec table and "When not to use".
 - Common traps: clustered values far from zero → dot plot, not truncated bars. Two units over time → two aligned charts, not dual axes. More than 6 categories → highlight plus grey, or group into "Other". A spread across people → distribution, not an average.
 
-### Storyline or options requests
-When the user pastes a table and asks for "N options" or "charts that fit this storyline", don't build N charts of the same thing. Work the data first, then the angles:
-- **List the question types the data can support:** `mv.suggest(df)` lists every shape and question the data fits and what it can't support. One period and one measure per category supports magnitude (ranked bars with a benchmark line), deviation from a benchmark (diverging bars, `mv.diverging_bars`) and derived counts (headcount × rate, as a second ranked bar or a KPI card). A slope or change-over-time chart needs **two periods**. A heat table needs **two dimensions**. A correlation or bubble scatter needs two measures per category (a count can be the bubble area). A part-to-whole needs parts that sum to a whole.
-- **Say what the data cannot support.** If an asked-for chart needs a field the table lacks (a trend without a second period, a heat table with one dimension), name it and what would be needed, instead of forcing it.
-- **Vary the charts.** Each option is a different chart type from a different leaf; when `mv.suggest` lists go-further charts, at least one option uses one. Five bar charts are not five options.
-- **Build one chart per supported angle**, each with its own headline computed from the data and its own focus. Different angles may name different focus items; each chart's headline must match its own highlight.
-- **Hand back a one-line brief per option** (angle, chart type, headline) plus **a recommendation of which one to lead with** and why (usually the one whose headline answers the storyline's question most directly), then the full chart brief for that one.
-
-### The options page
-When people see the same data differently ("show me a few ways to present this", "leadership can't agree how to show it", "options with pros and cons for a meeting"), build 3–6 views as above and hand them over as **one self-contained HTML page** with `mv.options_page` (the charts, Libre Franklin and the styles are all inside the file; it opens offline and prints one option per page):
-```python
-opts = [mv.Option(fig, name="Roles ranked by exposure", question="Which roles have the most exposed work?",
-                  how_to_read="One bar per role, sorted, against the workforce average.",
-                  strength="Every role is visible.", tradeoff="It treats a role of 450 people like one of 11,800.",
-                  alt="<headline plus 2-3 key numbers>"), ...]
-mv.options_page("<topic>-options.html", title="<Topic>: four ways to show it", options=opts,
-                lede="Four views of the same data. Each answers a different question; use one or combine them.",
-                findings=[("<bold lead>", "<rest, numbers computed from the data>"), ...],   # 2-3 facts
-                notes={"<term>": "<definition>", "Data": "<n, scope, exclusions, suppressed groups>"},
-                source="Source: <system>, as of <date>; <population>", label="Internal · For discussion")
-```
-- Each option is a finished chart (headline, subtitle, source, `mv.lint` clean) from the same data. Give each one a different question, a fair strength, and a real trade-off: what it hides, distorts or assumes.
-- Stay neutral unless the user asks which to lead with; then add `recommendation="..."` and `lead=<option number>`.
-- Mark sensitivity with `label=` (ask once if the data is internal; never leave real people data unlabeled).
-- With four or more options, make one a **blended table** (`mv.table`: inline bars, one heat column, a change column, bold focus rows, a weighted total), so every reader can find their own row; put it last, as the reference view.
-- Hand back the page, a one-line brief per option, and how to use it: open it in a browser, "Save as PDF" for a handout, Download or Copy under each chart for PowerPoint.
-
 ## 3. Build
-- Start from the cookbook snippet for the platform the user needs:
+- Start from the cookbook snippet for the platform the user needs. For anything but a PNG or PDF from Python, read `.github/skills/mck-chart/references/native-formats.md`.
   - **Python:** `import mckviz as mv; mv.use(); C = mv.colors` (`mv.use()` styles matplotlib and activates the "mck" Plotly template). Use `mv.fmt_num` for numbers (K/M/B, %, true minus), `mv.signed(v, decimals=1)` for a signed delta in a headline (its default is 0 decimals: pass the decimals the chart labels use, so "+2.0" in the headline matches "+2.0 hrs" on the bar) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `docs/cookbook/maps.md`).
     - **matplotlib** for slides, PNG, PDF and print: `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, `mv.label_bars` / `mv.label_line_ends` for labels.
     - **Copy the cookbook page's runnable snippet and change only the data, labels and focus.** Don't hand-build the frame with `fig.text` (the headline, subtitle and source come from `mv.titles` and `mv.source`, laid out by `mv.save`), and don't guess names. The color roles are `C.focus` (blue), `C.focus_light`, `C.context` (grey), `C.context_light`, `C.accent` (navy exception), `C.total` (navy totals and benchmarks), `C.negative` (orange, worse), `C.positive` (green, better), `C.text`, `C.text_muted`, `C.headline`, `C.title`; there is no `C.grey` or `C.muted`.
     - **Plotly** when the output is interactive or HTML: `mv.pl_highlight` for colors, `mv.pl_finish(fig, headline, subtitle, source_text)` for the frame, then `fig.write_html(...)`.
-  - **HTML:** the chart-card pattern with `dist/web/mck-viz.css` plus `mck-plotly-template.js` or `vega-lite-config.json` (starter: `templates/html/chart-card.html`).
-  - **Excel / PowerPoint:** build a **native, editable chart**, never a pasted picture, when a pptx tool is available. In Claude.ai, or any environment with a pptx skill (pptxgenjs), use it with the theme and chart options in `dist/office/pptxgenjs-theme.js` (`MCK.theme`, `MCK.text.*` on the slide grid, `MCK.barChart` with `MCK.pointColors(labels, focus)`) and the recipe in `docs/office-setup.md` ("A native chart from code with pptxgenjs"): the headline in the title placeholder at 26 pt Bold McKesson Blue, the subtitle and source as text, and the benchmark line and bold focus labels as shapes over the pinned plot area. Without a pptx tool, start from the starter deck (`McKesson-DataViz-Starter.pptx`, native charts on the template grid) and follow the cookbook page's Excel / PowerPoint section by hand, or render a PNG with matplotlib and place it on the slide as the last resort.
-  - **Power BI, R:** follow the cookbook page's section for that platform, using the themes in `dist/`.
 - **At most two highlighted items**, and they are what the headline names. When more qualify (three functions below a line), highlight the two the headline is about and keep the rest grey, or make the one exception the navy accent.
 - **No hex literals.** Use color roles only: context grey, focus blue, navy accent (the one exception), light blue for a uniform series, navy totals and benchmarks. Orange only when it means "worse" (below target, shrinking, a shortfall), green only when it means "better", both with ▲▼ or words. Red/amber/green only as status colors (`mv.STATUS`) with a symbol and word, never for data series.
 - Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.

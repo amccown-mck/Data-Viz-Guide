@@ -140,3 +140,12 @@ The Microsoft 365 Copilot agent "WI Data Storytelling Agent" (https://github.com
 - **Experiments on a feature branch** (`feat/<name>`). The agent's private copy can run a branch build while it is tried in Copilot; its shared copy accepts only a build from `main`.
 - **Before merging to `main`:** the human guide (`guide/pages/`, `docs/`) says the same as the skill, the CHANGELOG has an entry, and the tests and `tools/check_snippets.py` pass.
 - **Copilot sandbox specifics** go in the Copilot edition (`agents/skill/copilot/`, `<!-- copilot -->` blocks); the evidence (probes of the sandbox) is in the agent repo's `docs/sandbox-probe.md`.
+
+### Where agent guidance goes (four layers)
+Copilot loads `SKILL.md` whole whenever the skill triggers, caps it at 20,000 characters, and reads other files only when `SKILL.md` points to them. So each piece of guidance goes in the cheapest layer that still reaches the agent when it needs it:
+1. **Code** (`mckviz`): a rule a function can enforce goes there first: a builder (`mv.strip` draws the distribution spec), a lint rule, a `mv.suggest` branch. The text then needs a line at most. This is the best layer: it can't be skipped or misread.
+2. **`SKILL.md`** (`agents/skill/SKILL.template.md`): only what **every** chart request needs: the brief, the five steps, the decision tree, the builder index, setup, headline, QA. Budget: **14,000 characters** for the Copilot edition (`SKILL_BUDGET` in `tools/build_skill.py`; the build fails over it).
+3. **Task guides** (`agents/skill/references/*.md`, filled per edition into `references/`): detail that only some requests need, behind a one-line pointer in the "Task guides" list of `SKILL.md` that says when to read it: `options.md` (options pages and storylines), `review.md` (feedback on a chart), `native-formats.md` (Excel, PowerPoint, Power BI, HTML, R). Add a guide rather than growing `SKILL.md`.
+4. **Reference docs** (`docs/`, cookbook pages): the full rules and one page per chart, shared with the human guide; the guides and `SKILL.md` point into them.
+
+The agent's always-on instructions (`instruction.txt` in the agent repo, 8,000 limit, budget 4,000) hold only identity, when to use the skill, and the few rules that must hold even if the skill doesn't load. Before a change that moves guidance between layers goes to the shared agent, rerun the agent repo's regression prompts (`evals/prompts.json`).

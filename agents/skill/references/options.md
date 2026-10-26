@@ -1,0 +1,34 @@
+<!-- {{generated_note}} -->
+# Options and storyline requests
+
+Read this when the user asks for several ways to show the same data: "give me N options", "charts that fit this storyline", "show me a few ways to present this", "leadership can't agree how to show it", "options with pros and cons for a meeting". The workflow in `SKILL.md` still applies to every chart; this page adds how to pick the angles and how to hand them over.
+
+## Pick the angles
+Don't build N charts of the same thing. Work the data first, then the angles:
+- **List the question types the data can support:** `mv.suggest(df)` lists every shape and question the data fits and what it can't support. One period and one measure per category supports magnitude (ranked bars with a benchmark line), deviation from a benchmark (diverging bars, `mv.diverging_bars`) and derived counts (headcount × rate, as a second ranked bar or a KPI card). A slope or change-over-time chart needs **two periods**. A heat table needs **two dimensions**. A correlation or bubble scatter needs two measures per category (a count can be the bubble area). A part-to-whole needs parts that sum to a whole.
+- **Say what the data cannot support.** If an asked-for chart needs a field the table lacks (a trend without a second period, a heat table with one dimension), name it and what would be needed, instead of forcing it.
+- **Vary the charts.** Each option is a different chart type from a different leaf; when `mv.suggest` lists go-further charts or options, at least one option uses one. Five bar charts are not five options. This is where variety belongs: a single-chart request still gets the start chart.
+- **Build one chart per supported angle**, each with its own headline computed from the data and its own focus. Different angles may name different focus items; each chart's headline must match its own highlight.
+- **Hand back a one-line brief per option** (angle, chart type, headline) plus **a recommendation of which one to lead with** and why (usually the one whose headline answers the storyline's question most directly), then the full chart brief for that one.
+
+## The options page
+When people see the same data differently, build 3–6 views as above and hand them over as **one self-contained HTML page** with `mv.options_page` (the charts, Libre Franklin and the styles are all inside the file; it opens offline and prints one option per page):
+```python
+opts = [mv.Option(fig, name="Roles ranked by exposure", question="Which roles have the most exposed work?",
+                  how_to_read="One bar per role, sorted, against the workforce average.",
+                  strength="Every role is visible.", tradeoff="It treats a role of 450 people like one of 11,800.",
+                  alt="<headline plus 2-3 key numbers>"), ...]
+mv.options_page("<topic>-options.html", title="<Topic>: four ways to show it", options=opts,
+                lede="Four views of the same data. Each answers a different question; use one or combine them.",
+                findings=[("<bold lead>", "<rest, numbers computed from the data>"), ...],   # 2-3 facts
+                notes={"<term>": "<definition>", "Data": "<n, scope, exclusions, suppressed groups>"},
+                source="Source: <system>, as of <date>; <population>", label="Internal · For discussion")
+```
+- Each option is a finished chart (headline, subtitle, source, `mv.lint` clean) from the same data. Give each one a different question, a fair strength, and a real trade-off: what it hides, distorts or assumes.
+- Stay neutral unless the user asks which to lead with; then add `recommendation="..."` and `lead=<option number>`.
+- Mark sensitivity with `label=` (ask once if the data is internal; never leave real people data unlabeled).
+- With four or more options, make one a **blended table** (`mv.table`: inline bars, one heat column, a change column, bold focus rows, a weighted total), so every reader can find their own row; put it last, as the reference view.
+- Hand back the page, a one-line brief per option, and how to use it: open it in a browser, "Save as PDF" for a handout, Download or Copy under each chart for PowerPoint.
+<!-- copilot -->
+- In Copilot, write the page to `/mnt/data/`, run `plt.close("all")` after `mv.options_page`, then `pdf = mv.page_pdf(path)`. Copilot opens linked files in the OneDrive viewer, where a PDF reads and forwards cleanly but an .html's "Open in app" fails until it is downloaded. So link the **PDF first** ("to read, share or print"), then the **.html** with one line: "For the Download and Copy buttons (charts into PowerPoint), select Download (↓) at the top left of the preview, then open the file in your browser." If `page_pdf` returns None, link the .html with that line and point to its Save as PDF button. Don't show every chart inline: list the options with their headlines instead.
+<!-- /copilot -->
