@@ -185,11 +185,11 @@ A period column (months, quarters, years) with three or more periods, maybe a se
 
 **How is it moving? When did it change?** (change over time)
 
-- **Start with:** [Line, the focus series in blue and the rest grey](cookbook/line.md) (`mv.label_line_ends`)
+- **Start with:** [Line, the focus series in blue and the rest grey](cookbook/line.md) (`mv.line`)
 - **Go further** when more than 4 series: [Small multiples on one shared scale](cookbook/small-multiples.md) (`mv.multiples`)
 - **Go further** when the measures are parts that add up to 100 in each period: [Stacked area, or 100% columns for a few periods](cookbook/stacked-area.md)
 - **Go further** when two measures in different units over the same periods: [Two aligned panels (never dual axes)](cookbook/dual-axis.md)
-- **Go further** when a target or goal to compare against: [Line with a labelled target line](cookbook/line.md)
+- **Go further** when a target or goal to compare against: [Line with a labelled target line](cookbook/line.md) (`mv.line(..., target=, target_label=)`)
 - **Avoid:** Ten colored lines
 - **Color:** Focus (default); Categorical when the measures are parts that add up to 100 in each period; Focus + accent when the headline names a group and one member stands out
 

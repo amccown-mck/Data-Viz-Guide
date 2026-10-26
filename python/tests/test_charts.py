@@ -160,7 +160,17 @@ def _share_bar(ax):
                         below=0.90, focus={"Pharmacy Technician"}, ref="overall", ref_label="All job families")
 
 
-BUILDERS = {"share_bar": _share_bar, "strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
+def _line(ax):
+    na = float("nan")
+    q = ["Q1 '25", "Q2", "Q3", "Q4", "Q1 '26", "Q2", "Q3", "Q4"]
+    return mv.line(ax, q, {"Oncology": [9.0, 9.9, 11.2, 13.1, 13.4, 13.0, 12.8, 12.6],
+                           "Technology": [11.8, 10.9, 9.8, 9.0, 8.8, 8.9, 9.1, na],
+                           "Corporate": [8.2, 7.9, 7.6, 7.1, 7.0, 6.9, 6.8, 6.6]},
+                   focus={"Oncology"}, target=10, target_label="Target 10%", event=(2, 3, "Reorg"),
+                   forecast_from=5, band={"Oncology": ([na] * 5 + [13.0, 12.2, 11.6], [na] * 5 + [13.0, 13.4, 13.8])})
+
+
+BUILDERS = {"line": _line, "share_bar": _share_bar, "strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
             "dumbbell": _dumbbell, "heat": _heat, "heat_sequential": _heat_seq, "kpi_card": _kpi,
             "kpi_row": _kpi_row, "ring": _ring, "tracker": _tracker, "roadmap": _roadmap,
             "status_column": _status_column, "rank_slope": _rank_slope, "diverging_bars": _diverging,
@@ -513,3 +523,29 @@ def test_strip_boxes_only_the_focus_group_by_default():
     _strip(ax)
     assert len([p for p in ax.patches if isinstance(p, Rectangle) and p.get_fill() is False
                 or isinstance(p, Rectangle) and p.get_facecolor()[3] == 0]) == 1
+
+
+def test_line_greys_context_labels_ends_and_dashes_the_forecast():
+    fig, ax = plt.subplots(figsize=(10, 5))
+    ns = _line(ax)
+    assert to_hex(ns.lines["Oncology"].get_color()).upper() == C.focus.upper()
+    assert to_hex(ns.lines["Technology"].get_color()).upper() == C.context.upper()
+    texts = {t.get_text(): t for t in ns.labels}
+    assert "Oncology\n12.6 (11.6–13.8)" in texts and "Technology" in texts             # band label; context: name only
+    assert texts["Technology"].get_position()[0] == 6                                     # its last finite point
+    assert any(ln.get_linestyle() == "--" for ln in ax.get_lines())                        # the forecast part
+    ys = sorted(t.get_window_extent(fig.canvas.get_renderer()).y0 for t in ns.labels)
+    tops = sorted(t.get_window_extent(fig.canvas.get_renderer()).y1 for t in ns.labels)
+    assert all(b >= a - 1 for a, b in zip(tops[:-1], ys[1:]))                             # labels don't overlap
+    assert ax.get_xlim()[1] > 7.5                                                          # room for the labels
+    assert [t.get_text() for t in ax.get_xticklabels()][:2] == ["Q1 '25", "Q2"]
+
+
+def test_line_colors_and_limits():
+    fig, ax = plt.subplots()
+    ns = mv.line(ax, ["FY24", "FY25", "FY26"], {"A": [1, 2, 3], "B": [3, 2, 1]})
+    assert [to_hex(c).upper() for c in ns.colors.values()] == [c.upper() for c in mv.CATEGORICAL[:2]]
+    with pytest.raises(ValueError, match="name the focus"):
+        mv.line(ax, ["a", "b"], {str(i): [1, 2] for i in range(5)})
+    with pytest.raises(ValueError, match="appears 2 times"):
+        mv.line(ax, ["Q1", "Q2", "Q1"], {"A": [1, 2, 3]}, forecast_from="Q1")

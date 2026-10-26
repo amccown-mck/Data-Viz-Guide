@@ -517,7 +517,7 @@
           "start": {
             "chart": "Line, the focus series in blue and the rest grey",
             "page": "line",
-            "helper": "mv.label_line_ends"
+            "helper": "mv.line"
           },
           "further": [
             {
@@ -542,7 +542,7 @@
               "when": "has_target",
               "chart": "Line with a labelled target line",
               "page": "line",
-              "helper": null
+              "helper": "mv.line(..., target=, target_label=)"
             }
           ],
           "avoid": "Ten colored lines",

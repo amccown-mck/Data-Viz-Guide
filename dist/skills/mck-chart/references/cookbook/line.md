@@ -51,6 +51,8 @@
 ## Build it
 
 ### Python — matplotlib + `mckviz`
+`mv.line` draws the spec in one call: grey context and the headline's series in blue (one navy accent at most), labels at the line ends in end-value order instead of a legend, light horizontal gridlines, and room for the labels inside the plot. It also takes a target line, a shaded event and a dashed forecast with a scenario band. With no focus, two to four series each get a categorical color; more than four need a focus or [small multiples](small-multiples.md).
+
 ```python
 # verified runnable (from the repo root)
 import matplotlib
@@ -62,52 +64,35 @@ import numpy as np
 import mckviz as mv
 
 mv.use()
-C = mv.colors
-CONTEXT_LW = mv.TOKENS["chart"]["line"]["context_width_px"]
-
-# Voluntary attrition, annualized %, Q1 2024 - Q4 2026 (12 actual quarters) + 4 forecast quarters
-actual = {
-    "Pharmacy Technician": [29.8, 30.5, 31.2, 30.9, 30.1, 29.4, 26.0, 23.2, 22.1, 21.4, 21.0, 20.6],
-    "DC Associate":        [25.1, 25.6, 25.9, 25.2, 24.8, 24.6, 24.3, 24.4, 24.0, 24.2, 24.1, 23.9],
-    "Customer Care":       [18.6, 18.9, 18.3, 18.1, 18.4, 18.0, 18.2, 18.5, 18.0, 18.1, 18.2, 17.9],
-    "Specialty Nursing":   [15.0, 14.8, 14.6, 14.9, 14.4, 14.1, 14.3, 14.0, 14.2, 14.1, 14.2, 14.2],
-    "Software Engineering":[12.5, 12.0, 11.4, 10.9, 10.5, 10.2, 10.0, 9.9, 9.8, 9.7, 9.9, 9.8],
+NA = np.nan
+# Voluntary attrition, annualized %, Q1 2024 - Q4 2026 (12 actual quarters) + 4 forecast quarters (NaN = no actual)
+attrition = {
+    "Pharmacy Technician": [29.8, 30.5, 31.2, 30.9, 30.1, 29.4, 26.0, 23.2, 22.1, 21.4, 21.0, 20.6,
+                            20.3, 20.0, 19.8, 19.6],                     # the last four are the base-case forecast
+    "DC Associate":        [25.1, 25.6, 25.9, 25.2, 24.8, 24.6, 24.3, 24.4, 24.0, 24.2, 24.1, 23.9] + [NA] * 4,
+    "Customer Care":       [18.6, 18.9, 18.3, 18.1, 18.4, 18.0, 18.2, 18.5, 18.0, 18.1, 18.2, 17.9] + [NA] * 4,
+    "Specialty Nursing":   [15.0, 14.8, 14.6, 14.9, 14.4, 14.1, 14.3, 14.0, 14.2, 14.1, 14.2, 14.2] + [NA] * 4,
+    "Software Engineering": [12.5, 12.0, 11.4, 10.9, 10.5, 10.2, 10.0, 9.9, 9.8, 9.7, 9.9, 9.8] + [NA] * 4,
 }
+low = [NA] * 11 + [20.6, 19.6, 18.9, 18.3, 17.8]                         # scenario band, from the last actual
+high = [NA] * 11 + [20.6, 21.0, 21.2, 21.4, 21.6]
+quarters = [f"Q{q % 4 + 1}" + (f" '{24 + q // 4}" if q % 4 == 0 else "") for q in range(16)]
 focus = "Pharmacy Technician"
-base, low, high = [20.6, 20.3, 20.0, 19.8, 19.6], [20.6, 19.6, 18.9, 18.3, 17.8], [20.6, 21.0, 21.2, 21.4, 21.6]
-x_act, x_fc = np.arange(12), np.arange(11, 16)          # forecast starts at the last actual point
-ticks = [f"Q{q % 4 + 1}" + (f" '{24 + q // 4}" if q % 4 == 0 else "") for q in range(16)]
+drop = max(attrition[focus][:6]) - attrition[focus][11]                   # the headline's number, from the data
 
 fig, ax = plt.subplots(figsize=(10, 5.6))
-mv.shade_period(ax, 5.5, 7.5, "Pay-band reset + self-scheduling")
-for name, y in actual.items():
-    if name != focus:
-        ax.plot(x_act, y, color=C.context, lw=CONTEXT_LW, label=name)
-ax.fill_between(x_fc, low, high, color=C.focus, alpha=0.15, lw=0)
-ax.plot(x_fc, base, color=C.focus, ls=(0, (4, 3)), label="_forecast")
-ax.plot(x_act, actual[focus], color=C.focus, label="_focus", zorder=3)
-
-for name, y in actual.items():                          # context labels in muted text (grey #B4B0A5 fails contrast as text)
-    if name != focus:
-        ax.annotate(name, (11, y[-1]), xytext=(6, 0), textcoords="offset points", va="center", fontsize=10,
-                    color=C.text_muted, path_effects=mv.halo())
-ax.annotate(f"{focus}\n{base[-1]:.1f} base ({low[-1]:.1f}\u2013{high[-1]:.1f})", (15, base[-1]), xytext=(6, 0),
-            textcoords="offset points", va="center", fontsize=11, fontweight="bold", color=C.focus,
-            annotation_clip=False, path_effects=mv.halo())
-ax.axvline(11, color=C.axis, lw=0.75, ls=":", zorder=1)
-ax.text(11.15, 33.5, "Forecast", fontsize=9, color=C.text_muted, va="top")
-
-mv.clean_axes(ax)
-ax.set_ylim(5, 34)
-ax.set_xlim(-0.2, 15.1)
-ax.set_xticks(range(16), ticks)
-mv.titles(fig, "Pharmacy Technician attrition fell ~9 points after the pay and scheduling reset; base case nears 20% by end of 2027",
-          "Voluntary attrition by job family, annualized, Q1 2024\u2013Q4 2026 actual, 2027 forecast (%)")
-mv.source(fig, "Source: Workday HCM, as of 31 Dec 2026; U.S. regular employees. Synthetic data for illustration",
+# Quarter labels repeat ("Q3" every year), so periods are 0-based positions: 6-7 = Q3-Q4 2025, 11 = Q4 2026.
+mv.line(ax, quarters, attrition, focus={focus}, event=(6, 7, "Pay-band reset + self-scheduling"),
+        forecast_from=11, band={focus: (low, high)}, target=20, target_label="Target 20%")
+mv.titles(fig, f"Pharmacy Technician attrition fell about {drop:.0f} points after the pay and scheduling reset; "
+               "the base case reaches the 20% target in 2027",
+          "Voluntary attrition by job family, annualized, Q1 2024–Q4 2026 actual, 2027 forecast (%)")
+mv.source(fig, "Source: Synthetic data for illustration only",
           footnote="Forecast band = low/high scenarios from the SWP attrition model; dashed line = base case.")
-mv.save(fig, "out/line.png")
+mv.lint(fig, strict=True)
+mv.save(fig, "out/line.png", dpi=200)
 ```
-When every line is colored, `mv.label_line_ends(ax, fmt="{:,.0f}")` labels each line in its own color and skips series whose label starts with `_`. The [gallery `line_gap()`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_matplotlib.py) shows a supply/demand gap with a callout.
+`mv.line` returns the lines (`.lines[name]`) for a callout with `mv.callout`. The [gallery `line_gap()`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_matplotlib.py) shows a supply/demand gap with a callout.
 
 ### Python — Plotly / HTML
 ```python

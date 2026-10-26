@@ -1791,3 +1791,153 @@ def share_bar(ax, data, group: str | None = None, value: str | None = None, *, b
     _bold_ticks(ax.get_yticklabels(), focus)
     return SimpleNamespace(order=order, shares=shares, counts=beyond, n=n, overall=overall, suppressed=suppressed,
                            bars=bars)
+
+
+# ------------------------------------------------------------------ LINE
+def _fmt(fmt, v) -> str:
+    return fmt.format(v) if isinstance(fmt, str) else fmt(v)
+
+
+def line(ax, x, series, *, focus: Iterable[str] = (), accent: str | None = None, target: float | None = None,
+         target_label: str | None = None, event: tuple | None = None, forecast_from=None, band=None,
+         fmt="{:,.1f}", ylim: tuple[float, float] | None = None):
+    """Lines over time with the house rules: grey context, the headline's series blue (one navy accent at most),
+    direct labels at the line ends in end-value order (no legend), light horizontal gridlines, straight segments.
+
+        q = ["Q1 '24", "Q2", "Q3", "Q4", "Q1 '25", ...]
+        mv.line(ax, q, {"Pharmacy Technician": [...], "DC Associate": [...], ...}, focus={"Pharmacy Technician"},
+                target=20, target_label="Target 20%", event=("Q3 '25", "Q4", "Pay-band reset"),
+                forecast_from="Q4 '26", band={"Pharmacy Technician": (low, high)})
+
+    x: the period labels, evenly spaced (put the year on the first tick and at each year change). series:
+        {name: values} or a DataFrame whose columns are the series; NaN leaves a gap (never interpolated).
+    focus: at most two series in blue (accent= one in navy). With none: one series is the focus; two to four
+        series each get a categorical color; more than four raises (name the focus, or use mv.multiples).
+    target: a navy dashed line, named by target_label. event: (first, last, text) shades that span.
+    forecast_from: the last actual period; every line is dashed after it, with a dotted divider. Periods are a
+        label that appears once in x, or a 0-based position (repeated quarter labels need the position). band:
+        {name: (low, high)} scenario bounds aligned to x (NaN before the forecast), shaded in the line's color; the
+        end label then reads "base (low-high)". fmt: format for end values. ylim: fixed limits (a line may start
+        above zero, but never fill under it). Returns SimpleNamespace(lines={name: Line2D}, labels, colors).
+    """
+    from matplotlib.transforms import offset_copy
+
+    from . import CATEGORICAL, clean_axes, shade_period
+
+    if hasattr(series, "columns"):
+        data = {str(c): np.asarray(series[c], float) for c in series.columns}
+    else:
+        data = {str(k): np.asarray(list(v), float) for k, v in dict(series).items()}
+    labels_x = [str(v) for v in x]
+    n = len(labels_x)
+    if any(len(v) != n for v in data.values()):
+        raise ValueError("every series needs one value per period in x")
+    focus = {str(f) for f in focus}
+    accent = str(accent) if accent is not None else None
+    hot = focus | ({accent} if accent else set())
+    if hot - set(data):
+        raise ValueError(f"not a series: {sorted(hot - set(data))}")
+    if len(hot) > 2:
+        raise ValueError("at most two highlighted lines; grey the rest")
+    categorical = False
+    if not hot:
+        if len(data) == 1:
+            focus = hot = set(data)
+        elif len(data) <= 4:
+            categorical = True
+        else:
+            raise ValueError(f"{len(data)} lines: name the focus (the rest go grey) or use mv.multiples")
+    names = list(data)
+    color = {nm: (CATEGORICAL[i] if categorical else C.accent if nm == accent else C.focus if nm in focus
+                  else C.context) for i, nm in enumerate(names)}
+    strong = set(names) if categorical else hot
+    lw = TOKENS["chart"]["line"]
+    xs = np.arange(n)
+    def at(lab):                                              # a 0-based position, or a label that appears once
+        if isinstance(lab, (int, np.integer)):
+            if not 0 <= lab < n:
+                raise ValueError(f"position {lab} is outside x (0 to {n - 1})")
+            return int(lab)
+        hits = [i for i, v in enumerate(labels_x) if v == str(lab)]
+        if len(hits) != 1:
+            raise ValueError(f"{lab!r} appears {len(hits)} times in x; pass its 0-based position instead")
+        return hits[0]
+
+    if event is not None:
+        a, b, text = event
+        shade_period(ax, max(at(a) - 0.5, -0.2), min(at(b) + 0.5, n - 0.8), text)
+    cut = None if forecast_from is None else at(forecast_from)
+    band = {str(k): (np.asarray(lo, float), np.asarray(hi, float)) for k, (lo, hi) in (band or {}).items()}
+    for nm, (lo, hi) in band.items():
+        if nm not in data or len(lo) != n or len(hi) != n:
+            raise ValueError(f"band {nm!r}: a series name and two lists aligned to x")
+        ax.fill_between(xs, lo, hi, color=color[nm], alpha=0.15, lw=0, zorder=1)
+    lines = {}
+    for nm in sorted(names, key=lambda nm: nm in strong):    # context first, highlights on top
+        y = data[nm]
+        kw = dict(color=color[nm], lw=lw["width_pt"] if nm in strong else lw["context_width_px"],
+                  zorder=3 if nm in strong else 2, solid_capstyle="round")
+        if cut is None:
+            lines[nm], = ax.plot(xs, y, label=nm, **kw)
+        else:
+            lines[nm], = ax.plot(xs[:cut + 1], y[:cut + 1], label=nm, **kw)
+            ax.plot(xs[cut:], y[cut:], ls=(0, (4, 3)), label="_forecast", **kw)
+    if cut is not None:
+        ax.axvline(cut, color=C.axis, lw=0.75, ls=":", zorder=1)
+        ax.annotate("Forecast", (cut, 1), xycoords=("data", "axes fraction"), xytext=(4, -2),
+                    textcoords="offset points", va="top", fontsize=SMALL, color=C.text_muted)
+    if target is not None:
+        ax.axhline(target, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=2)
+        if target_label:
+            ax.annotate(target_label, (0, target), xycoords=("axes fraction", "data"), xytext=(2, 3),
+                        textcoords="offset points", va="bottom", fontsize=SMALL, color=C.annotation,
+                        path_effects=halo())
+    clean_axes(ax)
+    step = max(1, math.ceil(n / 20))                          # thin only long runs (monthly over years)
+    ax.set_xticks(xs[::step], labels_x[::step])
+    if ylim is not None:
+        ax.set_ylim(*ylim)
+    elif target is not None:
+        lo_, hi_ = ax.get_ylim()
+        ax.set_ylim(min(lo_, target), max(hi_, target))
+
+    # End labels: text first, so their width can be reserved inside the plot on the right.
+    ends = []
+    for nm in names:
+        y = data[nm]
+        idx = [i for i in range(n) if np.isfinite(y[i])]
+        if not idx:
+            continue
+        i = idx[-1]
+        if nm in band and np.isfinite(band[nm][0][i]):
+            text = f"{nm}\n{_fmt(fmt, y[i])} ({_fmt(fmt, band[nm][0][i])}–{_fmt(fmt, band[nm][1][i])})"
+        elif nm in strong:
+            text = f"{nm}  {_fmt(fmt, y[i])}"
+        else:
+            text = nm
+        ends.append((nm, i, float(y[i]), text))
+    fig = ax.figure
+    ax_pt = ax.get_window_extent(fig.canvas.get_renderer()).width * 72 / fig.dpi
+    width = max(max(_text_width_pt(ax, ln, LABEL, 600 if nm in strong else 400) for ln in t.split("\n"))
+                for nm, _, _, t in ends) / ax_pt + 0.02
+    left = -0.2
+    ax.set_xlim(left, left + (n - 1 - left + 0.1) / (1 - width))
+    ax.autoscale_view(scalex=False)
+    to_pt = 72 / fig.dpi
+    yp = {nm: ax.transData.transform((i, v))[1] * to_pt for nm, i, v, _ in ends}
+    placed = {}
+    prev = None
+    for nm, i, v, t in sorted(ends, key=lambda e: yp[e[0]]):  # bottom up, nudged apart
+        h = LABEL * 1.3 * t.count("\n") / 2 + LABEL * 0.65
+        y = yp[nm] if prev is None else max(yp[nm], prev + h + 1)
+        placed[nm] = y
+        prev = y + h - LABEL * 0.65
+    texts = []
+    inv = ax.transData.inverted()
+    for nm, i, v, t in ends:
+        y = inv.transform((0, placed[nm] / to_pt))[1]
+        texts.append(ax.text(i, y, t, transform=offset_copy(ax.transData, fig, x=6, units="points"),
+                             va="center", ha="left", fontsize=LABEL, linespacing=1.15,
+                             color=color[nm] if nm in strong else C.text_muted,
+                             fontweight=600 if nm in strong else 400, path_effects=halo(), zorder=4))
+    return SimpleNamespace(lines=lines, labels=texts, colors=color)
