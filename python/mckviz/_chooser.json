@@ -30,21 +30,21 @@
     "focus": {
       "name": "Focus (default)",
       "when": "The headline names one or two items: everything grey, those items McKesson Blue. Highlight at most two; bold the matching labels.",
-      "how": "mv.highlight(labels, focus=...)"
+      "how": "mv.highlight(labels, focus=...); a stack: mv.hstack(..., story=...)"
     },
     "uniform_accent": {
       "name": "Uniform + accent",
       "when": "Every item belongs to the same story and one exception must pop: the series light blue, the exception navy.",
-      "how": "mv.highlight(labels, accent=..., base=C.focus_light)"
+      "how": "mv.highlight(labels, accent=..., base=C.focus_light); a stack: mv.hstack(..., accent=..., uniform=True)"
     },
     "focus_accent": {
       "name": "Focus + accent",
-      "when": "A blue group the headline names plus one navy exception on grey context. Use sparingly.",
-      "how": "mv.highlight(labels, focus=..., accent=...)"
+      "when": "The headline names a group and one member that stands out: grey context, the group McKesson Blue, the standout navy (\"Four support roles are above 50% exposure, led by Claims & Billing\"). Use it whenever the headline has a \"led by\" or \"most of all\" clause, not only for rare exceptions.",
+      "how": "mv.highlight(labels, focus=..., accent=...); a stack: mv.hstack(..., story=..., accent=...)"
     },
     "story_greys": {
       "name": "Story segment + greys",
-      "when": "One part of a whole is the story: that segment blue on the baseline, the other parts in context greys.",
+      "when": "Focus applied to a stack: the one part that is the story blue on the baseline, the other parts in context greys.",
       "how": "mv.hstack(..., story=...)"
     },
     "categorical": {
@@ -180,7 +180,17 @@
             }
           ],
           "avoid": "Rainbow, 3D or cut-off bars",
-          "color": "focus"
+          "color": "focus",
+          "color_switch": [
+            {
+              "when": "the headline names a group and one member stands out",
+              "use": "focus_accent"
+            },
+            {
+              "when": "every item is part of the story and one is the exception",
+              "use": "uniform_accent"
+            }
+          ]
         },
         {
           "ask": "How far is each from the benchmark?",
@@ -221,7 +231,13 @@
             }
           ],
           "avoid": "A derived count presented as a recorded one",
-          "color": "focus"
+          "color": "focus",
+          "color_switch": [
+            {
+              "when": "the headline names a group and one member stands out",
+              "use": "focus_accent"
+            }
+          ]
         },
         {
           "ask": "What are the exact figures for each, so readers can find their own row?",
@@ -280,6 +296,14 @@
             {
               "when": "parts_ordered",
               "use": "sequential"
+            },
+            {
+              "when": "a group of parts is the story and one stands out",
+              "use": "focus_accent"
+            },
+            {
+              "when": "every part matters and one is the exception",
+              "use": "uniform_accent"
             }
           ]
         }
@@ -344,7 +368,13 @@
             }
           ],
           "avoid": "Two separate bar charts the reader must compare",
-          "color": "focus"
+          "color": "focus",
+          "color_switch": [
+            {
+              "when": "the headline names a group and one member stands out",
+              "use": "focus_accent"
+            }
+          ]
         },
         {
           "ask": "What are the before and after values, and the change, for each?",
@@ -382,7 +412,13 @@
             }
           ],
           "avoid": "Dual axes",
-          "color": "focus"
+          "color": "focus",
+          "color_switch": [
+            {
+              "when": "the headline names a group and one member stands out",
+              "use": "focus_accent"
+            }
+          ]
         },
         {
           "ask": "How does each category score across all the measures?",
@@ -488,6 +524,10 @@
             {
               "when": "parts_over_time",
               "use": "categorical"
+            },
+            {
+              "when": "the headline names a group and one member stands out",
+              "use": "focus_accent"
             }
           ]
         }

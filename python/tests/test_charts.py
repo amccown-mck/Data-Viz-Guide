@@ -239,6 +239,22 @@ def test_hstack_limits_segments():
         mv.hstack(ax, ["A"], [(str(i), [20]) for i in range(5)])
 
 
+def test_hstack_follows_the_three_color_patterns():
+    order = lambda ns: [b.get_label() for b in ns.bars]                # noqa: E731
+    fig, ax = plt.subplots()
+    ns = mv.hstack(ax, CATS, PARTS, story="Part-time", accent="Contingent")      # focus + accent
+    assert order(ns)[:2] == ["Contingent", "Part-time"]                         # the exception on the baseline
+    assert [hexes(b)[0] for b in ns.bars] == [C.accent.upper(), C.focus.upper(), C.context.upper()]
+    assert ns.names[0].get_color() == C.accent and ns.names[0].get_fontweight() in (600, "semibold")
+    ns = mv.hstack(ax, CATS, PARTS, accent="Contingent", uniform=True)           # uniform + accent: no greys
+    assert hexes(ns.bars[0])[0] == C.accent.upper()
+    assert {hexes(b)[0] for b in ns.bars[1:]} <= {c.upper() for c in (C.focus_light, *mv.SEQUENTIAL["blue"][:2])}
+    with pytest.raises(ValueError, match="accent"):
+        mv.hstack(ax, CATS, PARTS, uniform=True)
+    with pytest.raises(ValueError, match="not one of the parts"):
+        mv.hstack(ax, CATS, PARTS, accent="Interns")
+
+
 def test_dumbbell_flags_shortfalls_in_orange_only():
     fig, ax = plt.subplots()
     ns = _dumbbell(ax)

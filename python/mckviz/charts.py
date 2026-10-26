@@ -289,21 +289,28 @@ def waterfall(ax, steps: Sequence[str], values: Sequence[float], kinds: Sequence
 
 # ------------------------------------------------------------------ 100% STACKED BAR
 _STACK_GREYS = [C.context, C.context_light, C.axis]
+_STACK_LIGHT_BLUES = [C.focus_light, SEQUENTIAL["blue"][1], SEQUENTIAL["blue"][0]]   # uniform + accent: no greys
 
 
-def hstack(ax, categories: Sequence[str], parts, *, story: str | None = None, colors: Sequence[str] | None = None,
-           focus: Iterable[str] = (), label_min: float = 8, fmt="{:.0f}%", names: bool = True,
-           name_align: Sequence[str] | None = None, base: Sequence[float] | None = None, base_label: str = "n",
-           height: float = BAND, sep: float = 1.5):
-    """Horizontal (100%) stacked bars: story segment first on the baseline in blue, the rest in greys.
+def hstack(ax, categories: Sequence[str], parts, *, story=None, accent: str | None = None, uniform: bool = False,
+           colors: Sequence[str] | None = None, focus: Iterable[str] = (), label_min: float = 8, fmt="{:.0f}%",
+           names: bool = True, name_align: Sequence[str] | None = None, base: Sequence[float] | None = None,
+           base_label: str = "n", height: float = BAND, sep: float = 1.5):
+    """Horizontal (100%) stacked bars in the three color patterns, story segments first on the baseline.
 
         parts = [("Contingent", df.contingent_pct), ("Full-time", df.ft_pct), ("Part-time", df.pt_pct)]
         mv.hstack(ax, df.function, parts, focus={"Technology"}, base=df.workers, base_label="Workers")
         mv.titles(fig, "Technology uses contingent labor at 4x the rate of other functions", "Workforce mix, 2026 (%)")
 
     categories: one bar per category, the first drawn on top. parts: [(name, values)] or {name: values} in stack
-        order, left to right; `story=` moves that segment to the front (on the baseline, where it is easy to compare).
-    colors: per segment; default blue for the story segment, then context greys. More than 4 segments: group them.
+        order, left to right. The colored segments move to the front (on the baseline, where they are easy to compare).
+    Color patterns, the same three as mv.highlight:
+        Focus (default): `story=` (one segment, or two as a group) in blue, the rest in context greys; with no story
+            the first part is the story.
+        Focus + accent: `story=` blue plus `accent=` navy for the one segment that stands out, the rest greys.
+        Uniform + accent: `accent=` navy and `uniform=True`; every other segment in light blues, no greys.
+    colors: per segment, overriding the patterns (categorical, or sequential steps for ordered bands). More than 4
+        segments: group them.
     focus: categories whose names go bold navy. Segments are split by white lines (`sep`, points); values are
         printed inside segments of at least `label_min`; segment names sit once over the top bar (no legend);
         `base` adds the counts behind each bar at the right, under the header `base_label`.
@@ -312,17 +319,26 @@ def hstack(ax, categories: Sequence[str], parts, *, story: str | None = None, co
     cats = [str(c) for c in categories]
     items = list(parts.items()) if isinstance(parts, dict) else [tuple(p) for p in parts]
     items = [(str(nm), _floats(v, f"part {nm!r}")) for nm, v in items]
-    if story is not None:
-        idx = [nm for nm, _ in items].index(story) if story in [nm for nm, _ in items] else None
-        if idx is None:
-            raise ValueError(f"story={story!r} is not one of the parts")
-        items.insert(0, items.pop(idx))
+    story = [] if story is None else [str(story)] if isinstance(story, str) else [str(x) for x in story]
+    lead = ([str(accent)] if accent is not None else []) + story          # navy exception on the baseline, then blue
+    names_ = [nm for nm, _ in items]
+    for nm in lead:
+        if nm not in names_:
+            raise ValueError(f"{nm!r} is not one of the parts")
+    if len(story) > 2:
+        raise ValueError("story: at most two segments; color the rest grey or use colors=mv.categorical(n)")
+    if uniform and accent is None:
+        raise ValueError("uniform=True needs accent=: the light-blue series only works with one navy exception")
+    items = [it for nm in lead for it in items if it[0] == nm] + [it for it in items if it[0] not in lead]
     if any(len(v) != len(cats) for _, v in items):
         raise ValueError("every part needs one value per category")
     if colors is None:
-        if len(items) > 1 + len(_STACK_GREYS):
+        rest = len(items) - (len(lead) if lead else 1)
+        fill = _STACK_LIGHT_BLUES if uniform else _STACK_GREYS
+        if rest > len(fill):
             raise ValueError(f"{len(items)} segments: group the small ones into 'Other' (at most 4 read well)")
-        colors = [C.focus] + _STACK_GREYS[:len(items) - 1]
+        head = ([C.accent] if accent is not None else []) + [C.focus] * len(story) if lead else [C.focus]
+        colors = head + fill[:rest]
     if len(colors) != len(items):
         raise ValueError("one color per part")
     n = len(cats)
@@ -333,7 +349,7 @@ def hstack(ax, categories: Sequence[str], parts, *, story: str | None = None, co
         lefts.append(left.copy())
         bars.append(ax.barh(y, vals, left=left, color=col, height=height, edgecolor="white", linewidth=sep,
                             zorder=2, label=nm))
-        story_seg = col == C.focus
+        story_seg = col in (C.focus, C.accent)
         for yy, l0, v in zip(y, left, vals):
             if v >= label_min:
                 texts.append(ax.text(l0 + v / 2, yy, fmt.format(v) if isinstance(fmt, str) else fmt(v), ha="center",
@@ -349,10 +365,10 @@ def hstack(ax, categories: Sequence[str], parts, *, story: str | None = None, co
         for (nm, vals), col, a in zip(items, colors, align):
             v = vals[top]
             xx = {"left": l0, "center": l0 + v / 2, "right": l0 + v}[a]
-            hot = col == C.focus
+            hot = col in (C.focus, C.accent)
             name_texts.append(ax.annotate(nm, (xx, y[top] + height / 2), xytext=(0, 3), textcoords="offset points",
                                           ha=a, va="bottom", fontsize=TICK, annotation_clip=False,
-                                          color=C.focus if hot else C.text, fontweight=600 if hot else 400))
+                                          color=col if hot else C.text, fontweight=600 if hot else 400))
             l0 += v
     xmax = total
     if base is not None:

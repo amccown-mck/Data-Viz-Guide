@@ -101,6 +101,10 @@ def build() -> None:
     shutil.copyfile(SRC, PKG)
     DOC.write_text(markdown(tree), encoding="utf-8", newline="\n")
     print(f"  wrote docs/chart-decision-tree.md and python/mckviz/_chooser.json ({len(tree['shapes'])} shapes)")
+    bare = sorted({leaf["chart"] for s in tree["shapes"] for q in s["questions"]
+                   for leaf in [q["start"], *q["further"]] if not leaf.get("helper")})
+    if bare:                                                  # agents skip charts that take many lines by hand
+        print(f"  {len(bare)} charts have no mckviz helper yet: " + "; ".join(bare))
 
 
 if __name__ == "__main__":

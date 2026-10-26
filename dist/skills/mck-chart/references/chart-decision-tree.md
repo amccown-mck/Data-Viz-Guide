@@ -71,7 +71,7 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 - **Go further** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest): [Bubble strip: position = the measure, bubble area = the count](cookbook/distribution.md): shows how close the categories are and how many people each one covers
 - **Go further** when more than 20 categories: [Bubble strip with only the outliers and largest named](cookbook/distribution.md)
 - **Avoid:** Rainbow, 3D or cut-off bars
-- **Color:** Focus (default)
+- **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out; Uniform + accent when every item is part of the story and one is the exception
 
 **How far is each from the benchmark?** (deviation) *(when there is a benchmark: a column that is the same on every row, one named target / benchmark / average, or a Total row)*
 
@@ -85,7 +85,7 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 - **Start with:** [Sorted bar of the derived count, footnoted as an estimate](cookbook/bar.md) (`ax.barh + mv.highlight`)
 - **Go further** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest): [Treemap: tile area = the count, shade = the rate](cookbook/treemap.md): people and the rate in one picture
 - **Avoid:** A derived count presented as a recorded one
-- **Color:** Focus (default)
+- **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out
 
 **What are the exact figures for each, so readers can find their own row?** (lookup (exact figures))
 
@@ -105,7 +105,7 @@ Columns that add up to 100 (or to a total) in every row: workforce mix, survey f
 - **Go further** when more than 5 parts: [Treemap, or group the small parts into Other](cookbook/treemap.md)
 - **Go further** when the parts have a natural order (bands, ratings, unfavorable to favorable): [100% stacked bar in sequential shades (diverging for unfavorable to favorable)](cookbook/stacked-bar.md) (`mv.hstack(..., colors=...)`)
 - **Avoid:** Pies over 5 slices
-- **Color:** Categorical; Story segment + greys when one part is the story; Sequential when the parts have a natural order (bands, ratings, unfavorable to favorable)
+- **Color:** Categorical; Story segment + greys when one part is the story; Sequential when the parts have a natural order (bands, ratings, unfavorable to favorable); Focus + accent when a group of parts is the story and one stands out; Uniform + accent when every part matters and one is the exception
 
 <a id="bridge"></a>
 ### A bridge from one total to another
@@ -131,7 +131,7 @@ Before and after (rank_2023 and rank_2026, FY25 and FY26) or us and them (intern
 - **Go further** when the difference itself is the story (a gap column, or the pair is us vs. a benchmark): [Diverging bars of the difference](cookbook/bar.md) (`mv.diverging_bars`)
 - **Go further** when a target or goal to compare against: [Dumbbell with a target line](cookbook/dot-plot-dumbbell.md) (`mv.dumbbell`)
 - **Avoid:** Two separate bar charts the reader must compare
-- **Color:** Focus (default)
+- **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out
 
 **What are the before and after values, and the change, for each?** (lookup (exact figures))
 
@@ -149,7 +149,7 @@ One row per category with two or more measures in different units (a scorecard; 
 - **Start with:** [Scatter; bubble scatter when a count can be the bubble area](cookbook/scatter-bubble.md) (`mv.label_points`)
 - **Go further** when 6 or fewer categories: [Two aligned bar charts, one per measure](cookbook/bar.md)
 - **Avoid:** Dual axes
-- **Color:** Focus (default)
+- **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out
 
 **How does each category score across all the measures?** (ranking (profile))
 
@@ -184,7 +184,7 @@ A period column (months, quarters, years) with three or more periods, maybe a se
 - **Go further** when two measures in different units over the same periods: [Two aligned panels (never dual axes)](cookbook/dual-axis.md)
 - **Go further** when a target or goal to compare against: [Line with a labelled target line](cookbook/line.md)
 - **Avoid:** Ten colored lines
-- **Color:** Focus (default); Categorical when the measures are parts that add up to 100 in each period
+- **Color:** Focus (default); Categorical when the measures are parts that add up to 100 in each period; Focus + accent when the headline names a group and one member stands out
 
 <a id="flows"></a>
 ### Flows from one state to another
@@ -239,10 +239,10 @@ Grey first, then color only the point. Pick the pattern from what the color has 
 
 | Pattern | Use when | In mckviz |
 |---|---|---|
-| **Focus (default)** | The headline names one or two items: everything grey, those items McKesson Blue. Highlight at most two; bold the matching labels. | `mv.highlight(labels, focus=...)` |
-| **Uniform + accent** | Every item belongs to the same story and one exception must pop: the series light blue, the exception navy. | `mv.highlight(labels, accent=..., base=C.focus_light)` |
-| **Focus + accent** | A blue group the headline names plus one navy exception on grey context. Use sparingly. | `mv.highlight(labels, focus=..., accent=...)` |
-| **Story segment + greys** | One part of a whole is the story: that segment blue on the baseline, the other parts in context greys. | `mv.hstack(..., story=...)` |
+| **Focus (default)** | The headline names one or two items: everything grey, those items McKesson Blue. Highlight at most two; bold the matching labels. | `mv.highlight(labels, focus=...); a stack: mv.hstack(..., story=...)` |
+| **Uniform + accent** | Every item belongs to the same story and one exception must pop: the series light blue, the exception navy. | `mv.highlight(labels, accent=..., base=C.focus_light); a stack: mv.hstack(..., accent=..., uniform=True)` |
+| **Focus + accent** | The headline names a group and one member that stands out: grey context, the group McKesson Blue, the standout navy ("Four support roles are above 50% exposure, led by Claims & Billing"). Use it whenever the headline has a "led by" or "most of all" clause, not only for rare exceptions. | `mv.highlight(labels, focus=..., accent=...); a stack: mv.hstack(..., story=..., accent=...)` |
+| **Story segment + greys** | Focus applied to a stack: the one part that is the story blue on the baseline, the other parts in context greys. | `mv.hstack(..., story=...)` |
 | **Categorical** | Every series or part matters and must be told apart: at most 6, always in the fixed order (blue, navy, bright blue, teal, mint, orange); prefer 4 or fewer. | `mv.categorical(n), or mv.hstack(..., colors=mv.categorical(n))` |
 | **Sequential** | One ordered measure or ordered bands (low to high, bands of a rate): light to dark in one hue. Darker means more. | `mv.SEQUENTIAL['blue'], mv.sequential_cmap()` |
 | **Diverging** | Values centered on zero or a target: orange below (worse), blue above, a neutral middle. | `mv.DIVERGING, mv.diverging_cmap(), mv.diverging_bars(...)` |

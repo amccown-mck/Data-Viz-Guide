@@ -340,3 +340,24 @@ def test_repeated_period_labels_as_x_are_flagged_in_both_backends():
     band = go.Scatter(x=["a", "b", "c", "c", "b", "a"], y=[1, 2, 3, 4, 3, 2], fill="toself", line_width=0)
     line = go.Scatter(x=["a", "b", "c"], y=[1, 2, 3], mode="lines", line_color=C.focus)
     assert "x-repeats" not in rules(mv.lint(go.Figure([band, line]), **HEAD), "warn")
+
+
+def test_long_footnote_wraps_instead_of_widening_the_image(tmp_path):
+    from PIL import Image
+
+    plain = Image.open(mv.save(good_bar(), tmp_path / "plain.png", dpi=100)).size[0]
+    fig = good_bar()
+    mv.source(fig, "Source: Synthetic data for illustration only", footnote="Exposure = share of task hours matched "
+              "to gen-AI-capable activities in an external task taxonomy. " * 4)
+    path = mv.save(fig, tmp_path / "bar.png", dpi=100)
+    assert Image.open(path).size[0] == plain                                # same width as with a short source line
+    assert fig._mck["foot"].get_text().count("\n") >= 2                    # the footnote wrapped
+    assert "off-canvas" not in rules(mv.lint(fig, quiet=True))
+    plt.close(fig)
+
+
+def test_text_past_the_figure_edge_is_flagged():
+    fig = good_bar()
+    fig.axes[0].text(0.5, 0.5, "A note that is far too long for the plot " * 4, transform=fig.axes[0].transAxes)
+    assert "off-canvas" in rules(mv.lint(fig, quiet=True), "warn")
+    plt.close(fig)

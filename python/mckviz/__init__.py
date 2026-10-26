@@ -343,9 +343,30 @@ def source(fig, text: str, footnote: str | None = None, dark: bool = False) -> N
     """Footnote (optional) and 'Source:' line, bottom-left."""
     f = _role("footnote")
     lines = ([footnote] if footnote else []) + [text]
+    old = getattr(fig, "_mck", {}).get("foot")
+    if old is not None:                                       # called again: replace, don't stack a second line
+        old.remove()
     foot = fig.text(0, 0, "\n".join(lines), ha="left", va="top", fontsize=f["size_pt"],
                     color="white" if dark else f["hex"], fontweight=f["weight"], linespacing=1.35)
-    fig._mck = {**getattr(fig, "_mck", {}), "foot": foot}
+    fig._mck = {**getattr(fig, "_mck", {}), "foot": foot, "foot_lines": lines}
+
+
+def _fit_lines(fig, text_artist, lines: list[str], width_px: float) -> None:
+    """Wrap each line so the text block is no wider than width_px. An unwrapped footnote wider than the figure makes
+    savefig's tight bounding box widen the whole image, which shrinks the chart inside it."""
+    import textwrap
+
+    r = fig.canvas.get_renderer()
+    out = []
+    for line in lines:
+        chars = len(line)
+        while True:
+            text_artist.set_text("\n".join(textwrap.wrap(line, chars, break_on_hyphens=False)) or line)
+            if text_artist.get_window_extent(r).width <= width_px or chars <= 20:
+                break
+            chars = int(chars * 0.92)
+        out.append(text_artist.get_text())
+    text_artist.set_text("\n".join(out))
 
 
 def layout(fig, gap_pt: float = 10) -> None:
@@ -380,6 +401,9 @@ def layout(fig, gap_pt: float = 10) -> None:
             break
         fig.subplots_adjust(top=min(0.98, fig.subplotpars.top - excess))
     if fur.get("foot") is not None:
+        if fur.get("foot_lines"):                             # no wider than the plot and the headline
+            right = max([b.x1 for b in ax_boxes()] + [box(fur[k]).x1 for k in ("head", "sub") if fur.get(k)])
+            _fit_lines(fig, fur["foot"], fur["foot_lines"], 0.97 * (right - left) * fig.bbox.width)
         fur["foot"].set_position((left, min(b.y0 for b in ax_boxes()) - gap * 1.6))
 
 

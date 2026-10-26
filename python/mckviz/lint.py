@@ -405,6 +405,19 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
     if small:
         out.append(Finding("warn", "min-text-size", f"text at {', '.join(map(str, small))} pt; keep ≥ {MIN_FONT_PT:g} pt "
                                                     "on a 10 in figure (≈ 9 pt on a slide)"))
+    # Text past the figure edge: the tight bounding box widens the saved image to fit it, shrinking the chart inside.
+    # mv.layout wraps the footnote and source line, so they are skipped here.
+    fig.canvas.draw()
+    r, width = fig.canvas.get_renderer(), fig.bbox.width
+    off = []
+    for t in fig.findobj(Text):
+        if t.get_visible() and t.get_text().strip() and t is not fur.get("foot"):
+            e = t.get_window_extent(r)
+            if e.x1 > width * 1.1 or e.x0 < -width * 0.1:      # a little is normal: long tick labels
+                off.append(" ".join(t.get_text().split())[:40])
+    if off:
+        out.append(Finding("warn", "off-canvas", f"text runs past the figure edge ({'; '.join(off[:3])}); the saved "
+                                                 "image widens to fit it and the chart shrinks: wrap or shorten it"))
     missing: dict[str, str] = {}
     for t in fig.findobj(Text):
         if t.get_visible() and t.get_text().strip():
