@@ -66,6 +66,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 | Real maps | `from mckviz import geo`: `geo.canvas(fig)`, `geo.Map("states-albers-10m.json", "states", box, key=geo.FIPS.get)`, `geo.equal_earth` for world maps; US states, world countries and a county subset ship with the package (see `docs/cookbook/maps.md`) |
 | Translucent fills (Plotly) | `mv.rgba(C.negative, 0.12)` for a shortfall wash, `mv.rgba(C.focus, 0.4)` for Sankey links, instead of an `rgba(...)` literal |
 | Save | `mv.save(fig, path, dpi=200)`, which also lays out the titles and source |
+| Options page | `mv.options_page(path, title, [mv.Option(fig, name, question, how_to_read, strength, tradeoff, alt=...)], findings=..., notes=..., source=..., label=...)`: several views of the same data on one self-contained HTML page (charts, font and styles inside; Save as PDF prints one option per page), for a group deciding how to show it. Example: `examples/python/options_page.py` |
 | Check | `mv.lint(fig)` (matplotlib or Plotly; pass `headline=`, `subtitle=`, `source=` when they live in HTML); `strict=True` raises on errors |
 | Plotly titles | `mv.pl_finish(fig, headline, subtitle, source_text, footnote)` |
 | All tokens | `mv.TOKENS` (the full `tokens.json`) |

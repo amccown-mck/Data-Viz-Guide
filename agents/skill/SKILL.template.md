@@ -46,6 +46,27 @@ When the user pastes a table and asks for "N options" or "charts that fit this s
 - **Build one chart per supported angle**, each with its own headline computed from the data and its own focus. Different angles may name different focus items; each chart's headline must match its own highlight.
 - **Hand back a one-line brief per option** (angle, chart type, headline) plus **a recommendation of which one to lead with** and why (usually the one whose headline answers the storyline's question most directly), then the full chart brief for that one.
 
+### The options page
+When people see the same data differently ("show me a few ways to present this", "leadership can't agree how to show it", "options with pros and cons for a meeting"), build 3–6 views as above and hand them over as **one self-contained HTML page** with `mv.options_page` (the charts, Libre Franklin and the styles are all inside the file; it opens offline and prints one option per page):
+```python
+opts = [mv.Option(fig, name="Roles ranked by exposure", question="Which roles have the most exposed work?",
+                  how_to_read="One bar per role, sorted, against the workforce average.",
+                  strength="Every role is visible.", tradeoff="It treats a role of 450 people like one of 11,800.",
+                  alt="<headline plus 2-3 key numbers>"), ...]
+mv.options_page("<topic>-options.html", title="<Topic>: four ways to show it", options=opts,
+                lede="Four views of the same data. Each answers a different question; use one or combine them.",
+                findings=[("<bold lead>", "<rest, numbers computed from the data>"), ...],   # 2-3 facts
+                notes={"<term>": "<definition>", "Data": "<n, scope, exclusions, suppressed groups>"},
+                source="Source: <system>, as of <date>; <population>", label="Internal · For discussion")
+```
+- Each option is a finished chart (headline, subtitle, source, `mv.lint` clean) from the same data. Give each one a different question, a fair strength, and a real trade-off: what it hides, distorts or assumes.
+- Stay neutral unless the user asks which to lead with; then add `recommendation="..."` and `lead=<option number>`.
+- Mark sensitivity with `label=` (ask once if the data is internal; never leave real people data unlabeled).
+- Hand back the page, a one-line brief per option, and how to use it: open it in a browser, "Save as PDF" for a handout, Download or Copy under each chart for PowerPoint.
+<!-- copilot -->
+- In Copilot, write the page to `/mnt/data/`, run `plt.close("all")` after `mv.options_page`, and give a download link to the .html. Don't show every chart inline: list the options with their headlines instead.
+<!-- /copilot -->
+
 ## 3. Build
 - Start from the cookbook snippet for the platform the user needs:
   - **Python:** `import mckviz as mv; mv.use(); C = mv.colors` (`mv.use()` styles matplotlib and activates the "mck" Plotly template). Use `mv.fmt_num` for numbers (K/M/B, %, true minus), `mv.signed(v, decimals=1)` for a signed delta in a headline (its default is 0 decimals: pass the decimals the chart labels use, so "+2.0" in the headline matches "+2.0 hrs" on the bar) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `{{docs}}cookbook/maps.md`).

@@ -512,6 +512,7 @@ from .lint import Finding, LintError, lint  # noqa: E402  (needs the names above
 from .charts import (STATUS_ORDER, big, delta_label, diverging_bars, dumbbell, heat, hstack, key_strip,  # noqa: E402
                      kpi_card, kpi_row, label_points, multiples, rank_slope, ring, roadmap, sdot, small, status,
                      status_column, status_key, tracker, waterfall)
+from .page import Option, options_page  # noqa: E402
 
 
 def __getattr__(name: str):
