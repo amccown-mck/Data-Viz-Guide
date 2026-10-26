@@ -58,6 +58,7 @@ mv.options_page("<topic>-options.html", title="<Topic>: four ways to show it", o
 - Each option is a finished chart (headline, subtitle, source, `mv.lint` clean) from the same data. Give each one a different question, a fair strength, and a real trade-off: what it hides, distorts or assumes.
 - Stay neutral unless the user asks which to lead with; then add `recommendation="..."` and `lead=<option number>`.
 - Mark sensitivity with `label=` (ask once if the data is internal; never leave real people data unlabeled).
+- With four or more options, make one a **blended table** (`mv.table`: inline bars, one heat column, a change column, bold focus rows, a weighted total), so every reader can find their own row; put it last, as the reference view.
 - Hand back the page, a one-line brief per option, and how to use it: open it in a browser, "Save as PDF" for a handout, Download or Copy under each chart for PowerPoint.
 
 ## 3. Build

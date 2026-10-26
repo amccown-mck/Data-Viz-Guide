@@ -222,6 +222,18 @@
           ],
           "avoid": "A derived count presented as a recorded one",
           "color": "focus"
+        },
+        {
+          "ask": "What are the exact figures for each, so readers can find their own row?",
+          "type": "lookup (exact figures)",
+          "start": {
+            "chart": "Blended table: an inline bar for the count, the measure as a heat column, bold focus rows, a weighted total",
+            "page": "tables",
+            "helper": "mv.table"
+          },
+          "further": [],
+          "avoid": "A plain grid of numbers with no highlight",
+          "color": "sequential"
         }
       ]
     },
@@ -333,6 +345,18 @@
           ],
           "avoid": "Two separate bar charts the reader must compare",
           "color": "focus"
+        },
+        {
+          "ask": "What are the before and after values, and the change, for each?",
+          "type": "lookup (exact figures)",
+          "start": {
+            "chart": "Blended table: before, after, and a change column with the unfavorable direction in orange",
+            "page": "tables",
+            "helper": "mv.table"
+          },
+          "further": [],
+          "avoid": "A change column with no sign",
+          "color": "sequential"
         }
       ]
     },
@@ -364,9 +388,9 @@
           "ask": "How does each category score across all the measures?",
           "type": "ranking (profile)",
           "start": {
-            "chart": "Heat table (scorecard)",
+            "chart": "Blended table (scorecard): inline bars, one or two heat columns, a change column",
             "page": "tables",
-            "helper": "mv.heat"
+            "helper": "mv.table"
           },
           "further": [
             {
@@ -374,6 +398,12 @@
               "chart": "Parallel coordinates, the focus line in blue",
               "page": "parallel-coordinates",
               "helper": null
+            },
+            {
+              "when": "has_benchmark",
+              "chart": "Blended table with the gap to the benchmark as a diverging column",
+              "page": "tables",
+              "helper": "mv.table(..., mv.Col(..., 'heat', scale='diverging'))"
             }
           ],
           "avoid": "A clustered bar per measure",

@@ -519,6 +519,7 @@ from .charts import (STATUS_ORDER, big, delta_label, diverging_bars, dumbbell, h
                      status_column, status_key, tracker, waterfall)
 from .page import Option, options_page  # noqa: E402
 from .chooser import suggest  # noqa: E402
+from .table import Col, table  # noqa: E402
 
 
 def __getattr__(name: str):

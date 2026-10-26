@@ -60,68 +60,35 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from matplotlib.patches import Rectangle
 
 import mckviz as mv
 
 mv.use()
-C = mv.colors
 
 df = pd.read_csv(Path("assets/data/job_family_scorecard.csv")).sort_values("vol_attrition_pct", ascending=False)
-df = df.reset_index(drop=True)
-cols = [("headcount", "Headcount", "{:,.0f}"), ("vol_attrition_pct", "Voluntary\nattrition (%)", "{:.1f}"),
-        ("attrition_change_pts", "Change vs.\nFY25 (pts)", None), ("median_days_to_fill", "Median\ndays to fill", "{:.0f}"),
-        ("internal_fill_pct", "Internal fill\nrate (%)", "{:.0f}"), ("engagement_index", "Engagement\nindex", "{:.0f}")]
-focus = set(df.job_family[df.vol_attrition_pct > 20])                # the rows the headline names
-ramp = mv.SEQUENTIAL["blue"]                                          # 6 even 5-pt classes: 0-5, 5-10, ... 25+
-n = len(df)
-
-fig, ax = plt.subplots(figsize=(11, 5.4))
-ax.set_xlim(0, 10)
-ax.set_ylim(n + 0.6, -1.3)                                            # row 0 at the top
-ax.axis("off")
-xs = [4.75, 5.85, 6.85, 7.85, 8.9, 9.95]                              # right edges of the numeric columns
-for x, (_, head, _) in zip(xs, cols):
-    ax.text(x, -0.55, head, ha="right", va="bottom", fontsize=9, fontweight="bold", color=C.headline, linespacing=1.15)
-ax.plot([0, 10], [-0.45, -0.45], color=C.axis, lw=0.75)              # rule under the header
-bar_max = df.headcount.max()
-for i, r in df.iterrows():
-    hi = r.job_family in focus
-    weight, color = ("bold", C.headline) if hi else ("normal", C.text)
-    ax.text(0, i, r.job_family, va="center", fontsize=10, fontweight=weight, color=color)
-    ax.barh(i, 1.0 * r.headcount / bar_max, left=2.75, height=0.42, color=C.focus if hi else C.context)  # inline bar
-    for x, (key, _, fmt) in zip(xs, cols):
-        v = r[key]
-        txt = mv.signed(v, 1) if fmt is None else fmt.format(v)        # deltas: explicit + and true minus
-        tc = color
-        if key == "vol_attrition_pct":                                # the one shaded column
-            fill = ramp[min(int(v // 5), len(ramp) - 1)]
-            ax.add_patch(Rectangle((x - 0.85, i - 0.42), 0.95, 0.84, color=fill, lw=0))
-            tc = mv.text_on(fill)
-        if key == "attrition_change_pts" and v > 0:                   # color the unfavorable direction only
-            tc = C.negative_text
-        ax.text(x, i, txt, ha="right", va="center", fontsize=10, fontweight=weight, color=tc)
-    ax.plot([0, 10], [i + 0.5, i + 0.5], color=C.grid, lw=0.75)       # hairline between rows
-
-ax.plot([0, 10], [n - 0.5, n - 0.5], color=C.total, lw=1.25)          # navy rule above the total
-w = lambda c: np.average(df[c], weights=df.headcount)                 # weighted, not an average of rates
-total = [f"{df.headcount.sum():,.0f}", f"{w('vol_attrition_pct'):.1f}", mv.signed(w("attrition_change_pts"), 1),
-         f"{w('median_days_to_fill'):.0f}", f"{w('internal_fill_pct'):.0f}", f"{w('engagement_index'):.0f}"]
-ax.text(0, n + 0.15, f"All {n} job families", va="center", fontsize=10, fontweight="bold", color=C.headline)
-for x, t in zip(xs, total):
-    ax.text(x, n + 0.15, t, ha="right", va="center", fontsize=10, fontweight="bold", color=C.headline)
-
+focus = set(df.job_family[df.vol_attrition_pct > 20])                # the rows the headline names (two at most)
 lowest_eng = set(df.nsmallest(2, "engagement_index").job_family)      # check the headline before writing it
 assert focus == lowest_eng == set(df.nlargest(2, "headcount").job_family)
+
+cols = [mv.Col("headcount", "Headcount", "bar", agg="sum"),           # inline bar: scale without a second chart
+        mv.Col("vol_attrition_pct", "Voluntary\nattrition (%)", "heat", fmt="{:.1f}"),   # the one shaded column
+        mv.Col("attrition_change_pts", "Change vs.\nFY25 (pts)", "delta", worse="up"),  # a rise is worse: orange
+        mv.Col("median_days_to_fill", "Median\ndays to fill", fmt="{:.0f}"),
+        mv.Col("internal_fill_pct", "Internal fill\nrate (%)", fmt="{:.0f}"),
+        mv.Col("engagement_index", "Engagement\nindex", fmt="{:.0f}")]
+fig, ax = plt.subplots(figsize=(10, 5))                               # mv.table fits the height to the rows
+t = mv.table(ax, df, "job_family", cols, focus=focus, weights="headcount",
+             total_label=f"All {len(df)} job families")               # totals weighted, not an average of rates
 mv.titles(fig, "The two largest frontline job families combine the highest attrition with the lowest engagement",
           "Workforce scorecard by job family, FY26; totals weighted by headcount")
 mv.source(fig, "Source: Synthetic data for illustration only",
-          footnote="Attrition shaded in 5-point classes. Orange change = attrition rising vs. FY25. "
+          footnote=" ".join(t.notes) + " Orange change = attrition rising vs. FY25. "
                    "Internal fill rate = share of filled requisitions filled by current employees.")
 mv.save(fig, Path(tempfile.gettempdir()) / "ck_table_scorecard.png", dpi=200)
 ```
+
+`mv.table` draws the spec above: units in the headers and bare, right-aligned numbers in the cells, a rule under the header and hairlines between rows, at most two shaded columns (each on its own scale: `scale="blue"`, `"orange"` when darker means worse, `"diverging"` around `center=` for a gap to a benchmark) and two bold focus rows, the unfavorable direction of a change column in orange text, a navy rule above a weighted total row, and "n<10" for rows under ten people (`n=`). `t.notes` holds the footnote text for the shading, the weighting and any suppression.
 A drawn table is right for a fixed image (a slide picture, a PDF report). If people will edit or copy the numbers, build a native Excel or PowerPoint table instead (below).
 
 ### Python — HTML table (reports, intranet pages, emails)

@@ -87,6 +87,12 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 - **Avoid:** A derived count presented as a recorded one
 - **Color:** Focus (default)
 
+**What are the exact figures for each, so readers can find their own row?** (lookup (exact figures))
+
+- **Start with:** [Blended table: an inline bar for the count, the measure as a heat column, bold focus rows, a weighted total](cookbook/tables.md) (`mv.table`)
+- **Avoid:** A plain grid of numbers with no highlight
+- **Color:** Sequential
+
 <a id="composition"></a>
 ### Parts of a whole
 
@@ -127,6 +133,12 @@ Before and after (rank_2023 and rank_2026, FY25 and FY26) or us and them (intern
 - **Avoid:** Two separate bar charts the reader must compare
 - **Color:** Focus (default)
 
+**What are the before and after values, and the change, for each?** (lookup (exact figures))
+
+- **Start with:** [Blended table: before, after, and a change column with the unfavorable direction in orange](cookbook/tables.md) (`mv.table`)
+- **Avoid:** A change column with no sign
+- **Color:** Sequential
+
 <a id="cat-measures"></a>
 ### Categories × several measures
 
@@ -141,8 +153,9 @@ One row per category with two or more measures in different units (a scorecard; 
 
 **How does each category score across all the measures?** (ranking (profile))
 
-- **Start with:** [Heat table (scorecard)](cookbook/tables.md) (`mv.heat`)
+- **Start with:** [Blended table (scorecard): inline bars, one or two heat columns, a change column](cookbook/tables.md) (`mv.table`)
 - **Go further** when more than 12 categories: [Parallel coordinates, the focus line in blue](cookbook/parallel-coordinates.md)
+- **Go further** when a benchmark: a column that is the same on every row, one named target / benchmark / average, or a Total row: [Blended table with the gap to the benchmark as a diverging column](cookbook/tables.md) (`mv.table(..., mv.Col(..., 'heat', scale='diverging'))`)
 - **Avoid:** A clustered bar per measure
 - **Color:** Sequential
 
