@@ -476,7 +476,12 @@ def save(fig, path: str | Path, **kw) -> Path:
     layout(fig)
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, **kw)
+    if kw.get("transparent"):
+        fig.savefig(path, **kw)
+    else:
+        # What Figure.savefig calls. Going to it directly skips sandboxes that patch savefig, such as Copilot's, which
+        # writes a JSON chart spec beside the PNG and then shows a bare interactive re-plot instead of this image.
+        fig.canvas.print_figure(path, **kw)
     return path
 
 

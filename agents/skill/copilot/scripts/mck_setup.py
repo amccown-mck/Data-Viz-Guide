@@ -61,9 +61,19 @@ def load():
         del sys.modules[name]                                 # a stale copy from an earlier run or another install
     importlib.invalidate_caches()
     mv = importlib.import_module("mckviz")
+    import matplotlib as mpl
+
+    # Copilot's sandbox patches matplotlib at startup (/opt/python_setup/matplotlib_patch_for_interactive_chart_*.py):
+    # it sets its own style (a Microsoft palette, edges on every bar, rounded legends, outward ticks), and its savefig
+    # writes a JSON spec beside each PNG that Copilot shows as an interactive chart card instead of our image. Start
+    # from matplotlib's defaults so none of that style survives mv.use(); mv.save renders without the patched savefig.
+    patched = "patched" in getattr(mpl.figure.Figure.savefig, "__qualname__", "")
+    mpl.rcdefaults()
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         mv.use()
+    if patched:
+        print("sandbox chart patch found: its style was reset, and mv.save writes the PNG only (no chart card)")
     return mv, [str(w.message) for w in caught]
 
 
