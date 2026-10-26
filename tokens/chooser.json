@@ -1,0 +1,570 @@
+{
+  "$description": "The chart decision tree: the single source for the agent's docs/chart-decision-tree.md, mckviz.suggest() and the guide's chooser. Three questions in order: what is in the data (shape), what should the reader see (question), then start with a chart and go further when a condition holds; color comes from what it encodes. Built by tools/build_chooser.py (run by tokens/build.py).",
+  "version": 1,
+  "triggers": {
+    "clustered": "values bunched far from zero (the smallest is more than half the largest)",
+    "wide_range": "the largest value is more than 20 times the smallest",
+    "many_categories": "more than 12 categories",
+    "very_many_categories": "more than 20 categories",
+    "has_size": "a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest)",
+    "rate_and_size": "the measure is a rate or share and there is a count column, so rate × count gives an absolute amount",
+    "has_benchmark": "a benchmark: a column that is the same on every row, one named target / benchmark / average, or a Total row",
+    "tight_spread": "most categories sit close together (the middle half spans less than a fifth of the range)",
+    "has_groups": "people fall into 3 to 8 groups",
+    "parts_ordered": "the parts have a natural order (bands, ratings, unfavorable to favorable)",
+    "many_parts": "more than 5 parts",
+    "one_category": "only one row (a single whole)",
+    "ranks": "the values are ranks",
+    "few_categories": "6 or fewer categories",
+    "many_series": "more than 4 series",
+    "parts_over_time": "the measures are parts that add up to 100 in each period",
+    "two_units": "two measures in different units over the same periods",
+    "has_target": "a target or goal to compare against",
+    "several_numbers": "several headline numbers side by side",
+    "counts_not_rates": "the values are counts, not rates",
+    "more_than_three_sets": "more than 3 sets",
+    "has_status_history": "status recorded period by period",
+    "gap_is_point": "the difference itself is the story (a gap column, or the pair is us vs. a benchmark)"
+  },
+  "colors": {
+    "focus": {
+      "name": "Focus (default)",
+      "when": "The headline names one or two items: everything grey, those items McKesson Blue. Highlight at most two; bold the matching labels.",
+      "how": "mv.highlight(labels, focus=...)"
+    },
+    "uniform_accent": {
+      "name": "Uniform + accent",
+      "when": "Every item belongs to the same story and one exception must pop: the series light blue, the exception navy.",
+      "how": "mv.highlight(labels, accent=..., base=C.focus_light)"
+    },
+    "focus_accent": {
+      "name": "Focus + accent",
+      "when": "A blue group the headline names plus one navy exception on grey context. Use sparingly.",
+      "how": "mv.highlight(labels, focus=..., accent=...)"
+    },
+    "story_greys": {
+      "name": "Story segment + greys",
+      "when": "One part of a whole is the story: that segment blue on the baseline, the other parts in context greys.",
+      "how": "mv.hstack(..., story=...)"
+    },
+    "categorical": {
+      "name": "Categorical",
+      "when": "Every series or part matters and must be told apart: at most 6, always in the fixed order (blue, navy, bright blue, teal, mint, orange); prefer 4 or fewer.",
+      "how": "mv.categorical(n), or mv.hstack(..., colors=mv.categorical(n))"
+    },
+    "sequential": {
+      "name": "Sequential",
+      "when": "One ordered measure or ordered bands (low to high, bands of a rate): light to dark in one hue. Darker means more.",
+      "how": "mv.SEQUENTIAL['blue'], mv.sequential_cmap()"
+    },
+    "diverging": {
+      "name": "Diverging",
+      "when": "Values centered on zero or a target: orange below (worse), blue above, a neutral middle.",
+      "how": "mv.DIVERGING, mv.diverging_cmap(), mv.diverging_bars(...)"
+    },
+    "steps": {
+      "name": "Ordered steps",
+      "when": "Process stages in order (blue to green), never for magnitude.",
+      "how": "mv.STEPS"
+    },
+    "status": {
+      "name": "Status only",
+      "when": "On track / at risk / off track / not started / done, always with a symbol and a word, never on data series.",
+      "how": "mv.STATUS, mv.status(...)"
+    }
+  },
+  "shapes": [
+    {
+      "id": "single",
+      "label": "One number, or a few",
+      "looks_like": "A single row, or a handful of headline figures.",
+      "questions": [
+        {
+          "ask": "What one figure should they remember?",
+          "type": "single number",
+          "start": {
+            "chart": "Big number with a comparison",
+            "page": "kpi-big-number",
+            "helper": "mv.kpi_card"
+          },
+          "further": [
+            {
+              "when": "has_target",
+              "chart": "Progress bar or ring toward the target",
+              "page": "kpi-big-number",
+              "helper": "mv.kpi_card(..., target=, ring_value=)"
+            },
+            {
+              "when": "several_numbers",
+              "chart": "KPI row",
+              "page": "kpi-big-number",
+              "helper": "mv.kpi_row"
+            }
+          ],
+          "avoid": "Speedometers",
+          "color": "focus"
+        }
+      ]
+    },
+    {
+      "id": "people",
+      "label": "One measure per person or team (many rows)",
+      "looks_like": "Many rows, one per person or team, with a measure (compa-ratio, span of control, tenure) and maybe a group column.",
+      "questions": [
+        {
+          "ask": "How spread out is it? What's typical? Where are the outliers?",
+          "type": "distribution",
+          "start": {
+            "chart": "Strip plot or histogram",
+            "page": "distribution",
+            "helper": null
+          },
+          "further": [
+            {
+              "when": "has_groups",
+              "chart": "Strip or box plot by group, the focus group in blue",
+              "page": "distribution",
+              "helper": null
+            }
+          ],
+          "avoid": "An average with no spread",
+          "color": "focus"
+        }
+      ]
+    },
+    {
+      "id": "cat_measure",
+      "label": "Categories × one measure",
+      "looks_like": "One row per category (job family, site, role) with a measure, maybe a count column and a benchmark.",
+      "questions": [
+        {
+          "ask": "Which is biggest, and by how much? How do they rank?",
+          "type": "magnitude / ranking",
+          "start": {
+            "chart": "Sorted bar",
+            "page": "bar",
+            "helper": "ax.barh + mv.highlight + mv.label_bars"
+          },
+          "further": [
+            {
+              "when": "clustered",
+              "chart": "Dot plot",
+              "page": "dot-plot-dumbbell",
+              "helper": null,
+              "why": "bars must start at zero, which hides small differences"
+            },
+            {
+              "when": "wide_range",
+              "chart": "Proportional bubbles, or split the chart",
+              "page": "bubble-chart",
+              "helper": null
+            },
+            {
+              "when": "many_categories",
+              "chart": "Sorted bar with the tail grouped into Other",
+              "page": "bar",
+              "helper": null
+            },
+            {
+              "when": "has_size",
+              "chart": "Bubble strip: position = the measure, bubble area = the count",
+              "page": "distribution",
+              "helper": null,
+              "why": "shows how close the categories are and how many people each one covers"
+            },
+            {
+              "when": "very_many_categories",
+              "chart": "Bubble strip with only the outliers and largest named",
+              "page": "distribution",
+              "helper": null
+            }
+          ],
+          "avoid": "Rainbow, 3D or cut-off bars",
+          "color": "focus"
+        },
+        {
+          "ask": "How far is each from the benchmark?",
+          "type": "deviation",
+          "needs": "has_benchmark",
+          "start": {
+            "chart": "Diverging bars around the benchmark",
+            "page": "bar",
+            "helper": "mv.diverging_bars"
+          },
+          "further": [
+            {
+              "when": "clustered",
+              "chart": "Dot plot with a labelled benchmark line",
+              "page": "dot-plot-dumbbell",
+              "helper": null
+            }
+          ],
+          "avoid": "A benchmark nobody can see",
+          "color": "diverging"
+        },
+        {
+          "ask": "Where is the most of it in absolute terms (rate × people)?",
+          "type": "magnitude (derived count)",
+          "needs": "rate_and_size",
+          "start": {
+            "chart": "Sorted bar of the derived count, footnoted as an estimate",
+            "page": "bar",
+            "helper": "ax.barh + mv.highlight"
+          },
+          "further": [
+            {
+              "when": "has_size",
+              "chart": "Treemap: tile area = the count, shade = the rate",
+              "page": "treemap",
+              "helper": null,
+              "why": "people and the rate in one picture"
+            }
+          ],
+          "avoid": "A derived count presented as a recorded one",
+          "color": "focus"
+        }
+      ]
+    },
+    {
+      "id": "composition",
+      "label": "Parts of a whole",
+      "looks_like": "Columns that add up to 100 (or to a total) in every row: workforce mix, survey favorability, time mix.",
+      "questions": [
+        {
+          "ask": "What is each made of, and how do the mixes compare?",
+          "type": "part-to-whole",
+          "start": {
+            "chart": "100% stacked bar",
+            "page": "stacked-bar",
+            "helper": "mv.hstack"
+          },
+          "further": [
+            {
+              "when": "one_category",
+              "chart": "One 100% bar, or a donut with 5 slices or fewer",
+              "page": "donut-pie",
+              "helper": "mv.hstack"
+            },
+            {
+              "when": "many_parts",
+              "chart": "Treemap, or group the small parts into Other",
+              "page": "treemap",
+              "helper": null
+            },
+            {
+              "when": "parts_ordered",
+              "chart": "100% stacked bar in sequential shades (diverging for unfavorable to favorable)",
+              "page": "stacked-bar",
+              "helper": "mv.hstack(..., colors=...)"
+            }
+          ],
+          "avoid": "Pies over 5 slices",
+          "color": "categorical",
+          "color_switch": [
+            {
+              "when": "one part is the story",
+              "use": "story_greys"
+            },
+            {
+              "when": "parts_ordered",
+              "use": "sequential"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bridge",
+      "label": "A bridge from one total to another",
+      "looks_like": "Steps with a kind column (total, delta): headcount bridge, labor cost bridge.",
+      "questions": [
+        {
+          "ask": "What moved the total from A to B?",
+          "type": "part-to-whole (change)",
+          "start": {
+            "chart": "Waterfall",
+            "page": "waterfall",
+            "helper": "mv.waterfall"
+          },
+          "further": [],
+          "avoid": "Two stacked bars side by side",
+          "color": "focus"
+        }
+      ]
+    },
+    {
+      "id": "pairs",
+      "label": "A pair of values per category",
+      "looks_like": "Before and after (rank_2023 and rank_2026, FY25 and FY26) or us and them (internal and market pay) for each category, or a period column with two values.",
+      "questions": [
+        {
+          "ask": "What changed for each, or how big is each gap?",
+          "type": "change / comparison",
+          "start": {
+            "chart": "Dumbbell (before grey, after blue)",
+            "page": "dot-plot-dumbbell",
+            "helper": "mv.dumbbell"
+          },
+          "further": [
+            {
+              "when": "ranks",
+              "chart": "Slope chart of the ranks",
+              "page": "slope-bump",
+              "helper": "mv.rank_slope"
+            },
+            {
+              "when": "few_categories",
+              "chart": "Slope chart",
+              "page": "slope-bump",
+              "helper": "mv.rank_slope"
+            },
+            {
+              "when": "gap_is_point",
+              "chart": "Diverging bars of the difference",
+              "page": "bar",
+              "helper": "mv.diverging_bars"
+            },
+            {
+              "when": "has_target",
+              "chart": "Dumbbell with a target line",
+              "page": "dot-plot-dumbbell",
+              "helper": "mv.dumbbell"
+            }
+          ],
+          "avoid": "Two separate bar charts the reader must compare",
+          "color": "focus"
+        }
+      ]
+    },
+    {
+      "id": "cat_measures",
+      "label": "Categories × several measures",
+      "looks_like": "One row per category with two or more measures in different units (a scorecard; pay vs. exposure).",
+      "questions": [
+        {
+          "ask": "Do two measures move together?",
+          "type": "correlation",
+          "start": {
+            "chart": "Scatter; bubble scatter when a count can be the bubble area",
+            "page": "scatter-bubble",
+            "helper": "mv.label_points"
+          },
+          "further": [
+            {
+              "when": "few_categories",
+              "chart": "Two aligned bar charts, one per measure",
+              "page": "bar",
+              "helper": null
+            }
+          ],
+          "avoid": "Dual axes",
+          "color": "focus"
+        },
+        {
+          "ask": "How does each category score across all the measures?",
+          "type": "ranking (profile)",
+          "start": {
+            "chart": "Heat table (scorecard)",
+            "page": "tables",
+            "helper": "mv.heat"
+          },
+          "further": [
+            {
+              "when": "many_categories",
+              "chart": "Parallel coordinates, the focus line in blue",
+              "page": "parallel-coordinates",
+              "helper": null
+            }
+          ],
+          "avoid": "A clustered bar per measure",
+          "color": "sequential"
+        }
+      ]
+    },
+    {
+      "id": "matrix",
+      "label": "Two sets of categories × one measure",
+      "looks_like": "A long table: business unit × driver, function × quarter, with one value per pair.",
+      "questions": [
+        {
+          "ask": "Where are the hot spots across both dimensions?",
+          "type": "correlation (two categories)",
+          "start": {
+            "chart": "Heat table",
+            "page": "heatmap",
+            "helper": "mv.heat"
+          },
+          "further": [
+            {
+              "when": "has_benchmark",
+              "chart": "Diverging heat table around the benchmark",
+              "page": "heatmap",
+              "helper": "mv.heat(kind='diverging')"
+            }
+          ],
+          "avoid": "A rainbow color scale",
+          "color": "sequential",
+          "color_switch": [
+            {
+              "when": "values centered on zero or a target",
+              "use": "diverging"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time",
+      "label": "A measure over time",
+      "looks_like": "A period column (months, quarters, years) with three or more periods, maybe a series column.",
+      "questions": [
+        {
+          "ask": "How is it moving? When did it change?",
+          "type": "change over time",
+          "start": {
+            "chart": "Line, the focus series in blue and the rest grey",
+            "page": "line",
+            "helper": "mv.label_line_ends"
+          },
+          "further": [
+            {
+              "when": "many_series",
+              "chart": "Small multiples on one shared scale",
+              "page": "small-multiples",
+              "helper": "mv.multiples"
+            },
+            {
+              "when": "parts_over_time",
+              "chart": "Stacked area, or 100% columns for a few periods",
+              "page": "stacked-area",
+              "helper": null
+            },
+            {
+              "when": "two_units",
+              "chart": "Two aligned panels (never dual axes)",
+              "page": "dual-axis",
+              "helper": null
+            },
+            {
+              "when": "has_target",
+              "chart": "Line with a labelled target line",
+              "page": "line",
+              "helper": null
+            }
+          ],
+          "avoid": "Ten colored lines",
+          "color": "focus",
+          "color_switch": [
+            {
+              "when": "parts_over_time",
+              "use": "categorical"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flows",
+      "label": "Flows from one state to another",
+      "looks_like": "From and to columns with a count: internal moves, pipeline stages.",
+      "questions": [
+        {
+          "ask": "Where do people go, and how many?",
+          "type": "relationships and flows",
+          "start": {
+            "chart": "Sankey",
+            "page": "sankey",
+            "helper": null
+          },
+          "further": [],
+          "avoid": "A color per stage",
+          "color": "focus",
+          "color_switch": [
+            {
+              "when": "the stages are a process in order",
+              "use": "steps"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "geo",
+      "label": "Places",
+      "looks_like": "A state, country, county or FIPS column.",
+      "questions": [
+        {
+          "ask": "Where is it? Does place matter?",
+          "type": "geo-spatial",
+          "start": {
+            "chart": "Choropleth for rates",
+            "page": "maps",
+            "helper": "mckviz.geo"
+          },
+          "further": [
+            {
+              "when": "counts_not_rates",
+              "chart": "Bubble map (counts never go on a choropleth)",
+              "page": "maps",
+              "helper": "mckviz.geo"
+            }
+          ],
+          "avoid": "Counts on a choropleth",
+          "color": "sequential"
+        }
+      ]
+    },
+    {
+      "id": "plans",
+      "label": "Plans and status",
+      "looks_like": "Workstreams with start and end dates, milestones, owners or a status column.",
+      "questions": [
+        {
+          "ask": "What happens when, who owns it, and is it on track?",
+          "type": "plans and status",
+          "start": {
+            "chart": "Roadmap (Gantt bars, milestones as markers)",
+            "page": "plans-status",
+            "helper": "mv.roadmap"
+          },
+          "further": [
+            {
+              "when": "has_status_history",
+              "chart": "Initiative tracker with a status column",
+              "page": "plans-status",
+              "helper": "mv.tracker"
+            }
+          ],
+          "avoid": "Red/amber/green by color alone",
+          "color": "status"
+        }
+      ]
+    },
+    {
+      "id": "sets",
+      "label": "Overlapping groups",
+      "looks_like": "Yes/no (1/0) membership columns with a count per combination.",
+      "questions": [
+        {
+          "ask": "How much do the groups overlap?",
+          "type": "relationships",
+          "start": {
+            "chart": "Venn, 3 sets at most",
+            "page": "venn",
+            "helper": null
+          },
+          "further": [
+            {
+              "when": "more_than_three_sets",
+              "chart": "Sorted bar of the combinations",
+              "page": "bar",
+              "helper": null
+            }
+          ],
+          "avoid": "A Venn with 4 or more sets",
+          "color": "focus"
+        }
+      ]
+    }
+  ]
+}

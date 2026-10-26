@@ -14,7 +14,7 @@ If you are resuming unfinished work on the kit, read [`ROADMAP.md`](ROADMAP.md) 
 
 ### Workflow (do these in order)
 1. **Question.** Write the question the chart answers in one sentence ("Where is attrition concentrated?"). Decide whether the chart is explanatory (deck, report: the default) or exploratory (dashboard).
-2. **Chart type.** Name the question type, then pick from [`docs/choosing-a-chart.md`](docs/choosing-a-chart.md). Read [`docs/principles.md`](docs/principles.md) and the matching `docs/cookbook/<chart>.md` page **before** writing code. Each page has a spec table, do/don't rules and runnable code for each platform.
+2. **Chart type.** Put the data in the decision tree (`print(mv.suggest(df))`, or [`docs/chart-decision-tree.md`](docs/chart-decision-tree.md) by hand): its shape, the question, the chart to start with, the richer charts whose conditions hold, and the color pattern. [`docs/choosing-a-chart.md`](docs/choosing-a-chart.md) has the same advice by question type. Record the Path and Color lines in the chart brief. Read [`docs/principles.md`](docs/principles.md) and the matching `docs/cookbook/<chart>.md` page **before** writing code. Each page has a spec table, do/don't rules and runnable code for each platform.
 3. **Build.** Start from the cookbook snippet for your platform (see [Platform recipes](#platform-recipes)). Take every color from the tokens; never type a hex value.
 4. **Headline.** Compute the finding from the data, then write it as a full sentence. Build the numbers in the headline from variables, not by eyeballing.
 5. **QA.** In Python, run `mv.lint(fig)` and fix every error. Then go through [`docs/qa-checklist.md`](docs/qa-checklist.md) and the cookbook page's "QA specifics". Render the chart and look at it (open the PNG, or screenshot the HTML). Report any item you couldn't meet.
@@ -66,6 +66,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 | Real maps | `from mckviz import geo`: `geo.canvas(fig)`, `geo.Map("states-albers-10m.json", "states", box, key=geo.FIPS.get)`, `geo.equal_earth` for world maps; US states, world countries and a county subset ship with the package (see `docs/cookbook/maps.md`) |
 | Translucent fills (Plotly) | `mv.rgba(C.negative, 0.12)` for a shortfall wash, `mv.rgba(C.focus, 0.4)` for Sankey links, instead of an `rgba(...)` literal |
 | Save | `mv.save(fig, path, dpi=200)`, which also lays out the titles and source |
+| Choose a chart | `print(mv.suggest(df, category=None, measure=None, size=None, time=None))`: reads the table into the decision tree (`tokens/chooser.json`) and lists the start and go-further charts with the evidence, the color pattern and what the data can't support |
 | Options page | `mv.options_page(path, title, [mv.Option(fig, name, question, how_to_read, strength, tradeoff, alt=...)], findings=..., notes=..., source=..., label=...)`: several views of the same data on one self-contained HTML page (charts, font and styles inside; Save as PDF prints one option per page), for a group deciding how to show it. Example: `examples/python/options_page.py` |
 | Check | `mv.lint(fig)` (matplotlib or Plotly; pass `headline=`, `subtitle=`, `source=` when they live in HTML); `strict=True` raises on errors |
 | Plotly titles | `mv.pl_finish(fig, headline, subtitle, source_text, footnote)` |
@@ -92,6 +93,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 | Path | What it is | Edit? |
 |---|---|---|
 | `tokens/tokens.json` | The only source of colors, type and chart constants | Yes, then run `python tokens/build.py` |
+| `tokens/chooser.json` | The chart decision tree (shapes, questions, start / go-further charts, conditions, color patterns). `tools/build_chooser.py` checks it, copies it to `python/mckviz/_chooser.json` (read by `mv.suggest`) and writes `docs/chart-decision-tree.md`. A new condition also needs a `fact()` in `python/mckviz/chooser.py` | Yes, then run `python tokens/build.py` |
 | `tokens/build.py` | Generates everything in `dist/`, syncs `python/mckviz/` and rebuilds the agent skill | Yes |
 | `VERSION` | The kit version (one place). Synced into `python/mckviz/VERSION`; read by `pyproject.toml`, the guide cover (`{{version}}`), the agent rules, the skill and the release bundle. Bump it, add a `CHANGELOG.md` entry, rebuild, and the owner tags `v<version>` | Yes, with the changelog |
 | `dist/` | Generated theme files (CSS, Plotly, Vega-Lite, mplstyle, R, Power BI, Office, agent rules, the portable skill in `dist/skills/mck-chart/`). `dist/release/` (the zip) is not committed | **Never by hand** |

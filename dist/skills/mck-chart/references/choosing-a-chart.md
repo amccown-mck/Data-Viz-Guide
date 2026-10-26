@@ -2,6 +2,8 @@
 
 Pick the chart from the **question**, not from habit. First name the question type, then choose from the short list. Each chart links to its cookbook page (spec, do/don't, code for each platform).
 
+The same advice as a decision tree that starts from what is in the data, with the conditions for going beyond the first choice and the color pattern for each leaf, is in [chart-decision-tree.md](chart-decision-tree.md) (generated from `tokens/chooser.json`; `mv.suggest(df)` walks it for a table).
+
 ## Step 1 — What kind of question is it?
 
 | Question type | The reader wants to know… | Workforce examples |

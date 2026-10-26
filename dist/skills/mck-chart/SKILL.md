@@ -12,8 +12,9 @@ Work through the five steps in order. Keep a short **chart brief** as you go and
 ```
 Question:     <one sentence the chart answers>
 Mode:         explanatory | exploratory          Medium: slide | report | web | mobile | dashboard
-Chart:        <type> (references/cookbook/<page>.md)    Why: <question type → first choice / alternative>
-Focus:        <what is blue>   Accent: <optional single navy exception>   Context: everything else, grey
+Path:         <shape> -> <question type> -> <chart> (start, or go further: <condition that holds>)
+Chart:        <type> (references/cookbook/<page>.md)
+Color:        <pattern> (<why>)   Focus: <what is blue>   Accent: <optional single navy exception>
 Headline:     <insight sentence, numbers computed from data>
 Subtitle:     <metric, unit, scope, period>
 Source:       Source: <system>, as of <date>; <population>
@@ -26,15 +27,18 @@ QA:           pass | exceptions: <list>
 - Decide the **mode** (explanatory is the default) and the **medium** (slide, report, web, mobile, dashboard). The medium changes the layout. See `references/formats.md`.
 - Look at the data: grain (individual, team, firm, sector), the n per group, units, time span, and whether a benchmark or target exists.
 
-## 2. Chart type
-- Name the question type: magnitude, part-to-whole, change over time, ranking, distribution, correlation, relationships & flows, geo-spatial, single number, or plans and status (roadmap / Gantt, initiative tracker, milestones; status pills always show color + symbol + word, e.g. "✓ On track").
-- Pick from `references/choosing-a-chart.md` (the first choice unless a sanity check rules it out), then **read** `references/principles.md` and `references/cookbook/<page>.md`. Note the page's spec table and "When not to use".
+## 2. Chart type: walk the decision tree
+- **Put the data in the tree first:** `print(mv.suggest(df))`. It says how it read each column, which shape the data has, the questions that shape can answer, the chart to **start with**, and the richer charts to **go further** with whose conditions hold in this data, with the evidence ("headcount runs from 450 to 11,800"). Check how it read the columns and pass `category=`, `measure=`, `size=` or `time=` if a guess is wrong. Without Python, walk `references/chart-decision-tree.md` by hand.
+- **Pick the question, then the chart.** Use the start chart when no condition holds. When one holds, use the richer chart if it answers the question better (counts that differ 26-fold make a bubble strip show both how close the groups are and how many people each covers); don't fall back to a bar or a stacked bar out of habit. Status pills always show color + symbol + word ("✓ On track").
+- **Pick the color from what it encodes** (`references/chart-decision-tree.md`, section 4): Focus (grey, the named items blue) is the default; Uniform + accent or Focus + accent for one exception; Categorical when every part or series must be told apart; Sequential light-to-dark for ordered bands or one measure; Diverging around a benchmark; Story segment + greys only when one part is the story. A stack of greys is right only in that last case.
+- Write the **Path** and **Color** lines in the brief, then **read** `references/principles.md` and `references/cookbook/<page>.md`. Note the page's spec table and "When not to use".
 - Common traps: clustered values far from zero → dot plot, not truncated bars. Two units over time → two aligned charts, not dual axes. More than 6 categories → highlight plus grey, or group into "Other". A spread across people → distribution, not an average.
 
 ### Storyline or options requests
 When the user pastes a table and asks for "N options" or "charts that fit this storyline", don't build N charts of the same thing. Work the data first, then the angles:
-- **List the question types the data can support.** One period and one measure per category supports magnitude (ranked bars with a benchmark line), deviation from a benchmark (diverging bars, `mv.diverging_bars`) and derived counts (headcount × rate, as a second ranked bar or a KPI card). A slope or change-over-time chart needs **two periods**. A heat table needs **two dimensions**. A correlation or bubble scatter needs two measures per category (a count can be the bubble area). A part-to-whole needs parts that sum to a whole.
+- **List the question types the data can support:** `mv.suggest(df)` lists every shape and question the data fits and what it can't support. One period and one measure per category supports magnitude (ranked bars with a benchmark line), deviation from a benchmark (diverging bars, `mv.diverging_bars`) and derived counts (headcount × rate, as a second ranked bar or a KPI card). A slope or change-over-time chart needs **two periods**. A heat table needs **two dimensions**. A correlation or bubble scatter needs two measures per category (a count can be the bubble area). A part-to-whole needs parts that sum to a whole.
 - **Say what the data cannot support.** If an asked-for chart needs a field the table lacks (a trend without a second period, a heat table with one dimension), name it and what would be needed, instead of forcing it.
+- **Vary the charts.** Each option is a different chart type from a different leaf; when `mv.suggest` lists go-further charts, at least one option uses one. Five bar charts are not five options.
 - **Build one chart per supported angle**, each with its own headline computed from the data and its own focus. Different angles may name different focus items; each chart's headline must match its own highlight.
 - **Hand back a one-line brief per option** (angle, chart type, headline) plus **a recommendation of which one to lead with** and why (usually the one whose headline answers the storyline's question most directly), then the full chart brief for that one.
 

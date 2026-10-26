@@ -1155,6 +1155,10 @@ def main() -> None:
         print("  synced python/mckviz/ (_tokens.json, mckviz.mplstyle, plotly_template.json, VERSION, fonts/)")
     import importlib.util                                    # the portable agent skill embeds the rules file
 
+    spec = importlib.util.spec_from_file_location("build_chooser", ROOT / "tools" / "build_chooser.py")
+    chooser = importlib.util.module_from_spec(spec)          # the decision tree, before the skill that carries it
+    spec.loader.exec_module(chooser)
+    chooser.build()
     spec = importlib.util.spec_from_file_location("build_skill", ROOT / "tools" / "build_skill.py")
     skill = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(skill)

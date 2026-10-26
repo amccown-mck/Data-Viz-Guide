@@ -518,6 +518,7 @@ from .charts import (STATUS_ORDER, big, delta_label, diverging_bars, dumbbell, h
                      kpi_card, kpi_row, label_points, multiples, rank_slope, ring, roadmap, sdot, small, status,
                      status_column, status_key, tracker, waterfall)
 from .page import Option, options_page  # noqa: E402
+from .chooser import suggest  # noqa: E402
 
 
 def __getattr__(name: str):

@@ -62,7 +62,7 @@ REPO_URL = "https://github.com/amccown-mck/Data-Viz-Guide"
 VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
 ZIP_LIMIT_MB = 10                                           # Claude.ai custom skills; the zip is ~4 MB with the wheel
 
-DOCS = ["principles.md", "choosing-a-chart.md", "qa-checklist.md", "color.md", "typography-and-layout.md",
+DOCS = ["principles.md", "choosing-a-chart.md", "chart-decision-tree.md", "qa-checklist.md", "color.md", "typography-and-layout.md",
         "formats.md", "office-setup.md", "powerbi-setup.md"]
 # skill path under assets/ -> repo path. Text files get the skill's relative paths; binaries are copied as they are.
 ASSETS = {"web/mck-viz.css": "dist/web/mck-viz.css", "web/mck-plotly-template.js": "dist/web/mck-plotly-template.js",
