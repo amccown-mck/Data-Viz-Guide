@@ -171,7 +171,7 @@
               "when": "clustered",
               "chart": "Dot plot",
               "page": "dot-plot-dumbbell",
-              "helper": null,
+              "helper": "mv.dot_plot",
               "why": "bars must start at zero, which hides small differences"
             },
             {
@@ -228,7 +228,7 @@
               "when": "clustered",
               "chart": "Dot plot with a labelled benchmark line",
               "page": "dot-plot-dumbbell",
-              "helper": null
+              "helper": "mv.dot_plot(..., benchmark=, benchmark_label=)"
             }
           ],
           "avoid": "A benchmark nobody can see",

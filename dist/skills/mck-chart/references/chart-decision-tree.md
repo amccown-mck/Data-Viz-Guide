@@ -72,7 +72,7 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 **Which is biggest, and by how much? How do they rank?** (magnitude / ranking)
 
 - **Start with:** [Sorted bar](cookbook/bar.md) (`ax.barh + mv.highlight + mv.label_bars`)
-- **Go further** when values bunched far from zero (the smallest is more than half the largest): [Dot plot](cookbook/dot-plot-dumbbell.md): bars must start at zero, which hides small differences
+- **Go further** when values bunched far from zero (the smallest is more than half the largest): [Dot plot](cookbook/dot-plot-dumbbell.md) (`mv.dot_plot`): bars must start at zero, which hides small differences
 - **Go further** when the largest value is more than 20 times the smallest: [Proportional bubbles, or split the chart](cookbook/bubble-chart.md)
 - **Go further** when more than 12 categories: [Sorted bar with the tail grouped into Other](cookbook/bar.md)
 - **Option** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest), and only if the headline is about how many people each one covers, not only the rate: [Bubble strip: position = the measure, bubble area = the count](cookbook/distribution.md): shows how close the categories are and how many people each one covers
@@ -83,7 +83,7 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 **How far is each from the benchmark?** (deviation) *(when there is a benchmark: a column that is the same on every row, one named target / benchmark / average, or a Total row)*
 
 - **Start with:** [Diverging bars around the benchmark](cookbook/bar.md) (`mv.diverging_bars`)
-- **Go further** when values bunched far from zero (the smallest is more than half the largest): [Dot plot with a labelled benchmark line](cookbook/dot-plot-dumbbell.md)
+- **Go further** when values bunched far from zero (the smallest is more than half the largest): [Dot plot with a labelled benchmark line](cookbook/dot-plot-dumbbell.md) (`mv.dot_plot(..., benchmark=, benchmark_label=)`)
 - **Avoid:** A benchmark nobody can see
 - **Color:** Diverging
 

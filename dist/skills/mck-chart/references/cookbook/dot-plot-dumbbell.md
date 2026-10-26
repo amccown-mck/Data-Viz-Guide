@@ -75,7 +75,33 @@ mv.source(fig, "Source: Synthetic data for illustration only",
 mv.lint(fig, strict=True)
 mv.save(fig, "out/dumbbell.png", dpi=200)
 ```
-`gap="abs"` labels the difference in units instead of percent; `compare_name=` / `value_name=` rename the dots (for example "FY25" / "FY26" for a before-and-after dumbbell). **Dot plot variant:** use a single `ax.scatter(values, rows)` colored with `mv.highlight(rows, focus=...)`, then `ax.axvline(benchmark, color=C.total, lw=0.75, ls=(0, (3, 3)))` with an in-place label. Keep `mv.clean_axes(ax, keep=(), grid="x")`.
+`gap="abs"` labels the difference in units instead of percent; `compare_name=` / `value_name=` rename the dots (for example "FY25" / "FY26" for a before-and-after dumbbell).
+
+**Dot plot** (one value per row, far from zero): `mv.dot_plot` sorts the rows, draws grey dots with the headline's in blue, prints each value beside its dot and names the benchmark line in place. The axis may start above zero, because the dot's position carries the value, not a bar's length.
+
+```python
+# verified runnable (from the repo root)
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import pandas as pd
+
+import mckviz as mv
+
+mv.use()
+df = pd.read_csv("assets/data/job_family_scorecard.csv")
+company = (df.engagement_index * df.headcount).sum() / df.headcount.sum()      # headcount-weighted, not a plain mean
+low = df.nsmallest(2, "engagement_index").job_family
+
+fig, ax = plt.subplots(figsize=(10, 5))
+mv.dot_plot(ax, df.job_family, df.engagement_index, focus=set(low), benchmark=company,
+            benchmark_label=f"All job families {company:.0f}", fmt="{:.0f}")
+mv.titles(fig, "Engagement trails the company in two frontline job families",
+          "Engagement index by job family, FY26 (0–100)")
+mv.source(fig, "Source: Synthetic data for illustration only", footnote="All job families = weighted by headcount.")
+mv.lint(fig, strict=True)
+mv.save(fig, "out/dot-plot.png", dpi=200)
+```
 
 ### Python — Plotly / HTML
 ```python

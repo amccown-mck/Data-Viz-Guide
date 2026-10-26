@@ -170,7 +170,12 @@ def _line(ax):
                    forecast_from=5, band={"Oncology": ([na] * 5 + [13.0, 12.2, 11.6], [na] * 5 + [13.0, 13.4, 13.8])})
 
 
-BUILDERS = {"line": _line, "share_bar": _share_bar, "strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
+def _dot_plot(ax):
+    return mv.dot_plot(ax, ["Ops", "Sales", "Tech", "HR"], [66, 76, 74, 71], focus={"Ops"}, benchmark=72,
+                       benchmark_label="Company 72", fmt="{:.0f}")
+
+
+BUILDERS = {"dot_plot": _dot_plot, "line": _line, "share_bar": _share_bar, "strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
             "dumbbell": _dumbbell, "heat": _heat, "heat_sequential": _heat_seq, "kpi_card": _kpi,
             "kpi_row": _kpi_row, "ring": _ring, "tracker": _tracker, "roadmap": _roadmap,
             "status_column": _status_column, "rank_slope": _rank_slope, "diverging_bars": _diverging,
@@ -549,3 +554,15 @@ def test_line_colors_and_limits():
         mv.line(ax, ["a", "b"], {str(i): [1, 2] for i in range(5)})
     with pytest.raises(ValueError, match="appears 2 times"):
         mv.line(ax, ["Q1", "Q2", "Q1"], {"A": [1, 2, 3]}, forecast_from="Q1")
+
+
+def test_dot_plot_sorts_highlights_and_names_the_benchmark():
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ns = _dot_plot(ax)
+    assert ns.order == ["Sales", "Tech", "HR", "Ops"]                                     # largest on top
+    cols = [to_hex(c).upper() for c in ns.dots.get_facecolors()]
+    assert cols[-1] == C.focus.upper() and set(cols[:-1]) == {C.context.upper()}
+    assert {"66", "76", "Company 72"} <= {t.get_text() for t in ns.labels}
+    assert ax.get_xlim()[0] > 0                                                           # no forced zero
+    with pytest.raises(ValueError, match="at most two"):
+        mv.dot_plot(ax, ["a", "b", "c"], [1, 2, 3], focus={"a", "b", "c"})

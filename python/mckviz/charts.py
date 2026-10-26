@@ -1941,3 +1941,65 @@ def line(ax, x, series, *, focus: Iterable[str] = (), accent: str | None = None,
                              color=color[nm] if nm in strong else C.text_muted,
                              fontweight=600 if nm in strong else 400, path_effects=halo(), zorder=4))
     return SimpleNamespace(lines=lines, labels=texts, colors=color)
+
+
+# ------------------------------------------------------------------ DOT PLOT
+def dot_plot(ax, labels: Sequence[str], values: Sequence[float], *, focus: Iterable[str] = (),
+             accent: str | None = None, benchmark: float | None = None, benchmark_label: str | None = None,
+             fmt="{:,.1f}", sort: bool = True, xlim: tuple[float, float] | None = None, tick_fmt: str | None = None):
+    """One value per category as a dot on a common scale: the alternative to bars when the values sit far from zero
+    and the differences are small (engagement scores, compa-ratios, rates around 80-90%). Grey dots, the headline's
+    in blue (navy for one accent), the value beside each dot, a named dashed benchmark line, light row guides.
+
+        mv.dot_plot(ax, df.team, df.engagement, focus={"Pharmacy Ops"}, benchmark=78, benchmark_label="Company 78")
+
+    sort: largest value on top (False keeps the given order, for a natural order). xlim: the value range; by default
+    the data and the benchmark with a margin (the axis may start above zero, because position carries the value, not
+    length). tick_fmt: axis tick format, e.g. "{x:.0f}". Returns SimpleNamespace(order, dots, labels).
+    """
+    from matplotlib.ticker import StrMethodFormatter
+
+    from . import clean_axes
+
+    names = [str(v) for v in labels]
+    vals = _floats(values, "values")
+    if len(names) != len(vals):
+        raise ValueError("one value per label")
+    focus = {str(f) for f in focus}
+    accent = str(accent) if accent is not None else None
+    hot = focus | ({accent} if accent else set())
+    if len(hot) > 2:
+        raise ValueError("highlight at most two rows")
+    order = sorted(range(len(names)), key=lambda i: -vals[i]) if sort else list(range(len(names)))
+    names, vals = [names[i] for i in order], vals[order]
+    y = np.arange(len(names))[::-1]                            # first row on top
+    for yy in y:                                               # light guides, so each dot reads back to its name
+        ax.axhline(yy, color=C.grid, lw=0.75, zorder=0)
+    cols = [C.accent if nm == accent else C.focus if nm in focus else C.context for nm in names]
+    dots = ax.scatter(vals, y, s=90, color=cols, lw=0, zorder=3)
+    texts = []
+    for yy, nm, v in zip(y, names, vals):
+        texts.append(ax.annotate(_fmt(fmt, v), (v, yy), xytext=(8, 0), textcoords="offset points", va="center",
+                                 ha="left", fontsize=LABEL, color=C.headline if nm in hot else C.text,
+                                 fontweight=600 if nm in hot else 400, zorder=4))
+    span = [float(np.nanmin(vals)), float(np.nanmax(vals))] + ([benchmark] if benchmark is not None else [])
+    lo, hi = min(span), max(span)
+    pad = (hi - lo) * 0.08 or abs(hi) * 0.05 or 1
+    ax.set_xlim(*(xlim or (lo - pad, hi + pad * 1.6)))         # extra room on the right for the value labels
+    ax.set_ylim(-0.6, len(names) - 0.4 + (0.35 if benchmark_label else 0))
+    if benchmark is not None:
+        ax.axvline(benchmark, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=2)
+        if benchmark_label:
+            texts.append(ax.annotate(benchmark_label, (benchmark, y[0]), xytext=(0, 12), textcoords="offset points",
+                                     ha="center", va="bottom", fontsize=SMALL, color=C.annotation,
+                                     bbox=dict(fc="white", ec="none", pad=1), zorder=4))
+    ax.set_yticks(y, names)
+    clean_axes(ax, keep=(), grid=None)
+    ax.tick_params(length=0)
+    if tick_fmt:
+        ax.xaxis.set_major_formatter(StrMethodFormatter(tick_fmt))
+    for t in ax.get_yticklabels():
+        t.set_fontsize(TICK)
+        t.set_color(C.text)
+    _bold_ticks(ax.get_yticklabels(), hot)
+    return SimpleNamespace(order=names, dots=dots, labels=texts)
