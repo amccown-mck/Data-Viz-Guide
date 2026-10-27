@@ -38,12 +38,28 @@ def named(slide, name):
     return next(s for s in slide.shapes if s.name == name)
 
 
-def test_deck_is_the_kit_template():
+def test_deck_is_the_branded_template():
     prs = office.deck()
-    assert office.on_grid(prs)
-    assert len(prs.slides) == 0
+    assert len(prs.slides) == 0                                # the template's example slide is gone
     assert round(Emu(prs.slide_width).inches, 2) == 13.33 and round(Emu(prs.slide_height).inches, 2) == 7.5
+    assert any(lay.name == "Title Only" for lay in prs.slide_layouts)
+    assert any(s.name == "McK Logo" for s in prs.slide_master.shapes)
     assert mv.office is office                                 # lazy attribute on the package
+
+
+@pytest.mark.parametrize("headline, size", [
+    ("Pharmacy technicians lose more than 1 in 4 people a year", 34),
+    ("Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate", 28)])
+def test_title_takes_the_master_size_when_it_fits(headline, size):
+    assert office.title_size(headline) == size
+    slide = office.chart_slide(office.deck(), headline, "Subtitle", None, "", "Source: s")
+    assert slide.shapes.title.text_frame.paragraphs[0].runs[0].font.size.pt == size
+
+
+def test_title_too_long_for_two_lines_is_refused():
+    with pytest.raises(ValueError, match="shorten"):
+        office.title_size("Pharmacy technicians and distribution center associates lose about 1 in 4 people a year, "
+                          "above the enterprise rate of 19.9%, while every other job family stays below it")
 
 
 def test_horizontal_bars_largest_on_top():
@@ -172,6 +188,41 @@ def test_short_bar_on_the_benchmark_warns():
         warnings.simplefilter("always")
         office.bar_slide(office.deck(), ["A", "B"], [100, 1], benchmark=1.5, headline="h", source="s")
     assert any("too short" in str(w.message) for w in caught)
+
+
+def figure_with_titles():
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    mv.use(plotly_default=False)
+    fig, ax = plt.subplots(figsize=(10, 5.6))
+    mv.line(ax, ["Q1", "Q2", "Q3", "Q4"], {"A": [1, 2, 3, 4], "B": [2, 2, 2, 3]}, focus={"A"})
+    mv.titles(fig, "Figure headline", "Figure subtitle")
+    mv.source(fig, "Figure source")
+    mv.layout(fig)
+    return fig
+
+
+def test_picture_slide_says_each_title_once():
+    fig = figure_with_titles()
+    r = office.picture_slide(office.deck(), fig, headline="A rose every quarter", subtitle="Metric (%)",
+                             source="Source: s")
+    assert not {t.get_text() for t in fig.texts} & {"Figure headline", "Figure subtitle", "Figure source"}
+    assert r.slide.shapes.title.text == "A rose every quarter"
+    assert r.picture._element.nvPicPr.cNvPr.get("descr") == "A rose every quarter"
+    assert "picture" in r.slide.notes_slide.notes_text_frame.text
+
+
+def test_picture_stays_in_the_chart_area():
+    for kw in ({}, {"takeaways": [("4", "A at the end"), ("2x", "B's rise")]}):
+        r = office.picture_slide(office.deck(), figure_with_titles(), headline="h", source="s", **kw)
+        pic = r.picture
+        right = office.LEFT + (office.SIDE_CHART_W if kw else office.W - office.LEFT - office.RIGHT)
+        assert Emu(pic.left + pic.width).inches <= right + 0.01
+        assert Emu(pic.top).inches >= office.SUB_TOP + 0.35
+        assert Emu(pic.top + pic.height).inches <= office.FOOT_TOP
 
 
 def test_save_once_with_the_headline_as_title(tmp_path):

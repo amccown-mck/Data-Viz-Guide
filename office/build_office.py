@@ -58,7 +58,9 @@ A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
 C = mv.colors
 FONT = mv.FONT
 SRC = "Source: Synthetic data for illustration only"
-OFFICIAL = ROOT / "reference" / "mckesson-branding" / "McKesson Standard Template.pptx"
+# The McKesson branded template (master, layouts, logo, footer; one example slide). An internal brand asset, committed
+# by the owner's decision of 2026-10-27 (both repos are private): mckviz.office builds its slides on it.
+OFFICIAL = ROOT / "office" / "brand" / "McKesson-Branded-Template.pptx"
 PACKAGE_TEMPLATE = ROOT / "python" / "mckviz" / "template.pptx"     # what mckviz.office.deck() opens
 
 
@@ -1375,7 +1377,6 @@ def build_pptx() -> Path:
     set_properties(prs, "McKesson Data Viz template",
                    "16:9 PowerPoint template with the McKesson data-viz theme on the Standard Template grid.")
     _save_as_template(prs, template)                       # theme + layouts only, before any slides are added
-    _save_package_template(prs)
     set_properties(prs, "McKesson data-viz chart starter",
                    "Native, editable sample charts in the McKesson data-viz style, generated from tokens/tokens.json.")
     slide_cover(prs)
@@ -1424,10 +1425,14 @@ def build_pptx_official() -> Path | None:
     return path
 
 
-def _save_package_template(prs) -> None:
-    """The template mckviz.office.deck() opens: the same theme and layouts as the .potx, as a .pptx (a Copilot skill
-    can carry .pptx but not .potx). Fixed timestamps and a fixed placeholder for the footer's date field (PowerPoint
-    shows the current date anyway), so the file changes only when its content does."""
+def build_package_template() -> Path:
+    """The template mckviz.office.deck() opens: the branded template with its example slides removed, as a .pptx (a
+    Copilot skill can carry .pptx but not .potx). Fixed timestamps and a fixed placeholder for a date field
+    (PowerPoint shows the current date anyway), so the file changes only when its content does."""
+    prs = Presentation(str(OFFICIAL))
+    clear_slides(prs)
+    set_properties(prs, "McKesson branded chart template",
+                   "The McKesson branded master and layouts for mckviz.office slides. Internal use only.")
     cp = prs.core_properties
     cp.created = cp.modified = cp.last_printed = datetime(2026, 1, 1)
     buf = io.BytesIO()
@@ -1438,6 +1443,7 @@ def _save_package_template(prs) -> None:
             blob = src.read(item.filename).replace(f">{DATE_TEXT}<".encode(), b">1/1/2026<")
             dst.writestr(zipfile.ZipInfo(item.filename, date_time=(2026, 1, 1, 0, 0, 0)), blob,
                          compress_type=zipfile.ZIP_DEFLATED)
+    return PACKAGE_TEMPLATE
 
 
 def _save_as_template(prs, path: Path) -> None:
@@ -2317,7 +2323,7 @@ def _theme_xlsx(path: Path, named: dict[str, list[int]]) -> None:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    for build in (build_pptx, build_xlsx, build_pptx_official):
+    for build in (build_package_template, build_pptx, build_xlsx, build_pptx_official):
         path = build()
         if path:
             print("wrote", path.relative_to(ROOT))

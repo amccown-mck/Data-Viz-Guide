@@ -47,6 +47,7 @@ W, H = 13.333, 7.5
 # The McKesson Standard Template's grid: 0.39 in side margins, title box 0.38-1.31 in, footer and logo at 7.13 in.
 LEFT, RIGHT = 0.39, 0.39
 TITLE_TOP, TITLE_H, TITLE_PT = 0.38, 0.93, 26              # typography.roles.slide_title: Bold, McKesson Blue, 24-28 pt
+TITLE_LINES = {34: 1, 30: 1, 28: 2, 26: 2}     # lines each size may take in the 0.93 in title box (a line ~1.14 x size)
 SUB_TOP, CHART_TOP, CHART_H = 1.32, 1.8, 4.6
 FOOT_TOP = 6.45                                            # source / footnote block ends at 6.95 in, above the footer
 BODY_TOP, BODY_BOTTOM = 1.32, 6.95                         # content area: under the title box, above the source line
@@ -88,19 +89,21 @@ def _font(weight: str, size: float):
     return FontProperties(fname=str(FONTS / f"LibreFranklin-{weight}.ttf"), size=size)
 
 
-def text_width(text: str, size: float, weight: str = "Regular") -> float:
-    """Width in inches of one line of `text` at `size` pt in the bundled Libre Franklin."""
+def text_width(text: str, size: float, weight: str = "Regular", tracking: float = 0.0) -> float:
+    """Width in inches of one line of `text` at `size` pt in the bundled Libre Franklin; `tracking` is PowerPoint's
+    character spacing in pt (a:rPr spc / 100), added after every character."""
     from matplotlib.textpath import TextToPath
-    return TextToPath().get_text_width_height_descent(text, _font(weight, size), ismath=False)[0] / 72
+    width = TextToPath().get_text_width_height_descent(text, _font(weight, size), ismath=False)[0]
+    return (width + tracking * len(text)) / 72
 
 
-def wrapped_lines(text, size, width, weight="Regular") -> int:
+def wrapped_lines(text, size, width, weight="Regular", tracking=0.0) -> int:
     """How many lines `text` wraps to in a `width`-inch box at `size` pt: greedy word wrap, measured with the bundled
     Libre Franklin, so a caption that would spill is caught at build time, not on the slide."""
     lines, line = 1, ""
     for word in text.split():
         trial = f"{line} {word}".strip()
-        if line and text_width(trial, size, weight) > width:
+        if line and text_width(trial, size, weight, tracking) > width:
             lines, line = lines + 1, word
         else:
             line = trial
@@ -167,21 +170,37 @@ def add_footer(slide, lay) -> None:
         etree.SubElement(fld, qn("a:t")).text = "‹#›" if kind == 13 else DATE_TEXT
 
 
+BRAND_TITLE_PT = (34, 30, 28, 26)      # the branded master's 34 pt, stepped down until the headline fits the box
+BRAND_TITLE_TRACKING = -0.84           # pt per character: the branded master's title style (spc="-84"), at any size
+
+
+def title_size(headline: str, width: float = W - LEFT - RIGHT) -> int:
+    """The branded master's title size (34 pt) when the headline fits on one line, else 30 pt on one line, else 28 or
+    26 pt on two (two lines of 30 pt or more overflow the title box into the subtitle). Measured in Libre Franklin
+    Bold. A headline that needs three lines even at 26 pt would run into the subtitle: ValueError, shorten it."""
+    for size in BRAND_TITLE_PT:
+        if wrapped_lines(headline, size, width, "Bold", BRAND_TITLE_TRACKING) <= TITLE_LINES[size]:
+            return size
+    raise ValueError(f"the headline needs three lines even at 26 pt and would run into the subtitle; shorten it "
+                     f"(two lines hold about 150 characters): {headline!r}")
+
+
 def chart_slide(prs, headline, subtitle, footnote, notes, source):
     """Title Only layout: headline in the title placeholder, subtitle, then source/footnote bottom-left."""
     lay = layout(prs, "Title Only", 5)
     slide = prs.slides.add_slide(lay)
     title = slide.shapes.title
     title.text = headline                                      # position, size, weight and color come from the master
-    if not on_grid(prs):                                       # the official template: place the title on its grid
+    if not on_grid(prs):                                       # the branded template: place the title on its grid
         title.left, title.top = Inches(LEFT), Inches(TITLE_TOP)
         title.width, title.height = Inches(W - LEFT - RIGHT), Inches(TITLE_H)
         tf = title.text_frame
         tf.vertical_anchor = MSO_ANCHOR.TOP
         tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
         tf.word_wrap = True
-        for r in tf.paragraphs[0].runs:                        # the official master says 34 pt; insight titles use 26
-            r.font.size = Pt(TITLE_PT)
+        size = title_size(headline)
+        for r in tf.paragraphs[0].runs:                        # the master's 34 pt when it fits, else down to 26
+            r.font.size = Pt(size)
             r.font.bold = True
     if subtitle:
         text_box(slide, LEFT, SUB_TOP, W - LEFT - RIGHT, 0.35, subtitle, 14, C.text)
@@ -443,7 +462,8 @@ def dlbl(point, *, val=False, cat=False, ser=False, pos=None, num_fmt=None, size
 
 # ====================================================================== decks and one-call slides
 def deck():
-    """A new, empty deck on the kit's template (McKesson theme and fonts, the Standard Template grid, the footer)."""
+    """A new, empty deck on the McKesson branded template (its master, logo, footer, theme and Libre Franklin; built
+    from office/brand/ by office/build_office.py). Chart slides use its Title Only layout."""
     return Presentation(str(TEMPLATE))
 
 
@@ -614,3 +634,53 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     if takeaways:
         takeaways_card(slide, takeaways)
     return SimpleNamespace(slide=slide, chart=chart, order=names, x_max=x_max, inside=inside)
+
+
+def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None = None, footnote: str | None = None,
+                  alt: str | None = None, takeaways: Sequence[tuple[str, str]] | None = None, notes: str | None = None,
+                  dpi: int = 200):
+    """A chart that has no native PowerPoint slide yet (line, stack, Sankey, strip, ...) as a picture on the slide
+    grid: the mckviz figure drawn at the chart area's size, so its text keeps its point size on the slide. The slide
+    carries the headline, subtitle and source, so any that mv.titles / mv.source put on the figure are taken off first
+    (show the figure's PNG with them as the preview, then pass the same figure here). The speaker notes say the chart
+    is a picture.
+
+        fig, ax = plt.subplots(); mv.line(ax, ...); mv.titles(fig, ...); mv.source(fig, ...)
+        mv.save(fig, "/tmp/preview.png")                        # the inline preview
+        office.picture_slide(prs, fig, headline=..., subtitle=..., source=...)
+
+    alt: the picture's alt text (default: the headline). takeaways: as in bar_slide. Returns SimpleNamespace(slide,
+    picture).
+    """
+    import io
+
+    from PIL import Image
+
+    fur = getattr(fig, "_mck", {})
+    for key in ("head", "sub", "foot"):                        # the slide's own text replaces the figure's
+        if fur.get(key) is not None:
+            fur[key].remove()
+    fig._mck = {}
+    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    top, bottom = CARD_TOP - 0.1, FOOT_TOP - 0.1
+    slot_h = bottom - top
+    fig.set_size_inches(fw, slot_h)
+    if fur.get("head") is not None or fur.get("sub") is not None:
+        fig.subplots_adjust(top=0.97)                          # mv.layout had lowered the plot under the titles
+    buf = io.BytesIO()
+    fig.canvas.print_figure(buf, format="png", dpi=dpi, bbox_inches="tight", pad_inches=0.05,
+                            facecolor="white")                 # as mv.save: never the sandbox's patched savefig
+    buf.seek(0)
+    w_px, h_px = Image.open(buf).size
+    w_in, h_in = w_px / dpi, h_px / dpi
+    scale = min(1.0, fw / w_in, slot_h / h_in)                 # natural size (true point sizes) unless too big
+    buf.seek(0)
+    default_notes = ("This chart is a picture: it has no native PowerPoint version yet. To change it, rebuild it from "
+                     "the data with mckviz and replace the picture.")
+    slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
+    pic = slide.shapes.add_picture(buf, Inches(LEFT), Inches(top), Inches(w_in * scale), Inches(h_in * scale))
+    pic.name = "Chart"
+    pic._element.nvPicPr.cNvPr.set("descr", alt or headline)
+    if takeaways:
+        takeaways_card(slide, takeaways)
+    return SimpleNamespace(slide=slide, picture=pic)
