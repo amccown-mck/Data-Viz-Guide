@@ -148,6 +148,27 @@ fig.show()
 For pages, use the chart-card pattern in [`gallery_plotly.py`](../../examples/python/gallery_plotly.py): the headline, subtitle and source go in HTML and Plotly draws only the data. `hovermode="x unified"` gives cursor tracking across series. On mobile, swap the end-label annotations for a one-row key on top.
 
 ### Excel and PowerPoint
+**From Python, in one call:** `mckviz.office.line_slide` builds this slide as a native, editable line chart on the kit's template (needs `python-pptx`), with `mv.line`'s arguments and rules: grey context, the focus in blue, end labels instead of a legend (nudged apart so they never overlap), light gridlines, the target as a dashed line, and the forecast dashed after a dotted divider. Right-click › Edit Data changes the numbers, and the end labels follow. The shaded event and the scenario band have no native version yet: for those, put the `mv.line` figure on the slide with `office.picture_slide`.
+```python
+# verified runnable (from the repo root)
+from mckviz import office
+
+quarters = ["Q1 '24", "Q2", "Q3", "Q4", "Q1 '25", "Q2", "Q3", "Q4", "Q1 '26", "Q2", "Q3", "Q4"]
+attrition = {
+    "Pharmacy Technician": [29.8, 30.5, 31.2, 30.9, 30.1, 29.4, 26.0, 23.2, 22.1, 21.4, 21.0, 20.6],
+    "DC Associate":        [25.1, 25.6, 25.9, 25.2, 24.8, 24.6, 24.3, 24.4, 24.0, 24.2, 24.1, 23.9],
+    "Customer Care":       [18.6, 18.9, 18.3, 18.1, 18.4, 18.0, 18.2, 18.5, 18.0, 18.1, 18.2, 17.9],
+    "Specialty Nursing":   [15.0, 14.8, 14.6, 14.9, 14.4, 14.1, 14.3, 14.0, 14.2, 14.1, 14.2, 14.2],
+}
+drop = max(attrition["Pharmacy Technician"][:6]) - attrition["Pharmacy Technician"][-1]
+prs = office.deck()                                   # the McKesson branded template
+office.line_slide(prs, quarters, attrition, focus={"Pharmacy Technician"}, target=20, target_label="Target 20%",
+                  fmt="{:.1f}%", headline=f"Pharmacy Technician attrition fell about {drop:.0f} points in two years",
+                  subtitle="Voluntary attrition by job family, annualized, Q1 2024–Q4 2026 (%)",
+                  source="Source: Synthetic data for illustration only")
+office.save(prs, "out/line.pptx")                     # one save per deliverable
+```
+By hand:
 1. **Theme (once per machine):** copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and `dist/office/Theme Fonts/McKesson Data Viz.xml` to `...\Document Themes\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`.
 2. Apply it in **Excel** with **Page Layout → Colors → McKesson Data Viz** and **Page Layout → Fonts → McKesson Data Viz**. In **PowerPoint**, use **Design → Variants ▾ → Colors / Fonts → McKesson Data Viz**. Accent 1 = `#005A8C`, Accent 2 = `#143359`, Accent 3 = `#009EFF`; light blue `#66C4FF` via **More Colors › Hex**.
 3. Put periods in the first column and one series per column, then select the range and click **Insert → Insert Line or Area Chart → 2-D Line → Line**.

@@ -177,6 +177,20 @@ office.bar_slide(prs, df.job_family, df.vol_attrition_pct, focus={"Pharmacy Tech
                  source="Source: Synthetic data for illustration only")
 office.save(prs, "out/bar-highlight.pptx")            # one save per deliverable
 ```
+For a few periods or stages in their natural order, `office.column_slide` takes the same arguments (no `sort`) and draws columns: the value on top of each, the benchmark across all columns, named at its right end.
+```python
+# verified runnable (from the repo root)
+import pandas as pd
+from mckviz import office
+
+df = pd.read_csv("examples/data/internal_fill_by_fy.csv")
+prs = office.deck()
+office.column_slide(prs, df.fiscal_year, df.internal_fill_pct, focus={"FY26"}, fmt="{:.0f}%",
+                    headline="Internal candidates filled 29% of roles in FY26, the highest in five years",
+                    subtitle="Share of open roles filled by internal candidates, FY22–FY26 (%)",
+                    source="Source: Synthetic data for illustration only")
+office.save(prs, "out/column.pptx")
+```
 By hand:
 1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**). Accent 1 = `#005A8C` (focus), Accent 2 = `#143359` (navy accent), Accent 3 = `#009EFF` (bright blue); light blue `#66C4FF` and context grey `#B4B0A5` via **More Colors › Hex**.
 2. Sort the data by value, select it, then **Insert › Charts › Insert Column or Bar Chart › 2-D Clustered Bar**. Excel draws the first row at the bottom, so either sort ascending or set **Format Axis › Axis Options › Categories in reverse order**.

@@ -190,6 +190,145 @@ def test_short_bar_on_the_benchmark_warns():
     assert any("too short" in str(w.message) for w in caught)
 
 
+YEARS = ["FY22", "FY23", "FY24", "FY25", "FY26"]
+FILL = [22, 23, 25, 24, 29]
+
+
+def column(prs=None, **kw):
+    args = dict(focus={"FY26"}, fmt="{:.0f}%", headline="Internal fill reached 29% in FY26",
+                subtitle="Internal fill rate (%)", source="Source: Synthetic data")
+    args.update(kw)
+    return office.column_slide(prs or office.deck(), YEARS, FILL, **args)
+
+
+def test_columns_keep_their_order_with_labels_on_top():
+    r = column()
+    assert r.chart.chart_type == XL_CHART_TYPE.COLUMN_CLUSTERED
+    assert list(r.chart.plots[0].categories) == YEARS
+    xml = r.chart._chartSpace.xml
+    assert "majorGridlines" not in xml and "minorGridlines" not in xml
+    assert not r.chart.value_axis.visible
+    pts = r.chart.plots[0].series[0].points
+    assert str(pts[4].format.fill.fore_color.rgb) == mv.colors.focus.lstrip("#").upper()
+    assert pts[4].data_label.font.bold and not pts[0].data_label.font.bold
+    assert pts[0].data_label._dLbl.find(qn("c:numFmt")).get("formatCode") == '0"%"'
+
+
+def test_column_labels_fit_under_the_top():
+    r = column()
+    plot_h = office.PLOT_H * office.CHART_H
+    assert max(FILL) / r.y_max * plot_h + office.LABEL_PAD + office.LINE_H <= plot_h
+
+
+def test_column_benchmark_is_a_line_across_and_clears_its_labels():
+    r = column(benchmark=24, benchmark_label="Target 24%")
+    line = named(r.slide, "Benchmark line")
+    assert line.begin_y == line.end_y                            # horizontal, across every column
+    frame = next(s for s in r.slide.shapes if s.has_chart)
+    fl, fw = Emu(frame.left).inches, Emu(frame.width).inches
+    lay = manual_layout(r.chart)
+    assert Emu(line.begin_x).inches <= fl + fw * lay["x"] + 0.01
+    assert Emu(line.end_x).inches >= fl + fw * (lay["x"] + lay["w"])
+    assert named(r.slide, "Benchmark label").text_frame.text == "Target 24%"
+    assert set(r.inside) == {"FY22", "FY23", "FY25"}             # their top labels would cross the line at 24
+    assert column().inside == []
+
+
+def test_long_column_labels_warn():
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        office.column_slide(office.deck(), FAMILIES * 2, RATES * 2, headline="h", source="s")
+    assert any("bar_slide" in str(w.message) for w in caught)
+
+
+QUARTERS = ["Q1 '24", "Q2", "Q3", "Q4", "Q1 '25", "Q2", "Q3", "Q4"]
+LINES = {"Pharmacy Technician": [31, 30.5, 30, 29.8, 29, 28.4, 28, 27.4],
+         "Customer Care": [19, 19.2, 19.4, 19, 18.8, 18.9, 19.1, 18.9],
+         "Finance": [8, 7.9, 7.8, 7.6, 7.5, 7.6, 7.5, 7.4],
+         "HR": [8.5, 8.4, 8.3, 8.2, 8.3, 8.1, 8.2, 7.6]}
+
+
+def line(prs=None, **kw):
+    args = dict(focus={"Pharmacy Technician"}, fmt="{:.1f}%", headline="Pharmacy technician attrition fell",
+                subtitle="Voluntary attrition (%)", source="Source: Synthetic data")
+    args.update(kw)
+    return office.line_slide(prs or office.deck(), QUARTERS, LINES, **args)
+
+
+def end_label(r, name):
+    s = next(s for s in r.chart.plots[0].series if s.name == name)
+    return s.points[len(QUARTERS) - 1].data_label._dLbl
+
+
+def test_line_colors_and_draw_order():
+    r = line(accent="Customer Care")
+    assert r.chart.chart_type == XL_CHART_TYPE.LINE
+    assert set(r.order[-2:]) == {"Pharmacy Technician", "Customer Care"}   # highlighted lines draw last, on top
+    assert r.colors == {"Pharmacy Technician": mv.colors.focus, "Customer Care": mv.colors.accent,
+                        "Finance": mv.colors.context, "HR": mv.colors.context}
+    assert not r.chart.has_legend
+
+
+def test_line_end_labels_name_and_value_follow_edit_data():
+    r = line()
+    hot = end_label(r, "Pharmacy Technician")
+    assert hot.find(qn("c:showSerName")).get("val") == "1" and hot.find(qn("c:showVal")).get("val") == "1"
+    assert hot.find(qn("c:numFmt")).get("formatCode") == '0.0"%"'
+    grey = end_label(r, "Finance")
+    assert grey.find(qn("c:showSerName")).get("val") == "1" and grey.find(qn("c:showVal")).get("val") == "0"
+
+
+def test_close_end_labels_are_nudged_apart():
+    r = line()
+    nudged = {nm: end_label(r, nm).find(qn("c:layout")) for nm in ("Finance", "HR")}
+    assert any(lay is not None for lay in nudged.values())       # 7.4% and 7.6% would overlap
+    assert end_label(r, "Pharmacy Technician").find(qn("c:layout")) is None
+
+
+def test_line_axis_and_gridlines():
+    r = line()
+    va = r.chart.value_axis
+    assert va.has_major_gridlines and va.visible
+    assert va.tick_labels.number_format == '0"%"'                 # whole-number steps: no decimals on the axis
+    lo, hi = r.y_range
+    assert lo <= 7.4 and hi >= 31
+
+
+def test_line_target_and_forecast():
+    r = line(target=20, target_label="Target 20%", forecast_from="Q1 '25")
+    assert named(r.slide, "Target label").text_frame.text == "Target 20%"
+    tl = named(r.slide, "Target line")
+    assert tl.begin_y == tl.end_y
+    s = r.chart.plots[0].series[0]
+    assert s.points[7].format.line.dash_style is not None         # dashed after the last actual
+    assert named(r.slide, "Forecast divider")
+
+
+def test_forecast_label_must_be_unique():
+    with pytest.raises(ValueError, match="position"):
+        line(forecast_from="Q2")                                  # "Q2" appears twice
+    assert named(line(forecast_from=5).slide, "Forecast divider")
+
+
+@pytest.mark.parametrize("kw, msg", [
+    (dict(focus=set()), "name the focus"), (dict(focus={"A", "B", "C"}), "at most two"),
+    (dict(focus={"Z"}), "not among")])
+def test_line_rejects(kw, msg):
+    many = {k: [1, 2] for k in "ABCDE"}
+    with pytest.raises(ValueError, match=msg):
+        office.line_slide(office.deck(), ["Q1", "Q2"], many, headline="h", source="s", **kw)
+
+
+def test_two_to_four_lines_without_focus_are_categorical():
+    r = office.line_slide(office.deck(), ["Q1", "Q2"], {"A": [1, 2], "B": [2, 1]}, headline="h", source="s")
+    assert r.colors == {"A": mv.CATEGORICAL[0], "B": mv.CATEGORICAL[1]}
+
+
+def test_line_gaps_stay_gaps():
+    r = office.line_slide(office.deck(), ["Q1", "Q2", "Q3"], {"A": [1, float("nan"), 3]}, headline="h", source="s")
+    assert r.chart.plots[0].series[0].values == (1.0, None, 3.0)
+
+
 def figure_with_titles():
     import matplotlib
 

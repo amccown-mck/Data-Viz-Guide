@@ -1166,38 +1166,16 @@ def slide_two_charts(prs):
 
 
 def slide_column(prs):
+    """Columns in time order, built by the one-call slide the agents use (mckviz.office.column_slide)."""
     D = column_data()
     df = D.df
-    slide = chart_slide(
-        prs, D.headline, D.subtitle, D.footnote,
-        "Column highlight: one blue column (the one the headline names), the rest grey; labels on top, value axis and "
-        "gridlines deleted, columns from zero. Edit Data to change the numbers; to move the highlight, click a column "
-        f"twice › Fill › {C.focus}, and set the others to {C.context}.")
-    data = CategoryChartData()
-    data.categories = list(df.fiscal_year)
-    data.add_series("Internal fill rate (%)", list(df.internal_fill_pct))
-    frame, chart = add_chart(slide, XL_CHART_TYPE.COLUMN_CLUSTERED, data, width=SIDE_CHART_W)
-    plot_layout(chart, 0.02, PLOT_Y, 0.96, PLOT_H)
-    plot = chart.plots[0]
-    plot.gap_width = BAND_GAP
-    plot.vary_by_categories = False
-    s = plot.series[0]
-    fill(s, C.context)
-    last = len(df) - 1
-    for i, v in enumerate(df.internal_fill_pct):
-        hi = i == last
-        if hi:
-            fill(s.points[i], C.focus)
-        point_label(s.points[i], f"{v:.0f}%", C.headline if hi else C.text, bold=hi,
-                    position=XL_LABEL_POSITION.OUTSIDE_END)
-    va = chart.value_axis
-    va.minimum_scale, va.maximum_scale = 0, int(df.internal_fill_pct.max() * 1.12) + 1     # room for the top label
-    va.visible = False
-    va.has_major_gridlines = False
-    baseline(chart.category_axis)
-    axis_ticks(chart.category_axis, 12, C.text)
-    takeaways(slide, D.points)
-    return slide
+    built = office.column_slide(
+        prs, df.fiscal_year, df.internal_fill_pct, focus={df.fiscal_year.iloc[-1]}, fmt="{:.0f}%",
+        headline=D.headline, subtitle=D.subtitle, footnote=D.footnote, source=SRC, takeaways=D.points,
+        notes="Column highlight: one blue column (the one the headline names), the rest grey; labels on top, value "
+              "axis and gridlines deleted, columns from zero. Edit Data to change the numbers; the labels follow. To "
+              f"move the highlight, click a column twice › Fill › {C.focus}, and set the others to {C.context}.")
+    return built.slide
 
 
 def slide_dumbbell(prs):
