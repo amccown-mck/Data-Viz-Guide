@@ -348,8 +348,14 @@ def test_stack_labels_where_they_fit():
     r = office.stack_slide(office.deck(), FUNCTIONS, MIX, story="Contingent", headline="h", source="s")
     contingent = r.chart.plots[0].series[0]
     assert all(p.data_label._dLbl.find(qn("c:showVal")).get("val") == "1" for p in contingent.points)
-    with pytest.warns(UserWarning, match="runs past"):         # a sliver's name can't sit over it either
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")                         # a sliver's name right-aligns to the bar's end
         tiny = office.stack_slide(office.deck(), ["A"], [("Big", [99.5]), ("Small", [0.5])], headline="h", source="s")
+    name = named(tiny.slide, "Segment name: Small")
+    frame = next(s for s in tiny.slide.shapes if s.has_chart)
+    lay = manual_layout(tiny.chart)
+    plot_right = Emu(frame.left).inches + Emu(frame.width).inches * (lay["x"] + lay["w"])
+    assert Emu(name.left + name.width).inches == pytest.approx(plot_right, abs=0.01)
     assert tiny.chart.plots[0].series[1].points[0].data_label._dLbl.find(qn("c:showVal")).get("val") == "0"
 
 

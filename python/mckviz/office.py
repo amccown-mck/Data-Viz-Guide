@@ -1130,7 +1130,8 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
     ca.tick_labels.font.size = Pt(TICK_PT)
     ca.tick_labels.font.color.rgb = rgb(C.text)
 
-    # Segment names once, above the top bar, each at its segment's left edge (pushed right if the one before is long).
+    # Segment names once, above the top bar, each at its segment's left edge (pushed right if the one before is long;
+    # a name that would run past the bar's end is right-aligned to it instead).
     fl, ft, _, fh = _frame_in(frame)
     plot_left = fl + fw * px
     band = ph * CHART_H / len(cats)
@@ -1140,8 +1141,11 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
         hot = col in (C.focus, C.accent)
         tw = text_width(nm, TICK_PT, "SemiBold" if hot else "Regular") + 0.1
         start = max(x, prev_end + 0.15 if prev_end > plot_left else x)
-        if start + tw > plot_left + plot_w + 0.1:
-            warnings.warn(f"the segment name {nm!r} runs past the chart; shorten the part names", stacklevel=2)
+        if start + tw > plot_left + plot_w:
+            start = plot_left + plot_w - tw
+        if prev_end > plot_left and start < prev_end + 0.1:
+            warnings.warn(f"the segment names {nm!r} and the one before it overlap above the top bar; shorten the "
+                          "part names", stacklevel=2)
         text_box(slide, start, bar_top - LINE_H - 0.08, tw, LINE_H, nm, TICK_PT, col if hot else C.text,
                  font=SEMI if hot else None, name=f"Segment name: {nm}", wrap=False)
         prev_end = start + tw
