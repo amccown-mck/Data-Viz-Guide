@@ -322,7 +322,7 @@ def build_copilot() -> Path:
     pkg = ROOT / "python" / "mckviz"
     shutil.copytree(pkg, COPILOT_OUT / "scripts" / "mckviz_src", ignore=lambda d, names: [   # the code only
         n for n in names if not n.endswith(".py")])
-    for f in [*pkg.glob("*.json"), pkg / "mckviz.mplstyle", pkg / "VERSION"]:   # data, next to the README
+    for f in [*pkg.glob("*.json"), *pkg.glob("*.pptx"), pkg / "mckviz.mplstyle", pkg / "VERSION"]:   # data, by README
         name = f.name if f.suffix in COPILOT_TYPES else f"{f.name}.txt"   # mck_setup.py renames these back
         shutil.copyfile(f, COPILOT_OUT / "assets" / "mckviz" / name)
     shutil.copytree(pkg / "geodata", COPILOT_OUT / "assets" / "geodata", ignore=shutil.ignore_patterns("__pycache__"))

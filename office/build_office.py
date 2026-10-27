@@ -32,59 +32,38 @@ import pandas as pd
 from lxml import etree
 from pptx import Presentation
 from pptx.chart.data import BubbleChartData, CategoryChartData, XyChartData
-from pptx.dml.color import RGBColor
-from pptx.enum.chart import (XL_CHART_TYPE, XL_LABEL_POSITION, XL_LEGEND_POSITION, XL_MARKER_STYLE,
-                            XL_TICK_LABEL_POSITION, XL_TICK_MARK)
-from pptx.enum.shapes import MSO_CONNECTOR, MSO_SHAPE
-from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
+from pptx.enum.chart import XL_CHART_TYPE, XL_LABEL_POSITION, XL_MARKER_STYLE, XL_TICK_LABEL_POSITION
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from pptx.oxml.ns import qn
 from pptx.util import Emu, Inches, Pt
 
 import mckviz as mv
+from mckviz import office
+# The slide grid and the slide and chart helpers live in mckviz.office (shared with the one-call slides).
+from mckviz.office import (AUTHOR, BAND_GAP, BODY_BOTTOM, BODY_TOP, CARD_BOTTOM, CARD_TOP, CHART_H, CHART_TOP,
+                           DATE_TEXT, FOOT_TOP, FOOTER_H, FOOTER_PT, FOOTER_TEXT, FOOTER_TOP, GUTTER, H, LEFT,
+                           MASTER_NAME, PLOT_H, PLOT_Y, RIGHT, SEMI, SIDE_CHART_W, TITLE_H, TITLE_PT, TITLE_TOP, W,
+                           add_chart, baseline, dlbl, fill, flat, layout, legend_top_left, line_shape, no_fill,
+                           no_rounded_corners, plot_layout, point_label, points_on_edges, rgb, shape, shape_text,
+                           takeaways_card as takeaways, text_box)
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "examples" / "data"
 OUT = ROOT / "dist" / "office"
-FONTS = ROOT / "fonts" / "LibreFranklin"
 THEME_COLORS = OUT / "Theme Colors" / "McKesson Data Viz.xml"
 THEME_FONTS = OUT / "Theme Fonts" / "McKesson Data Viz.xml"
 A_NS = "http://schemas.openxmlformats.org/drawingml/2006/main"
 C = mv.colors
 FONT = mv.FONT
 SRC = "Source: Synthetic data for illustration only"
-BAND_GAP = 50                       # Office gap width 50% -> bar : gap ~ 2 : 1 (chart.bar.band_fill)
-
-# Slide geometry (16:9, inches)
-W, H = 13.333, 7.5
-# The McKesson Standard Template's grid: 0.39 in side margins, title box 0.38-1.31 in, footer and logo at 7.13 in.
-LEFT, RIGHT = 0.39, 0.39
-TITLE_TOP, TITLE_H, TITLE_PT = 0.38, 0.93, 26              # typography.roles.slide_title: Bold, McKesson Blue, 24-28 pt
-SUB_TOP, CHART_TOP, CHART_H = 1.32, 1.8, 4.6
-FOOT_TOP = 6.45                                            # source / footnote block ends at 6.95 in, above the footer
-BODY_TOP, BODY_BOTTOM = 1.32, 6.95                         # content area: under the title box, above the source line
-# Footer (as in the Standard Template): page number | thin blue rule | confidentiality line | date, centred on 7.2 in.
-FOOTER_TOP, FOOTER_H, FOOTER_PT = 7.08, 0.24, 8
-# Two chart widths on a one-chart slide: full width, or chart + takeaways (the chart two-thirds, a gutter as wide as
-# the two-charts slide's, and the takeaways panel the right third).
-GUTTER = 0.5
-SIDE_CHART_W = (W - LEFT - RIGHT - GUTTER) * 2 / 3          # 8.04 in
-TAKE_LEFT = LEFT + SIDE_CHART_W + GUTTER
-TAKE_W = W - RIGHT - TAKE_LEFT                               # 4.02 in
-# The takeaways card sits in the same place on every slide; plot areas line up with it (PLOT_Y, PLOT_H are fractions
-# of the chart frame), so the chart's top and baseline meet the card's top and bottom edges.
-CARD_TOP, CARD_BOTTOM = CHART_TOP + 0.15, 6.0
-PLOT_Y, PLOT_H = (CARD_TOP - CHART_TOP) / CHART_H, (CARD_BOTTOM - CARD_TOP) / CHART_H
-FOOTER_TEXT = "McKesson Proprietary and Confidential"
-MASTER_NAME = "McKesson Data Viz"
-AUTHOR = "McKesson Workforce Innovation"
-TODAY = datetime.now()
-DATE_TEXT = f"{TODAY.month}/{TODAY.day}/{TODAY.year}"        # placeholder text; PowerPoint updates the date field
 OFFICIAL = ROOT / "reference" / "mckesson-branding" / "McKesson Standard Template.pptx"
+PACKAGE_TEMPLATE = ROOT / "python" / "mckviz" / "template.pptx"     # what mckviz.office.deck() opens
 
 
-def rgb(hex_color: str) -> RGBColor:
-    return RGBColor.from_string(hex_color.lstrip("#").upper())
+def chart_slide(prs, headline, subtitle, footnote, notes, source=SRC):
+    return office.chart_slide(prs, headline, subtitle, footnote, notes, source)
 
 
 # ====================================================================== theme
@@ -300,12 +279,6 @@ def grid_master(prs) -> None:
                     ext.set("cx", str(r - x))
 
 
-def on_grid(prs_or_layout) -> bool:
-    """True for the kit's own master (already on the grid); False for the official template."""
-    master = prs_or_layout.slide_master._element
-    return master.find(qn("p:cSld")).get("name") == MASTER_NAME
-
-
 def set_properties(prs, title: str, description: str) -> None:
     """Replace python-pptx's defaults (author 'Steve Canny', 2013 dates, its own description) and drop its
     default thumbnail, which would otherwise show a generic picture in File Explorer and SharePoint."""
@@ -322,265 +295,7 @@ def set_properties(prs, title: str, description: str) -> None:
             rels.pop(rid)
 
 
-def flat(shape) -> None:
-    """No theme effect (shadow, glow, bevel) on a drawn shape or connector: effectRef idx 0."""
-    ref = shape._element.find(".//" + qn("a:effectRef"))
-    if ref is not None:
-        ref.set("idx", "0")
-
-
 # ====================================================================== slide furniture
-def _shapes(target):
-    """A slide or a group shape -> its shape collection (so helpers can draw into a group)."""
-    return target.shapes if hasattr(target, "shapes") else target
-
-
-def text_box(slide, left, top, width, height, text, size, color, bold=False, light=False, anchor=MSO_ANCHOR.TOP,
-             align=PP_ALIGN.LEFT, font=None, name=None, wrap=True):
-    """Text box with zero insets. `font` names a weight explicitly (e.g. "Libre Franklin SemiBold")."""
-    box = _shapes(slide).add_textbox(Inches(left), Inches(top), Inches(width), Inches(height))
-    if name:
-        box.name = name
-    tf = box.text_frame
-    tf.word_wrap = wrap
-    tf.vertical_anchor = anchor
-    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
-    for i, line in enumerate(text.split("\n")):
-        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.alignment = align
-        run = p.add_run()
-        run.text = line
-        run.font.size = Pt(size)
-        run.font.bold = bold
-        run.font.color.rgb = rgb(color)
-        run.font.name = font or (f"{FONT} Light" if light else FONT)
-    return box
-
-
-def layout(prs, name: str, fallback: int):
-    """A layout by name (the official template), else the default template's layout by index."""
-    return next((l for l in prs.slide_layouts if l.name == name), prs.slide_layouts[fallback])
-
-
-def add_footer(slide, lay) -> None:
-    """Copy the layout's slide-number and date placeholders onto the slide (python-pptx doesn't), with live fields,
-    so the official template's footer reads: page | McKesson Proprietary and Confidential | date."""
-    kinds = (13, 15, 16) if on_grid(lay) else (13, 16)
-    for ph in lay.placeholders:
-        kind = ph.placeholder_format.type
-        if kind not in kinds:                                  # SLIDE_NUMBER, FOOTER (kit master only), DATE
-            continue
-        slide.shapes.clone_placeholder(ph)
-        p = slide.placeholders[ph.placeholder_format.idx].text_frame.paragraphs[0]._p
-        if kind == 15:
-            r = etree.SubElement(p, qn("a:r"))
-            etree.SubElement(r, qn("a:rPr"), lang="en-US")
-            etree.SubElement(r, qn("a:t")).text = FOOTER_TEXT
-            continue
-        fld = etree.SubElement(p, qn("a:fld"))
-        fld.set("id", "{B6F15528-21DE-4FAA-801E-634DDDAF4B2B}" if kind == 13 else "{3A1B2C4D-5E6F-4A7B-8C9D-0E1F2A3B4C5D}")
-        fld.set("type", "slidenum" if kind == 13 else "datetime1")
-        etree.SubElement(fld, qn("a:t")).text = "\u2039#\u203a" if kind == 13 else DATE_TEXT
-
-
-def chart_slide(prs, headline, subtitle, footnote, notes, source=SRC):
-    """Title Only layout: headline in the title placeholder, subtitle, then source/footnote bottom-left."""
-    lay = layout(prs, "Title Only", 5)
-    slide = prs.slides.add_slide(lay)
-    title = slide.shapes.title
-    title.text = headline                                      # position, size, weight and color come from the master
-    if not on_grid(prs):                                       # the official template: place the title on its grid
-        title.left, title.top = Inches(LEFT), Inches(TITLE_TOP)
-        title.width, title.height = Inches(W - LEFT - RIGHT), Inches(TITLE_H)
-        tf = title.text_frame
-        tf.vertical_anchor = MSO_ANCHOR.TOP
-        tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
-        tf.word_wrap = True
-        for r in tf.paragraphs[0].runs:                        # the official master says 34 pt; insight titles use 26
-            r.font.size = Pt(TITLE_PT)
-            r.font.bold = True
-    if subtitle:
-        text_box(slide, LEFT, SUB_TOP, W - LEFT - RIGHT, 0.35, subtitle, 14, C.text)
-    foot = "\n".join(x for x in (footnote, source) if x)
-    if foot:
-        text_box(slide, LEFT, FOOT_TOP, W - LEFT - RIGHT, 0.5, foot, 9, C.text_muted, light=True,
-                 anchor=MSO_ANCHOR.BOTTOM)
-    if lay.name == "Title Only":
-        add_footer(slide, lay)
-    slide.notes_slide.notes_text_frame.text = notes
-    return slide
-
-
-def wrapped_lines(text, size, width, weight="Regular") -> int:
-    """How many lines `text` wraps to in a `width`-inch box at `size` pt: greedy word wrap, measured with the bundled
-    Libre Franklin, so a caption that would spill is caught at build time, not on the slide."""
-    from matplotlib.font_manager import FontProperties
-    from matplotlib.textpath import TextToPath
-    prop = FontProperties(fname=str(FONTS / f"LibreFranklin-{weight}.ttf"), size=size)
-    measure = lambda t: TextToPath().get_text_width_height_descent(t, prop, ismath=False)[0] / 72   # noqa: E731
-    lines, line = 1, ""
-    for word in text.split():
-        trial = f"{line} {word}".strip()
-        if line and measure(trial) > width:
-            lines, line = lines + 1, word
-        else:
-            line = trial
-    return lines
-
-
-def takeaways(slide, points, title="Key takeaways"):
-    """Chart + takeaways: a flat card in the right third of the slide (TAKE_LEFT, TAKE_W) beside a two-thirds chart
-    (SIDE_CHART_W), in the same place on every slide (CARD_TOP to CARD_BOTTOM; the chart's plot area uses PLOT_Y and
-    PLOT_H to line up with it). Light fill, a blue rule along the top (the guide's flat card), the label, then two or
-    three points spread down the card with hairlines between them: each a Bold navy number on one line and a caption
-    of at most two lines, written from the data. Facts, not advice."""
-    assert 2 <= len(points) <= 3, "two or three takeaways"
-    pad, label_h, num_h, cap_h = 0.25, 0.42, 0.42, 0.46
-    x, w = TAKE_LEFT + pad, TAKE_W - 2 * pad
-    for num, cap in points:
-        assert wrapped_lines(num, 24, w, "Bold") == 1, f"takeaway number wraps: {num!r}"
-        assert wrapped_lines(cap, 14, w) <= 2, f"takeaway caption over two lines: {cap!r}"
-    y0 = CARD_TOP + pad + label_h
-    item = num_h + cap_h
-    gap = min((CARD_BOTTOM - pad - y0 - len(points) * item) / (len(points) - 1), 0.6)
-    assert gap >= 0.2, "the card is too short for its points"
-    g = slide.shapes.add_group_shape()
-    g.name = "Takeaways"
-    shape(g, MSO_SHAPE.RECTANGLE, TAKE_LEFT, CARD_TOP, TAKE_W, CARD_BOTTOM - CARD_TOP, C.surface_subtle,
-          name="Takeaways card")
-    shape(g, MSO_SHAPE.RECTANGLE, TAKE_LEFT, CARD_TOP, TAKE_W, 0.04, C.focus, name="Takeaways rule")
-    text_box(g, x, CARD_TOP + pad, w, 0.26, title, 14, C.headline, font=SEMI, name="Takeaways label")
-    for i, (num, cap) in enumerate(points):
-        y = y0 + i * (item + gap)
-        if i:
-            line_shape(g, x, y - gap / 2, x + w, y - gap / 2, C.context_light, dash=False, name=f"Takeaway rule {i}")
-        text_box(g, x, y, w, num_h, num, 24, C.headline, bold=True, name=f"Takeaway {i + 1}: number")
-        text_box(g, x, y + num_h, w, cap_h, cap, 14, C.text, name=f"Takeaway {i + 1}: caption")
-    nf = slide.notes_slide.notes_text_frame
-    nf.text += (f"\n\nLayout: chart + takeaways. The chart is two-thirds of the width ({SIDE_CHART_W:.2f} in); the "
-                f"takeaways card is the right third ({TAKE_W:.2f} in) after a {GUTTER} in gutter, in the same place on "
-                f"every slide ({CARD_TOP:.2f}-{CARD_BOTTOM:.2f} in), and the plot area lines up with it. Keep 2-3 "
-                "points, each a number and a caption of one or two lines: facts from the chart, no advice. Retype them "
-                "for your data (each is its own text box in the Takeaways group).")
-    return g
-
-
-def points_on_edges(chart) -> None:
-    """Line chart: put the first and last categories on the plot's edges (Axis Position › On tick marks) instead of
-    the middle of their bands, so a two-period slope uses the plot's full width."""
-    va = chart._chartSpace.find(".//" + qn("c:valAx"))
-    el = va.find(qn("c:crossBetween"))
-    if el is None:
-        el = etree.Element(qn("c:crossBetween"))
-        next(e for e in (va.find(qn(t)) for t in ("c:crossesAt", "c:crosses")) if e is not None).addnext(el)
-    el.set("val", "midCat")
-
-
-def add_chart(slide, chart_type, data, top=CHART_TOP, height=CHART_H, left=LEFT, width=None):
-    width = width or (W - LEFT - RIGHT)
-    frame = slide.shapes.add_chart(chart_type, Inches(left), Inches(top), Inches(width), Inches(height), data)
-    chart = frame.chart
-    chart.has_title = False                    # the slide title is the headline
-    chart.has_legend = False
-    chart.font.name = FONT
-    chart.font.size = Pt(12)
-    chart.font.color.rgb = rgb(C.text)
-    no_rounded_corners(chart._chartSpace)
-    return frame, chart
-
-
-def no_rounded_corners(chart_space) -> None:
-    """Flat, not rounded: <c:roundedCorners val="0"/> (Office rounds the chart border when the element is missing)."""
-    old = chart_space.find(qn("c:roundedCorners"))
-    if old is None:
-        old = etree.Element(qn("c:roundedCorners"))
-        after = [chart_space.find(qn(t)) for t in ("c:date1904", "c:lang")]
-        after = [e for e in after if e is not None]
-        if after:
-            after[-1].addnext(old)
-        else:
-            chart_space.insert(0, old)
-    old.set("val", "0")
-
-
-def plot_layout(chart, x, y, w, h) -> None:
-    """Pin the inner plot area (fractions of the chart frame) so drawn overlays line up with the data."""
-    plot_area = chart._chartSpace.chart.plotArea
-    old = plot_area.find(qn("c:layout"))
-    if old is not None:
-        plot_area.remove(old)
-    layout = etree.SubElement(plot_area, qn("c:layout"))
-    plot_area.insert(0, layout)
-    manual = etree.SubElement(layout, qn("c:manualLayout"))
-    for tag, val in (("layoutTarget", "inner"), ("xMode", "edge"), ("yMode", "edge"),
-                     ("x", x), ("y", y), ("w", w), ("h", h)):
-        etree.SubElement(manual, qn(f"c:{tag}")).set("val", str(val))
-
-
-def legend_top_left(chart) -> None:
-    chart.has_legend = True
-    chart.legend.position = XL_LEGEND_POSITION.TOP
-    chart.legend.include_in_layout = False
-    chart.legend.font.size = Pt(12)
-    leg = chart._chartSpace.chart.find(qn("c:legend"))
-    layout = leg.find(qn("c:layout"))
-    if layout is None:
-        layout = etree.SubElement(leg, qn("c:layout"))
-        leg.find(qn("c:legendPos")).addnext(layout)
-    manual = etree.SubElement(layout, qn("c:manualLayout"))
-    for tag, val in (("xMode", "edge"), ("yMode", "edge"), ("x", 0.0), ("y", 0.0), ("w", 0.42), ("h", 0.07)):
-        etree.SubElement(manual, qn(f"c:{tag}")).set("val", str(val))
-
-
-def no_fill(series) -> None:
-    series.format.fill.background()
-    series.format.line.fill.background()
-
-
-def fill(target, hex_color) -> None:
-    """Solid fill for a chart series/point (.format.fill) or an autoshape (.fill)."""
-    f = target.format.fill if hasattr(target, "format") else target.fill
-    f.solid()
-    f.fore_color.rgb = rgb(hex_color)
-
-
-def baseline(axis, visible=True) -> None:
-    axis.major_tick_mark = XL_TICK_MARK.NONE
-    axis.minor_tick_mark = XL_TICK_MARK.NONE
-    if visible:
-        axis.format.line.color.rgb = rgb(C.axis)
-        axis.format.line.width = Pt(0.75)
-    else:
-        axis.format.line.fill.background()
-
-
-def point_label(point, text, color, bold=False, size=12, position=None):
-    dl = point.data_label
-    dl.has_text_frame = True
-    dl.text_frame.text = text
-    run = dl.text_frame.paragraphs[0].runs[0]
-    run.font.size = Pt(size)
-    run.font.bold = bold
-    run.font.name = FONT if bold else f"{FONT} Medium"         # typography.roles.label: Medium; emphasis: Bold
-    run.font.color.rgb = rgb(color)
-    if position is not None:
-        dl.position = position
-
-
-def line_shape(slide, x1, y1, x2, y2, color, width_pt=0.75, dash=True, arrow=False, name=None):
-    ln = _shapes(slide).add_connector(MSO_CONNECTOR.STRAIGHT, Inches(x1), Inches(y1), Inches(x2), Inches(y2))
-    ln.line.color.rgb = rgb(color)
-    ln.line.width = Pt(width_pt)
-    if dash:
-        ln.line.dash_style = 4          # MSO_LINE_DASH_STYLE.DASH
-    if arrow:                           # arrowhead at the end point
-        etree.SubElement(ln.line._get_or_add_ln(), qn("a:tailEnd"), type="triangle", w="med", len="med")
-    if name:
-        ln.name = name
-    flat(ln)
-    return ln
-
-
 # ====================================================================== headlines (computed from the data, shared by both files)
 def waterfall_headline(df) -> str:
     focus = {"Automation savings", "Contractor conversion"}
@@ -643,48 +358,18 @@ def slide_rules(prs):
 
 
 def slide_bar(prs):
-    df = pd.read_csv(DATA / "attrition_by_job_family.csv").sort_values("vol_attrition_pct")   # ascending: top = largest
+    """The ranking bar, built by the one-call slide the agents use (mckviz.office.bar_slide)."""
+    df = pd.read_csv(DATA / "attrition_by_job_family.csv")
     ent = float(df.enterprise_rate_pct.iloc[0])
-    focus = set(df.job_family[df.vol_attrition_pct > 20])
-    slide = chart_slide(
-        prs, f"Two frontline job families lose about 1 in 4 people a year, well above the {ent:.1f}% enterprise rate",
-        "Voluntary attrition by job family, FY26 (%)",
-        "Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months.",
-        "Bar highlight. To change the data: right-click › Edit Data. To recolor a bar: click it twice to select only that "
-        "bar › Format Data Point › Fill. The dashed enterprise line is a drawn shape positioned for an axis of 0–30: "
-        "move it if the rate changes. Build-up: duplicate the slide, make all bars grey on the first copy.")
-    data = CategoryChartData()
-    data.categories = list(df.job_family)
-    data.add_series("Voluntary attrition (%)", list(df.vol_attrition_pct))
-    frame, chart = add_chart(slide, XL_CHART_TYPE.BAR_CLUSTERED, data)
-    px, py, pw, ph = 0.25, 0.08, 0.68, 0.9
-    plot_layout(chart, px, py, pw, ph)
-    plot = chart.plots[0]
-    plot.gap_width = BAND_GAP
-    plot.vary_by_categories = False
-    series = plot.series[0]
-    fill(series, C.context)
-    for i, (fam, val) in enumerate(zip(df.job_family, df.vol_attrition_pct)):
-        hi = fam in focus
-        if hi:
-            fill(series.points[i], C.focus)
-        point_label(series.points[i], f"{val:.1f}%", C.headline if hi else C.text, bold=hi,
-                    position=XL_LABEL_POSITION.OUTSIDE_END)
-    va = chart.value_axis
-    va.minimum_scale, va.maximum_scale = 0, 30
-    va.visible = False
-    va.has_major_gridlines = False
-    ca = chart.category_axis
-    baseline(ca)
-    ca.tick_labels.font.size = Pt(12)
-    ca.tick_labels.font.color.rgb = rgb(C.text)
-    # Benchmark: a labelled, dashed navy line drawn at the enterprise rate on the pinned plot area.
-    fl, ft, fw, fh = (Emu(v).inches for v in (frame.left, frame.top, frame.width, frame.height))
-    x = fl + fw * (px + pw * ent / 30)
-    line_shape(slide, x, ft + fh * py - 0.05, x, ft + fh * (py + ph), C.total)
-    text_box(slide, x - 1.0, ft + fh * py - 0.33, 2.0, 0.26, f"Enterprise {ent:.1f}%", 11, C.annotation,
-             align=PP_ALIGN.CENTER)
-    return slide
+    built = office.bar_slide(
+        prs, df.job_family, df.vol_attrition_pct, focus=set(df.job_family[df.vol_attrition_pct > 20]),
+        benchmark=ent, benchmark_label=f"Enterprise {ent:.1f}%", fmt="{:.1f}%",
+        headline=f"Two frontline job families lose about 1 in 4 people a year, well above the {ent:.1f}% enterprise rate",
+        subtitle="Voluntary attrition by job family, FY26 (%)",
+        footnote="Voluntary attrition = voluntary exits ÷ average headcount, trailing 12 months.", source=SRC)
+    built.slide.notes_slide.notes_text_frame.text += (
+        "\n\nBuild-up: duplicate the slide, make all bars grey on the first copy.")
+    return built.slide
 
 
 def slide_line(prs):
@@ -858,7 +543,6 @@ STATUS_DEF = ("Off track = a milestone missed with no recovery date; at risk = a
 SHORTW = {"Skills inventory rollout": "Skills inventory", "Pharmacy technician career path": "Pharmacy tech career path"}
 SHORT_JF = {"Pharmacy Technician": "Pharmacy Tech", "Distribution Center Associate": "DC Associate",
             "Software Engineering": "Software Eng.", "Supply Chain Planning": "Supply Chain"}
-SEMI, MEDIUM = f"{FONT} SemiBold", f"{FONT} Medium"
 UP, DOWN = "▲", "▼"
 
 
@@ -1050,40 +734,6 @@ def bubble_data() -> SimpleNamespace:
 
 
 # ====================================================================== drawn-shape helpers
-def shape(target, kind, left, top, width, height, color=None, line=None, line_w=0.75, dash=False, name=None):
-    """A flat autoshape: solid fill (or none), optional outline, effectRef 0."""
-    s = _shapes(target).add_shape(kind, Inches(left), Inches(top), Inches(width), Inches(height))
-    if color:
-        fill(s, color)
-    else:
-        s.fill.background()
-    if line:
-        s.line.color.rgb = rgb(line)
-        s.line.width = Pt(line_w)
-        if dash:
-            s.line.dash_style = 4
-    else:
-        s.line.fill.background()
-    flat(s)
-    if name:
-        s.name = name
-    return s
-
-
-def shape_text(s, text, size, color, font=FONT, align=PP_ALIGN.CENTER, bold=False):
-    tf = s.text_frame
-    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
-    tf.word_wrap = False
-    tf.auto_size = MSO_AUTO_SIZE.NONE
-    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
-    p = tf.paragraphs[0]
-    p.alignment = align
-    r = p.add_run()
-    r.text = text
-    r.font.size, r.font.bold, r.font.name = Pt(size), bold, font
-    r.font.color.rgb = rgb(color)
-
-
 def status_dot(target, cx, cy, key, d=0.2):
     """Status: a small flat circle in the status color with its symbol inside (white or navy ink)."""
     st = STATUS[key]
@@ -1121,65 +771,6 @@ def frame_in(frame):
 
 
 # ====================================================================== chart helpers for the new charts
-C15 = "http://schemas.microsoft.com/office/drawing/2012/chart"
-
-
-def dlbl(point, *, val=False, cat=False, ser=False, pos=None, num_fmt=None, size=12, color=C.text, bold=False,
-         sep=" ", text=None, dx=0.0, dy=0.0, box=None, align=None):
-    """One data label: which fields it shows (for XY charts 'cat' is the X value, 'val' the Y value), position, number
-    format, font (Medium; Bold when emphasized), or fixed `text`; dx/dy nudge it (fractions of the chart frame);
-    box=(w, h) sizes the label (fractions of the frame), so a long one stays on one line instead of wrapping at about
-    a fifth of the chart's width; align ("l" / "r") then sets which side of the box the text keeps to."""
-    if text is not None:
-        point_label(point, text, color, bold=bold, size=size, position=pos)
-        d = point.data_label._dLbl
-    else:
-        dl = point.data_label
-        f = dl.font
-        f.size, f.bold, f.name = Pt(size), bold, FONT if bold else MEDIUM
-        f.color.rgb = rgb(color)
-        if pos is not None:
-            dl.position = pos
-        d = dl._dLbl
-        for tag, on in (("showLegendKey", 0), ("showVal", val), ("showCatName", cat), ("showSerName", ser),
-                        ("showPercent", 0), ("showBubbleSize", 0)):
-            el = d.find(qn(f"c:{tag}"))
-            if el is None:
-                el = etree.SubElement(d, qn(f"c:{tag}"))
-            el.set("val", "1" if on else "0")
-        if sum(map(bool, (val, cat, ser))) > 1:
-            etree.SubElement(d, qn("c:separator")).text = sep
-        if num_fmt:
-            nf = etree.Element(qn("c:numFmt"), formatCode=num_fmt, sourceLinked="0")
-            anchor = next(e for e in (d.find(qn(t)) for t in ("c:spPr", "c:txPr", "c:dLblPos", "c:showLegendKey"))
-                          if e is not None)
-            anchor.addprevious(nf)
-    if dx or dy:
-        lay = etree.Element(qn("c:layout"))
-        man = etree.SubElement(lay, qn("c:manualLayout"))
-        etree.SubElement(man, qn("c:x"), val=f"{dx:.4f}")
-        etree.SubElement(man, qn("c:y"), val=f"{dy:.4f}")
-        d.find(qn("c:idx")).addnext(lay)
-    if box:                                                    # Format Data Label › Size (Office 2013+ extension)
-        ext_lst = d.find(qn("c:extLst"))
-        if ext_lst is None:
-            ext_lst = etree.SubElement(d, qn("c:extLst"))
-        ext = etree.SubElement(ext_lst, qn("c:ext"), uri="{CE6537A1-D6FC-4f65-9D91-7224C49458BB}", nsmap={"c15": C15})
-        man = etree.SubElement(etree.SubElement(ext, f"{{{C15}}}layout"), qn("c:manualLayout"))
-        etree.SubElement(man, qn("c:w"), val=f"{box[0]:.4f}")
-        etree.SubElement(man, qn("c:h"), val=f"{box[1]:.4f}")
-    if align:
-        for para in d.iter(qn("a:p")):
-            ppr = para.find(qn("a:pPr"))
-            if ppr is None:
-                ppr = etree.Element(qn("a:pPr"))
-                para.insert(0, ppr)
-            ppr.set("algn", align)
-        for body in d.iter(qn("a:bodyPr")):                    # a sized label centres its text block otherwise
-            body.set("wrap", "square")
-            body.set("anchorCtr", "0")
-
-
 def point_line(point, color=None, width_pt=None):
     """The line segment that leads into an XY or line point (Office draws segment k with point k's format)."""
     if color is None:
@@ -1784,6 +1375,7 @@ def build_pptx() -> Path:
     set_properties(prs, "McKesson Data Viz template",
                    "16:9 PowerPoint template with the McKesson data-viz theme on the Standard Template grid.")
     _save_as_template(prs, template)                       # theme + layouts only, before any slides are added
+    _save_package_template(prs)
     set_properties(prs, "McKesson data-viz chart starter",
                    "Native, editable sample charts in the McKesson data-viz style, generated from tokens/tokens.json.")
     slide_cover(prs)
@@ -1830,6 +1422,22 @@ def build_pptx_official() -> Path | None:
     path = OUT / "McKesson-DataViz-Starter-Official.pptx"
     prs.save(path)
     return path
+
+
+def _save_package_template(prs) -> None:
+    """The template mckviz.office.deck() opens: the same theme and layouts as the .potx, as a .pptx (a Copilot skill
+    can carry .pptx but not .potx). Fixed timestamps and a fixed placeholder for the footer's date field (PowerPoint
+    shows the current date anyway), so the file changes only when its content does."""
+    cp = prs.core_properties
+    cp.created = cp.modified = cp.last_printed = datetime(2026, 1, 1)
+    buf = io.BytesIO()
+    prs.save(buf)
+    src = zipfile.ZipFile(buf)
+    with zipfile.ZipFile(PACKAGE_TEMPLATE, "w", zipfile.ZIP_DEFLATED) as dst:
+        for item in src.infolist():
+            blob = src.read(item.filename).replace(f">{DATE_TEXT}<".encode(), b">1/1/2026<")
+            dst.writestr(zipfile.ZipInfo(item.filename, date_time=(2026, 1, 1, 0, 0, 0)), blob,
+                         compress_type=zipfile.ZIP_DEFLATED)
 
 
 def _save_as_template(prs, path: Path) -> None:

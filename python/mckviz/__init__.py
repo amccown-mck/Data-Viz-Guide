@@ -547,11 +547,12 @@ from .table import Col, table  # noqa: E402
 
 
 def __getattr__(name: str):
-    """`mv.geo` imports the map module on first use (import mckviz.geo works too)."""
-    if name == "geo":
+    """`mv.geo` and `mv.office` (native PowerPoint, needs python-pptx) import on first use (import mckviz.geo works
+    too)."""
+    if name in ("geo", "office"):
         import importlib
 
-        return importlib.import_module(".geo", __name__)
+        return importlib.import_module(f".{name}", __name__)
     raise AttributeError(f"module 'mckviz' has no attribute {name!r}")
 
 

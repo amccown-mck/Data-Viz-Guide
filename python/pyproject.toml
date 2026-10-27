@@ -31,8 +31,10 @@ dependencies = ["matplotlib>=3.8", "numpy>=1.26"]
 # 5.24 ships plotly.js 2.35: layout.title.subtitle and numeric font.weight, both used by the "mck" template.
 plotly = ["plotly>=5.24"]
 pandas = ["pandas>=2.0"]
+# mckviz.office: native, editable PowerPoint slides (1.0.2 is the Microsoft 365 Copilot sandbox's version).
+office = ["python-pptx>=1.0"]
 examples = ["plotly>=5.24", "pandas>=2.0"]
-dev = ["pytest>=8", "jsonschema>=4", "pandas>=2.0"]
+dev = ["pytest>=8", "jsonschema>=4", "pandas>=2.0", "python-pptx>=1.0"]
 
 [project.urls]
 Homepage = "https://github.com/amccown-mck/Data-Viz-Guide"
@@ -47,5 +49,5 @@ where = ["."]
 include = ["mckviz*"]
 
 [tool.setuptools.package-data]
-mckviz = ["VERSION", "_tokens.json", "mckviz.mplstyle", "plotly_template.json",
+mckviz = ["VERSION", "_tokens.json", "mckviz.mplstyle", "plotly_template.json", "template.pptx",
           "fonts/*.ttf", "fonts/OFL.txt", "geodata/*.json", "geodata/README.md"]

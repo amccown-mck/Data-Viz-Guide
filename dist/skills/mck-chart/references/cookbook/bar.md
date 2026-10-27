@@ -162,6 +162,22 @@ fig.write_html("out/bar-highlight.html", include_plotlyjs="cdn")
 For HTML pages, prefer the chart-card pattern in [`examples/python/gallery_plotly.py`](https://github.com/amccown-mck/Data-Viz-Guide/blob/main/examples/python/gallery_plotly.py): the headline, subtitle and source go in HTML, and the figure carries only the data. Hover text may show headcount, but never for groups with n < 10.
 
 ### Excel and PowerPoint
+**From Python, in one call:** `mckviz.office.bar_slide` builds this slide as a native, editable chart on the kit's template (needs `python-pptx`): sorted from the top, no gridlines, the plot starting right after the labels, the value at each bar's end, the benchmark as a dashed line across all bars (a label that would sit on it moves inside its bar), and the headline, subtitle and source on the grid. Right-click › Edit Data changes the numbers, and the labels follow.
+```python
+# verified runnable (from the repo root)
+import pandas as pd
+from mckviz import office
+
+df = pd.read_csv("assets/data/attrition_by_job_family.csv")
+prs = office.deck()                                   # McKesson theme, Libre Franklin, the slide grid
+office.bar_slide(prs, df.job_family, df.vol_attrition_pct, focus={"Pharmacy Technician", "Distribution Center Associate"},
+                 benchmark=19.9, benchmark_label="Enterprise 19.9%", fmt="{:.1f}%",
+                 headline="Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate",
+                 subtitle="Voluntary attrition by job family, FY26 (%)",
+                 source="Source: Synthetic data for illustration only")
+office.save(prs, "out/bar-highlight.pptx")            # one save per deliverable
+```
+By hand:
 1. Install the theme once. Copy `assets/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `assets/fonts`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**). Accent 1 = `#005A8C` (focus), Accent 2 = `#143359` (navy accent), Accent 3 = `#009EFF` (bright blue); light blue `#66C4FF` and context grey `#B4B0A5` via **More Colors › Hex**.
 2. Sort the data by value, select it, then **Insert › Charts › Insert Column or Bar Chart › 2-D Clustered Bar**. Excel draws the first row at the bottom, so either sort ascending or set **Format Axis › Axis Options › Categories in reverse order**.
 3. Right-click a bar › **Format Data Series › Series Options › Gap Width 50%**. This gives bar : gap ≈ 2 : 1. For grouped bars, also set **Series Overlap 0%**.
