@@ -509,6 +509,78 @@ def save(fig, path: str | Path, **kw) -> Path:
     return path
 
 
+DELIVER_DIR = Path("/mnt/data")       # Copilot: every file written here syncs to the user's OneDrive as a new copy
+
+
+def _same_file(a: Path, b: Path) -> bool:
+    """The same deliverable, ignoring when it was built: equal bytes; or for Office files (zips), the same parts,
+    leaving out the document properties (created / modified times) and the zip's own dates; or for PDFs, the same
+    bytes once the creation and modification dates and the file ID are taken out. So rebuilding a file the same way
+    and delivering it again is a no-op."""
+    import re
+    import zipfile
+
+    x, y = a.read_bytes(), b.read_bytes()
+    if x == y:
+        return True
+    if zipfile.is_zipfile(a) and zipfile.is_zipfile(b):
+        with zipfile.ZipFile(a) as za, zipfile.ZipFile(b) as zb:
+            names = sorted(n for n in za.namelist() if not n.startswith("docProps/"))
+            return names == sorted(n for n in zb.namelist() if not n.startswith("docProps/")) and \
+                all(za.read(n) == zb.read(n) for n in names)
+    if x.startswith(b"%PDF") and y.startswith(b"%PDF"):
+        strip = re.compile(rb"/(CreationDate|ModDate)\s*\([^)]*\)|/ID\s*\[[^\]]*\]")
+        return strip.sub(b"", x) == strip.sub(b"", y)
+    return False
+
+
+def deliver(*paths, to: str | Path | None = None) -> Path | list[Path]:
+    """Hand finished files to the user, as the last step: copy each one from the working folder (/tmp) into the
+    delivery folder, /mnt/data in Copilot (it syncs to the user's OneDrive, Copilot > Created) or `to`. Each file
+    is written there once. Delivering the same file again does nothing, so a rerun leaves no extra copy; a changed
+    file under a name already delivered is refused (rebuilding it the same way isn't a change: build dates are
+    ignored) (deliver a revision under a new name, such as "-v2"), because
+    every write there, even after a delete, becomes another copy in the user's OneDrive. Never cp, mv or rm in the
+    delivery folder: use this.
+
+        mv.save(fig, "/tmp/attrition.png"); mv.deliver("/tmp/attrition.png")      # then link sandbox:/mnt/data/...
+        mv.deliver("/tmp/options.html", "/tmp/options.pdf")
+
+    Returns the delivered path (a list for several)."""
+    import shutil
+
+    dest_dir = Path(to) if to is not None else DELIVER_DIR
+    if not dest_dir.is_dir():
+        raise FileNotFoundError(f"no delivery folder {dest_dir}; pass to=")
+    out = []
+    for p in paths:
+        src = Path(p)
+        if not src.is_file():
+            raise FileNotFoundError(src)
+        dest = dest_dir / src.name
+        if src.resolve() == dest.resolve():
+            raise ValueError(f"{src} is already in the delivery folder: build and check in /tmp, then deliver from "
+                             "there")
+        if dest.exists():
+            if _same_file(src, dest):
+                out.append(dest)                                # the same file: already delivered, nothing to do
+                continue
+            raise FileExistsError(f"{dest.name} was already delivered with different content; deliver the revision "
+                                  f"under a new name (e.g. {src.stem}-v2{src.suffix}). Don't delete or overwrite it: "
+                                  "each write there is another copy in the user's OneDrive")
+        shutil.copyfile(src, dest)
+        out.append(dest)
+    return out[0] if len(out) == 1 else out
+
+
+def look(path: str | Path, width: int = 900):
+    """Show a render (a PNG in /tmp) in the notebook output so you can check it, without writing it to the
+    delivery folder: copying a check image into /mnt/data to see it leaves a copy in the user's OneDrive."""
+    from IPython.display import Image, display
+
+    display(Image(filename=str(path), width=width))
+
+
 # ------------------------------------------------------------------ Plotly
 def plotly_template():
     import plotly.graph_objects as go
@@ -561,7 +633,7 @@ __all__ = [
     "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
     "fmt_num", "suppress_small",
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",
-    "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
+    "deliver", "look", "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
     # chart builders (mckviz/charts.py)
     "waterfall", "hstack", "diverging_bars", "label_points", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
     "kpi_row", "delta_label", "sdot", "status", "status_key", "status_column", "tracker", "roadmap", "multiples",

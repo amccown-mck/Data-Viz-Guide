@@ -4,6 +4,7 @@ pushed right, and the benchmark drawn between two columns instead of across the 
 from __future__ import annotations
 
 import warnings
+from datetime import datetime
 
 import pytest
 
@@ -459,9 +460,34 @@ def test_save_refuses_the_delivery_folder_and_deliver_copies_once(tmp_path, monk
         office.save(prs, onedrive / "deck.pptx")               # a validator run there would leave copies
     work = office.save(prs, tmp_path / "work" / "deck.pptx")
     assert office.deliver(work) == onedrive / "deck.pptx"
+    before = (onedrive / "deck.pptx").stat().st_mtime_ns
+    assert office.deliver(work) == onedrive / "deck.pptx"     # a rerun: the same file, nothing written
+    rebuilt = office.deck()
+    bar(prs=rebuilt)
+    office.save(rebuilt, work)                                 # built again the same way, at another time
+    again = pptx.Presentation(str(work))
+    again.core_properties.modified = again.core_properties.created = datetime(2020, 1, 1)
+    again.save(str(work))
+    assert work.read_bytes() != (onedrive / "deck.pptx").read_bytes()
+    assert office.deliver(work) == onedrive / "deck.pptx"
+    assert (onedrive / "deck.pptx").stat().st_mtime_ns == before
+    bar(prs=prs)
+    office.save(prs, work)
     with pytest.raises(FileExistsError, match="new name"):
-        office.deliver(work)                                   # a second write is a second OneDrive copy
+        office.deliver(work)                                   # a changed deck: a second OneDrive copy, refused
+    with pytest.raises(ValueError, match="already in the delivery folder"):
+        mv.deliver(onedrive / "deck.pptx", to=onedrive)
     assert [p.name for p in onedrive.iterdir()] == ["deck.pptx"]
+
+
+def test_deliver_several_files(tmp_path):
+    out = tmp_path / "out"
+    out.mkdir()
+    files = []
+    for name in ("page.html", "page.pdf"):
+        (tmp_path / name).write_text(name)
+        files.append(tmp_path / name)
+    assert mv.deliver(*files, to=out) == [out / "page.html", out / "page.pdf"]
 
 
 def test_bar_chart_has_alt_text():

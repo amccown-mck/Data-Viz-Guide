@@ -496,24 +496,13 @@ def save(prs, path) -> Path:
     return path
 
 
-def deliver(path, to=None) -> Path:
-    """Copy a finished, checked deck (or its preview PNG) into the delivery folder once, as the last step: /mnt/data
-    in Copilot (the user's OneDrive), or `to`. Refuses to overwrite: a second write there is a second copy in
-    OneDrive. For a revision the user asked for, deliver under a new name. Don't render, validate or delete in the
-    delivery folder afterwards."""
-    import shutil
+def deliver(*paths, to=None):
+    """mv.deliver for decks: copy the finished, checked deck (and its preview PNG) into the delivery folder once, as
+    the last step. Delivering the same file again does nothing; a changed deck under a delivered name is refused
+    (deliver a revision under a new name). Never cp, mv or rm in the delivery folder."""
+    from . import deliver as _deliver
 
-    src = Path(path)
-    dest_dir = Path(to) if to is not None else DELIVER_DIR
-    if not src.is_file():
-        raise FileNotFoundError(src)
-    if not dest_dir.is_dir():
-        raise FileNotFoundError(f"no delivery folder {dest_dir}; pass to=")
-    dest = dest_dir / src.name
-    if dest.exists():
-        raise FileExistsError(f"{dest} was already delivered; for a revision, save under a new name and deliver that")
-    shutil.copyfile(src, dest)
-    return dest
+    return _deliver(*paths, to=to if to is not None else DELIVER_DIR)
 
 
 def _fmt(fmt, v) -> str:
