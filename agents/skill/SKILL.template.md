@@ -31,7 +31,7 @@ QA:           pass | exceptions: <list>
 ```
 
 **Task guides.** This page covers every chart. When the request is one of these, also read the guide before you build; it adds to the steps below and doesn't replace them:
-- **Several options or a storyline** ("show me a few ways", "N options", "pros and cons for a meeting"): `{{refs}}options.md`, how to pick the angles and the options page.
+- **Several options or a storyline** ("show me a few ways", "several ways to show it", "N options", "pros and cons for a meeting", "one page to share"): `{{refs}}options.md`, how to pick the angles and the options page. Always `mv.options_page`, never hand-built HTML.
 - **Feedback on a chart the user shares:** `{{refs}}review.md`.
 - **A slide or deck (a real .pptx), or a native chart in Excel or Power BI, or HTML or R:** `{{refs}}native-formats.md`.
 
