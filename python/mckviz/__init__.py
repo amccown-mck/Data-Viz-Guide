@@ -513,29 +513,29 @@ def save(fig, path: str | Path, **kw) -> Path:
 DELIVER_DIR = Path("/mnt/data")       # Copilot: every file written here syncs to the user's OneDrive as a new copy
 
 
-def _same_file(a: Path, b: Path) -> bool:
-    """The same deliverable, ignoring when it was built: equal bytes; or for Office files (zips), the same parts,
-    leaving out the document properties (created / modified times) and the zip's own dates; or for PDFs, the same
-    bytes once the creation and modification dates and the file ID are taken out. So rebuilding a file the same way
-    and delivering it again is a no-op."""
-    import re
+def _signature(path: Path) -> str:
+    """What a file holds, ignoring when it was built: for Office files (zips), the parts other than the document
+    properties (created / modified times); for PDFs, the bytes without the creation and modification dates and the
+    file ID; else the bytes. Rebuilding a file the same way gives the same signature."""
+    import hashlib
     import zipfile
 
-    x, y = a.read_bytes(), b.read_bytes()
-    if x == y:
-        return True
-    if zipfile.is_zipfile(a) and zipfile.is_zipfile(b):
-        with zipfile.ZipFile(a) as za, zipfile.ZipFile(b) as zb:
-            names = sorted(n for n in za.namelist() if not n.startswith("docProps/"))
-            return names == sorted(n for n in zb.namelist() if not n.startswith("docProps/")) and \
-                all(za.read(n) == zb.read(n) for n in names)
-    if x.startswith(b"%PDF") and y.startswith(b"%PDF"):
-        strip = re.compile(rb"/(CreationDate|ModDate)\s*\([^)]*\)|/ID\s*\[[^\]]*\]")
-        return strip.sub(b"", x) == strip.sub(b"", y)
-    return False
+    h = hashlib.sha1()
+    data = path.read_bytes()
+    if zipfile.is_zipfile(path):
+        with zipfile.ZipFile(path) as z:
+            for n in sorted(n for n in z.namelist() if not n.startswith("docProps/")):
+                h.update(n.encode() + b"\0" + z.read(n))
+    elif data.startswith(b"%PDF"):
+        h.update(re.sub(rb"/(CreationDate|ModDate)\s*\([^)]*\)|/ID\s*\[[^\]]*\]", b"", data))
+    else:
+        h.update(data)
+    return h.hexdigest()
 
 
 _VERSION_TAIL = re.compile(r"([ _.-]*(v\d+|rev\d*|final|draft|copy|new|fixed|updated|\(\d+\)|\d))+$", re.I)
+_OFFICE = {".pptx", ".xlsx", ".docx"}
+_RUN = __import__("uuid").uuid4().hex    # this load of mckviz: mck_setup.py reloads it at the start of every script
 
 
 def _deliverable(name: str) -> str:
@@ -552,6 +552,13 @@ def _ledger(dest_dir: Path) -> Path:
 
     key = hashlib.sha1(str(dest_dir.resolve()).encode()).hexdigest()[:12]
     return Path(tempfile.gettempdir()) / f".mckviz-delivered-{key}.json"
+
+
+def _read_ledger(dest_dir: Path) -> dict:
+    try:
+        return json.loads(_ledger(dest_dir).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
 
 
 def deliver(*paths, to: str | Path | None = None, revision: str | None = None) -> Path | list[Path]:
@@ -576,11 +583,7 @@ def deliver(*paths, to: str | Path | None = None, revision: str | None = None) -
     dest_dir = Path(to) if to is not None else DELIVER_DIR
     if not dest_dir.is_dir():
         raise FileNotFoundError(f"no delivery folder {dest_dir}; pass to=")
-    ledger = _ledger(dest_dir)
-    try:
-        done = json.loads(ledger.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        done = {}
+    done = _read_ledger(dest_dir)
     out = []
     for p in paths:
         src = Path(p)
@@ -590,28 +593,47 @@ def deliver(*paths, to: str | Path | None = None, revision: str | None = None) -
         if src.resolve() == dest.resolve():
             raise ValueError(f"{src} is already in the delivery folder: build and check in /tmp, then deliver from "
                              "there")
-        if dest.exists() and _same_file(src, dest):
-            out.append(dest)                                    # the same file: already delivered, nothing to do
-            continue
+        sig = _signature(src)
         what = _deliverable(src.name)
         earlier = done.get(what)
+        if earlier and earlier["sig"] == sig or dest.exists() and _signature(dest) == sig:
+            out.append(dest_dir / (earlier["name"] if earlier else dest.name))      # already delivered: a no-op
+            continue
         if (earlier or dest.exists()) and not revision:
             raise FileExistsError(
-                f"{earlier or dest.name} was already delivered in this chat, and every new file in {dest_dir} is "
-                "another copy in the user's OneDrive. Deliver each deliverable once: make every fix and check in "
-                "/tmp (mv.look) first. If the user asked for a change, deliver it under a new name with "
+                f"{earlier['name'] if earlier else dest.name} was already delivered in this chat, and every new file "
+                f"in {dest_dir} is another copy in the user's OneDrive. Deliver each deliverable once: make every fix "
+                "and check in /tmp (mv.look) first. If the user asked for a change, deliver it under a new name with "
                 "revision='<what the user asked for>'.")
         if dest.exists():
             raise FileExistsError(f"{dest.name} is taken: deliver the revision under a new name (e.g. "
                                   f"{src.stem}-v2{src.suffix}); never delete or overwrite it there")
         shutil.copyfile(src, dest)
-        done[what] = src.name
+        done[what] = {"name": src.name, "sig": sig, "run": _RUN}
         out.append(dest)
     try:
-        ledger.write_text(json.dumps(done), encoding="utf-8")
+        _ledger(dest_dir).write_text(json.dumps(done), encoding="utf-8")
     except OSError:
         pass
     return out[0] if len(out) == 1 else out
+
+
+def clear_delivered(to: str | Path | None = None) -> list[Path]:
+    """Take the Office files (.pptx, .xlsx, .docx) that deliver() handed over in an earlier run out of the delivery
+    folder; scripts/mck_setup.py calls this at the start of every script. In Copilot they are already in the user's
+    OneDrive by then, and stay there (with their links); but a copy left in /mnt/data is uploaded again as
+    "name 1.pptx", "name 2.pptx", ... after every later code run, because OneDrive changes Office files after the
+    upload. Files delivered in this run, and every other file, are left alone. Returns what it took out."""
+    dest_dir = Path(to) if to is not None else DELIVER_DIR
+    if not dest_dir.is_dir():
+        return []
+    cleared = []
+    for entry in _read_ledger(dest_dir).values():
+        f = dest_dir / entry["name"]
+        if entry.get("run") != _RUN and f.suffix.lower() in _OFFICE and f.is_file():
+            f.unlink()
+            cleared.append(f)
+    return cleared
 
 
 def look(path: str | Path, width: int = 900):
@@ -674,7 +696,7 @@ __all__ = [
     "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
     "fmt_num", "suppress_small",
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",
-    "deliver", "look", "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
+    "deliver", "clear_delivered", "look", "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
     # chart builders (mckviz/charts.py)
     "waterfall", "hstack", "diverging_bars", "label_points", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
     "kpi_row", "delta_label", "sdot", "status", "status_key", "status_column", "tracker", "roadmap", "multiples",

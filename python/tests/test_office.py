@@ -504,6 +504,23 @@ def test_deliver_several_files(tmp_path):
     assert mv.deliver(other, to=out) == out / "labor_cost_bridge.pptx"     # a different deliverable: fine
 
 
+def test_clear_delivered_takes_earlier_decks_out_and_a_rerun_stays_a_no_op(tmp_path, monkeypatch):
+    out = tmp_path / "out"
+    out.mkdir()
+    prs = office.deck()
+    bar(prs=prs)
+    deck = office.save(prs, tmp_path / "deck.pptx")
+    png = tmp_path / "deck_preview.png"
+    png.write_bytes(b"png")
+    mv.deliver(deck, png, to=out)
+    assert mv.clear_delivered(to=out) == []                    # delivered in this run: left alone
+    monkeypatch.setattr(mv, "_RUN", "a later script")
+    assert mv.clear_delivered(to=out) == [out / "deck.pptx"]   # an earlier run's deck: out of the folder
+    assert sorted(p.name for p in out.iterdir()) == ["deck_preview.png"]
+    assert mv.deliver(deck, to=out) == out / "deck.pptx"       # delivering it again: still a no-op, no re-upload
+    assert not (out / "deck.pptx").exists()
+
+
 @pytest.mark.parametrize("name, what", [
     ("Workforce_Mix_Slide_v3.pptx", "workforce_mix_slide.pptx"), ("deck-final.pptx", "deck.pptx"),
     ("deck (2).pptx", "deck.pptx"), ("deck_v2_fixed.pptx", "deck.pptx"), ("fy26_bridge.png", "fy26_bridge.png")])
