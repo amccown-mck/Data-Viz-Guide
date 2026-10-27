@@ -86,7 +86,7 @@ QA:           pass | exceptions: <list>
 ## Hand-back
 Give the user the output (file path, or code plus the rendered image), the chart brief, and the alt text. Mention any assumptions about the data (definitions, exclusions, suppressed groups), every placeholder left in the chart (source, as-of date, period), and which install path the build used (mckviz, or the no-package fallback and its font).
 <!-- copilot -->
-**Files land in the user's OneDrive** (Copilot > Created) from `/mnt/data/`, and saving the same name again adds a numbered copy. Write drafts and render checks to `/tmp/`; write each deliverable (PNG, PDF, HTML, PPTX) to `/mnt/data/` once, when it is final, and link only that. For a revision the user asks for, one new file is fine.
+**Files land in the user's OneDrive** (Copilot > Created) from `/mnt/data/`, and saving the same name again adds a numbered copy. Write drafts, renders and validator runs to `/tmp/`; write each deliverable (PNG, PDF, HTML, PPTX) to `/mnt/data/` once, when it is final, and link only that; never rewrite or delete it there. For a revision the user asks for, one new file is fine. **Slides:** only `mv.office` (`{{refs}}native-formats.md`), never PptxGenJS or another slide tool: they lack the McKesson master.
 In Copilot, save the PNG to `/mnt/data/` and **show it inline as an image** (`![<headline>](sandbox:/mnt/data/<name>.png)`) with a download link under it. If a "Chart" card appears instead (a bare re-plot with a generic "X" or "Y" axis), save again with `mv.save` and show that file. Open the reply with the headline sentence, never a question or a topic label. Show the code only if the user asks.
 <!-- /copilot -->
 <!-- portable -->

@@ -57,6 +57,8 @@ Once the theme is applied, the color picker's top rows are the McKesson palette,
 Each chart type's click-by-click recipe is in its cookbook page under **Excel and PowerPoint**, for example [bar.md](cookbook/bar.md#excel-and-powerpoint).
 
 ## A native chart from code with pptxgenjs
+**Where Python runs (Microsoft 365 Copilot, Claude Code, the repo), use `mckviz.office` instead:** it builds the slide on the McKesson branded template (master, logo, footer), which pptxgenjs can't load. This section is for environments without Python.
+
 In Claude.ai (its pptx skill builds decks with [pptxgenjs](https://gitbrent.github.io/PptxGenJS/)) or any Node project, build the chart as a **native, editable PowerPoint chart**, never a pasted picture. The theme is generated from the tokens as [`dist/office/pptxgenjs-theme.js`](../assets/office/pptxgenjs-theme.js) (`assets/office/pptxgenjs-theme.js` in the portable skill): color roles, the Office scheme slots, text styles on the template grid, and chart options for bar, column and line that match the click-by-click recipes above.
 
 ```js

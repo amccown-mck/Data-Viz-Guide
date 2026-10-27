@@ -6,7 +6,8 @@
                      headline="Pharmacy technicians lose 1 in 4 people a year, above the 19.9% enterprise rate",
                      subtitle="Voluntary attrition by job family, FY26 (%)", source="Source: Workday HCM, as of ...",
                      benchmark=19.9, benchmark_label="Enterprise 19.9%", fmt="{:.1f}%")
-    office.save(prs, "/mnt/data/attrition.pptx")   # one save per deliverable
+    path = office.save(prs, "/tmp/attrition.pptx")  # check it here (render, validate) ...
+    office.deliver(path)                            # ... then one copy to /mnt/data (Copilot: the user's OneDrive)
 
 Each slide is a real PowerPoint chart (right-click › Edit Data works), on the McKesson Standard Template's grid: the
 headline in the title placeholder (Bold 26 pt McKesson Blue), the subtitle, the chart, the source at 9 pt bottom-left
@@ -467,10 +468,22 @@ def deck():
     return Presentation(str(TEMPLATE))
 
 
+DELIVER_DIR = Path("/mnt/data")       # Copilot: every file written here syncs to the user's OneDrive as a new copy
+
+
+def _in_deliver_dir(path: Path) -> bool:
+    return DELIVER_DIR.is_dir() and DELIVER_DIR.resolve() in path.resolve().parents
+
+
 def save(prs, path) -> Path:
-    """Save the deck once, its title taken from the first slide's headline. In Copilot, write drafts to /tmp and
-    the deliverable to /mnt/data once: every save there is another copy in the user's OneDrive."""
+    """Save the deck (its title taken from the first slide's headline) to a working folder such as /tmp, then check
+    it there (render, validate) and hand it over with deliver(). Where /mnt/data exists (Copilot), saving into it
+    directly is refused: every write there, including a validator's rewrite and its .orig backup, becomes another
+    copy in the user's OneDrive, and deleting the file doesn't remove the copy."""
     path = Path(path)
+    if _in_deliver_dir(path):
+        raise ValueError(f"save the deck to /tmp first (e.g. /tmp/{path.name}), check it there, then "
+                         f"mv.office.deliver('/tmp/{path.name}') copies it to {DELIVER_DIR} once")
     cp = prs.core_properties
     if len(prs.slides) and prs.slides[0].shapes.title is not None:
         cp.title = prs.slides[0].shapes.title.text
@@ -479,6 +492,26 @@ def save(prs, path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(path))
     return path
+
+
+def deliver(path, to=None) -> Path:
+    """Copy a finished, checked deck (or its preview PNG) into the delivery folder once, as the last step: /mnt/data
+    in Copilot (the user's OneDrive), or `to`. Refuses to overwrite: a second write there is a second copy in
+    OneDrive. For a revision the user asked for, deliver under a new name. Don't render, validate or delete in the
+    delivery folder afterwards."""
+    import shutil
+
+    src = Path(path)
+    dest_dir = Path(to) if to is not None else DELIVER_DIR
+    if not src.is_file():
+        raise FileNotFoundError(src)
+    if not dest_dir.is_dir():
+        raise FileNotFoundError(f"no delivery folder {dest_dir}; pass to=")
+    dest = dest_dir / src.name
+    if dest.exists():
+        raise FileExistsError(f"{dest} was already delivered; for a revision, save under a new name and deliver that")
+    shutil.copyfile(src, dest)
+    return dest
 
 
 def _fmt(fmt, v) -> str:
@@ -510,7 +543,7 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
               subtitle: str | None = None, footnote: str | None = None, focus: Iterable[str] = (),
               accent: str | None = None, benchmark: float | None = None, benchmark_label: str | None = None,
               fmt="{:,.0f}", sort: bool = True, takeaways: Sequence[tuple[str, str]] | None = None,
-              notes: str | None = None):
+              alt: str | None = None, notes: str | None = None):
     """A ranking as a native, editable horizontal bar chart on a slide: bars sorted largest first from the top, grey
     context with the headline's bars in McKesson Blue (navy for one accent, at most two highlighted), the value at
     each bar's end (Bold for the highlighted bars), no gridlines and no value axis, the category labels sized to
@@ -523,8 +556,9 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     source: the source line (write the skill's placeholder when the user gave none). fmt: the value format, as a
     Python format string; the common ones become the chart's number format, so the labels follow Edit Data. sort:
     False keeps the given order (a natural order). takeaways: two or three (number, caption) pairs for the card in
-    the right third; the chart then takes two-thirds. Values must be zero or more (bars start at zero; use a
-    diverging bar for signed changes). Returns SimpleNamespace(slide, chart, order, x_max, inside).
+    the right third; the chart then takes two-thirds. alt: the chart's alt text (default: the headline). Values must
+    be zero or more (bars start at zero; use a diverging bar for signed changes). Returns SimpleNamespace(slide,
+    chart, order, x_max, inside).
     """
     names = [str(v) for v in labels]
     vals = [float(v) for v in values]
@@ -575,6 +609,8 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     data.categories = names
     data.add_series(subtitle or "Value", vals)
     frame, chart = add_chart(slide, XL_CHART_TYPE.BAR_CLUSTERED, data, width=fw)
+    frame.name = "Chart"
+    frame._element.nvGraphicFramePr.cNvPr.set("descr", alt or headline)
     plot_layout(chart, px, PLOT_Y, pw, ph)
     plot = chart.plots[0]
     plot.gap_width = int(BAND_GAP)

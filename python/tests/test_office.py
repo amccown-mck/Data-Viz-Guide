@@ -225,6 +225,28 @@ def test_picture_stays_in_the_chart_area():
         assert Emu(pic.top + pic.height).inches <= office.FOOT_TOP
 
 
+def test_save_refuses_the_delivery_folder_and_deliver_copies_once(tmp_path, monkeypatch):
+    onedrive = tmp_path / "mnt-data"
+    onedrive.mkdir()
+    monkeypatch.setattr(office, "DELIVER_DIR", onedrive)
+    prs = office.deck()
+    bar(prs=prs)
+    with pytest.raises(ValueError, match="/tmp first"):
+        office.save(prs, onedrive / "deck.pptx")               # a validator run there would leave copies
+    work = office.save(prs, tmp_path / "work" / "deck.pptx")
+    assert office.deliver(work) == onedrive / "deck.pptx"
+    with pytest.raises(FileExistsError, match="new name"):
+        office.deliver(work)                                   # a second write is a second OneDrive copy
+    assert [p.name for p in onedrive.iterdir()] == ["deck.pptx"]
+
+
+def test_bar_chart_has_alt_text():
+    frame = next(s for s in bar().slide.shapes if s.has_chart)
+    assert frame._element.nvGraphicFramePr.cNvPr.get("descr") == "Two job families lose 1 in 4 a year"
+    frame = next(s for s in bar(alt="Bars").slide.shapes if s.has_chart)
+    assert frame._element.nvGraphicFramePr.cNvPr.get("descr") == "Bars"
+
+
 def test_save_once_with_the_headline_as_title(tmp_path):
     prs = office.deck()
     bar(prs=prs)
