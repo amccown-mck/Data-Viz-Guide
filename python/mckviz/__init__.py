@@ -14,6 +14,7 @@ Franklin fonts (SIL OFL) and the map data for mckviz.geo ship inside the package
 from __future__ import annotations
 
 import json
+import re
 import warnings
 from pathlib import Path
 from types import SimpleNamespace
@@ -534,17 +535,40 @@ def _same_file(a: Path, b: Path) -> bool:
     return False
 
 
-def deliver(*paths, to: str | Path | None = None) -> Path | list[Path]:
+_VERSION_TAIL = re.compile(r"([ _.-]*(v\d+|rev\d*|final|draft|copy|new|fixed|updated|\(\d+\)|\d))+$", re.I)
+
+
+def _deliverable(name: str) -> str:
+    """What a file is, whatever version it says it is: "Attrition_Slide_v3.pptx" -> "attrition_slide.pptx"."""
+    p = Path(name)
+    return f"{_VERSION_TAIL.sub('', p.stem).lower()}{p.suffix.lower()}"
+
+
+def _ledger(dest_dir: Path) -> Path:
+    """Where deliver() records what it handed over in this chat: beside the working files, not in the delivery
+    folder (a file written there would sync to the user's OneDrive)."""
+    import hashlib
+    import tempfile
+
+    key = hashlib.sha1(str(dest_dir.resolve()).encode()).hexdigest()[:12]
+    return Path(tempfile.gettempdir()) / f".mckviz-delivered-{key}.json"
+
+
+def deliver(*paths, to: str | Path | None = None, revision: str | None = None) -> Path | list[Path]:
     """Hand finished files to the user, as the last step: copy each one from the working folder (/tmp) into the
-    delivery folder, /mnt/data in Copilot (it syncs to the user's OneDrive, Copilot > Created) or `to`. Each file
-    is written there once. Delivering the same file again does nothing, so a rerun leaves no extra copy; a changed
-    file under a name already delivered is refused (rebuilding it the same way isn't a change: build dates are
-    ignored) (deliver a revision under a new name, such as "-v2"), because
-    every write there, even after a delete, becomes another copy in the user's OneDrive. Never cp, mv or rm in the
-    delivery folder: use this.
+    delivery folder, /mnt/data in Copilot (it syncs to the user's OneDrive, Copilot > Created) or `to`. Every write
+    there, even after a delete, becomes another copy in the user's OneDrive, so each deliverable goes there once:
+
+    - Delivering the same file again does nothing (rebuilding it the same way isn't a change: build dates are
+      ignored), so a rerun leaves no extra copy.
+    - A second version of a deliverable already handed over in this chat ("deck.pptx", then "deck_v2.pptx", or a
+      changed "deck.pptx") is refused: finish the checks in /tmp (mv.look) before delivering. When the user asks
+      for a change, deliver it under a new name with `revision=` saying what they asked for.
+    - Never cp, mv or rm in the delivery folder: use this.
 
         mv.save(fig, "/tmp/attrition.png"); mv.deliver("/tmp/attrition.png")      # then link sandbox:/mnt/data/...
         mv.deliver("/tmp/options.html", "/tmp/options.pdf")
+        mv.deliver("/tmp/attrition_v2.pptx", revision="user asked for the enterprise rate as a line")
 
     Returns the delivered path (a list for several)."""
     import shutil
@@ -552,6 +576,11 @@ def deliver(*paths, to: str | Path | None = None) -> Path | list[Path]:
     dest_dir = Path(to) if to is not None else DELIVER_DIR
     if not dest_dir.is_dir():
         raise FileNotFoundError(f"no delivery folder {dest_dir}; pass to=")
+    ledger = _ledger(dest_dir)
+    try:
+        done = json.loads(ledger.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        done = {}
     out = []
     for p in paths:
         src = Path(p)
@@ -561,15 +590,27 @@ def deliver(*paths, to: str | Path | None = None) -> Path | list[Path]:
         if src.resolve() == dest.resolve():
             raise ValueError(f"{src} is already in the delivery folder: build and check in /tmp, then deliver from "
                              "there")
+        if dest.exists() and _same_file(src, dest):
+            out.append(dest)                                    # the same file: already delivered, nothing to do
+            continue
+        what = _deliverable(src.name)
+        earlier = done.get(what)
+        if (earlier or dest.exists()) and not revision:
+            raise FileExistsError(
+                f"{earlier or dest.name} was already delivered in this chat, and every new file in {dest_dir} is "
+                "another copy in the user's OneDrive. Deliver each deliverable once: make every fix and check in "
+                "/tmp (mv.look) first. If the user asked for a change, deliver it under a new name with "
+                "revision='<what the user asked for>'.")
         if dest.exists():
-            if _same_file(src, dest):
-                out.append(dest)                                # the same file: already delivered, nothing to do
-                continue
-            raise FileExistsError(f"{dest.name} was already delivered with different content; deliver the revision "
-                                  f"under a new name (e.g. {src.stem}-v2{src.suffix}). Don't delete or overwrite it: "
-                                  "each write there is another copy in the user's OneDrive")
+            raise FileExistsError(f"{dest.name} is taken: deliver the revision under a new name (e.g. "
+                                  f"{src.stem}-v2{src.suffix}); never delete or overwrite it there")
         shutil.copyfile(src, dest)
+        done[what] = src.name
         out.append(dest)
+    try:
+        ledger.write_text(json.dumps(done), encoding="utf-8")
+    except OSError:
+        pass
     return out[0] if len(out) == 1 else out
 
 

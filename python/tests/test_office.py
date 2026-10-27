@@ -479,8 +479,13 @@ def test_save_refuses_the_delivery_folder_and_deliver_copies_once(tmp_path, monk
     assert (onedrive / "deck.pptx").stat().st_mtime_ns == before
     bar(prs=prs)
     office.save(prs, work)
-    with pytest.raises(FileExistsError, match="new name"):
+    with pytest.raises(FileExistsError, match="already delivered in this chat"):
         office.deliver(work)                                   # a changed deck: a second OneDrive copy, refused
+    v2 = office.save(prs, tmp_path / "work" / "deck_v2.pptx")
+    with pytest.raises(FileExistsError, match="revision="):
+        office.deliver(v2)                                     # the agent's own retry under a new name, refused
+    assert office.deliver(v2, revision="user asked for a second slide") == onedrive / "deck_v2.pptx"
+    (onedrive / "deck_v2.pptx").unlink()                       # (tidy for the check below; never done in Copilot)
     with pytest.raises(ValueError, match="already in the delivery folder"):
         mv.deliver(onedrive / "deck.pptx", to=onedrive)
     assert [p.name for p in onedrive.iterdir()] == ["deck.pptx"]
@@ -494,6 +499,16 @@ def test_deliver_several_files(tmp_path):
         (tmp_path / name).write_text(name)
         files.append(tmp_path / name)
     assert mv.deliver(*files, to=out) == [out / "page.html", out / "page.pdf"]
+    other = tmp_path / "labor_cost_bridge.pptx"
+    other.write_text("deck")
+    assert mv.deliver(other, to=out) == out / "labor_cost_bridge.pptx"     # a different deliverable: fine
+
+
+@pytest.mark.parametrize("name, what", [
+    ("Workforce_Mix_Slide_v3.pptx", "workforce_mix_slide.pptx"), ("deck-final.pptx", "deck.pptx"),
+    ("deck (2).pptx", "deck.pptx"), ("deck_v2_fixed.pptx", "deck.pptx"), ("fy26_bridge.png", "fy26_bridge.png")])
+def test_deliverable_ignores_version_tails(name, what):
+    assert mv._deliverable(name) == what
 
 
 def test_bar_chart_has_alt_text():

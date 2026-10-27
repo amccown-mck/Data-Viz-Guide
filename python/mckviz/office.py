@@ -496,13 +496,14 @@ def save(prs, path) -> Path:
     return path
 
 
-def deliver(*paths, to=None):
+def deliver(*paths, to=None, revision=None):
     """mv.deliver for decks: copy the finished, checked deck (and its preview PNG) into the delivery folder once, as
-    the last step. Delivering the same file again does nothing; a changed deck under a delivered name is refused
-    (deliver a revision under a new name). Never cp, mv or rm in the delivery folder."""
+    the last step. Delivering the same file again does nothing; a second version of a deck already delivered in this
+    chat is refused unless `revision=` says what the user asked to change. Never cp, mv or rm in the delivery
+    folder."""
     from . import deliver as _deliver
 
-    return _deliver(*paths, to=to if to is not None else DELIVER_DIR)
+    return _deliver(*paths, to=to if to is not None else DELIVER_DIR, revision=revision)
 
 
 def _fmt(fmt, v) -> str:
