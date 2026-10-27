@@ -22,7 +22,6 @@ from __future__ import annotations
 import copy
 import io
 import shutil
-import textwrap
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -422,113 +421,21 @@ def slide_line(prs):
 
 
 def slide_waterfall(prs):
+    """The bridge, built by the one-call slide the agents use (mckviz.office.waterfall_slide)."""
     df = pd.read_csv(DATA / "labor_cost_bridge.csv")
-    focus = {"Automation savings", "Contractor conversion"}
-    slide = chart_slide(
-        prs, waterfall_headline(df),
-        "Labor cost bridge, FY25 to FY26 ($M)",
-        "Value axis starts at $3,900M (break marks on the totals) so the drivers are readable.",
-        "Waterfall built as a stacked column: an invisible 'Base' series lifts each change to the running total. "
-        "Edit the 'Change' and 'Total' columns in Edit Data; recompute 'Base' as the running total before each step. "
-        "Office 2016+ also has Insert › Waterfall, but it can't break the axis or recolor single bars by rule.")
-    base, change, total, running = [], [], [], 0.0
-    for r in df.itertuples():
-        if r.kind == "total":
-            running = r.value_musd
-            base.append(0); change.append(0); total.append(r.value_musd)
-        else:
-            base.append(running + min(r.value_musd, 0)); change.append(abs(r.value_musd)); total.append(0)
-            running += r.value_musd
-    data = CategoryChartData()
-    data.categories = [textwrap.fill(s, 14) for s in df.step]
-    data.add_series("Base", base)
-    data.add_series("Change", change)
-    data.add_series("Total", total)
-    data.add_series("Label", [0] * len(df))           # zero-height carrier: its labels sit just above each column
-    frame, chart = add_chart(slide, XL_CHART_TYPE.COLUMN_STACKED, data)
-    px, py, pw, ph = 0.02, 0.06, 0.96, 0.76
-    plot_layout(chart, px, py, pw, ph)
-    plot = chart.plots[0]
-    plot.gap_width = BAND_GAP
-    plot.overlap = 100
-    s_base, s_change, s_total, s_label = plot.series
-    no_fill(s_base)
-    no_fill(s_label)
-    fill(s_total, C.total)
-    fill(s_change, C.context)
-    lo, hi = 3900, 4500
-    tops = []
-    for i, r in df.iterrows():
-        if r.kind == "total":
-            tops.append(r.value_musd)
-            point_label(s_label.points[i], f"{r.value_musd:,.0f}", C.headline, bold=True,
-                        position=XL_LABEL_POSITION.INSIDE_BASE)
-        else:
-            tops.append(base[i] + change[i])
-            hit = r.step in focus
-            if hit:
-                fill(s_change.points[i], C.focus)
-            point_label(s_label.points[i], mv.signed(r.value_musd), C.headline if hit else C.text, bold=hit,
-                        position=XL_LABEL_POSITION.INSIDE_BASE)
-    va = chart.value_axis
-    va.minimum_scale, va.maximum_scale = lo, hi
-    va.visible = False
-    va.has_major_gridlines = False
-    ca = chart.category_axis
-    baseline(ca)
-    ca.tick_labels.font.size = Pt(11)
-    ca.tick_labels.font.color.rgb = rgb(C.text)
-    # Axis-break marks: two short white slashes across the bottom of each total bar.
-    fl, ft, fw, fh = (Emu(v).inches for v in (frame.left, frame.top, frame.width, frame.height))
-    n = len(df)
-    slot = fw * pw / n
-    bar_w = slot / (1 + BAND_GAP / 100)
-    y0 = ft + fh * (py + ph) - 0.28
-    for i in (0, n - 1):
-        cx = fl + fw * px + slot * (i + 0.5)
-        for dy in (0.0, 0.09):
-            line_shape(slide, cx - bar_w / 2 - 0.03, y0 + dy + 0.05, cx + bar_w / 2 + 0.03, y0 + dy - 0.05, "#FFFFFF",
-                       width_pt=2.5, dash=False)
-    return slide
+    return office.waterfall_slide(
+        prs, df.step, df.value_musd, df.kind, focus={"Automation savings", "Contractor conversion"}, floor=3900,
+        headline=waterfall_headline(df), subtitle="Labor cost bridge, FY25 to FY26 ($M)", source=SRC).slide
 
 
 def slide_stacked(prs):
-    df = pd.read_csv(DATA / "workforce_mix.csv").sort_values("contingent_pct")       # ascending: top = largest
-    slide = chart_slide(
-        prs, stacked_headline(df),
-        "Workforce composition by function, 2026 (% of workers)", None,
-        "100% stacked bar. The segment the headline is about (contingent) sits on the baseline in blue, so every "
-        "bar's value starts level; the rest are greys. The key is top-left in stack order; or delete it and type "
-        "the segment names above the top bar.")
-    data = CategoryChartData()
-    data.categories = list(df.function)
-    parts = [("contingent_pct", "Contingent", C.focus), ("employee_ft_pct", "Full-time", C.context),
-             ("employee_pt_pct", "Part-time", C.context_light)]       # story segment first: on the baseline
-    for col, name, _ in parts:
-        data.add_series(name, list(df[col]))
-    frame, chart = add_chart(slide, XL_CHART_TYPE.BAR_STACKED_100, data)
-    plot_layout(chart, 0.14, 0.1, 0.84, 0.86)
-    plot = chart.plots[0]
-    plot.gap_width = BAND_GAP
-    plot.overlap = 100
-    for series, (col, name, color) in zip(plot.series, parts):
-        fill(series, color)
-        series.format.line.color.rgb = rgb("#FFFFFF")
-        series.format.line.width = Pt(1.5)
-        for i, (fn, v) in enumerate(zip(df.function, df[col])):
-            hi = col == "contingent_pct" and fn == "Technology"
-            if v >= 5:                                         # labels only where they fit
-                point_label(series.points[i], f"{v:.0f}%", mv.text_on(color), bold=hi, size=12 if hi else 11,
-                            position=XL_LABEL_POSITION.CENTER)
-    va = chart.value_axis
-    va.visible = False
-    va.has_major_gridlines = False
-    ca = chart.category_axis
-    baseline(ca, visible=False)
-    ca.tick_labels.font.size = Pt(12)
-    ca.tick_labels.font.color.rgb = rgb(C.text)
-    legend_top_left(chart)
-    return slide
+    """The 100% stack, built by the one-call slide the agents use (mckviz.office.stack_slide)."""
+    df = pd.read_csv(DATA / "workforce_mix.csv").sort_values("contingent_pct", ascending=False)
+    parts = [("Full-time", df.employee_ft_pct), ("Part-time", df.employee_pt_pct), ("Contingent", df.contingent_pct)]
+    return office.stack_slide(
+        prs, df.function, parts, story="Contingent", base=df.workers, base_label="Workers",
+        headline=stacked_headline(df), subtitle="Workforce composition by function, 2026 (% of workers)",
+        source=SRC).slide
 
 
 # ====================================================================== data for the new slides (shared by both files)
@@ -1179,45 +1086,14 @@ def slide_column(prs):
 
 
 def slide_dumbbell(prs):
+    """Pay vs. market, built by the one-call slide the agents use (mckviz.office.dumbbell_slide)."""
     D = dumbbell_data()
-    df, n = D.df, len(D.df)
-    x_min, x_max = 30, 160
-    slide = chart_slide(
-        prs, D.headline, D.subtitle, D.footnote,
-        "Dumbbell built as an XY scatter with one series per role (the series name is the row label). Each series has "
-        f"three points: (1) X = the axis minimum {x_min}, the label anchor, no marker, no line; (2) X = market, grey dot; "
-        "(3) X = McKesson, blue dot (orange when below market is the story), joined to (2) by a light 3 pt line. Y = row "
-        f"number, {n} at the top. Edit Data: change the market and McKesson X values; the gap labels on the right are "
-        "typed text (Format Data Label › Text), so update them too. Key: the two dots above the top row are shapes.")
-    rows = [(r.role, [float(r.market_median_k), float(r.internal_median_k)]) for r in df.itertuples()]
-    lay = (0.23, PLOT_Y, 0.6, PLOT_H)                                      # names on one line at the left
-    frame, chart = row_series_chart(slide, rows, LEFT, CHART_TOP, SIDE_CHART_W, CHART_H, x_min, layout=lay)
-    xy_axes(chart, n, x_min, x_max, 25, '"$"#,##0"K"', headroom=1.0)       # a band above row 1 for the key
-    for ser, r in zip(chart.plots[0].series, df.itertuples()):
-        hi = r.role in D.focus
-        ser.smooth = False
-        ser.marker.style = XL_MARKER_STYLE.NONE
-        ser.format.line.color.rgb = rgb(C.context_light)
-        ser.format.line.width = Pt(3)
-        point_line(ser.points[1], None)                       # no segment from the label anchor to the first dot
-        dlbl(ser.points[0], ser=True, pos=XL_LABEL_POSITION.LEFT, size=11, color=C.headline if hi else C.text,
-             box=(lay[0] * 0.95, 0.24 / CHART_H), align="r")
-        point_marker(ser.points[1], C.context, 7, edge=None)
-        point_marker(ser.points[2], C.negative if hi else C.focus, 9, edge=None)
-        right = 1 if r.market_median_k >= r.internal_median_k else 2
-        dlbl(ser.points[right], text=mv.signed(r.gap_pct, 1, "%"), pos=XL_LABEL_POSITION.RIGHT,
-             color=C.negative_text if hi else C.text, bold=hi)
-    fl, ft, fw, fh = frame_in(frame)
-    ky = ft + fh * lay[1] + 0.12
-    g = slide.shapes.add_group_shape()
-    g.name = "Key"
-    kx = fl + fw * lay[0]
-    for color, lab, d in ((C.context, "Market", 0.1), (C.focus, "McKesson", 0.125)):
-        shape(g, MSO_SHAPE.OVAL, kx, ky - d / 2, d, d, color, name=f"Key: {lab}")
-        text_box(g, kx + 0.18, ky - 0.12, 1.2, 0.24, lab, 11, C.text, anchor=MSO_ANCHOR.MIDDLE, wrap=False)
-        kx += 1.15
-    takeaways(slide, D.points)
-    return slide
+    df = D.df
+    widest = float(df.gap_pct[df.role.isin(D.focus)].max())               # flag exactly the roles the headline names
+    return office.dumbbell_slide(
+        prs, df.role, df.market_median_k, df.internal_median_k, tick_fmt="${:,.0f}K", flag_below=widest,
+        flag_name="McKesson, widest gaps", headline=D.headline, subtitle=D.subtitle, footnote=D.footnote, source=SRC,
+        takeaways=D.points).slide
 
 
 def slide_slope(prs):

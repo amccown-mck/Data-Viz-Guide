@@ -142,7 +142,21 @@ fig.write_html("out/dumbbell.html", include_plotlyjs="cdn")
 ```
 
 ### Excel and PowerPoint
-Excel has no native dumbbell; build it from an **XY scatter** once, then save it as a template.
+**From Python, in one call:** `mckviz.office.dumbbell_slide` builds the dumbbell as a native, editable chart on the kit's template (needs `python-pptx`), with `mv.dumbbell`'s arguments: the comparator's dot grey, ours blue (orange where we are `flag_below`% or more below), the gap after each pair, the row names at the left (bold navy when flagged), light gridlines and a key above the top row. It is the XY scatter described below, so Edit Data moves the dots; the gap labels are typed text.
+```python
+# verified runnable (from the repo root)
+import pandas as pd
+from mckviz import office
+
+df = pd.read_csv("assets/data/pay_vs_market.csv").sort_values("gap_pct")      # widest gap below market on top
+prs = office.deck()
+office.dumbbell_slide(prs, df.role, df.market_median_k, df.internal_median_k, tick_fmt="${:,.0f}K",
+                      headline="Three roles are paid 5% or more below market",
+                      subtitle="Median base pay, McKesson vs. market, by role, 2026 ($K)",
+                      source="Source: Synthetic data for illustration only")
+office.save(prs, "out/dumbbell.pptx")
+```
+By hand: Excel has no native dumbbell; build it from an **XY scatter** once, then save it as a template.
 1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin) from `assets/office/` (see [bar.md](bar.md#excel-and-powerpoint)).
 2. Set up the sheet with these columns: `Role`, `Market`, `McKesson`, `Row` (1…n), `Plus = MAX(0, Market − McKesson)`, `Minus = MAX(0, McKesson − Market)`, `LabelX = MAX(Market, McKesson) + 3`, `GapPct = (McKesson − Market) / Market`, `GapLabel = IF(GapPct<0,"−","+")&TEXT(ABS(GapPct),"0.0%")` and `AxisX` (the axis minimum, e.g. 35).
 3. **Insert › Charts › Scatter (markers only)**. In **Select Data**, add the series *Market* (X = Market, Y = Row) and *McKesson* (X = McKesson, Y = Row).

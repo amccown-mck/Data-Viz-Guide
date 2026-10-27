@@ -115,6 +115,22 @@ fig.write_html("out/stacked-100.html", include_plotlyjs="cdn")
 If the data are counts rather than shares, use `barnorm="percent"` in `update_layout` and put the counts and n in `hovertemplate`. Suppress groups with n < 10 before plotting.
 
 ### Excel and PowerPoint
+**From Python, in one call:** `mckviz.office.stack_slide` builds a 100% stacked bar as a native, editable chart on the kit's template (needs `python-pptx`), with `mv.hstack`'s arguments and color patterns: the story segment first on the baseline in blue, the rest greys, values inside every segment wide enough to hold one, each segment named once above the top bar, and the counts behind each bar at the right. Right-click › Edit Data changes the numbers, and the labels follow.
+```python
+# verified runnable (from the repo root)
+import pandas as pd
+from mckviz import office
+
+df = pd.read_csv("examples/data/workforce_mix.csv").sort_values("contingent_pct", ascending=False)
+parts = [("Full-time", df.employee_ft_pct), ("Part-time", df.employee_pt_pct), ("Contingent", df.contingent_pct)]
+prs = office.deck()
+office.stack_slide(prs, df.function, parts, story="Contingent", base=df.workers, base_label="Workers",
+                   headline="Technology uses contingent labor at more than 4× the rate of other functions",
+                   subtitle="Workforce composition by function, 2026 (% of workers)",
+                   source="Source: Synthetic data for illustration only")
+office.save(prs, "out/stacked-bar.pptx")
+```
+By hand:
 1. Apply the **McKesson Data Viz** theme colors and fonts (Libre Franklin). Install them from `dist/office/` as described in [bar.md](bar.md#excel-and-powerpoint).
 2. Select the data, then **Insert › Charts › Insert Column or Bar Chart › 100% Stacked Bar** (or **Stacked Column** for absolute values). For horizontal bars, set **Format Axis › Categories in reverse order** so the sheet order runs top-down.
 3. **Chart Design › Select Data › Legend Entries (Series)**: use the ▲▼ arrows so the story series is **first** (baseline/left) or **last** (right end). Never leave it in the middle.

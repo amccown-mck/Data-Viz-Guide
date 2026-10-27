@@ -132,6 +132,21 @@ fig.write_html("out/waterfall.html", include_plotlyjs="cdn")
 `go.Waterfall` colors by type (increase / decrease / total), not by bar, so it suits the **semantic** pattern shown here. For the **highlight** pattern, use `go.Bar(x=steps, y=heights, base=bottoms, marker_color=fills)` with the `bottoms`/`heights`/`fills` computed as in the matplotlib snippet, and draw the connectors with `fig.add_shape(type="line", ...)`. Use `orientation="h"` for a horizontal waterfall.
 
 ### Excel and PowerPoint
+**From Python, in one call:** `mckviz.office.waterfall_slide` builds the bridge as a native, editable chart on the kit's template (needs `python-pptx`), with `mv.waterfall`'s arguments: totals navy, steps grey, the headline's steps blue (or `semantic=` green and orange with ▲/▼), each value above its column, and `floor=` to start the axis above zero, with break marks on the totals and a footnote that says so. It is a stacked column with an invisible base, so it opens in any PowerPoint; the speaker notes say how to edit it.
+```python
+# verified runnable (from the repo root)
+import pandas as pd
+from mckviz import office
+
+df = pd.read_csv("examples/data/labor_cost_bridge.csv")
+prs = office.deck()
+office.waterfall_slide(prs, df.step, df.value_musd, df.kind, focus={"Automation savings", "Contractor conversion"},
+                       floor=3900, headline="Automation and contractor conversion offset ~40% of FY26 labor cost growth",
+                       subtitle="Labor cost bridge, FY25 to FY26 ($M)",
+                       source="Source: Synthetic data for illustration only")
+office.save(prs, "out/waterfall.pptx")
+```
+By hand:
 1. Install the theme once. Copy `dist/office/Theme Colors/McKesson Data Viz.xml` to `%APPDATA%\Microsoft\Templates\Document Themes\Theme Colors\` and the Theme Fonts file to `...\Theme Fonts\`. Install Libre Franklin from `fonts/LibreFranklin`. Then apply **Page Layout › Colors › McKesson Data Viz** and **Fonts › McKesson Data Viz** (in PowerPoint: **Design › Variants › Colors / Fonts**).
 2. Lay out two columns, *Step* | *Value*. The first row holds the start total, then the signed drivers (negatives as negative numbers), then the end total as a positive value. Check that start + Σ drivers = end.
 3. Select the data, then **Insert › Charts › Insert Waterfall, Funnel, Stock, Surface or Radar Chart › Waterfall**.

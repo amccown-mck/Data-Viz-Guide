@@ -10,11 +10,12 @@
     office.deliver(path)                            # ... then one copy to /mnt/data (Copilot: the user's OneDrive)
 
 Each slide is a real PowerPoint chart (right-click › Edit Data works): bar_slide (a ranking), column_slide (periods or
-stages) and line_slide (over time); picture_slide puts any other mckviz figure on the slide as a picture. Each has
-the headline in the title placeholder (Bold McKesson Blue, 34 pt down to 26 to fit), the subtitle, the chart, and the
-source at 9 pt bottom-left above the footer. Geometry is computed from the text, measured with the bundled Libre Franklin, so labels fit and never
-sit on a benchmark line. The slide helpers below are shared with office/build_office.py, which builds the template
-and the starter deck.
+stages), line_slide (over time), stack_slide (parts of a whole), waterfall_slide (a bridge) and dumbbell_slide
+(us vs. a comparator); picture_slide puts any other mckviz figure on the slide as a picture. Each has the headline
+in the title placeholder (Bold McKesson Blue, 34 pt down to 26 to fit), the subtitle, the chart, and the source at
+9 pt bottom-left above the footer. Geometry is computed from the text, measured with the bundled Libre Franklin, so
+labels fit and never sit on a benchmark line. The slide helpers below are shared with office/build_office.py, which
+builds the template and the starter deck.
 """
 from __future__ import annotations
 
@@ -1029,10 +1030,422 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
     return SimpleNamespace(slide=slide, chart=chart, order=names, colors=color, y_range=(lo, hi))
 
 
+def _label_column(names: Sequence[str], fw: float) -> float:
+    """The plot's left edge (a fraction of the chart frame) for horizontal rows: right after the longest row label."""
+    cat_w = max(text_width(n, TICK_PT) for n in names)
+    if cat_w > 0.4 * fw:
+        warnings.warn(f"row labels up to {cat_w:.1f} in wide take over 40% of the chart; shorten them", stacklevel=3)
+    return min(cat_w * 1.05 + TICK_GAP, 0.45 * fw) / fw
+
+
+def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source: str, subtitle: str | None = None,
+                footnote: str | None = None, story=None, accent: str | None = None, uniform: bool = False,
+                colors: Sequence[str] | None = None, label_min: float = 0, fmt="{:.0f}%",
+                base: Sequence[float] | None = None, base_label: str = "n",
+                takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None, notes: str | None = None):
+    """Parts of a whole as native, editable 100% stacked bars, with mv.hstack's rules: the first category on top, the
+    story segments first on the baseline (blue; navy for one accent; the rest greys, or light blues with
+    uniform=True), white lines between segments, values inside every segment wide enough to hold one (and at least
+    `label_min`), each segment named
+    once above the top bar (no legend), and optional counts behind each bar at the right (`base`).
+
+        parts = [("Contingent", df.contingent_pct), ("Full-time", df.ft_pct), ("Part-time", df.pt_pct)]
+        office.stack_slide(prs, df.function, parts, story="Contingent", headline=..., subtitle=..., source=...)
+
+    parts: [(name, values)] or {name: values} in stack order; each category's parts should add up to 100 (the chart
+    draws shares either way, but the labels show the values given). story / accent / uniform / colors: as in
+    mv.hstack (with neither story nor colors, the first part is the story). Sort the categories first (by the story
+    segment, say). takeaways, alt, notes: as in bar_slide. Returns SimpleNamespace(slide, chart, order, colors).
+    """
+    from .charts import _STACK_GREYS, _STACK_LIGHT_BLUES
+
+    cats = [str(c) for c in categories]
+    items = list(parts.items()) if isinstance(parts, dict) else [tuple(p) for p in parts]
+    items = [(str(nm), [float(v) for v in vals]) for nm, vals in items]
+    story = [] if story is None else [str(story)] if isinstance(story, str) else [str(x) for x in story]
+    lead = ([str(accent)] if accent is not None else []) + story
+    names = [nm for nm, _ in items]
+    if unknown := set(lead) - set(names):
+        raise ValueError(f"not one of the parts: {sorted(unknown)}")
+    if len(story) > 2:
+        raise ValueError("story: at most two segments; color the rest grey or pass colors=")
+    if uniform and accent is None:
+        raise ValueError("uniform=True needs accent=: the light-blue series only works with one navy exception")
+    if any(len(v) != len(cats) for _, v in items):
+        raise ValueError("every part needs one value per category")
+    if any(v != v or v < 0 for _, vals in items for v in vals):
+        raise ValueError("parts must be zero or more, none missing")
+    items = [it for nm in lead for it in items if it[0] == nm] + [it for it in items if it[0] not in lead]
+    if colors is None:
+        rest = len(items) - (len(lead) if lead else 1)
+        pool = _STACK_LIGHT_BLUES if uniform else _STACK_GREYS
+        if rest > len(pool):
+            raise ValueError(f"{len(items)} segments: group the small ones into 'Other' (at most 4 read well)")
+        head = ([C.accent] if accent is not None else []) + [C.focus] * len(story) if lead else [C.focus]
+        colors = head + pool[:rest]
+    colors = list(colors)
+    if len(colors) != len(items):
+        raise ValueError("one color per part")
+    totals = [sum(vals[i] for _, vals in items) for i in range(len(cats))]
+    if isinstance(fmt, str) and fmt.endswith("%") and any(abs(t - 100) > 1.5 for t in totals):
+        warnings.warn("the parts don't add up to 100 for every category, but the labels say %; check the data",
+                      stacklevel=2)
+    num_fmt = number_format(fmt)
+
+    default_notes = ("100% stacked bar (mckviz.office.stack_slide). The colored segment is on the baseline so every "
+                     "bar's value starts level. Right-click › Edit Data to change the numbers; the labels follow. The "
+                     "segment names above the top bar are text boxes: move them if the top bar's split changes.")
+    slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
+    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    base_txt = [f"{b:,.0f}" for b in base] if base is not None else []
+    reserve = (max(text_width(t, LABEL_PT - 1) for t in base_txt + [base_label]) + 0.3) if base is not None else 0.0
+    px = _label_column(cats, fw)
+    pw = 1 - px - 0.02 - reserve / fw
+    names_h = 0.35                                             # the segment names' row above the top bar
+    py = PLOT_Y + names_h / CHART_H
+    ph = min(PLOT_H - names_h / CHART_H, len(cats) * MAX_BAND / CHART_H)
+
+    data = CategoryChartData(number_format=num_fmt) if num_fmt else CategoryChartData()
+    data.categories = cats
+    for nm, vals in items:
+        data.add_series(nm, vals)
+    frame, chart = _chart(slide, XL_CHART_TYPE.BAR_STACKED_100, data, fw, alt or headline)
+    plot_layout(chart, px, py, pw, ph)
+    plot = chart.plots[0]
+    plot.gap_width = int(BAND_GAP)
+    plot.overlap = 100
+    plot_w = fw * pw
+    for s, (nm, vals), col in zip(plot.series, items, colors):
+        fill(s, col)
+        s.format.line.color.rgb = rgb("#FFFFFF")
+        s.format.line.width = Pt(1.5)
+        hot = col in (C.focus, C.accent)
+        for i, v in enumerate(vals):
+            seg_w = plot_w * v / (totals[i] or 1)              # a label only where it fits inside its segment
+            if v >= label_min and seg_w >= text_width(_fmt(fmt, v), LABEL_PT - 1, "Bold") + 0.12:
+                if num_fmt:
+                    dlbl(s.points[i], val=True, num_fmt=num_fmt, pos=XL_LABEL_POSITION.CENTER, size=LABEL_PT - 1,
+                         color=text_on(col), bold=hot)
+                else:
+                    dlbl(s.points[i], text=_fmt(fmt, v), pos=XL_LABEL_POSITION.CENTER, size=LABEL_PT - 1,
+                         color=text_on(col), bold=hot)
+            else:
+                dlbl(s.points[i])                              # no label: the segment is too thin to hold one
+    va = chart.value_axis
+    va.visible = False
+    va.has_major_gridlines = va.has_minor_gridlines = False
+    ca = chart.category_axis
+    ca.reverse_order = True                                    # first category on top
+    ca.has_major_gridlines = ca.has_minor_gridlines = False
+    baseline(ca, visible=False)
+    ca.tick_labels.font.size = Pt(TICK_PT)
+    ca.tick_labels.font.color.rgb = rgb(C.text)
+
+    # Segment names once, above the top bar, each at its segment's left edge (pushed right if the one before is long).
+    fl, ft, _, fh = _frame_in(frame)
+    plot_left = fl + fw * px
+    band = ph * CHART_H / len(cats)
+    bar_top = ft + fh * py + (band - band / (1 + BAND_GAP / 100)) / 2
+    x, prev_end = plot_left, plot_left
+    for (nm, vals), col in zip(items, colors):
+        hot = col in (C.focus, C.accent)
+        tw = text_width(nm, TICK_PT, "SemiBold" if hot else "Regular") + 0.1
+        start = max(x, prev_end + 0.15 if prev_end > plot_left else x)
+        if start + tw > plot_left + plot_w + 0.1:
+            warnings.warn(f"the segment name {nm!r} runs past the chart; shorten the part names", stacklevel=2)
+        text_box(slide, start, bar_top - LINE_H - 0.08, tw, LINE_H, nm, TICK_PT, col if hot else C.text,
+                 font=SEMI if hot else None, name=f"Segment name: {nm}", wrap=False)
+        prev_end = start + tw
+        x += plot_w * vals[0] / (totals[0] or 1)
+    if base is not None:
+        bx = plot_left + plot_w + 0.25
+        text_box(slide, bx, bar_top - LINE_H - 0.08, reserve, LINE_H, base_label, TICK_PT, C.text, name="Base label",
+                 wrap=False)
+        for i, t in enumerate(base_txt):
+            cy = ft + fh * py + band * (i + 0.5)
+            text_box(slide, bx, cy - LINE_H / 2, reserve, LINE_H, t, LABEL_PT - 1, C.text_muted, anchor=MSO_ANCHOR.MIDDLE,
+                     name=f"Base: {cats[i]}", wrap=False)
+    if takeaways:
+        takeaways_card(slide, takeaways)
+    return SimpleNamespace(slide=slide, chart=chart, order=[nm for nm, _ in items], colors=colors)
+
+
+def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: Sequence[str] | None = None, *,
+                    headline: str, source: str, subtitle: str | None = None, footnote: str | None = None,
+                    focus: Iterable[str] = (), semantic: str | None = None, floor: float | None = None, fmt=None,
+                    takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None,
+                    notes: str | None = None):
+    """A bridge from a start total to an end total as a native, editable waterfall, with mv.waterfall's rules: totals
+    navy, steps grey, the headline's steps in McKesson Blue (at most two), each value above its column (steps with
+    an explicit sign), no gridlines and no value axis. Built as a stacked column (an invisible base lifts each step),
+    so it opens in any PowerPoint.
+
+        office.waterfall_slide(prs, df.step, df.value_musd, df.kind, focus={"Automation savings"}, floor=3900,
+                               headline=..., subtitle="Labor cost bridge, FY25 to FY26 ($M)", source=...)
+
+    kinds: "total" or "delta" per step (default: first and last are totals; a "total" in the middle is a subtotal).
+    semantic: "up" (an increase is favorable: green up, orange down) or "down" (an increase is unfavorable, e.g.
+    cost), with ▲/▼ on the steps, instead of focus. floor: start the value axis here, so small steps are readable;
+    the totals get two white break marks and the footnote says where the axis starts. fmt: callable(value, kind) ->
+    label (default: totals "4,210", steps "+120" with a true minus). takeaways, alt, notes: as in bar_slide. Returns
+    SimpleNamespace(slide, chart, tops, ends, colors, y_range).
+    """
+    import textwrap
+
+    from . import signed
+
+    steps, vals = [str(s) for s in steps], [float(v) for v in values]
+    n = len(steps)
+    if len(vals) != n:
+        raise ValueError("steps and values must have the same length")
+    if any(v != v for v in vals):
+        raise ValueError("a value is missing (NaN): drop or fill it first")
+    kinds = list(kinds) if kinds is not None else ["total"] + ["delta"] * (n - 2) + ["total"]
+    if len(kinds) != n or set(kinds) - {"total", "delta"}:
+        raise ValueError("kinds must be 'total' or 'delta', one per step")
+    if semantic not in (None, "up", "down"):
+        raise ValueError("semantic must be None, 'up' (increase is favorable) or 'down' (increase is unfavorable)")
+    focus = {str(f) for f in focus}
+    if len(focus) > 2:
+        raise ValueError("highlight at most two steps; the rest stay grey")
+    if unknown := focus - set(steps):
+        raise ValueError(f"focus not among the steps: {sorted(unknown)}")
+    fmt = fmt or (lambda v, k: f"{v:,.0f}" if k == "total" else signed(v))
+
+    run, base, change, total, cols, tones, ends = 0.0, [], [], [], [], [], []
+    for s, v, k in zip(steps, vals, kinds):
+        if k == "total":
+            base.append(0.0), change.append(0.0), total.append(v)
+            run = v
+            cols.append(C.total), tones.append("total")
+        else:
+            base.append(run + min(v, 0.0)), change.append(abs(v)), total.append(0.0)
+            run += v
+            if semantic:
+                good = (v > 0) == (semantic == "up")
+                cols.append(C.positive if good else C.negative), tones.append("good" if good else "bad")
+            else:
+                cols.append(C.focus if s in focus else C.context), tones.append("focus" if s in focus else "context")
+        ends.append(run)
+    tops = [b + c + t for b, c, t in zip(base, change, total)]
+    if min(tops) < 0 or min(base) < 0:
+        raise ValueError("the bridge goes below zero; a native waterfall can't show that, use picture_slide")
+    lo = floor if floor is not None else 0.0
+    if floor is not None and any(base[i] < floor for i in range(n) if kinds[i] == "delta"):
+        raise ValueError(f"floor={floor:g} cuts into a step's bar; lower it")
+    note = (f"Value axis starts at {floor:,.0f} (break marks on the totals) so the steps are readable."
+            if floor is not None else "")
+    if note:
+        footnote = f"{footnote} {note}" if footnote else note
+
+    default_notes = ("Waterfall (mckviz.office.waterfall_slide), built as a stacked column: an invisible 'Base' series "
+                     "lifts each step to the running total. To change the numbers, Edit Data: 'Change' and 'Total', "
+                     "then 'Base' as the running total before each step. The value labels are typed text "
+                     "(Format Data Label › Text): retype them too. Office 2016+ also has Insert › Waterfall, but it "
+                     "can't break the axis or color single steps by rule.")
+    slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
+    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    px, pw = 0.02, 0.96
+    plot_w, plot_h = pw * fw, PLOT_H * CHART_H
+    band = plot_w / n
+    wrap = max(6, int(band * 0.9 / text_width("n", TICK_PT - 1)))   # characters per line that fit one column
+    ticks = [textwrap.fill(s, wrap) for s in steps]
+    lines = max(t.count("\n") for t in ticks) + 1
+    if lines > 3:
+        warnings.warn("step names wrap to four lines or more under their columns; shorten them", stacklevel=2)
+    # The plot ends high enough for the step names' lines under it (PowerPoint cuts a label that has no room).
+    ph = min(PLOT_H, 1 - PLOT_Y - (lines * (TICK_PT - 1) * 1.25 / 72 + 0.15) / CHART_H)
+    plot_h = ph * CHART_H
+    room = LINE_H + 0.1                                         # a label above the tallest column
+    hi = (max(tops) * plot_h - lo * room) / (plot_h - room)
+
+    data = CategoryChartData()
+    data.categories = ticks
+    data.add_series("Base", base)
+    data.add_series("Change", change)
+    data.add_series("Total", total)
+    data.add_series("Label", [0.0] * n)                        # zero height on top of each stack: carries its label
+    frame, chart = _chart(slide, XL_CHART_TYPE.COLUMN_STACKED, data, fw, alt or headline)
+    plot_layout(chart, px, PLOT_Y, pw, ph)
+    plot = chart.plots[0]
+    plot.gap_width = int(BAND_GAP)
+    plot.overlap = 100
+    s_base, s_change, s_total, s_label = plot.series
+    no_fill(s_base)
+    no_fill(s_label)
+    fill(s_total, C.total)
+    fill(s_change, C.context)
+    for i, (v, k, col, tone) in enumerate(zip(vals, kinds, cols, tones)):
+        if k == "delta" and col != C.context:
+            fill(s_change.points[i], col)
+        text = fmt(v, k)
+        if semantic and k == "delta" and v:
+            text = f"{'▲' if v > 0 else '▼'} {text}"
+        color = {"total": C.headline, "focus": C.headline, "good": C.positive_text,
+                 "bad": C.negative_text}.get(tone, C.text)
+        dlbl(s_label.points[i], text=text, pos=XL_LABEL_POSITION.INSIDE_BASE, size=LABEL_PT, color=color,
+             bold=tone in ("total", "focus", "good", "bad"))
+    va = chart.value_axis
+    va.minimum_scale, va.maximum_scale = lo, hi
+    va.visible = False
+    va.has_major_gridlines = va.has_minor_gridlines = False
+    ca = chart.category_axis
+    ca.has_major_gridlines = ca.has_minor_gridlines = False
+    baseline(ca)
+    ca.tick_labels.font.size = Pt(TICK_PT - 1)
+    ca.tick_labels.font.color.rgb = rgb(C.text)
+    _horizontal_ticks(ca)
+
+    if floor is not None:                                       # two white slashes across each total near the floor
+        fl, ft, _, fh = _frame_in(frame)
+        bar_w = band / (1 + BAND_GAP / 100)
+        y0 = ft + fh * (PLOT_Y + ph) - 0.3
+        for i in (i for i in range(n) if kinds[i] == "total"):
+            cx = fl + fw * px + band * (i + 0.5)
+            for dy in (0.0, 0.09):
+                line_shape(slide, cx - bar_w / 2 - 0.03, y0 + dy + 0.05, cx + bar_w / 2 + 0.03, y0 + dy - 0.05,
+                           "#FFFFFF", width_pt=2.5, dash=False, name="Axis break")
+    if takeaways:
+        takeaways_card(slide, takeaways)
+    return SimpleNamespace(slide=slide, chart=chart, tops=tops, ends=ends, colors=cols, y_range=(lo, hi))
+
+
+def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: Sequence[float], *, headline: str,
+                   source: str, subtitle: str | None = None, footnote: str | None = None,
+                   compare_name: str = "Market", value_name: str = "McKesson", flag_below: float | None = -5.0,
+                   flag_name: str | None = None, gap: str = "pct", decimals: int = 1, tick_fmt: str = "{:,.0f}",
+                   xlim: tuple[float, float] | None = None, focus: Iterable[str] | None = None,
+                   takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None,
+                   notes: str | None = None):
+    """Us vs. a comparator per row as a native, editable dumbbell, with mv.dumbbell's rules: the comparator's dot
+    grey, ours blue (orange where we are `flag_below`% or more below), joined by a light bar; the gap after each pair
+    (orange and bold when flagged), the row names at the left (bold navy when flagged or in `focus`), light vertical
+    gridlines, and a key naming each dot type once above the top row.
+
+        office.dumbbell_slide(prs, df.role, df.market_median_k, df.internal_median_k, tick_fmt="${:,.0f}K",
+                              headline=..., subtitle="Median base pay, McKesson vs. market, 2026 ($K)", source=...)
+
+    The first row is on top; sort the rows first (largest shortfall first, say). gap: "pct" (value vs. compare in %)
+    or "abs" (in units). tick_fmt: the x-axis format, as a Python format string. Built as an XY chart with one series
+    per row, so Edit Data changes the dots; the gap labels are typed text. takeaways, alt, notes: as in bar_slide.
+    Returns SimpleNamespace(slide, chart, flagged, gaps, x_range).
+    """
+    import numpy as np
+    from matplotlib.ticker import MaxNLocator
+    from pptx.chart.data import XyChartData
+
+    from . import signed
+
+    rows = [str(s) for s in labels]
+    a, b = [float(v) for v in compare], [float(v) for v in value]
+    if not (len(rows) == len(a) == len(b)) or not rows:
+        raise ValueError("labels, compare and value must have the same, non-zero length")
+    if any(v != v for v in a + b):
+        raise ValueError("a value is missing (NaN): drop or fill it first")
+    if gap not in ("pct", "abs"):
+        raise ValueError("gap must be 'pct' or 'abs'")
+    gaps = [(bv / av - 1) * 100 if gap == "pct" else bv - av for av, bv in zip(a, b)]
+    flagged = [flag_below is not None and g <= flag_below for g in gaps]
+    focus = {str(f) for f in (focus or ())}
+    if unknown := focus - set(rows):
+        raise ValueError(f"focus not among the labels: {sorted(unknown)}")
+    lo_v, hi_v = min(a + b), max(a + b)
+    pad = (hi_v - lo_v) * 0.08 or 1.0
+    if xlim is None:                                            # from a round tick below the data to just past it
+        ticks = list(MaxNLocator(nbins=5).tick_values(lo_v - pad, hi_v + pad))
+        x_min, x_max = ticks[0], hi_v + pad
+    else:
+        x_min, x_max = xlim
+        ticks = [t for t in MaxNLocator(nbins=5).tick_values(x_min, x_max) if x_min <= t <= x_max]
+    major = ticks[1] - ticks[0] if len(ticks) > 1 else (x_max - x_min)
+    suffix = "%" if gap == "pct" else ""
+    gap_txt = [signed(g, decimals, suffix) for g in gaps]
+
+    default_notes = ("Dumbbell (mckviz.office.dumbbell_slide), built as an XY chart with one series per row (the "
+                     "series name is the row label). Each series has three points: the axis minimum (the label "
+                     f"anchor, no marker), {compare_name} (grey dot) and {value_name} (blue, or orange when flagged). "
+                     "Edit Data changes the dots; the gap labels at the right are typed text, so retype them too. The "
+                     "key above the top row is shapes.")
+    slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
+    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    hot = [f or r in focus for r, f in zip(rows, flagged)]
+    name_w = max(text_width(r, TICK_PT, "SemiBold" if h else "Regular") for r, h in zip(rows, hot))
+    px = min(name_w * 1.05 + TICK_GAP, 0.45 * fw) / fw
+    gap_w = max(text_width(t, LABEL_PT - 1, "Bold") for t in gap_txt) + LABEL_PAD + 0.15
+    pw = 1 - px - gap_w / fw - 0.02
+    n = len(rows)
+    headroom = 1.0                                              # a band above the top row for the key
+
+    data = XyChartData()
+    for i, (r, av, bv) in enumerate(zip(rows, a, b)):
+        s = data.add_series(r)
+        for xv in (x_min, av, bv):
+            s.add_data_point(xv, n - i)
+    frame, chart = _chart(slide, XL_CHART_TYPE.XY_SCATTER_LINES_NO_MARKERS, data, fw, alt or headline)
+    plot_layout(chart, px, PLOT_Y, pw, PLOT_H)
+    for ser, r, av, bv, f, h, txt in zip(chart.plots[0].series, rows, a, b, flagged, hot, gap_txt):
+        ser.smooth = False
+        ser.marker.style = XL_MARKER_STYLE.NONE
+        ser.format.line.color.rgb = rgb(C.context_light)
+        ser.format.line.width = Pt(3)
+        ser.points[1].format.line.fill.background()           # no segment from the label anchor to the first dot
+        dlbl(ser.points[0], ser=True, pos=XL_LABEL_POSITION.LEFT, size=TICK_PT, color=C.headline if h else C.text,
+             bold=h, box=(px * 0.95, 0.24 / CHART_H), align="r")
+        for p, color, size in ((ser.points[1], C.context, 8), (ser.points[2], C.negative if f else C.focus, 10)):
+            m = p.marker
+            m.style, m.size = XL_MARKER_STYLE.CIRCLE, size
+            m.format.fill.solid()
+            m.format.fill.fore_color.rgb = rgb(color)
+            m.format.line.fill.background()
+        right = 1 if av >= bv else 2
+        dlbl(ser.points[right], text=txt, pos=XL_LABEL_POSITION.RIGHT, size=LABEL_PT - 1,
+             color=C.negative_text if f else C.text, bold=f)
+    va, xa = chart.value_axis, chart.category_axis              # XY: value_axis = Y, category_axis = X
+    va.minimum_scale, va.maximum_scale = 0.5, n + headroom
+    va.visible = False
+    va.has_major_gridlines = va.has_minor_gridlines = False
+    xa.minimum_scale, xa.maximum_scale, xa.major_unit = x_min, x_max, major
+    xa.has_major_gridlines = True
+    xa.major_gridlines.format.line.color.rgb = rgb(C.grid)
+    xa.major_gridlines.format.line.width = Pt(TOKENS["chart"]["grid"]["width_px"])
+    baseline(xa, visible=False)
+    xa.tick_labels.font.size = Pt(TICK_PT - 1)
+    xa.tick_labels.font.color.rgb = rgb(C.text_muted)
+    if (code := number_format(tick_fmt)) is not None:
+        xa.tick_labels.number_format = code
+        xa.tick_labels.number_format_is_linked = False
+
+    # The key: each dot type once, above the top row, starting where the plot starts.
+    fl, ft, _, fh = _frame_in(frame)
+    plot_h = PLOT_H * CHART_H
+    y_top, y_key = n + headroom, n + 0.65                      # the axis maximum, and the key's row above the top row
+    ky = ft + fh * PLOT_Y + plot_h * (y_top - y_key) / (y_top - 0.5)
+    keys = [(value_name, C.focus, C.focus, True)]
+    if any(flagged):
+        unit = "%" if gap == "pct" else ""
+        keys.append((flag_name or f"{value_name}, {abs(flag_below):g}{unit}+ below {compare_name.lower()}",
+                     C.negative, C.negative_text, True))
+    keys.append((compare_name, C.context, C.text_muted, False))
+    g = slide.shapes.add_group_shape()
+    g.name = "Key"
+    kx = fl + fw * px
+    for lab, dot, tone, strong in keys:
+        d = 0.12
+        shape(g, MSO_SHAPE.OVAL, kx, ky - d / 2, d, d, dot, name=f"Key: {lab}")
+        tw = text_width(lab, NOTE_PT, "SemiBold" if strong else "Regular") + 0.1
+        text_box(g, kx + d + 0.06, ky - LINE_H / 2, tw, LINE_H, lab, NOTE_PT, tone, font=SEMI if strong else None,
+                 anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        kx += d + 0.06 + tw + 0.25
+    if takeaways:
+        takeaways_card(slide, takeaways)
+    return SimpleNamespace(slide=slide, chart=chart, flagged=np.array(flagged), gaps=np.array(gaps),
+                           x_range=(x_min, x_max))
+
+
 def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None = None, footnote: str | None = None,
                   alt: str | None = None, takeaways: Sequence[tuple[str, str]] | None = None, notes: str | None = None,
                   dpi: int = 200):
-    """A chart that has no native PowerPoint slide yet (stack, waterfall, Sankey, strip, ...) as a picture on the slide
+    """A chart that has no native PowerPoint slide yet (Sankey, strip, treemap, heatmap, ...) as a picture on the slide
     grid: the mckviz figure drawn at the chart area's size, so its text keeps its point size on the slide. The slide
     carries the headline, subtitle and source, so any that mv.titles / mv.source put on the figure are taken off first
     (show the figure's PNG with them as the preview, then pass the same figure here). The speaker notes say the chart

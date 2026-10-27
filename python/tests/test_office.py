@@ -329,6 +329,91 @@ def test_line_gaps_stay_gaps():
     assert r.chart.plots[0].series[0].values == (1.0, None, 3.0)
 
 
+FUNCTIONS = ["Technology", "Corporate", "Distribution"]
+MIX = [("Full-time", [58, 88, 71]), ("Part-time", [12, 4, 22]), ("Contingent", [30, 8, 7])]
+
+
+def test_stack_story_segment_first_on_the_baseline():
+    r = office.stack_slide(office.deck(), FUNCTIONS, MIX, story="Contingent", headline="h", source="s")
+    assert r.chart.chart_type == XL_CHART_TYPE.BAR_STACKED_100
+    assert r.order == ["Contingent", "Full-time", "Part-time"]            # moved to the front
+    assert r.colors[0] == mv.colors.focus and mv.colors.focus not in r.colors[1:]
+    assert r.chart.category_axis.reverse_order                            # first category on top
+    assert not r.chart.has_legend
+    assert named(r.slide, "Segment name: Contingent").text_frame.text == "Contingent"
+
+
+def test_stack_labels_where_they_fit():
+    r = office.stack_slide(office.deck(), FUNCTIONS, MIX, story="Contingent", headline="h", source="s")
+    contingent = r.chart.plots[0].series[0]
+    assert all(p.data_label._dLbl.find(qn("c:showVal")).get("val") == "1" for p in contingent.points)
+    with pytest.warns(UserWarning, match="runs past"):         # a sliver's name can't sit over it either
+        tiny = office.stack_slide(office.deck(), ["A"], [("Big", [99.5]), ("Small", [0.5])], headline="h", source="s")
+    assert tiny.chart.plots[0].series[1].points[0].data_label._dLbl.find(qn("c:showVal")).get("val") == "0"
+
+
+def test_stack_base_counts_and_rejects():
+    r = office.stack_slide(office.deck(), FUNCTIONS, MIX, story="Contingent", base=[4100, 5300, 14200],
+                           base_label="Workers", headline="h", source="s")
+    assert named(r.slide, "Base: Distribution").text_frame.text == "14,200"
+    with pytest.raises(ValueError, match="not one of the parts"):
+        office.stack_slide(office.deck(), FUNCTIONS, MIX, story="Bogus", headline="h", source="s")
+    with pytest.raises(ValueError, match="accent"):
+        office.stack_slide(office.deck(), FUNCTIONS, MIX, uniform=True, headline="h", source="s")
+
+
+STEPS = ["FY25", "Merit", "Hires", "Backfill lag", "Automation", "Contractors", "FY26"]
+BRIDGE = [4210, 139, 96, -58, -71, -24, 4292]
+
+
+def test_waterfall_floats_the_steps_on_a_hidden_base():
+    r = office.waterfall_slide(office.deck(), STEPS, BRIDGE, focus={"Automation"}, headline="h", source="s")
+    assert r.chart.chart_type == XL_CHART_TYPE.COLUMN_STACKED
+    base = r.chart.plots[0].series[0]
+    assert base.values[1] == 4210 and base.values[3] == 4210 + 139 + 96 - 58     # a fall starts at its new level
+    assert r.ends[-2] == pytest.approx(4292)
+    assert r.colors[4] == mv.colors.focus and r.colors[0] == mv.colors.total and r.colors[1] == mv.colors.context
+    label = r.chart.plots[0].series[3].points[3].data_label.text_frame.text
+    assert label == "−58"                                                     # a true minus
+
+
+def test_waterfall_floor_breaks_the_totals_and_says_so():
+    r = office.waterfall_slide(office.deck(), STEPS, BRIDGE, floor=3900, headline="h", source="s")
+    assert r.y_range[0] == 3900
+    assert len([s for s in r.slide.shapes if s.name == "Axis break"]) == 4    # two slashes on each total
+    assert any("starts at 3,900" in s.text_frame.text for s in r.slide.shapes if s.has_text_frame)
+    with pytest.raises(ValueError, match="cuts into"):
+        office.waterfall_slide(office.deck(), STEPS, BRIDGE, floor=4300, headline="h", source="s")
+
+
+def test_waterfall_semantic_colors_and_arrows():
+    r = office.waterfall_slide(office.deck(), STEPS, BRIDGE, semantic="down", headline="h", source="s")
+    assert r.colors[1] == mv.colors.negative and r.colors[4] == mv.colors.positive
+    assert r.chart.plots[0].series[3].points[1].data_label.text_frame.text.startswith("▲")
+
+
+ROLES = ["RN, Specialty", "Pharmacy Technician", "Software Engineer", "Data Scientist"]
+MARKET, OURS = [101, 44, 142, 128], [94, 41, 138, 131]
+
+
+def test_dumbbell_flags_and_gaps():
+    r = office.dumbbell_slide(office.deck(), ROLES, MARKET, OURS, tick_fmt="${:,.0f}K", headline="h", source="s")
+    assert r.chart.chart_type == XL_CHART_TYPE.XY_SCATTER_LINES_NO_MARKERS
+    assert list(r.flagged) == [True, True, False, False]                       # 5% or more below market
+    assert [s.name for s in r.chart.plots[0].series] == ROLES                 # the row names, first on top
+    first = r.chart.plots[0].series[0]
+    assert first.points[0].data_label._dLbl.find(qn("c:showSerName")).get("val") == "1"
+    assert first.points[1].data_label.text_frame.text == "−6.9%"              # at the right-most dot
+    assert r.chart.category_axis.tick_labels.number_format == '"$"#,##0"K"'
+    assert named(r.slide, "Key")
+
+
+def test_dumbbell_axis_holds_every_dot():
+    r = office.dumbbell_slide(office.deck(), ROLES, MARKET, OURS, headline="h", source="s")
+    lo, hi = r.x_range
+    assert lo <= 41 and hi >= 142
+
+
 def figure_with_titles():
     import matplotlib
 
