@@ -90,8 +90,8 @@ def main():
         return None, None, False
     for w in warns:
         print(f"warning: {w}")
-    # Decks delivered by an earlier script are in the user's OneDrive already; a copy left in /mnt/data would be
-    # uploaded again after every code run (OneDrive changes Office files after the upload, so they never match).
+    # Files delivered by an earlier script are in the user's OneDrive already; a copy left in /mnt/data would be
+    # uploaded again, as a numbered copy, after later code runs.
     for f in mv.clear_delivered():
         print(f"delivered earlier, now only in OneDrive: {f.name} (its link still works)")
     from matplotlib import font_manager as fm

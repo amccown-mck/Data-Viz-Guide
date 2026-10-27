@@ -574,9 +574,9 @@ def _frame_in(frame) -> tuple[float, float, float, float]:
 def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: str, source: str,
               subtitle: str | None = None, footnote: str | None = None, focus: Iterable[str] = (),
               accent: str | None = None, benchmark: float | None = None, benchmark_label: str | None = None,
-              fmt="{:,.0f}", sort: bool = True, takeaways: Sequence[tuple[str, str]] | None = None,
+              fmt="{:,.0f}", sort: bool | str = True, takeaways: Sequence[tuple[str, str]] | None = None,
               alt: str | None = None, notes: str | None = None):
-    """A ranking as a native, editable horizontal bar chart on a slide: bars sorted largest first from the top, grey
+    """A ranking as a native, editable horizontal bar chart on a slide: bars sorted with the story on top, grey
     context with the headline's bars in McKesson Blue (navy for one accent, at most two highlighted), the value at
     each bar's end (Bold for the highlighted bars), no gridlines and no value axis, the category labels sized to
     their text so the plot starts right after them, and an optional benchmark as a dashed navy line across all bars,
@@ -587,14 +587,24 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
 
     source: the source line (write the skill's placeholder when the user gave none). fmt: the value format, as a
     Python format string; the common ones become the chart's number format, so the labels follow Edit Data. sort:
-    False keeps the given order (a natural order). takeaways: two or three (number, caption) pairs for the card in
+    True puts the story on top: largest first, or smallest first when the highlighted bars are the small ones (a
+    "lagging" or "lowest" headline); "descending" / "ascending" force the order; False keeps the given order (a
+    natural order). takeaways: two or three (number, caption) pairs for the card in
     the right third; the chart then takes two-thirds. alt: the chart's alt text (default: the headline). Values must
     be zero or more (bars start at zero; use a diverging bar for signed changes). Returns SimpleNamespace(slide,
     chart, order, x_max, inside).
     """
     names, vals = _bars(labels, values)
     focus, accent, hot = _highlight(names, focus, accent)
-    order =sorted(range(len(names)), key=lambda i: -vals[i]) if sort else list(range(len(names)))
+    if sort not in (True, False, "descending", "ascending"):
+        raise ValueError("sort: True (the story on top), 'descending', 'ascending' or False")
+    order = list(range(len(names)))
+    if sort:
+        order.sort(key=lambda i: -vals[i])                     # largest first
+        rank = {names[i]: k for k, i in enumerate(order)}
+        low_story = bool(hot) and all(rank[h] >= len(names) / 2 for h in hot)
+        if sort == "ascending" or (sort is True and low_story):
+            order.reverse()                                    # the highlighted (smallest) bars on top
     names, vals = [names[i] for i in order], [vals[i] for i in order]
     num_fmt = number_format(fmt)
 
@@ -1436,16 +1446,42 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
                            x_range=(x_min, x_max))
 
 
+PICTURE_TOP, PICTURE_BOTTOM = CARD_TOP - 0.1, FOOT_TOP - 0.1     # the picture's area on the slide (inches)
+
+
+def picture_size(takeaways: bool = False) -> tuple[float, float]:
+    """The figure size (inches) that fills a picture slide's chart area: full width, or two-thirds beside the
+    takeaways card."""
+    return (SIDE_CHART_W if takeaways else W - LEFT - RIGHT), PICTURE_BOTTOM - PICTURE_TOP
+
+
+def picture_figure(takeaways: bool = False):
+    """A figure and axes for a chart going onto picture_slide: the chart area's size, with the plot filling it
+    before the chart is drawn (builders such as mv.sankey measure their labels against the plot when they draw, so
+    margins added later leave empty space or crowd the labels). Returns (fig, ax).
+
+        fig, ax = office.picture_figure()                       # picture_figure(takeaways=True) beside a card
+        mv.sankey(ax, flows, ...); mv.titles(fig, ...); mv.source(fig, ...)"""
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=picture_size(takeaways))
+    fig.subplots_adjust(left=0.02, right=0.98, bottom=0.04, top=0.96)
+    return fig, ax
+
+
 def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None = None, footnote: str | None = None,
                   alt: str | None = None, takeaways: Sequence[tuple[str, str]] | None = None, notes: str | None = None,
                   dpi: int = 200):
     """A chart that has no native PowerPoint slide yet (Sankey, strip, treemap, heatmap, ...) as a picture on the slide
-    grid: the mckviz figure drawn at the chart area's size, so its text keeps its point size on the slide. The slide
+    grid: the mckviz figure drawn as its builder laid it out (resizing it afterwards would move labels onto each other
+    or away from their columns), then scaled down only as far as the chart area needs. Start the figure with
+    picture_figure() so it fills the area at its true point sizes. The slide
     carries the headline, subtitle and source, so any that mv.titles / mv.source put on the figure are taken off first
     (show the figure's PNG with them as the preview, then pass the same figure here). The speaker notes say the chart
     is a picture.
 
-        fig, ax = plt.subplots(); mv.line(ax, ...); mv.titles(fig, ...); mv.source(fig, ...)
+        fig, ax = office.picture_figure()                       # picture_figure(takeaways=True) beside a card
+        mv.sankey(ax, ...); mv.titles(fig, ...); mv.source(fig, ...)
         mv.save(fig, "/tmp/preview.png")                        # the inline preview
         office.picture_slide(prs, fig, headline=..., subtitle=..., source=...)
 
@@ -1461,10 +1497,8 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
         if fur.get(key) is not None:
             fur[key].remove()
     fig._mck = {}
-    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
-    top, bottom = CARD_TOP - 0.1, FOOT_TOP - 0.1
-    slot_h = bottom - top
-    fig.set_size_inches(fw, slot_h)
+    fw, slot_h = picture_size(bool(takeaways))
+    top = PICTURE_TOP
     if fur.get("head") is not None or fur.get("sub") is not None:
         fig.subplots_adjust(top=0.97)                          # mv.layout had lowered the plot under the titles
     buf = io.BytesIO()
@@ -1473,7 +1507,7 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
     buf.seek(0)
     w_px, h_px = Image.open(buf).size
     w_in, h_in = w_px / dpi, h_px / dpi
-    scale = min(1.0, fw / w_in, slot_h / h_in)                 # natural size (true point sizes) unless too big
+    scale = min(1.0, fw / w_in, slot_h / h_in)                 # natural size unless too big: then all of it shrinks
     buf.seek(0)
     default_notes = ("This chart is a picture: it has no native PowerPoint version yet. To change it, rebuild it from "
                      "the data with mckviz and replace the picture.")

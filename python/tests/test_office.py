@@ -446,6 +446,18 @@ def test_picture_slide_says_each_title_once():
     assert "picture" in r.slide.notes_slide.notes_text_frame.text
 
 
+def test_picture_figure_fills_the_chart_area_and_is_placed_as_built():
+    for takeaways in (False, True):
+        fig, ax = office.picture_figure(takeaways)
+        assert tuple(fig.get_size_inches()) == pytest.approx(office.picture_size(takeaways))
+        assert ax.get_position().width > 0.9                   # the plot fills it, before the chart is drawn
+        ax.barh(["A", "B"], [1, 2])
+        r = office.picture_slide(office.deck(), fig, headline="h", source="s",
+                                 takeaways=[("1", "a"), ("2", "b")] if takeaways else None)
+        assert tuple(fig.get_size_inches()) == pytest.approx(office.picture_size(takeaways))   # never resized
+        assert Emu(r.picture.width).inches > 0.9 * office.picture_size(takeaways)[0]
+
+
 def test_picture_stays_in_the_chart_area():
     for kw in ({}, {"takeaways": [("4", "A at the end"), ("2x", "B's rise")]}):
         r = office.picture_slide(office.deck(), figure_with_titles(), headline="h", source="s", **kw)
@@ -468,6 +480,9 @@ def test_save_refuses_the_delivery_folder_and_deliver_copies_once(tmp_path, monk
     assert office.deliver(work) == onedrive / "deck.pptx"
     before = (onedrive / "deck.pptx").stat().st_mtime_ns
     assert office.deliver(work) == onedrive / "deck.pptx"     # a rerun: the same file, nothing written
+    import time
+
+    time.sleep(1.1)                                            # the embedded workbook's own dates tick over
     rebuilt = office.deck()
     bar(prs=rebuilt)
     office.save(rebuilt, work)                                 # built again the same way, at another time
@@ -515,10 +530,23 @@ def test_clear_delivered_takes_earlier_decks_out_and_a_rerun_stays_a_no_op(tmp_p
     mv.deliver(deck, png, to=out)
     assert mv.clear_delivered(to=out) == []                    # delivered in this run: left alone
     monkeypatch.setattr(mv, "_RUN", "a later script")
-    assert mv.clear_delivered(to=out) == [out / "deck.pptx"]   # an earlier run's deck: out of the folder
-    assert sorted(p.name for p in out.iterdir()) == ["deck_preview.png"]
+    (out / "notes.txt").write_text("not ours")
+    cleared = mv.clear_delivered(to=out)                       # an earlier run's files: out of the folder
+    assert sorted(p.name for p in cleared) == ["deck.pptx", "deck_preview.png"]
+    assert [p.name for p in out.iterdir()] == ["notes.txt"]    # a file deliver() didn't write stays
     assert mv.deliver(deck, to=out) == out / "deck.pptx"       # delivering it again: still a no-op, no re-upload
     assert not (out / "deck.pptx").exists()
+
+
+def test_bar_story_on_top():
+    names, vals = ["A", "B", "C", "D"], [82, 71, 41, 38]
+    low = office.bar_slide(office.deck(), names, vals, focus={"C", "D"}, headline="h", source="s")
+    assert low.order == ["D", "C", "B", "A"]                   # a "lagging" story: the smallest, highlighted, on top
+    high = office.bar_slide(office.deck(), names, vals, focus={"A"}, headline="h", source="s")
+    assert high.order == ["A", "B", "C", "D"]
+    assert office.bar_slide(office.deck(), names, vals, focus={"C"}, sort="descending", headline="h",
+                            source="s").order == ["A", "B", "C", "D"]
+    assert office.bar_slide(office.deck(), names, vals, headline="h", source="s").order == ["A", "B", "C", "D"]
 
 
 @pytest.mark.parametrize("name, what", [

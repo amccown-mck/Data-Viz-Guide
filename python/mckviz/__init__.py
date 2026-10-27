@@ -518,23 +518,26 @@ def _signature(path: Path) -> str:
     properties (created / modified times); for PDFs, the bytes without the creation and modification dates and the
     file ID; else the bytes. Rebuilding a file the same way gives the same signature."""
     import hashlib
+    import io
     import zipfile
 
+    def digest(data: bytes, h) -> None:
+        if data[:2] == b"PK" and zipfile.is_zipfile(io.BytesIO(data)):
+            with zipfile.ZipFile(io.BytesIO(data)) as z:
+                for n in sorted(n for n in z.namelist() if not n.startswith("docProps/")):
+                    h.update(n.encode() + b"\0")
+                    digest(z.read(n), h)                       # a chart's embedded workbook has its own dates
+        elif data.startswith(b"%PDF"):
+            h.update(re.sub(rb"/(CreationDate|ModDate)\s*\([^)]*\)|/ID\s*\[[^\]]*\]", b"", data))
+        else:
+            h.update(data)
+
     h = hashlib.sha1()
-    data = path.read_bytes()
-    if zipfile.is_zipfile(path):
-        with zipfile.ZipFile(path) as z:
-            for n in sorted(n for n in z.namelist() if not n.startswith("docProps/")):
-                h.update(n.encode() + b"\0" + z.read(n))
-    elif data.startswith(b"%PDF"):
-        h.update(re.sub(rb"/(CreationDate|ModDate)\s*\([^)]*\)|/ID\s*\[[^\]]*\]", b"", data))
-    else:
-        h.update(data)
+    digest(path.read_bytes(), h)
     return h.hexdigest()
 
 
 _VERSION_TAIL = re.compile(r"([ _.-]*(v\d+|rev\d*|final|draft|copy|new|fixed|updated|\(\d+\)|\d))+$", re.I)
-_OFFICE = {".pptx", ".xlsx", ".docx"}
 _RUN = __import__("uuid").uuid4().hex    # this load of mckviz: mck_setup.py reloads it at the start of every script
 
 
@@ -619,18 +622,18 @@ def deliver(*paths, to: str | Path | None = None, revision: str | None = None) -
 
 
 def clear_delivered(to: str | Path | None = None) -> list[Path]:
-    """Take the Office files (.pptx, .xlsx, .docx) that deliver() handed over in an earlier run out of the delivery
-    folder; scripts/mck_setup.py calls this at the start of every script. In Copilot they are already in the user's
-    OneDrive by then, and stay there (with their links); but a copy left in /mnt/data is uploaded again as
-    "name 1.pptx", "name 2.pptx", ... after every later code run, because OneDrive changes Office files after the
-    upload. Files delivered in this run, and every other file, are left alone. Returns what it took out."""
+    """Take the files that deliver() handed over in an earlier run out of the delivery folder; scripts/mck_setup.py
+    calls this at the start of every script. In Copilot they are already in the user's OneDrive by then, and stay
+    there (with their links); but a file left in /mnt/data is uploaded again as "name 1.pptx", "name 2.pdf", ... after
+    later code runs (decks, PDFs and HTML pages all came back). Files delivered in this run, and files deliver()
+    didn't write, are left alone. Returns what it took out."""
     dest_dir = Path(to) if to is not None else DELIVER_DIR
     if not dest_dir.is_dir():
         return []
     cleared = []
     for entry in _read_ledger(dest_dir).values():
         f = dest_dir / entry["name"]
-        if entry.get("run") != _RUN and f.suffix.lower() in _OFFICE and f.is_file():
+        if entry.get("run") != _RUN and f.is_file():
             f.unlink()
             cleared.append(f)
     return cleared
