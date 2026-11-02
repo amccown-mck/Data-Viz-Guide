@@ -67,7 +67,14 @@ Anyone at McKesson who needs to communicate with data: analysts, consultants, da
 - Not a chart library of its own. It sits on matplotlib, Plotly, ggplot2, Vega-Lite and native Office charts.
 - Not a data-cleaning tool. You still clean the export; the kit takes over when the numbers are ready to become a chart.
 - Not only for Workforce Innovation. The examples are workforce data; the rules are for any team.
-- Not yet a chart maker for non-coders. "Paste a table, ask a question, get five on-brand options" is the next build. Today, coding agents work to the rules in a repo and lint a chart before handing it over; people in PowerPoint and Excel use the guide and the templates.
+
+## The Copilot agent
+
+**WI Data Storytelling Agent** (Workforce Innovation's agents all carry the "WI" prefix) is the way in for people who live in PowerPoint and Excel: it runs in Microsoft 365 Copilot, on the license they already have. How it introduces itself:
+
+> I help you make charts that look like they came from a top consulting firm, without having to become a data viz expert. Built on McKesson's Data Viz Guide, I pick the right chart, write the headline and build it, all the way to an editable PowerPoint slide, and I'll review charts you've already made.
+
+The agent's instructions (its identity line) and its description in Copilot follow this paragraph. It speaks in plain words to people who don't know chart terms, and it teaches the choices it makes, so people pick up the craft as they go.
 
 ## Voice
 

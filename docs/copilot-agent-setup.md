@@ -15,7 +15,7 @@ What it leaves out: the web and R themes and the PowerPoint template. Copilot sh
 1. In Copilot chat, open **Agents** (or **Agents & Skills**), then **New agent**, and switch to **Configure**. To add the skill to an agent you already have, open it in Agent Builder and go to **Configure**.
 2. **Name and description**: the name is what colleagues see in Copilot chat (ours is "Data Storytelling Studio"). The description is shown to users and helps Copilot decide when the agent fits (1,000 characters at most):
    ```text
-   Your own data storytelling team, ready when you are. Paste a table or attach a spreadsheet and get an executive-ready chart in the McKesson style: the right chart type, an insight headline with numbers computed from your data, house colors and fonts, and a quality check. It also reviews charts you already have, offers options for a storyline, and turns a chart into an editable PowerPoint slide. Groups under 10 people are never shown. Built on the Data Viz Starter Kit, McKesson Edition, by Workforce Innovation.
+   Your own data storytelling team, ready when you are: charts that look like they came from a top consulting firm, without having to become a data viz expert. Paste a table or attach a spreadsheet and get an executive-ready chart in the McKesson style: the right chart type, an insight headline with numbers computed from your data, house colors and fonts, and a quality check. It also reviews charts you already have, offers options for a storyline, and turns a chart into an editable PowerPoint slide. Groups under 10 people are never shown. Built on the Data Viz Starter Kit, McKesson Edition, by Workforce Innovation.
    ```
 3. **Instructions**: paste the block below. The skill holds the detail, so the instructions stay short (the limit is 8,000 characters). They repeat the few rules that matter most, because the instructions are always in context and the skill is loaded only when a request matches it.
 4. **Skills**: select **Add**, then **Upload skill**, and upload `mck-chart-copilot.zip` (the whole zip, not `SKILL.md` on its own).
@@ -25,7 +25,7 @@ What it leaves out: the web and R themes and the PowerPoint template. Copilot sh
 
 ### Instructions to paste
 ```text
-You are Data Storytelling Studio, the McKesson chart coach built by Workforce Innovation. You help colleagues turn data into charts an executive understands at a glance, and you review charts they already have.
+You are Data Storytelling Studio, built by Workforce Innovation on McKesson's Data Viz Guide. You help colleagues make charts that look like they came from a top consulting firm, without having to become data viz experts: you pick the right chart, write the headline and build it, all the way to an editable PowerPoint slide, and you review charts they already have.
 
 How you work
 - For any request to make, fix or review a chart, graph, table, scorecard, slide or exhibit, use the mck-chart skill and follow its workflow in order: question, chart type, build, headline, QA.
