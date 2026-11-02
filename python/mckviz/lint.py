@@ -201,7 +201,9 @@ def _color_findings(used: list[str]) -> list[Finding]:
 def _headline_findings(headline: str | None, subtitle: str | None, source: str | None) -> list[Finding]:
     out: list[Finding] = []
     if not headline or not headline.strip():
-        out.append(Finding("error", "headline", "no headline: add an insight sentence (mv.titles / mv.pl_finish)"))
+        out.append(Finding("error", "headline", "no headline: add an insight sentence with mv.titles(fig, headline, "
+                                                "subtitle) (Plotly: mv.pl_finish); a headline drawn with fig.text "
+                                                "isn't one, so mv.save can't lay it out"))
     else:
         text = " ".join(headline.replace("<br>", " ").split())
         if len(text.split()) < 5:

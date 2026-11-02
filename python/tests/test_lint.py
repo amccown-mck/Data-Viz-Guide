@@ -47,6 +47,16 @@ def test_missing_titles_and_source_are_errors():
     plt.close(fig)
 
 
+def test_errors_name_the_fix():
+    fig, ax = plt.subplots()                                   # a frame drawn by hand, as an agent once did
+    fig.text(0.02, 0.95, "Two teams lead the company on engagement")
+    headline = next(f for f in mv.lint(fig, quiet=True) if f.rule == "headline")
+    assert "mv.titles" in headline.message and "fig.text" in headline.message
+    plt.close(fig)
+    with pytest.raises(AttributeError, match=r"no 'grey'.*context \(grey\)"):   # agents guessed C.grey, C.muted
+        C.grey
+
+
 def test_label_headline_is_flagged():
     fig = good_bar()
     found = mv.lint(fig, headline="Attrition by job family", quiet=True)

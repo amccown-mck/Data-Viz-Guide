@@ -35,7 +35,19 @@ DIVERGING: list[str] = _C["diverging"]["orange_blue"]["values"]
 STEPS: list[str] = _C["steps"]["values"]            # ordered process stages (blue to green), not data magnitude
 STATUS: dict[str, dict] = {k: v for k, v in _C["status"].items() if not k.startswith("$")}   # RAG: status only
 
-colors = SimpleNamespace(
+class _Roles(SimpleNamespace):
+    """The color roles. A name that isn't one says which are: agents guessed C.grey and C.muted."""
+
+    def __getattr__(self, name: str):                          # only reached when the name isn't a role
+        if name.startswith("__"):
+            raise AttributeError(name)
+        raise AttributeError(f"mv.colors has no {name!r}. The roles: context (grey), context_light, focus (McKesson "
+                             "Blue), focus_light, accent (the one navy exception), total (navy totals and benchmarks), "
+                             "negative (orange, worse), positive (green, better), text, text_muted, headline, title, "
+                             f"annotation, axis, grid; all: {', '.join(sorted(vars(self)))}")
+
+
+colors = _Roles(
     **{k: t["value"] for k, t in TOKENS["brand"]["core"].items()},
     **{k: t["value"] for k, t in TOKENS["brand"]["core_2026"].items() if k != "text"},
     **{k: t["value"] for k, t in _C["chart"].items()},
