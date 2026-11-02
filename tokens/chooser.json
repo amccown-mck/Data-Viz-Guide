@@ -164,7 +164,7 @@
           "start": {
             "chart": "Sorted bar",
             "page": "bar",
-            "helper": "ax.barh + mv.highlight + mv.label_bars"
+            "helper": "mv.bar"
           },
           "further": [
             {
@@ -184,7 +184,7 @@
               "when": "many_categories",
               "chart": "Sorted bar with the tail grouped into Other",
               "page": "bar",
-              "helper": null
+              "helper": "group the tail, then mv.bar"
             },
             {
               "when": "has_size",
@@ -241,7 +241,7 @@
           "start": {
             "chart": "Sorted bar of the derived count, footnoted as an estimate",
             "page": "bar",
-            "helper": "ax.barh + mv.highlight"
+            "helper": "mv.bar"
           },
           "further": [
             {
@@ -655,7 +655,7 @@
               "when": "more_than_three_sets",
               "chart": "Sorted bar of the combinations",
               "page": "bar",
-              "helper": null
+              "helper": "mv.bar"
             }
           ],
           "avoid": "A Venn with 4 or more sets",

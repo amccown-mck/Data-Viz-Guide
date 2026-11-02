@@ -594,17 +594,11 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     be zero or more (bars start at zero; use a diverging bar for signed changes). Returns SimpleNamespace(slide,
     chart, order, x_max, inside).
     """
+    from .charts import story_order                           # shared with mv.bar, so the chart and slide agree
+
     names, vals = _bars(labels, values)
     focus, accent, hot = _highlight(names, focus, accent)
-    if sort not in (True, False, "descending", "ascending"):
-        raise ValueError("sort: True (the story on top), 'descending', 'ascending' or False")
-    order = list(range(len(names)))
-    if sort:
-        order.sort(key=lambda i: -vals[i])                     # largest first
-        rank = {names[i]: k for k, i in enumerate(order)}
-        low_story = bool(hot) and all(rank[h] >= len(names) / 2 for h in hot)
-        if sort == "ascending" or (sort is True and low_story):
-            order.reverse()                                    # the highlighted (smallest) bars on top
+    order = story_order(names, vals, hot, sort)
     names, vals = [names[i] for i in order], [vals[i] for i in order]
     num_fmt = number_format(fmt)
 

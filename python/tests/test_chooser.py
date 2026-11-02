@@ -55,7 +55,7 @@ def test_size_column_offers_richer_charts_but_the_bar_stays_the_answer():
     assert "Option: Bubble strip" in str(s) and "Option: Treemap" in str(s)
     rank = next(lf for lf in leaf if lf.type == "magnitude / ranking")
     assert all(f.only_if for f in rank.further if f.holds)                   # no rule forces a switch here
-    assert "Sorted bar  -> cookbook/bar.md  (ax.barh + mv.highlight + mv.label_bars)  <- the answer here" in str(s)
+    assert "Sorted bar  -> cookbook/bar.md  (mv.bar)  <- the answer here" in str(s)
 
 
 def test_benchmark_opens_the_deviation_question():

@@ -1433,7 +1433,8 @@ def multiples(fig, data, *, x: Sequence | None = None, ncols: int = 3, order: st
     return SimpleNamespace(axes=axes, order=names)
 
 
-__all__ = ["waterfall", "hstack", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
+__all__ = ["bar", "story_order", "line", "share_bar", "strip", "dot_plot", "sankey", "diverging_bars", "label_points",
+           "waterfall", "hstack", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
            "kpi_row", "delta_label", "sdot", "status", "status_key", "status_column", "tracker", "roadmap",
            "multiples", "STATUS_ORDER"]
 
@@ -1720,6 +1721,90 @@ def strip(ax, data, group: str | None = None, value: str | None = None, *, focus
         t.set_color(C.text)
     _bold_ticks(ax.get_yticklabels(), focus)
     return SimpleNamespace(order=names, stats=stats, suppressed=suppressed, labels=texts)
+
+
+# ------------------------------------------------------------------ RANKING BAR
+def story_order(names: Sequence[str], values: Sequence[float], hot: Iterable[str] = (), sort: bool | str = True):
+    """The order a ranking runs from the top, as indexes into names: the story on top. True: largest first, or
+    smallest first when every highlighted bar is in the bottom half (a "lagging" or "lowest" headline, which would
+    otherwise put its blue bars at the bottom); "descending" / "ascending" force the order; False keeps the given
+    order (a natural order). mv.bar and mv.office.bar_slide share it, so a chart and its slide agree."""
+    if sort not in (True, False, "descending", "ascending"):
+        raise ValueError("sort: True (the story on top), 'descending', 'ascending' or False")
+    order = list(range(len(names)))
+    if not sort:
+        return order
+    order.sort(key=lambda i: -values[i])                       # largest first
+    hot = set(hot)
+    rank = {names[i]: k for k, i in enumerate(order)}
+    low_story = bool(hot) and all(rank[h] >= len(names) / 2 for h in hot)
+    if sort == "ascending" or (sort is True and low_story):
+        order.reverse()                                        # the highlighted (smallest) bars on top
+    return order
+
+
+def bar(ax, labels: Sequence[str], values: Sequence[float], *, focus: Iterable[str] = (), accent: str | None = None,
+        uniform: bool = False, benchmark: float | None = None, benchmark_label: str | None = None, fmt="{:,.0f}",
+        sort: bool | str = True):
+    """A ranking as sorted horizontal bars, the start chart for categories × one measure: the story on top (as
+    mv.office.bar_slide), grey context with the headline's bars in McKesson Blue (navy for one accent, at most two
+    highlighted; uniform=True makes the rest light blue for the "uniform + accent" pattern), the value at each bar's
+    end (bold for the highlighted bars), no value axis or gridlines, a zero baseline, and an optional benchmark as a
+    dashed navy line named above the bars.
+
+        mv.bar(ax, df.job_family, df.vol_attrition_pct, focus={"Pharmacy Technician", "Distribution Center Associate"},
+               benchmark=19.9, benchmark_label="Enterprise 19.9%", fmt="{:.1f}%")
+
+    fmt: a format string or a function for the value labels. sort: see mv.story_order. Values must be zero or more
+    (bars start at zero; use mv.diverging_bars for signed changes, mv.dot_plot for values far from zero). Returns
+    SimpleNamespace(order, bars, labels).
+    """
+    names = [str(v) for v in labels]
+    vals = _floats(values, "values")
+    if len(names) != len(vals):
+        raise ValueError("one value per label")
+    if not names:
+        raise ValueError("no bars")
+    if np.isnan(vals).any():
+        raise ValueError("a value is missing (NaN): drop or fill it first")
+    if vals.min() < 0:
+        raise ValueError("bars start at zero: for signed changes use mv.diverging_bars")
+    focus = {str(f) for f in focus}
+    accent = str(accent) if accent is not None else None
+    hot = focus | ({accent} if accent else set())
+    if len(hot) > 2:
+        raise ValueError("highlight at most two bars, the ones the headline names; grey the rest")
+    if unknown := hot - set(names):
+        raise ValueError(f"focus/accent not among the labels: {sorted(unknown)}")
+    order = story_order(names, list(vals), hot, sort)
+    names, vals = [names[i] for i in order], vals[order]
+    y = np.arange(len(names))[::-1]                            # first in the order on top
+    base = C.focus_light if uniform else C.context
+    cols = [C.accent if nm == accent else C.focus if nm in focus else base for nm in names]
+    bars = ax.barh(y, vals, height=BAND, color=cols, zorder=2)
+    backing = dict(fc="white", ec="none", pad=0.5) if benchmark is not None else None   # a label over the line
+    texts = [ax.annotate(_fmt(fmt, v), (v, yy), xytext=(4, 0), textcoords="offset points", va="center", ha="left",
+                         fontsize=LABEL, color=C.headline if nm in hot else C.text,
+                         fontweight=600 if nm in hot else 500, bbox=backing, zorder=4)
+             for yy, nm, v in zip(y, names, vals)]
+    top = max(float(vals.max()), benchmark or 0) or 1
+    if benchmark is not None:
+        ax.axvline(benchmark, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=3)
+        if benchmark_label:
+            texts.append(ax.annotate(benchmark_label, (benchmark, y[0] + BAND / 2), xytext=(0, 4),
+                                     textcoords="offset points", ha="center", va="bottom", fontsize=SMALL,
+                                     color=C.annotation, annotation_clip=False,
+                                     bbox=dict(fc="white", ec="none", pad=1), zorder=4))
+    ax.set_xlim(0, top * 1.18)
+    ax.set_ylim(-0.6, len(names) - 0.4)
+    ax.set_yticks(y, names)
+    ax.set_xticks([])
+    _plain(ax, keep=("left",))                                 # the zero baseline only
+    for t in ax.get_yticklabels():
+        t.set_fontsize(TICK)
+        t.set_color(C.text)
+    _bold_ticks(ax.get_yticklabels(), hot)
+    return SimpleNamespace(order=names, bars=bars, labels=texts)
 
 
 # ------------------------------------------------------------------ SHARE BEYOND A THRESHOLD

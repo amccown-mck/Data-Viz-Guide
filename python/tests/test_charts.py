@@ -175,7 +175,13 @@ def _dot_plot(ax):
                        benchmark_label="Company 72", fmt="{:.0f}")
 
 
-BUILDERS = {"dot_plot": _dot_plot, "line": _line, "share_bar": _share_bar, "strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
+def _bar(ax):
+    return mv.bar(ax, ["Finance", "Sales", "Supply Chain", "Pharmacy Ops"], [71, 64, 38, 41],
+                  focus={"Supply Chain", "Pharmacy Ops"}, benchmark=50.8, benchmark_label="Company 50.8%",
+                  fmt="{:.0f}%")
+
+
+BUILDERS = {"bar": _bar, "dot_plot": _dot_plot, "line": _line, "share_bar": _share_bar, "strip": _strip, "sankey": _sankey, "waterfall": _waterfall, "waterfall_semantic": _waterfall_semantic, "hstack": _hstack,
             "dumbbell": _dumbbell, "heat": _heat, "heat_sequential": _heat_seq, "kpi_card": _kpi,
             "kpi_row": _kpi_row, "ring": _ring, "tracker": _tracker, "roadmap": _roadmap,
             "status_column": _status_column, "rank_slope": _rank_slope, "diverging_bars": _diverging,
@@ -554,6 +560,36 @@ def test_line_colors_and_limits():
         mv.line(ax, ["a", "b"], {str(i): [1, 2] for i in range(5)})
     with pytest.raises(ValueError, match="appears 2 times"):
         mv.line(ax, ["Q1", "Q2", "Q1"], {"A": [1, 2, 3]}, forecast_from="Q1")
+
+
+def test_bar_puts_the_story_on_top_and_highlights_only_it():
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ns = _bar(ax)
+    assert ns.order == ["Supply Chain", "Pharmacy Ops", "Sales", "Finance"]   # a "lagging" story: smallest on top
+    cols = [to_hex(b.get_facecolor()).upper() for b in ns.bars]
+    assert cols[:2] == [C.focus.upper()] * 2 and set(cols[2:]) == {C.context.upper()}
+    assert ax.get_xlim()[0] == 0 and not ax.get_xticks().size                 # from zero, no value axis
+    assert {"38%", "71%", "Company 50.8%"} <= {t.get_text() for t in ns.labels}
+    lead = mv.bar(ax, ["A", "B", "C"], [9, 30, 20], focus={"B"})
+    assert lead.order == ["B", "C", "A"]                                      # a "leading" story: largest on top
+    uniform = mv.bar(ax, ["A", "B", "C"], [9, 30, 20], accent="B", uniform=True)
+    assert [to_hex(b.get_facecolor()).upper() for b in uniform.bars] == [C.accent.upper()] + [C.focus_light.upper()] * 2
+    with pytest.raises(ValueError, match="at most two"):
+        mv.bar(ax, ["a", "b", "c"], [1, 2, 3], focus={"a", "b", "c"})
+    with pytest.raises(ValueError, match="diverging"):
+        mv.bar(ax, ["a", "b"], [1, -2])
+
+
+def test_bar_and_bar_slide_share_the_order():
+    from mckviz import office
+
+    names, vals = ["A", "B", "C", "D"], [82, 71, 41, 38]
+    for focus in ({"C", "D"}, {"A"}, set()):
+        fig, ax = plt.subplots()
+        chart = mv.bar(ax, names, vals, focus=focus)
+        slide = office.bar_slide(office.deck(), names, vals, focus=focus, headline="h", source="s")
+        assert chart.order == slide.order
+        plt.close(fig)
 
 
 def test_dot_plot_sorts_highlights_and_names_the_benchmark():

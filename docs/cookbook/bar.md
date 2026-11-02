@@ -65,25 +65,14 @@ import pandas as pd
 import mckviz as mv
 
 mv.use()
-C = mv.colors
 
-df = pd.read_csv(Path("examples/data/attrition_by_job_family.csv")).sort_values("vol_attrition_pct")
+df = pd.read_csv(Path("examples/data/attrition_by_job_family.csv"))
 ent = df.enterprise_rate_pct.iloc[0]
 focus = set(df.job_family[df.vol_attrition_pct > 20])      # only what the headline names
 
 fig, ax = plt.subplots(figsize=(10, 5.6))
-bars = ax.barh(df.job_family, df.vol_attrition_pct, color=mv.highlight(df.job_family, focus=focus),
-               height=mv.TOKENS["chart"]["bar"]["band_fill"], zorder=2)   # bar:gap ~ 2:1
-mv.label_bars(ax, bars, fmt="{:.1f}%")
-ax.axvline(ent, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=1)          # labelled benchmark line
-ax.text(ent, len(df) - 0.4, f"Enterprise {ent:.1f}%", ha="center", va="bottom", fontsize=9, color=C.annotation,
-        bbox=dict(fc="white", ec="none", pad=1))
-mv.clean_axes(ax, keep=("left",), grid=None)                              # zero baseline only
-ax.set_xticks([])
-for lbl in ax.get_yticklabels():                                          # echo the highlight in the label
-    if lbl.get_text() in focus:
-        lbl.set_fontweight("bold")
-        lbl.set_color(C.headline)
+mv.bar(ax, df.job_family, df.vol_attrition_pct, focus=focus, benchmark=ent,
+       benchmark_label=f"Enterprise {ent:.1f}%", fmt="{:.1f}%")             # sorted with the story on top
 
 mv.titles(fig, f"Two frontline job families lose about 1 in 4 people a year, well above the {ent:.1f}% enterprise rate",
           "Voluntary attrition by job family, FY26 (%)")
@@ -91,7 +80,7 @@ mv.source(fig, "Source: Synthetic data for illustration only",
           footnote="Voluntary attrition = voluntary exits \u00f7 average headcount, trailing 12 months.")
 mv.save(fig, "out/bar-highlight.png", dpi=200)
 ```
-To show one navy exception against all-light-blue bars instead, use `mv.highlight(labels, accent="Pharmacy Technician", base=C.focus_light)`. For grouped bars, offset each series by `±width/2` with `width = 0.67 / n_series`, color the series with `mv.categorical(n)`, and put a top-left legend or label the first cluster.
+`mv.bar` sorts with the story on top: largest first, or smallest first when the highlighted bars are the small ones (a "lagging" headline), the same order as `mv.office.bar_slide`, so the chart and its slide agree (`sort="descending"`, `"ascending"`, or `False` for a natural order). It draws the bars at the 2 : 1 bar-to-gap ratio, the value at each bar's end (bold for the highlighted ones, with a white backing where a label meets the benchmark line), the labelled dashed benchmark, a zero baseline and no value axis, and refuses a third highlight. To show one navy exception against all-light-blue bars instead, use `mv.bar(ax, labels, values, accent="Pharmacy Technician", uniform=True)`. For grouped bars, offset each series by `±width/2` with `width = 0.67 / n_series`, color the series with `mv.categorical(n)`, and put a top-left legend or label the first cluster.
 
 **Diverging bars** (deviation from a benchmark): pass the gaps, not the raw values, and name the unfavorable side. `mv.diverging_bars` paints that side orange and the other focus blue, labels the bar ends with a true minus, bolds the unfavorable category names and pads the limits so the labels on negative bars never run into the names.
 ```python
