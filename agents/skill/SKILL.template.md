@@ -15,7 +15,12 @@ This skill is the Data Viz Starter Kit, McKesson Edition (v{{version}}), Microso
 This is the in-repo copy of the skill; the full rules are in `AGENTS.md`. A portable copy that works in any repo (and zips for Claude.ai) is generated into `dist/skills/mck-chart/` by `python tools/build_skill.py`.
 <!-- /repo -->
 
+<!-- portable,repo -->
 Work through the five steps in order. Keep a short **chart brief** as you go and show it to the user with the result.
+<!-- /portable,repo -->
+<!-- copilot -->
+Work through the five steps in order. Keep a short **chart brief** in your reasoning as you go: your working notes, shown only if asked.
+<!-- /copilot -->
 
 ```
 Question:     <one sentence the chart answers>
@@ -54,7 +59,7 @@ QA:           pass | exceptions: <list>
     - **matplotlib** for slides, PNG, PDF and print: `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, `mv.label_bars` / `mv.label_line_ends` for labels.
     - **Copy the cookbook page's runnable snippet and change only the data, labels and focus.** Don't hand-build the frame with `fig.text` (the headline, subtitle and source come from `mv.titles` and `mv.source`, laid out by `mv.save`), and don't guess names. The color roles are `C.focus` (blue), `C.focus_light`, `C.context` (grey), `C.context_light`, `C.accent` (navy exception), `C.total` (navy totals and benchmarks), `C.negative` (orange, worse), `C.positive` (green, better), `C.text`, `C.text_muted`, `C.headline`, `C.title`; there is no `C.grey` or `C.muted`.
 <!-- copilot -->
-    - **Save only with `mv.save(fig, "<name>.png", dpi=200)`**, then `plt.close(fig)`. Never `plt.savefig`, `fig.savefig` or `plt.show`: the sandbox patches them to turn the chart into Copilot's interactive "Chart" card, which can't carry the house style and is never the deliverable. If Python can't run, say so and use the fallback in [Setup](#setup). Plotly only for an interactive HTML file the user asks for.
+    - **Save only with `mv.save(fig, "<name>.png", dpi=200)`**, then `plt.close(fig)`. Never `plt.savefig`, `fig.savefig` or `plt.show`: the sandbox patches them into Copilot's "Chart" card, which drops the house style. Plotly only for an interactive HTML file the user asks for.
 <!-- /copilot -->
 <!-- portable,repo -->
     - **Plotly** when the output is interactive or HTML: `mv.pl_highlight` for colors, `mv.pl_finish(fig, headline, subtitle, source_text)` for the frame, then `fig.write_html(...)`.
@@ -84,10 +89,19 @@ QA:           pass | exceptions: <list>
 <!-- /repo -->
 
 ## Hand-back
+<!-- portable,repo -->
 Give the user the output (file path, or code plus the rendered image), the chart brief, and the alt text. Mention any assumptions about the data (definitions, exclusions, suppressed groups), every placeholder left in the chart (source, as-of date, period), and which install path the build used (mckviz, or the no-package fallback and its font).
+<!-- /portable,repo -->
 <!-- copilot -->
-**Files land in the user's OneDrive** (Copilot > Created) from `/mnt/data/`: every write there, even after a delete, adds a copy. Build, render and check in `/tmp/` (`mv.look(png)` shows you a render there); put each final file in `/mnt/data/` with `mv.deliver(path, ...)` as the last step, and link only that. Never `cp`, `mv` or `rm` in `/mnt/data/`, and never copy a check image there to see it. Delivering the same file again does nothing; deliver a revision the user asks for under a new name. **Slides:** only `mv.office` (`{{refs}}native-formats.md`), never PptxGenJS or another slide tool: they lack the McKesson master.
-In Copilot, `mv.save` the PNG to `/tmp/`, `mv.deliver` it, and **show it inline as an image** (`![<headline>](sandbox:/mnt/data/<name>.png)`) with a download link under it. If a "Chart" card appears instead (a bare re-plot with a generic "X" or "Y" axis), something called `plt.savefig` or `plt.show`: rebuild with `mv.save`, deliver it under a new name and show that file. Open the reply with the headline sentence, never a question or a topic label. Show the code only if the user asks.
+Write for a busy colleague who knows Excel and PowerPoint, not chart terms. Lead with what they asked for (for a chart, its headline), then the chart, then:
+- **Why this chart:** one or two plain sentences that teach the choice ("A sorted bar makes a ranking of ten job families instant; blue marks the two the headline names").
+- **Before you share:** placeholders left in the chart (source, as-of date, period), data assumptions (definitions, exclusions, groups left out for privacy) and QA exceptions.
+- **Alt text:** one line.
+
+Leave the brief's labels (Path, Mode, Focus, QA) and tool names out of the reply. When it helps, end with one line offering two or three next steps (a slide, other ways to show it, a different highlight); not while the user is making small edits.
+
+**Files land in the user's OneDrive** (Copilot > Created) from `/mnt/data/`: every write there, even after a delete, adds a copy. Build, render and check in `/tmp/` (`mv.look(png)` shows you a render there); put each final file in `/mnt/data/` with `mv.deliver(path, ...)` as the last step, and link only that. Never `cp`, `mv` or `rm` in `/mnt/data/`, and never copy a check image there to see it. Delivering the same file again does nothing; deliver a revision the user asks for under a new name.
+In Copilot, `mv.save` the PNG to `/tmp/`, `mv.deliver` it, and **show it inline as an image** (`![<headline>](sandbox:/mnt/data/<name>.png)`) with a download link under it. If a "Chart" card appears instead (a bare re-plot, axes "X" and "Y"), rebuild with `mv.save` and deliver it under a new name. Show the code only if the user asks.
 <!-- /copilot -->
 <!-- portable -->
 

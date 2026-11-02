@@ -9,7 +9,12 @@ Don't build N charts of the same thing. Work the data first, then the angles:
 - **Say what the data cannot support.** If an asked-for chart needs a field the table lacks (a trend without a second period, a heat table with one dimension), name it and what would be needed, instead of forcing it.
 - **Vary the charts.** Each option is a different chart type from a different leaf; when `mv.suggest` lists go-further charts or options, at least one option uses one. **At most one ranked bar**: a second measure on the same ranking is that option's trade-off, not another option. Start from what this data's columns can say, not from a set of views used before (rate bar, volume bar, bubble scatter, table every time reads as a formula). This is where variety belongs: a single-chart request still gets the start chart.
 - **Build one chart per supported angle**, each with its own headline computed from the data and its own focus. Different angles may name different focus items; each chart's headline must match its own highlight.
+<!-- portable,repo -->
 - **Hand back a one-line brief per option** (angle, chart type, headline) plus **a recommendation of which one to lead with** and why (usually the one whose headline answers the storyline's question most directly), then the full chart brief for that one.
+<!-- /portable,repo -->
+<!-- copilot -->
+- **Hand back one plain line per option** (what it shows, its headline) plus **a recommendation of which one to lead with** and why (usually the one whose headline answers the storyline's question most directly).
+<!-- /copilot -->
 
 ## The options page
 When people see the same data differently, build 3–6 views as above and hand them over as **one self-contained HTML page** with `mv.options_page` (the charts, Libre Franklin and the styles are all inside the file; it opens offline and prints one option per page). **"One page", "a one-pager" or "something to share" means this page** and its PDF, which runs one option per page by design: never rebuild it as a single-sheet PDF, a PNG collage or hand-built HTML.
