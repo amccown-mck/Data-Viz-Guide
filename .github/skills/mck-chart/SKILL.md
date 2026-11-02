@@ -22,7 +22,7 @@ Min n check:  <smallest group shown> (must be ≥ 10)
 QA:           pass | exceptions: <list>
 ```
 
-**Task guides.** This page covers every chart. When the request is one of these, also read the guide before you build; it adds to the steps below and doesn't replace them:
+**When the request is one of these, also read its guide before you build.** It adds to the five steps and doesn't replace them:
 - **Several options or a storyline** ("show me a few ways", "several ways to show it", "N options", "pros and cons for a meeting", "one page to share"): `.github/skills/mck-chart/references/options.md`, how to pick the angles and the options page. Always `mv.options_page`, never hand-built HTML.
 - **Feedback on a chart the user shares:** `.github/skills/mck-chart/references/review.md`.
 - **A slide or deck (a real .pptx), or a native chart in Excel or Power BI, or HTML or R:** `.github/skills/mck-chart/references/native-formats.md`.
@@ -33,28 +33,26 @@ QA:           pass | exceptions: <list>
 - Look at the data: grain (individual, team, firm, sector), the n per group, units, time span, and whether a benchmark or target exists.
 
 ## 2. Chart type: walk the decision tree
-- **Put the data in the tree first:** `print(mv.suggest(df))` on the rows as the user gave them; one row per person stays one row per person, because totaling first hides the spread. It shows how it read each column, the shape, the questions it can answer, the chart to **start with**, and the **go further** rules and **options** that hold, with evidence. Pass `category=`, `measure=`, `size=` or `time=` if a guess is wrong. Without Python, walk `docs/chart-decision-tree.md`.
-- **The start chart is the answer most of the time** (a sorted bar for a ranking). Switch only for a **Go further** rule (the start chart would mislead: values clustered far from zero, two units on one axis). Take an **Option** only when the headline depends on it, or as an extra view on an options page. Status pills always show color + symbol + word ("✓ On track").
+- **Put the data in the tree first:** `print(mv.suggest(df))` on the rows as the user gave them (one row per person stays that way: totaling first hides the spread). It prints the shape, the chart to **start with**, the **go further** rules and **options** that hold, with evidence, and the color pattern; pass `category=`, `measure=`, `size=` or `time=` if it read a column wrong. Without Python, walk `docs/chart-decision-tree.md`.
+- **The start chart is the answer most of the time** (a sorted bar for a ranking). Switch only for a **Go further** rule (the start chart would mislead), and take an **Option** only when the headline depends on it, or as an extra view on an options page.
 - **Build with the one-call builder the tree names, also when the user names the chart:** `mv.suggest` prints it after each chart (`mv.bar`, `mv.strip`, `mv.sankey`, ...), `docs/chart-decision-tree.md` lists every chart's, and its cookbook page shows the call. Don't redraw by hand a chart a builder draws.
-- **Color from what it encodes** (`docs/chart-decision-tree.md`, section 4): Focus (grey, the named items blue) by default. Focus + accent (grey, a blue group, one navy standout) for a "led by" headline; two items named as equals stay Focus, both blue. Uniform + accent (light blue, one navy exception) when every item is in the story. Categorical when every part must be told apart; Sequential for ordered bands or one measure; Diverging around a benchmark. Stacks: `mv.hstack(story=, accent=, uniform=)`.
+- **Color from what it encodes:** use the pattern the tree names, and its switch when the condition holds (`docs/chart-decision-tree.md`, section 4, explains each). Focus by default: grey, with what the headline names in blue. A "led by" headline adds one navy standout (Focus + accent); items named as equals stay blue alike.
 - Write the **Path** and **Color** lines in the brief, then **read** `docs/principles.md` and `docs/cookbook/<page>.md`. Note the page's spec table and "When not to use".
-- Common traps: clustered values far from zero → dot plot, not truncated bars. Two units over time → two aligned charts, not dual axes. More than 6 categories → highlight plus grey, or group into "Other". A spread across people → distribution, not an average.
 
 ## 3. Build
-- Start from the cookbook snippet for the platform the user needs. For anything but a PNG or PDF from Python, read `.github/skills/mck-chart/references/native-formats.md`.
+- Start from the cookbook snippet for the platform the user needs.
   - **Python:** `import mckviz as mv; mv.use(); C = mv.colors` (`mv.use()` styles matplotlib and activates the "mck" Plotly template). Use `mv.fmt_num` for numbers (K/M/B, %, true minus), `mv.signed(v, decimals=1)` for a signed delta in a headline (its default is 0 decimals: pass the decimals the chart labels use, so "+2.0" in the headline matches "+2.0 hrs" on the bar) and `mv.suppress_small` for the minimum-n rule. Real US, county and world maps: `from mckviz import geo` (see `docs/cookbook/maps.md`).
     - **matplotlib** for slides, PNG, PDF and print: `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, `mv.label_bars` / `mv.label_line_ends` for labels.
     - **Copy the cookbook page's runnable snippet and change only the data, labels and focus.** The headline, subtitle and source come from `mv.titles` and `mv.source`, never `fig.text`; when a name is wrong, the error lists the right ones.
     - **Plotly** when the output is interactive or HTML: `mv.pl_highlight` for colors, `mv.pl_finish(fig, headline, subtitle, source_text)` for the frame, then `fig.write_html(...)`.
 - **Highlight what the headline names, and only that:** usually one or two items, more when the headline names a group ("four support roles"). When more qualify than the story is about (three functions below a line), highlight the ones the headline names and keep the rest grey; when most would be blue, none stands out (the builders warn).
-- **No hex literals.** Use color roles only: context grey, focus blue, navy accent (the one exception), light blue for a uniform series, navy totals and benchmarks. Orange only when it means "worse" (below target, shrinking, a shortfall), green only when it means "better", both with ▲▼ or words. Red/amber/green only as status colors (`mv.STATUS`) with a symbol and word, never for data series.
+- **No hex literals:** color roles only (`AGENTS.md`). Orange only when it means "worse" (below target, shrinking, a shortfall), green only when it means "better", both with ▲▼ or words. Red/amber/green only as status (`mv.STATUS`), always color + symbol + word ("✓ On track"), never for data series.
 - Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.
 - When a chart shows a **derived measure** (leavers = headcount × attrition rate, hours freed = FTE × share, cost = headcount × average pay), say so in the footnote and call the result an estimate ("Estimated leavers = headcount × voluntary attrition rate"). Never present a derived count as a recorded one.
 - Drop or merge any group with n < 10 **before** plotting (`df, note = mv.suppress_small(df, "headcount")`, then pass `note` as the footnote), and keep individual values out of tooltips.
 
 ## 4. Headline
-- Compute the finding in code (shares, gaps, counts, multipliers, "n of m"), then write a full sentence with a verb and the number: "Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate".
-- **Spell out a number that starts the headline** ("Two frontline job families...", not "2 frontline..."); digits are fine anywhere else. `mv.lint` warns when a headline starts with a digit.
+- Compute the finding in code (shares, gaps, counts, multipliers, "n of m"), then write a full sentence with a verb and the number, spelling out a number that starts it: "Two frontline job families lose about 1 in 4 people a year, well above the 19.9% enterprise rate".
 - Check every word against the chart: "all", "most", "doubled", "fastest" must be literally true. Recompute; don't eyeball.
 - The headline names what the focus color shows. If the two disagree, fix the highlight or the headline.
 - The subtitle is neutral: metric, unit, scope, period. The source line names the system, the as-of date and the population (or "Synthetic data for illustration only").

@@ -10,10 +10,12 @@ A working document for the rework planned on 2026-11-02. It classifies every pie
 
 ## Where this lands
 
-| | Today | After | Working level |
-|---|---|---|---|
-| `instruction.txt` | 3,903 | about 2,400 | 2,500 |
-| Copilot `SKILL.md` | 13,997 | about 10,500 | 11,000 |
+| | Snapshot | Planned | Done (Phase 5, 11-02) | Working level |
+|---|---|---|---|---|
+| `instruction.txt` | 3,903 | about 2,400 | 2,455 | 2,500 |
+| Copilot `SKILL.md` | 13,997 | about 10,500 | 11,107 | 11,000 |
+
+**Status:** every row's action is done (Phase 4 code on `feat/code-first`, the text on `feat/skill-restructure`), except B48's `savefig`/`show` override, which waits for a sandbox probe, so B48 and the Chart-card sentence in B79 stay. B49 changed with the owner's decision on 11-02: no fixed number of highlights. B90 moved to `native-formats.md`, "When mckviz won't load", behind a router line.
 
 ## A. `instruction.txt`
 
