@@ -12,7 +12,7 @@ Run this before any chart leaves your hands. Agents: run it on your own output a
 - [ ] One message per chart; ≤ 2 charts per slide.
 
 ## Color and emphasis
-- [ ] Highlight follows the headline: grey context, blue focus, navy accent; **≤ 2 highlighted** items. Orange appears only where something is worse (negative, below target).
+- [ ] Highlight follows the headline: grey context, blue focus, navy accent; **only what the headline names** is highlighted, and few enough to stand out. Orange appears only where something is worse (negative, below target).
 - [ ] Categorical colors (if any) come from the fixed order, ≤ 6, consistent across the deck.
 - [ ] No red–green contrasts; nothing encoded by color alone.
 - [ ] Focus category labels are bolded/colored to echo the highlight.

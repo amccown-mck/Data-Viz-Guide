@@ -176,8 +176,7 @@ def test_callable_format_types_the_labels():
 
 
 @pytest.mark.parametrize("kw, msg", [
-    (dict(focus={"A", "B", "C"}), "at most two"), (dict(focus={"Z"}), "not among"),
-    (dict(values=[1, -2, 3]), "zero"), (dict(values=[1, float("nan"), 3]), "missing")])
+    (dict(focus={"Z"}), "not among"), (dict(values=[1, -2, 3]), "zero"), (dict(values=[1, float("nan"), 3]), "missing")])
 def test_rejects(kw, msg):
     values = kw.pop("values", [1, 2, 3])
     with pytest.raises(ValueError, match=msg):
@@ -312,8 +311,7 @@ def test_forecast_label_must_be_unique():
 
 
 @pytest.mark.parametrize("kw, msg", [
-    (dict(focus=set()), "name the focus"), (dict(focus={"A", "B", "C"}), "at most two"),
-    (dict(focus={"Z"}), "not among")])
+    (dict(focus=set()), "name the focus"), (dict(focus={"Z"}), "not among")])
 def test_line_rejects(kw, msg):
     many = {k: [1, 2] for k in "ABCDE"}
     with pytest.raises(ValueError, match=msg):
@@ -585,3 +583,8 @@ def test_save_once_with_the_headline_as_title(tmp_path):
     path = office.save(prs, tmp_path / "deck.pptx")
     assert path.exists()
     assert pptx.Presentation(str(path)).core_properties.title == "Two job families lose 1 in 4 a year"
+
+
+def test_most_bars_highlighted_warns_instead_of_refusing():
+    with pytest.warns(UserWarning, match="3 of 3 items highlighted"):
+        office.bar_slide(office.deck(), ["A", "B", "C"], [1, 2, 3], focus={"A", "B", "C"}, headline="h", source="s")

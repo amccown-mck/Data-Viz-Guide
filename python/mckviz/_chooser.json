@@ -29,7 +29,7 @@
   "colors": {
     "focus": {
       "name": "Focus (default)",
-      "when": "The headline names one or two items: everything grey, those items McKesson Blue. Highlight at most two; bold the matching labels.",
+      "when": "The headline names a few items: everything grey, those items McKesson Blue (usually one or two; when most would be blue, none stands out). Bold the matching labels.",
       "how": "mv.highlight(labels, focus=...); a stack: mv.hstack(..., story=...)"
     },
     "uniform_accent": {

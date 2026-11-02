@@ -37,7 +37,7 @@ from pptx.enum.text import MSO_ANCHOR, MSO_AUTO_SIZE, PP_ALIGN
 from pptx.oxml.ns import qn
 from pptx.util import Emu, Inches, Pt
 
-from . import FONT, TOKENS, colors as C, text_on
+from . import FONT, TOKENS, colors as C, few_highlights, text_on
 
 _HERE = Path(__file__).resolve().parent
 TEMPLATE = _HERE / "template.pptx"
@@ -548,12 +548,11 @@ def _bars(labels, values) -> tuple[list[str], list[float]]:
 
 
 def _highlight(names, focus, accent) -> tuple[set[str], str | None, set[str]]:
-    """focus (McKesson Blue) and accent (navy) as strings, checked: at most two in all, each one of `names`."""
+    """focus (McKesson Blue) and accent (navy) as strings, checked: each one of `names`, and few enough to stand out."""
     focus = {str(f) for f in focus}
     accent = str(accent) if accent is not None else None
     hot = focus | ({accent} if accent else set())
-    if len(hot) > 2:
-        raise ValueError("highlight at most two; grey the rest")
+    few_highlights(hot, len(names), "items", stacklevel=4)
     if unknown := hot - set(names):
         raise ValueError(f"focus/accent not among the labels: {sorted(unknown)}")
     return focus, accent, hot
@@ -577,7 +576,7 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
               fmt="{:,.0f}", sort: bool | str = True, takeaways: Sequence[tuple[str, str]] | None = None,
               alt: str | None = None, notes: str | None = None):
     """A ranking as a native, editable horizontal bar chart on a slide: bars sorted with the story on top, grey
-    context with the headline's bars in McKesson Blue (navy for one accent, at most two highlighted), the value at
+    context with the headline's bars in McKesson Blue (navy for one accent), the value at
     each bar's end (Bold for the highlighted bars), no gridlines and no value axis, the category labels sized to
     their text so the plot starts right after them, and an optional benchmark as a dashed navy line across all bars,
     named above the plot. A value label that would sit on the benchmark line moves inside its bar.
@@ -697,7 +696,7 @@ def column_slide(prs, labels: Sequence[str], values: Sequence[float], *, headlin
                  fmt="{:,.0f}", takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None,
                  notes: str | None = None):
     """A few values in their natural order (fiscal years, quarters, stages) as native, editable columns: grey with the
-    headline's columns in McKesson Blue (navy for one accent, at most two highlighted), the value on top of each
+    headline's columns in McKesson Blue (navy for one accent), the value on top of each
     column (Bold for the highlighted ones), no gridlines and no value axis, columns from zero, and an optional
     benchmark as a dashed navy line across all columns, named at its right end. A value label that would sit on the
     line moves inside its column. For a ranking, or labels too long for a column, use bar_slide.
@@ -1174,7 +1173,7 @@ def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: S
                     takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None,
                     notes: str | None = None):
     """A bridge from a start total to an end total as a native, editable waterfall, with mv.waterfall's rules: totals
-    navy, steps grey, the headline's steps in McKesson Blue (at most two), each value above its column (steps with
+    navy, steps grey, the headline's steps in McKesson Blue, each value above its column (steps with
     an explicit sign), no gridlines and no value axis. Built as a stacked column (an invisible base lifts each step),
     so it opens in any PowerPoint.
 
@@ -1204,8 +1203,7 @@ def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: S
     if semantic not in (None, "up", "down"):
         raise ValueError("semantic must be None, 'up' (increase is favorable) or 'down' (increase is unfavorable)")
     focus = {str(f) for f in focus}
-    if len(focus) > 2:
-        raise ValueError("highlight at most two steps; the rest stay grey")
+    few_highlights(focus, sum(k == "delta" for k in kinds), "steps")
     if unknown := focus - set(steps):
         raise ValueError(f"focus not among the steps: {sorted(unknown)}")
     fmt = fmt or (lambda v, k: f"{v:,.0f}" if k == "total" else signed(v))

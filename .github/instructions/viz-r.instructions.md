@@ -21,7 +21,7 @@ Use `mck_font()` rather than the font name "Libre Franklin": matching the instal
 
 ## Rules
 - **No hex literals.** Use `mck_colors$focus`, `$focus_light`, `$context`, `$context_light`, `$accent` (navy exception), `$negative` (orange, only for "worse"), `$total`, `$annotation`, `$headline`, `$text`, `$muted`, `$grid`, `$axis`, `$surface_subtle` and `$negative_text`, plus the palette vectors above.
-- **Highlight:** `scale_fill_manual(values = mck_highlight(levels(x), focus = ..., accent = ...), guide = "none")`. Grey context and blue focus, with ≤ 2 highlighted items.
+- **Highlight:** `scale_fill_manual(values = mck_highlight(levels(x), focus = ..., accent = ...), guide = "none")`. Grey context and blue for what the headline names (usually one or two items).
 - **Titles:** `labs(title = mck_wrap(<insight sentence>), subtitle = <metric, unit, scope, period>, caption = "Footnote\nSource: ...")`. `mck_wrap()` balances long headlines over 2 lines, since ggplot2 doesn't wrap titles. `theme_mck()` left-aligns titles to the plot edge and sizes them for 13.33 in slides; for a 10 in figure use `theme_mck(base_size = 10)` with a 17 pt title. Build the numbers in the title with `sprintf()` from the data.
 - **Direct labels:** use `geom_text()` at bar ends and line ends, then `guides(fill = "none")`, and when values are labelled remove the value axis and gridlines with `theme(axis.text.x = element_blank(), panel.grid = element_blank())`. To bold the focus category, draw the category labels with `geom_text()` instead of styling the axis text. A legend, if needed, goes at the top-left.
 - **Bars:** `geom_col(width = 0.67)`, starting at zero (`expansion(mult = c(0, ...))`), sorted with `reorder()` unless the order is natural.

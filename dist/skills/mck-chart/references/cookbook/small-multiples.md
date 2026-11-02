@@ -25,7 +25,7 @@
 | Axes / gridlines | Use the **same x and y scale in every panel** (`sharex=True, sharey=True`). Show y tick labels only on the left column and x tick labels only on the bottom row. Keep 2–3 gridlines in `chart.grid` `#E6E4DE`. Use sparse time ticks: the first period and each year change. |
 | Sort / order | When explaining, put the focus panel first (top-left), then sort by the measure (latest value or change). Use a natural order (region, level) or alphabetical order for look-up grids. Keep the panel order identical across the deck. |
 | Proportions | Use 2×2, 2×3, 3×3 or 3×4 grids with panels of equal size and aspect. Keep the gutters at ~15–20% of panel width and each panel at least ~1.5 in wide on slides. Line weights follow `chart.line`: own series 2.25 pt / 2 px, context 1.25 px. |
-| Limits | Live slides take ≤ 6 panels; reports and dashboards ≤ 12, or ≤ 20 for look-up grids. Each panel follows its base chart's limits (≤ 2 highlights, ≤ 5 ring segments). Suppress or merge any panel with n < 10 and footnote it. |
+| Limits | Live slides take ≤ 6 panels; reports and dashboards ≤ 12, or ≤ 20 for look-up grids. Each panel follows its base chart's limits (highlights only on what the headline names, ≤ 5 ring segments). Suppress or merge any panel with n < 10 and footnote it. |
 
 ## Do / don't
 

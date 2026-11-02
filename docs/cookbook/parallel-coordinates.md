@@ -20,12 +20,12 @@
 
 | Element | Rule |
 |---|---|
-| Color | Grey everything, then color the group the headline names. Context lines `chart.context` `#B4B0A5` at 1 px (`chart.line.context_width_px` 1.25 max) with ~30% transparency. Focus lines `chart.focus` `#005A8C` at 2 px, drawn **on top**. One exception the headline calls out may be `chart.accent` navy `#143359`. Highlight **≤ 2 groups** (one color each). Never use one color per line, and never use several shades of blue for several groups. If two groups must be compared, use `color.categorical` positions 1–2 (`#005A8C`, `#143359`) and nothing else. |
+| Color | Grey everything, then color the group the headline names. Context lines `chart.context` `#B4B0A5` at 1 px (`chart.line.context_width_px` 1.25 max) with ~30% transparency. Focus lines `chart.focus` `#005A8C` at 2 px, drawn **on top**. One exception the headline calls out may be `chart.accent` navy `#143359`. Highlight **only the groups the headline names** (one color each). Never use one color per line, and never use several shades of blue for several groups. If two groups must be compared, use `color.categorical` positions 1–2 (`#005A8C`, `#143359`) and nothing else. |
 | Labels | Label focus lines directly at the right end (series label role: 12 pt / 13 px, SemiBold, in the line color). No legend. Axis names go below each axis (tick role, 11 pt / 12 px, `#505050`), with the unit in parentheses. **Bold the story axis names** in Navy `#143359`. Show each axis's raw **min at the bottom and max at the top** in `#737373`, 9–11 pt. Use thousands separators and `%` where relevant. One callout (bold 2–5 word title + 1 line) sits in empty space near the axes it explains. |
 | Axes / gridlines | Thin vertical axes in `chart.axis` `#8C8C8C`, 0.75 pt. No horizontal gridlines, no frame, no markers where lines cross axes. |
 | Sort / order | **Order axes deliberately.** Put the story axis first (leftmost), then the measures it explains, then the context measures. Place related measures next to each other so crossings between them are meaningful. **Orient every axis so the same direction means the same thing** (e.g., up = more risk). Reverse axes like engagement or tenure and say "reversed" in the axis name and footnote. Keep the same axis order on every slide of a build-up. |
 | Proportions | **Normalize each axis** (min–max per axis, or a percentile/z-score scale, stated in the subtitle). Never put raw units with different scales on one shared y-axis. Evenly spaced axes. About 16:9 for slides. |
-| Limits | 4–8 axes. ≤ ~50 lines for a static chart (beyond that, show group medians or a density and keep the focus lines). ≤ 2 highlighted groups. **Every line is an aggregate with n ≥ 10.** Drop or merge smaller units into "Other" and footnote it, including in tooltips. |
+| Limits | 4–8 axes. ≤ ~50 lines for a static chart (beyond that, show group medians or a density and keep the focus lines). Highlight only the groups the headline names. **Every line is an aggregate with n ≥ 10.** Drop or merge smaller units into "Other" and footnote it, including in tooltips. |
 
 ## Do / don't
 
@@ -283,7 +283,7 @@ ggplot(long, aes(axis, scaled, group = site)) +
 - [ ] Every axis is normalized (method stated in the subtitle), and the raw min/max is printed at each axis end with units.
 - [ ] Axis order is deliberate: story axis first, related measures adjacent, and the same order on every slide.
 - [ ] Every axis points the same way ("up = worse" or "up = better"). Reversed axes are labelled and footnoted.
-- [ ] ≤ 2 highlighted groups, drawn on top, matching the headline. All other lines are grey with no per-line colors or legend.
+- [ ] The highlighted groups are the ones the headline names, drawn on top. All other lines are grey with no per-line colors or legend.
 - [ ] Every line is an aggregate of **n ≥ 10**, including in tooltips, brushes and drill-downs. No individual-person lines.
 - [ ] The headline claim is recomputed from the data (e.g., the three focus sites really are the top 3 on overtime and time to fill, and the only sites above 25% attrition).
 

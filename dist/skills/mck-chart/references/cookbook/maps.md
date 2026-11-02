@@ -26,7 +26,7 @@
 | Axes / gridlines | None: no lat/long graticule, frame, coastline emphasis, or background fill. Boundaries stay thin and light. In **print**, darken boundaries to `chart.axis` `#8C8C8C`, because white hairlines can vanish on paper. |
 | Sort / order | Legend classes run in value order (highest at top when stacked). Small-multiple maps run in the order of their totals, largest first, or in a stated natural order, with each total labelled beneath its map. |
 | Proportions | Use an **equal-area projection** (Albers USA: Plotly `scope="usa"`; R `coord_sf(crs = 5070)`). Alaska and Hawaii are insets. Bubbles scale by **area** (Plotly `sizemode="area"`); the largest bubble is ~40–56 px across and bubbles may overlap lightly but never hide a focus site. Dots in a dot-density map are small (2–3 px) and all one size. |
-| Limits | **3–5 classes** (5 is the default; never more than 7). Classes are **even-width with round breaks**, with no gaps and no overlaps, open-ended at both ends ("Under 0.8", "1.7+"), and every class holds at least one area. ≤ 2 highlighted sites or one highlighted class. **Every area, site and dot cluster is n ≥ 10**: merge small sites into "Other" or drop and footnote them. **Never plot employee home addresses**; aggregate to state, metro, or ZIP3 and place density dots randomly inside the area. |
+| Limits | **3–5 classes** (5 is the default; never more than 7). Classes are **even-width with round breaks**, with no gaps and no overlaps, open-ended at both ends ("Under 0.8", "1.7+"), and every class holds at least one area. Highlight only the sites or the one class the headline names. **Every area, site and dot cluster is n ≥ 10**: merge small sites into "Other" or drop and footnote them. **Never plot employee home addresses**; aggregate to state, metro, or ZIP3 and place density dots randomly inside the area. |
 
 ## Do / don't
 
@@ -348,7 +348,7 @@ ggplot(shapes, aes(long, lat, group = group, fill = cls)) +
 - [ ] Choropleth values are **rates** (per candidate, %, per 1,000), not raw counts. Counts are shown as **area-scaled** bubbles.
 - [ ] 3–5 binned classes with round, even-width breaks, no gaps or overlaps, open-ended ends, and a legend that names the unit. A diverging scale is centered on a stated, meaningful midpoint.
 - [ ] Only brand ramps are used (sequential blue, or diverging orange–blue). The base map is light sand with thin white boundaries (darker boundaries for print), with no graticule or frame.
-- [ ] The areas or sites the headline names are labelled directly. Small or dense areas have a zoom inset or a lens callout. At most 2 highlighted sites or one highlighted class.
+- [ ] The areas or sites the headline names are labelled directly. Small or dense areas have a zoom inset or a lens callout. Highlighted: only the sites or the one class the headline names.
 - [ ] Every area, site and dot cluster is **n ≥ 10**. Smaller ones are merged or suppressed and footnoted, including in tooltips. No individual or home-level locations are plotted.
 - [ ] The headline claim is recomputed from the data (e.g., exactly four states are in the 1.7+ class), and the projection is equal-area (Albers USA).
 

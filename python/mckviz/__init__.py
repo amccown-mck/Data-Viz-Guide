@@ -137,9 +137,20 @@ def highlight(labels: Iterable, focus=None, accent=None, base: str | None = None
             return set()
         return {x} if isinstance(x, (str, int, float)) else set(x)
 
+    labels = list(labels)
     f, a = as_set(focus), as_set(accent)
+    few_highlights(f | a, len(labels))
     default = base or colors.context
     return [colors.accent if lab in a else colors.focus if lab in f else default for lab in labels]
+
+
+def few_highlights(hot, n: int, what: str = "items", stacklevel: int = 3) -> None:
+    """Highlight what the headline names. How many is right depends on the story, so there is no fixed cap; a
+    highlight only stands out against more grey, so warn (never refuse) when more than two outnumber the rest."""
+    if len(hot) > 2 and len(hot) * 2 > n:
+        warnings.warn(f"{len(hot)} of {n} {what} highlighted: when most are blue, none stands out. Highlight only "
+                      "what the headline names, or color them all alike with one navy accent (Uniform + accent)",
+                      stacklevel=stacklevel)
 
 
 def categorical(n: int) -> list[str]:
@@ -722,7 +733,7 @@ def __getattr__(name: str):
 
 __all__ = [
     "__version__", "TOKENS", "FONT", "CATEGORICAL", "FILL_TINTS", "SEQUENTIAL", "DIVERGING", "STEPS", "STATUS", "colors", "extended",
-    "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
+    "use", "register_fonts", "highlight", "few_highlights", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
     "fmt_num", "suppress_small",
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",
     "working_path", "deliver", "clear_delivered", "look", "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",

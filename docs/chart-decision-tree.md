@@ -246,7 +246,7 @@ Grey first, then color only the point. Pick the pattern from what the color has 
 
 | Pattern | Use when | In mckviz |
 |---|---|---|
-| **Focus (default)** | The headline names one or two items: everything grey, those items McKesson Blue. Highlight at most two; bold the matching labels. | `mv.highlight(labels, focus=...); a stack: mv.hstack(..., story=...)` |
+| **Focus (default)** | The headline names a few items: everything grey, those items McKesson Blue (usually one or two; when most would be blue, none stands out). Bold the matching labels. | `mv.highlight(labels, focus=...); a stack: mv.hstack(..., story=...)` |
 | **Uniform + accent** | Every item belongs to the same story and one exception must pop: the series light blue, the exception navy. | `mv.highlight(labels, accent=..., base=C.focus_light); a stack: mv.hstack(..., accent=..., uniform=True)` |
 | **Focus + accent** | The headline names a group and one member that stands out above the rest of it: grey context, the group McKesson Blue, the standout navy ("Four support roles are above 50% exposure, led by Claims & Billing"). Use it for a "led by" or "most of all" clause. Two items the headline names as equals ("two job families") stay Focus: both blue. | `mv.highlight(labels, focus=..., accent=...); a stack: mv.hstack(..., story=..., accent=...)` |
 | **Story segment + greys** | Focus applied to a stack: the one part that is the story blue on the baseline, the other parts in context greys. | `mv.hstack(..., story=...)` |

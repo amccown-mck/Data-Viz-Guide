@@ -23,7 +23,7 @@ from typing import Iterable, Sequence
 
 import numpy as np
 
-from . import DIVERGING, FONT, MINUS, SEQUENTIAL, STATUS, TOKENS, _SCALE, colors as C, halo, signed, text_on
+from . import DIVERGING, FONT, MINUS, SEQUENTIAL, STATUS, TOKENS, _SCALE, colors as C, few_highlights, halo, signed, text_on
 
 _ROLES = TOKENS["typography"]["roles"]
 LABEL = _ROLES["label"]["size_pt"] - 1          # 11 pt: direct labels (as mv.label_bars)
@@ -175,7 +175,7 @@ def waterfall(ax, steps: Sequence[str], values: Sequence[float], kinds: Sequence
         mv.source(fig, "Source: ...", footnote=ns.note)          # ns = the return value; says where the axis starts
 
     kinds: "total" or "delta" per step (default: first and last are totals). A "total" in the middle is a subtotal.
-    focus: delta steps to color blue (at most two; everything else stays grey).
+    focus: the delta steps the headline names, in blue (everything else stays grey).
     semantic: color deltas by judgment instead: "up" (an increase is favorable: green up, orange down) or "down"
         (an increase is unfavorable, e.g. cost). Labels then carry ▲/▼ (arrows=False drops them).
     floor: start the value axis here (a truncated waterfall). Totals get two white break marks; say so in a footnote
@@ -194,8 +194,7 @@ def waterfall(ax, steps: Sequence[str], values: Sequence[float], kinds: Sequence
     if semantic not in (None, "up", "down"):
         raise ValueError("semantic must be None, 'up' (increase is favorable) or 'down' (increase is unfavorable)")
     focus = set(focus)
-    if len(focus) > 2:
-        raise ValueError("highlight at most two steps; the rest stay grey (house rule)")
+    few_highlights(focus, sum(k == "delta" for k in kinds), "steps")
     arrows = (semantic is not None) if arrows is None else arrows
     fmt = fmt or (lambda v, k: f"{v:,.0f}" if k == "total" else signed(v))
 
@@ -580,8 +579,7 @@ def rank_slope(ax, names: Sequence[str], before: Sequence[int], after: Sequence[
     names = [str(n) for n in names]
     r0, r1 = [int(v) for v in before], [int(v) for v in after]
     focus, worse, short = set(focus), set(worse), short or {}
-    if len(focus | worse) > 2:
-        raise ValueError("highlight at most two lines; the rest stay grey (house rule)")
+    few_highlights(focus | worse, len(names), "lines")
     lines, left, right = {}, {}, {}
     for i in sorted(range(len(names)), key=lambda i: names[i] in focus | worse):   # highlights drawn last
         nm = names[i]
@@ -1609,7 +1607,7 @@ def strip(ax, data, group: str | None = None, value: str | None = None, *, focus
                  zone=(None, 0.90), zone_label="Below 0.90", ref=1.0, ref_label="Range midpoint", xfmt="{x:.2f}")
 
     data: a DataFrame with `group` and `value` columns, or {group: values}. order: groups top to bottom; default by
-        median, highest at the top. focus: at most two groups, in blue with bold navy names.
+        median, highest at the top. focus: the groups the headline names, in blue with bold navy names.
     dots / box: box="focus" (default) boxes the focus groups only, the calm executive view; box=True boxes every
         group, for readers comparing spreads; box=False, median ticks only. dots=False draws box plots with
         10th-90th percentile whiskers, for many groups or tens of thousands of people. Footnote the box once
@@ -1634,8 +1632,7 @@ def strip(ax, data, group: str | None = None, value: str | None = None, *, focus
     if not groups:
         raise ValueError(f"every group has fewer than {min_n} people")
     focus = {str(f) for f in focus}
-    if len(focus) > 2:
-        raise ValueError("highlight at most two groups")
+    few_highlights(focus, len(groups), "groups")
     if len(groups) > (8 if dots else 20):
         raise ValueError(f"{len(groups)} groups: at most 8 for a strip plot (dots=True), 20 for box plots")
     if share is not None:
@@ -1747,8 +1744,8 @@ def bar(ax, labels: Sequence[str], values: Sequence[float], *, focus: Iterable[s
         uniform: bool = False, benchmark: float | None = None, benchmark_label: str | None = None, fmt="{:,.0f}",
         sort: bool | str = True):
     """A ranking as sorted horizontal bars, the start chart for categories × one measure: the story on top (as
-    mv.office.bar_slide), grey context with the headline's bars in McKesson Blue (navy for one accent, at most two
-    highlighted; uniform=True makes the rest light blue for the "uniform + accent" pattern), the value at each bar's
+    mv.office.bar_slide), grey context with the headline's bars in McKesson Blue (navy for one accent;
+    uniform=True makes the rest light blue for the "uniform + accent" pattern), the value at each bar's
     end (bold for the highlighted bars), no value axis or gridlines, a zero baseline, and an optional benchmark as a
     dashed navy line named above the bars.
 
@@ -1772,8 +1769,7 @@ def bar(ax, labels: Sequence[str], values: Sequence[float], *, focus: Iterable[s
     focus = {str(f) for f in focus}
     accent = str(accent) if accent is not None else None
     hot = focus | ({accent} if accent else set())
-    if len(hot) > 2:
-        raise ValueError("highlight at most two bars, the ones the headline names; grey the rest")
+    few_highlights(hot, len(vals), "bars")
     if unknown := hot - set(names):
         raise ValueError(f"focus/accent not among the labels: {sorted(unknown)}")
     order = story_order(names, list(vals), hot, sort)
@@ -1819,7 +1815,7 @@ def share_bar(ax, data, group: str | None = None, value: str | None = None, *, b
         mv.share_bar(ax, df, "job_family", "compa_ratio", below=0.90, focus={"Pharmacy Technician"})
 
     data: a DataFrame with `group` and `value` columns, or {group: values}. Pass exactly one of below= / above=
-        (strictly below or above the threshold). focus: at most two groups. ref: an optional reference share in
+        (strictly below or above the threshold). focus: the groups the headline names. ref: an optional reference share in
         percent, drawn as a navy dashed line and named by ref_label; ref="overall" draws the share across all the
         groups shown, labeled with that share ("All groups 12%"; ref_label replaces "All groups").
     Groups under min_n people are left out and listed in `.suppressed`. Returns SimpleNamespace(order, shares
@@ -1838,8 +1834,7 @@ def share_bar(ax, data, group: str | None = None, value: str | None = None, *, b
     if not groups:
         raise ValueError(f"every group has fewer than {min_n} people")
     focus = {str(f) for f in focus}
-    if len(focus) > 2:
-        raise ValueError("highlight at most two groups")
+    few_highlights(focus, len(groups), "groups")
     beyond = {g: int(np.sum(v < below if below is not None else v > above)) for g, v in groups.items()}
     n = {g: len(v) for g, v in groups.items()}
     shares = {g: 100 * beyond[g] / n[g] for g in groups}
@@ -1896,7 +1891,7 @@ def line(ax, x, series, *, focus: Iterable[str] = (), accent: str | None = None,
 
     x: the period labels, evenly spaced (put the year on the first tick and at each year change). series:
         {name: values} or a DataFrame whose columns are the series; NaN leaves a gap (never interpolated).
-    focus: at most two series in blue (accent= one in navy). With none: one series is the focus; two to four
+    focus: the series the headline names, in blue (accent= one in navy). With none: one series is the focus; two to four
         series each get a categorical color; more than four raises (name the focus, or use mv.multiples).
     target: a navy dashed line, named by target_label. event: (first, last, text) shades that span.
     forecast_from: the last actual period; every line is dashed after it, with a dotted divider. Periods are a
@@ -1922,8 +1917,7 @@ def line(ax, x, series, *, focus: Iterable[str] = (), accent: str | None = None,
     hot = focus | ({accent} if accent else set())
     if hot - set(data):
         raise ValueError(f"not a series: {sorted(hot - set(data))}")
-    if len(hot) > 2:
-        raise ValueError("at most two highlighted lines; grey the rest")
+    few_highlights(hot, len(data), "lines")
     categorical = False
     if not hot:
         if len(data) == 1:
@@ -2066,8 +2060,7 @@ def dot_plot(ax, labels: Sequence[str], values: Sequence[float], *, focus: Itera
     focus = {str(f) for f in focus}
     accent = str(accent) if accent is not None else None
     hot = focus | ({accent} if accent else set())
-    if len(hot) > 2:
-        raise ValueError("highlight at most two rows")
+    few_highlights(hot, len(vals), "rows")
     order = sorted(range(len(names)), key=lambda i: -vals[i]) if sort else list(range(len(names)))
     names, vals = [names[i] for i in order], vals[order]
     y = np.arange(len(names))[::-1]                            # first row on top

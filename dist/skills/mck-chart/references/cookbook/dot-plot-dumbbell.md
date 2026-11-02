@@ -27,7 +27,7 @@
 | Axes / gridlines | A **non-zero value range is allowed**: pick round bounds that just contain the data. Show the value axis with tick labels (dots aren't value-labelled) and light **vertical** gridlines in `chart.grid` `#E6E4DE`, 0.75 pt. No baseline, no tick marks, no y-axis line. Small multiples share the same range. |
 | Sort / order | Sort by the gap (largest unfavorable first) or by the focus value. Keep a natural order (job level, survey item order) where it exists. Use the same order across the deck. |
 | Proportions | Comparator dot ≈ 7 px (matplotlib `s≈55`), focus dot ≈ 8–9 px (`s≈70`), connector 3 pt with round caps, drawn behind the dots. Row pitch ≥ 2× the dot diameter. |
-| Limits | 2 values per row (3 at most, e.g., min / median / max as a range). ≤ ~15 rows; beyond that, filter or use small multiples. ≤ 2 highlighted groups. Each dot is based on **n ≥ 10** people; footnote any suppressed rows. |
+| Limits | 2 values per row (3 at most, e.g., min / median / max as a range). ≤ ~15 rows; beyond that, filter or use small multiples. Highlight only the groups the headline names. Each dot is based on **n ≥ 10** people; footnote any suppressed rows. |
 
 ## Do / don't
 

@@ -21,7 +21,7 @@
 
 | Element | Rule |
 |---|---|
-| Color | **One color** for all bubbles, `chart.focus` `#005A8C`, **or** `chart.context` `#B4B0A5` for all with the headline bubble in `chart.focus` `#005A8C` (one exception in `chart.accent` navy `#143359`). Highlight at most 2. Use the categorical order (`#005A8C`, `#143359`, `#66C4FF`, `#00AF9D`, …) only when color **encodes a group** (≤ 3–4 groups), with a small top-left key. Never use decorative multi-color bubbles. No gradients, 3D or shadows. |
+| Color | **One color** for all bubbles, `chart.focus` `#005A8C`, **or** `chart.context` `#B4B0A5` for all with the headline bubble in `chart.focus` `#005A8C` (one exception in `chart.accent` navy `#143359`). Highlight only what the headline names. Use the categorical order (`#005A8C`, `#143359`, `#66C4FF`, `#00AF9D`, …) only when color **encodes a group** (≤ 3–4 groups), with a small top-left key. Never use decorative multi-color bubbles. No gradients, 3D or shadows. |
 | Labels | Every bubble shows a **bold value** plus its category name in regular weight. Put the label **inside** when the bubble is big enough (white on `#005A8C`, navy `#143359` on grey; use `mv.text_on()`). Otherwise put it **below** (or beside) the bubble, aligned on one shared line. Use one unit in the subtitle ("thousand hours", "$M") and consistent K/M. |
 | Axes / gridlines | None: no axes, gridlines, size legend or frame. Values are labelled, so the size key is redundant. |
 | Sort / order | **Descending by size.** Largest first (left, or top-left), wrapping into a second row like text if needed; keep the order monotonic. The arrangement may adapt to the layout, but never scatter bubbles randomly. Bubbles sit on a **shared baseline** (single row) or are packed with 2–4 px white gaps and no overlap. |
@@ -200,7 +200,7 @@ ggplot() +
 - [ ] The range justifies bubbles (max/min ≥ ~20×); otherwise the chart is redrawn as bars.
 - [ ] Bubbles are sorted largest → smallest, don't overlap, and stay circular (equal aspect ratio).
 - [ ] Every bubble has a value label (inside if it fits, otherwise below on one aligned line); there are no axes, gridlines or size legend.
-- [ ] Color is one hue, or grey plus ≤ 2 highlights tied to the headline. Multiple colors only encode a keyed grouping.
+- [ ] Color is one hue, or grey plus highlights on only what the headline names. Multiple colors only encode a keyed grouping.
 - [ ] The headline's comparison ("more than all others combined", "34x") is recomputed from the data.
 
 ## Inspiration

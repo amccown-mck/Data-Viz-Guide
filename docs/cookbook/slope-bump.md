@@ -21,12 +21,12 @@
 
 | Element | Rule |
 |---|---|
-| Color | All items in `chart.context` `#B4B0A5` (lines and markers). The item the headline is about is `chart.focus` `#005A8C`. At most one contrasting mover (`limits.highlighted_series` = 2): `chart.accent` navy `#143359`, or `semantic.negative` orange `#EF8200` when that mover is a decline, as in the bump example below. Orange never marks a plain highlight. On dark social cards use `chart.focus_on_dark` `#66C4FF` and `chart.context_on_dark` `#5A7194` on Deep Navy `#0B3266`. |
+| Color | All items in `chart.context` `#B4B0A5` (lines and markers). The item the headline is about is `chart.focus` `#005A8C`. At most one contrasting mover: `chart.accent` navy `#143359`, or `semantic.negative` orange `#EF8200` when that mover is a decline, as in the bump example below. Orange never marks a plain highlight. On dark social cards use `chart.focus_on_dark` `#66C4FF` and `chart.context_on_dark` `#5A7194` on Deep Navy `#0B3266`. |
 | Labels | Put names at **both ends**: left in starting order, right in ending order. No legend. Slope charts show the value (or rank) next to each name. Bump charts put the rank number inside circular markers, with the text color from `mv.text_on(fill)`. Highlighted names are bold: navy `#143359` for the focus and `semantic.negative_text` `#A75B00` for an orange (declining) item (orange text is below 3:1 contrast). Put bold period headers (`2023`, `FY26`) above each column. |
 | Axes / gridlines | No axes and no gridlines. For ranks, put 1 at the top and space ranks evenly. For value slopes, use one linear scale shared by both columns (it doesn't have to start at 0). The column positions are the time axis, spaced evenly. |
 | Sort / order | Rank 1 is at the top, with labels following the order on each side. Draw context lines first and highlighted lines last, so they sit on top. For top-N lists, say "Top N" in the subtitle and show items entering or leaving with a "new" marker or a stub that drops off. |
 | Proportions | Line weights come from `chart.line`: focus 2.25 pt / 2 px, context 1.25 px. Bump markers are ~18–22 px circles with 1.5 px white outlines. Slope charts work narrow (4:3, 1:1 or one print column); bump charts use 16:9 with even column spacing. |
-| Limits | Slope charts take ≤ ~10 items; bump charts ≤ ~8 items × 3–6 periods. Highlight ≤ 2 items. Don't rank groups with fewer than 10 people, and footnote the metric definition so ranks aren't over-read. |
+| Limits | Slope charts take ≤ ~10 items; bump charts ≤ ~8 items × 3–6 periods. Highlight only the items the headline names. Don't rank groups with fewer than 10 people, and footnote the metric definition so ranks aren't over-read. |
 
 ## Do / don't
 
@@ -194,7 +194,7 @@ ggplot(df, aes(fy, rank, group = bu, colour = bu)) +
 Use white rank numbers on blue and navy markers only. On orange `#EF8200` and grey `#B4B0A5` markers, map the text color to `#143359` (as `mv.text_on()` does).
 
 ## QA specifics
-- [ ] There are ≤ 2 highlighted items, and they're exactly the ones the headline names. Everything else is `#B4B0A5`.
+- [ ] The highlighted items are exactly the ones the headline names. Everything else is `#B4B0A5`.
 - [ ] Every item is labelled at both ends in rank order, with no legend, and no labels collide where ranks tie or lines cross.
 - [ ] Rank 1 is at the top, the period headers are present, and the columns are evenly spaced.
 - [ ] Value slopes use one shared scale on both sides, and the gaps between items are stated or footnoted when ranks hide them.

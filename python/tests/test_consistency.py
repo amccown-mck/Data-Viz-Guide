@@ -111,6 +111,22 @@ def test_tokens_have_the_settled_order():
     assert MIN_N == 10, f"mv.suppress_small defaults to min_n={MIN_N}; the rules say 10"
 
 
+HIGHLIGHT_CAP = re.compile(r"(?i)(?:≤\s*2|at most (?:two|2)|two)\s+highlight|highlight\w*\s+(?:≤|at most)\s*(?:2|two)"
+                           r"|highlight\w* at most two")
+
+
+def test_no_fixed_cap_on_highlights():
+    """Highlight what the headline names; how many depends on the story (mv.few_highlights warns when most are
+    blue). Stacks keep two story segments, which hstack enforces so the segments stay apart."""
+    pages = FILES + [str(p.relative_to(REPO)).replace("\\", "/") for p in
+                     [*(REPO / "docs").rglob("*.md"), *(REPO / "guide" / "pages").glob("*.html"),
+                      *(REPO / "agents").rglob("*.md")]]
+    hits = [f"{rel}:{i}" for rel in sorted(set(pages)) if "worklog" not in rel and "agent-architecture" not in rel
+            for i, line in enumerate(read(rel).splitlines(), 1)
+            if HIGHLIGHT_CAP.search(line) and "segments" not in line]
+    assert not hits, "a fixed number of highlights: say 'what the headline names' instead: " + ", ".join(hits)
+
+
 @pytest.mark.parametrize("rel,rule,pattern", REQUIRED, ids=[f"{f}: {r}" for f, r, _ in REQUIRED])
 def test_file_states_rule_as_tokens_do(rel, rule, pattern):
     assert re.search(pattern, read(rel), flags=re.S), \

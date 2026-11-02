@@ -14,8 +14,8 @@
 Column kinds: "number" (right-aligned, one format per column), "bar" (an inline bar in context grey, focus rows in blue,
 with the value after it), "heat" (cells shaded light to dark on the column's own scale; scale="orange" when darker
 means worse, scale="diverging" around `center` for gaps to a benchmark), "delta" (signed with a true minus; only the
-unfavorable direction, given by worse="up" or "down", is colored) and "text". At most two shaded columns and two focus
-rows, as the spec says. Rows are drawn in the order given: sort the frame first. With `n=` (a count column), cells of
+unfavorable direction, given by worse="up" or "down", is colored) and "text". At most two shaded columns, as the spec says;
+focus rows are the ones the headline names. Rows are drawn in the order given: sort the frame first. With `n=` (a count column), cells of
 rows under `min_n` people show "n<10". The figure height is fitted to the rows unless fit=False.
 """
 from __future__ import annotations
@@ -27,7 +27,7 @@ from typing import Iterable, Sequence
 import numpy as np
 from matplotlib.patches import Rectangle
 
-from . import DIVERGING, SEQUENTIAL, colors as C, signed, text_on
+from . import DIVERGING, SEQUENTIAL, colors as C, few_highlights, signed, text_on
 
 _PAD = 14            # points between columns
 _BAR_PT = 72         # inline bar length (points)
@@ -83,8 +83,7 @@ def table(ax, df, label: str, cols: Sequence[Col], *, focus: Iterable = (), weig
           fit: bool = True):
     """Draw a blended table on `ax` (rows in the order of `df`). Returns SimpleNamespace(notes, rows)."""
     focus = set(focus)
-    if len(focus) > 2:
-        raise ValueError(f"{len(focus)} focus rows: bold at most two, the ones the headline names")
+    few_highlights(focus, len(df), "rows")
     if sum(c.kind == "heat" for c in cols) > 2:
         raise ValueError("shade at most two columns, each on its own scale")
     df = df.reset_index(drop=True)

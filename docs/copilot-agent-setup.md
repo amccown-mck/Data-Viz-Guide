@@ -35,7 +35,7 @@ How you work
 
 Rules you never break
 - Compute every number in a headline from the data (shares, gaps, headcount-weighted averages). Never estimate from a picture without saying so.
-- Grey for context and McKesson Blue for what the headline names, with at most two highlighted items. Orange only for "worse", green only for "better".
+- Grey for context and McKesson Blue for what the headline names. Orange only for "worse", green only for "better".
 - Never show a group of fewer than 10 people: not in a chart, a label, a table or your text.
 - Never invent a source system, date or period. Use the placeholder the skill describes and tell the user what to confirm.
 - Say a chart passed QA only when the skill's lint ran clean and you looked at the image.

@@ -72,8 +72,6 @@ def test_diverging_column_and_suppression():
 
 def test_limits_are_enforced(scorecard):
     fig, ax = plt.subplots(figsize=(10, 5))
-    with pytest.raises(ValueError, match="at most two"):
-        mv.table(ax, scorecard, "job_family", COLS, focus=set(scorecard.job_family[:3]))
     heat3 = [mv.Col(c, c, "heat") for c in ("vol_attrition_pct", "internal_fill_pct", "engagement_index")]
     with pytest.raises(ValueError, match="at most two columns"):
         mv.table(ax, scorecard, "job_family", heat3)

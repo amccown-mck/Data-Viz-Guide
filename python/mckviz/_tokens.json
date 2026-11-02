@@ -131,7 +131,6 @@
     "donut": { "hole": 0.62, "max_segments": 5 },
     "limits": {
       "categorical_series": 6,
-      "highlighted_series": 2,
       "stacked_segments": 5,
       "pie_segments": 5,
       "lines_before_greying": 4,

@@ -64,7 +64,7 @@ QA:           pass | exceptions: <list>
 <!-- portable,repo -->
     - **Plotly** when the output is interactive or HTML: `mv.pl_highlight` for colors, `mv.pl_finish(fig, headline, subtitle, source_text)` for the frame, then `fig.write_html(...)`.
 <!-- /portable,repo -->
-- **At most two highlighted items**, and they are what the headline names. When more qualify (three functions below a line), highlight the two the headline is about and keep the rest grey, or make the one exception the navy accent.
+- **Highlight what the headline names, and only that:** usually one or two items, more when the headline names a group ("four support roles"). When more qualify than the story is about (three functions below a line), highlight the ones the headline names and keep the rest grey; when most would be blue, none stands out (the builders warn).
 - **No hex literals.** Use color roles only: context grey, focus blue, navy accent (the one exception), light blue for a uniform series, navy totals and benchmarks. Orange only when it means "worse" (below target, shrinking, a shortfall), green only when it means "better", both with ▲▼ or words. Red/amber/green only as status colors (`mv.STATUS`) with a symbol and word, never for data series.
 - Direct labels, a zero baseline for bars, sorting by value (or natural order), and units in the subtitle.
 - When a chart shows a **derived measure** (leavers = headcount × attrition rate, hours freed = FTE × share, cost = headcount × average pay), say so in the footnote and call the result an estimate ("Estimated leavers = headcount × voluntary attrition rate"). Never present a derived count as a recorded one.

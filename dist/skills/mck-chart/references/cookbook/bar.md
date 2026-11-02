@@ -225,7 +225,7 @@ ggplot(df, aes(vol_attrition_pct, job_family, fill = job_family)) +
 ## QA specifics
 - [ ] The value axis starts at **0** and the zero baseline is visible. Bars are never truncated or broken.
 - [ ] Bar : gap ≈ 2 : 1 (Excel Gap Width ≈ 50%). No hairline bars.
-- [ ] At most 2 highlighted bars, exactly the ones the headline names, with their category labels bolded. No per-bar rainbow colors.
+- [ ] The highlighted bars are exactly the ones the headline names, with their category labels bolded. No per-bar rainbow colors.
 - [ ] When values are labelled, the value axis and gridlines are gone. When they aren't, light gridlines and the unit are in the subtitle.
 - [ ] Sorted by value (largest at the top for horizontal bars), or in a stated natural order, consistent across the deck.
 - [ ] The benchmark/target line is labelled in place and defined in a footnote. No category is shown with n < 10.

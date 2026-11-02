@@ -15,7 +15,7 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 - An **insight headline**: a full sentence with a verb stating the "so what", ≤ 2 lines, sentence case, no final period. Every claim is visibly true in the chart.
 - A **neutral subtitle**: metric, unit, scope, period. Example: "Voluntary attrition by job family, FY26 (%)".
 - **Direct labels** instead of a legend. A legend only when labels would collide, top-left. When values are labelled, remove the value axis and gridlines.
-- **Grey context with one blue focus** (plus an optional single navy accent). At most 2 highlighted items. For one series with one exception: all light blue, the exception navy.
+- **Grey context with one blue focus** (plus an optional single navy accent). Highlight only what the headline names, usually one or two items: when most are blue, none stands out. For one series with one exception: all light blue, the exception navy.
 - **Orange means worse.** Use orange only for negatives, decreases, below target or benchmark, and the low end of the diverging scale. Never as a highlight or decoration.
 - At most **6 categorical colors**, in the fixed order below. Group the tail into "Other".
 - A **"Source:"** line bottom-left (system, as-of date, population), with footnotes for definitions.
@@ -72,7 +72,7 @@ Copy this single file into any repo (for example as `AGENTS.md`, `CLAUDE.md`, `.
 ## QA checklist (run before returning a chart)
 - [ ] The headline is an insight sentence, and its numbers are computed from the data.
 - [ ] The subtitle states metric, unit, scope and period. The source line has system, date and population.
-- [ ] Grey context, ≤ 2 highlights matching the headline, ≤ 6 categorical colors, no red vs. green. Orange only where something is worse.
+- [ ] Grey context, highlights only on what the headline names, ≤ 6 categorical colors, no red vs. green. Orange only where something is worse.
 - [ ] Direct labels. No redundant axis, gridlines or legend. Nothing overlaps.
 - [ ] Bars from zero, honest areas, no dual axes, sorted with intent.
 - [ ] No group under 10 people anywhere, including tooltips.

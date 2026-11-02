@@ -24,7 +24,7 @@
 | Axes / gridlines | None. No frame, no background fill. |
 | Sort / order | Stages run left → right in process order. Within a column, keep the main path together and the exits/leakage at the edge. Keep the same node order on every slide of a build-up. |
 | Proportions | Band width ∝ value on **one shared scale**. Inflow = outflow at every intermediate node. Exits are explicit nodes, not silently dropped. |
-| Limits | ≤ 4 stages, ≤ ~8 nodes per column, ≤ 3 link colors, ≤ 2 highlighted paths. **Every node and flow must be n ≥ 10.** Merge smaller flows into "Other" (context grey) and footnote it. |
+| Limits | ≤ 4 stages, ≤ ~8 nodes per column, ≤ 3 link colors; highlight only the paths the headline names. **Every node and flow must be n ≥ 10.** Merge smaller flows into "Other" (context grey) and footnote it. |
 
 ## Do / don't
 

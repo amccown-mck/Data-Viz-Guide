@@ -30,7 +30,7 @@
 | Axes / gridlines | No value axis and no gridlines when bars are labelled. Keep a thin baseline in `chart.axis` `#8C8C8C`, 0.75 pt. **Connectors:** thin horizontal lines at the running total from one bar to the next, `#8C8C8C`, 0.75 pt (or lighter). Never heavy or black. |
 | Sort / order | Start total → drivers → end total. Order the drivers by **logic** (the process sequence, e.g., hires → transfers in → exits → transfers out), or group the increases first and the decreases second, largest first within each group. Keep the same driver order across periods, scenarios and the deck. Horizontal waterfalls run top to bottom. |
 | Proportions | Bar : gap ≈ **2 : 1** (`chart.bar.band_fill` = 0.67, Excel **Gap Width 50%**). Totals and drivers have the **same width**. A waterfall is the **only** bar chart that may start above zero: do it only when the totals dwarf the drivers, mark breaks on the total bars, and say so in a footnote. Every driver must still be fully visible. |
-| Limits | ≤ ~8 drivers (group the tail into "Other drivers" in `#B4B0A5`), ≤ 2 subtotals, ≤ 2 highlighted drivers. The drivers **must reconcile**: start + Σ drivers = end, to the rounding shown. Headcount bridges: no driver cell may describe fewer than **10 people**. Merge small movements (e.g., rehires) into "Other movements". |
+| Limits | ≤ ~8 drivers (group the tail into "Other drivers" in `#B4B0A5`), ≤ 2 subtotals; highlight only the drivers the headline names. The drivers **must reconcile**: start + Σ drivers = end, to the rounding shown. Headcount bridges: no driver cell may describe fewer than **10 people**. Merge small movements (e.g., rehires) into "Other movements". |
 
 ## Do / don't
 
@@ -298,7 +298,7 @@ For the **semantic** pattern, `{type: "waterfall", measure: ["absolute", "relati
 ## QA specifics
 - [ ] The drivers reconcile: start + Σ drivers = end (and every subtotal) to the rounding shown. Label totals are recomputed, not typed.
 - [ ] Totals are navy and bold without a sign. Drivers carry an explicit + or a true −. Total category labels are bold.
-- [ ] One color pattern only: highlight (grey drivers, ≤ 2 named drivers in blue, or one in navy; never orange) **or** semantic (green/orange from the audience's point of view, explained in the subtitle). No red/green.
+- [ ] One color pattern only: highlight (grey drivers, the drivers the headline names in blue, or one in navy; never orange) **or** semantic (green/orange from the audience's point of view, explained in the subtitle). No red/green.
 - [ ] Connectors are thin and light grey, and sit exactly at the running total. Bars are ≈ 2 : 1 bar : gap, and totals are the same width as drivers.
 - [ ] If the axis starts above zero, the total bars carry break marks, a footnote says where it starts, and no driver is cropped.
 - [ ] ≤ ~8 drivers, logically ordered and consistent across the deck. Headcount movements under 10 people are merged into "Other".

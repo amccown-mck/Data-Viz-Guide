@@ -1,6 +1,7 @@
 """Tests for the chart builders in mckviz/charts.py: each passes mv.lint(strict=True), and each keeps the house rules."""
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 
 import matplotlib
@@ -249,8 +250,6 @@ def test_waterfall_semantic_colors_carry_arrows():
 
 def test_waterfall_guards():
     fig, ax = plt.subplots()
-    with pytest.raises(ValueError, match="at most two"):
-        mv.waterfall(ax, STEPS, VALS, focus={"Merit", "Hires", "Lag"})
     with pytest.raises(ValueError, match="cuts into"):
         mv.waterfall(ax, STEPS, VALS, floor=4300)
     with pytest.raises(ValueError, match="kinds"):
@@ -503,8 +502,6 @@ def test_strip_suppresses_small_groups_and_limits_groups():
     with pytest.raises(ValueError, match="at most 8"):
         mv.strip(ax, {str(i): range(20) for i in range(9)})
     assert len(mv.strip(ax, {str(i): range(20) for i in range(9)}, dots=False).order) == 9   # boxes go to 20
-    with pytest.raises(ValueError, match="at most two"):
-        mv.strip(ax, {"A": range(40), "B": range(30), "C": range(30)}, focus={"A", "B", "C"})
 
 
 def test_share_bar_computes_shares_from_people_and_sorts():
@@ -574,8 +571,6 @@ def test_bar_puts_the_story_on_top_and_highlights_only_it():
     assert lead.order == ["B", "C", "A"]                                      # a "leading" story: largest on top
     uniform = mv.bar(ax, ["A", "B", "C"], [9, 30, 20], accent="B", uniform=True)
     assert [to_hex(b.get_facecolor()).upper() for b in uniform.bars] == [C.accent.upper()] + [C.focus_light.upper()] * 2
-    with pytest.raises(ValueError, match="at most two"):
-        mv.bar(ax, ["a", "b", "c"], [1, 2, 3], focus={"a", "b", "c"})
     with pytest.raises(ValueError, match="diverging"):
         mv.bar(ax, ["a", "b"], [1, -2])
 
@@ -600,5 +595,17 @@ def test_dot_plot_sorts_highlights_and_names_the_benchmark():
     assert cols[-1] == C.focus.upper() and set(cols[:-1]) == {C.context.upper()}
     assert {"66", "76", "Company 72"} <= {t.get_text() for t in ns.labels}
     assert ax.get_xlim()[0] > 0                                                           # no forced zero
-    with pytest.raises(ValueError, match="at most two"):
-        mv.dot_plot(ax, ["a", "b", "c"], [1, 2, 3], focus={"a", "b", "c"})
+
+
+def test_highlights_follow_the_headline_and_warn_only_when_most_are_blue():
+    fig, ax = plt.subplots()
+    labels = list("abcdefghij")
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")                          # three of ten, named by the headline: fine
+        mv.bar(ax, labels, range(1, 11), focus={"a", "b", "c"})
+        mv.line(ax, ["Q1", "Q2"], {k: [1, 2] for k in labels[:6]}, focus={"a", "b", "c"})
+        mv.highlight(labels, focus={"a", "b"}, accent="c")
+    with pytest.warns(UserWarning, match="4 of 5 bars highlighted"):
+        mv.bar(ax, labels[:5], range(1, 6), focus=set("abcd"))
+    with pytest.warns(UserWarning, match="none stands out"):
+        mv.highlight(labels[:4], focus=set("abc"))

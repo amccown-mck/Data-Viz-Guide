@@ -29,7 +29,7 @@
 | Axes / gridlines | No vertical lines and no boxes around cells. Use a 0.75 pt `chart.axis` `#8C8C8C` rule under the header, hairline `chart.grid` `#E6E4DE` rules between rows (or white space alone for ≤ 6 rows), and a 1.25–1.5 pt Navy `#143359` rule above the total row. A heat column's cells may touch vertically. |
 | Sort / order | Sort rows by the column the headline is about (largest risk on top), or keep a natural order (org hierarchy, job level, time). The **total / average row goes last**, labelled with what it covers ("All eight job families"), and is weighted correctly (by headcount, not a simple mean of rates). Order columns as the reader's eye should travel: identifier → size → the focus measure → supporting measures. |
 | Proportions | Row height about 1.6–1.8 × the text size. Column widths fit the content; don't stretch the numbers across a wide slide. The table and its headline share one left edge. Inline bars take ≤ 15% of the table width and start from a common left edge. |
-| Limits | ≤ 12 rows and ≤ 7 data columns on a slide. ≤ 2 shaded columns. ≤ 2 focus rows. **Suppress any cell based on fewer than 10 people**, and never sort or total so that a suppressed value can be worked out by subtraction (for example, a total row with only one suppressed cell). |
+| Limits | ≤ 12 rows and ≤ 7 data columns on a slide. ≤ 2 shaded columns. Focus rows only for what the headline names. **Suppress any cell based on fewer than 10 people**, and never sort or total so that a suppressed value can be worked out by subtraction (for example, a total row with only one suppressed cell). |
 
 ## Do / don't
 
@@ -88,7 +88,7 @@ mv.source(fig, "Source: Synthetic data for illustration only",
 mv.save(fig, Path(tempfile.gettempdir()) / "ck_table_scorecard.png", dpi=200)
 ```
 
-`mv.table` draws the spec above: units in the headers and bare, right-aligned numbers in the cells, a rule under the header and hairlines between rows, at most two shaded columns (each on its own scale: `scale="blue"`, `"orange"` when darker means worse, `"diverging"` around `center=` for a gap to a benchmark) and two bold focus rows, the unfavorable direction of a change column in orange text, a navy rule above a weighted total row, and "n<10" for rows under ten people (`n=`). `t.notes` holds the footnote text for the shading, the weighting and any suppression.
+`mv.table` draws the spec above: units in the headers and bare, right-aligned numbers in the cells, a rule under the header and hairlines between rows, at most two shaded columns (each on its own scale: `scale="blue"`, `"orange"` when darker means worse, `"diverging"` around `center=` for a gap to a benchmark) and bold focus rows, the unfavorable direction of a change column in orange text, a navy rule above a weighted total row, and "n<10" for rows under ten people (`n=`). `t.notes` holds the footnote text for the shading, the weighting and any suppression.
 A drawn table is right for a fixed image (a slide picture, a PDF report). If people will edit or copy the numbers, build a native Excel or PowerPoint table instead (below).
 
 ### Python — HTML table (reports, intranet pages, emails)
