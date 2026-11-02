@@ -4,6 +4,20 @@ What happened on the kit and the WI Data Storytelling Agent, and why: findings, 
 
 At the end of a working session, add one entry at the top: the date, what was done, what was found (with the evidence, such as an eval ID or a probe), and what was decided and by whom. Keep each entry to what a person resuming the work needs; the commits hold the rest.
 
+## 2026-11-02
+
+**Done:** shared agent 1.0.15 (plain-words hand-back, an onboarding starter with a demo chart and a numbered menu, the guide linked on SharePoint), then the guidance rework, shipped as 1.0.16. `AGENTS.md` gained the six layers and how they stay that way; the build checks the Copilot edition's pointers, placeholders and "never" advice, and the agent repo checks the instruction budget. An inventory (`docs/agent-architecture.md`) classed every always-loaded line; the owner reviewed the eleven that came from real failures and approved them all. Code took over what prose had carried: `mv.bar` (story on top, shared with `bar_slide`), `mv.save` / `options_page` / `page_pdf` refusing `/mnt/data`, picture slides that fill the chart area, `mv.colors` and lint errors that name the fix. Then `SKILL.md` became the workflow plus a router (13,997 to 11,107) and `instruction.txt` kept only the no-skill rules (3,903 to 2,516).
+
+**Found:**
+- A CLI provision without `ATK_FRONTIER=true` leaves `skills/` out of the package ("Failed to resolve SKILL.md"), and Copilot shows cached starters until the manifest version goes up, for the local agent too.
+- The agent retyped a SharePoint URL with one wrong character; a ready-made markdown link, pasted as written, fixed it. A second "(PDF)" link beside it read as if the guide were a PDF, so the PDF is now given only on request.
+- core-3's small Sankey was a figure of the wrong shape (1.8 : 1 on a 2.8 : 1 area), not the picture's height.
+- "At most two highlighted" was contradicted by the scatter page's own four-role example.
+- After a password reset, signing the toolkit in from Chrome fails Conditional Access (53003, unregistered device); Edge works (the agent repo's `CLAUDE.md`).
+- Core run on the local agent: core-1 to core-4 and journey-1 passed; core-2's follow-up took six seconds where it used to reason at length. core-1 built a slide in its first reply as well as the image (the owner likes it). Some legends collide with data.
+
+**Decided (owner):** keep one skill; the opener's wording ("charts that look like they came from a top consulting firm, without having to become a data viz expert"); no fixed cap on highlights, what's reasonable depends on the story; telemetry is a long-term blocker, not asked about each session; link the HTML guide, the PDF only on request.
+
 ## 2026-10-27
 
 **Done:** `mckviz.office` grew from one native slide to six (bar, column, line, 100% stack, waterfall, dumbbell) plus picture slides, on the McKesson branded template, with titles that fit themselves. The options guide now reads "one page" as the options page and its PDF, asks for varied chart types, and recommends a lead. Files reach the user's OneDrive once (`mv.deliver`, `mv.look`, `mv.clear_delivered`). The agent repo's evals were restructured into four `core` chats plus per-area sets. Merged to `main` and provisioned to the shared agent (1.0.11).
