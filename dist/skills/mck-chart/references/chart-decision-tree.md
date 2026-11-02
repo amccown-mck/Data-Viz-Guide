@@ -71,10 +71,10 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 
 **Which is biggest, and by how much? How do they rank?** (magnitude / ranking)
 
-- **Start with:** [Sorted bar](cookbook/bar.md) (`ax.barh + mv.highlight + mv.label_bars`)
+- **Start with:** [Sorted bar](cookbook/bar.md) (`mv.bar`)
 - **Go further** when values bunched far from zero (the smallest is more than half the largest): [Dot plot](cookbook/dot-plot-dumbbell.md) (`mv.dot_plot`): bars must start at zero, which hides small differences
 - **Go further** when the largest value is more than 20 times the smallest: [Proportional bubbles, or split the chart](cookbook/bubble-chart.md)
-- **Go further** when more than 12 categories: [Sorted bar with the tail grouped into Other](cookbook/bar.md)
+- **Go further** when more than 12 categories: [Sorted bar with the tail grouped into Other](cookbook/bar.md) (`group the tail, then mv.bar`)
 - **Option** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest), and only if the headline is about how many people each one covers, not only the rate: [Bubble strip: position = the measure, bubble area = the count](cookbook/distribution.md): shows how close the categories are and how many people each one covers
 - **Go further** when more than 20 categories: [Bubble strip with only the outliers and largest named](cookbook/distribution.md)
 - **Avoid:** Rainbow, 3D or cut-off bars
@@ -89,7 +89,7 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 
 **Where is the most of it in absolute terms (rate × people)?** (magnitude (derived count)) *(when there is the measure is a rate or share and there is a count column, so rate × count gives an absolute amount)*
 
-- **Start with:** [Sorted bar of the derived count, footnoted as an estimate](cookbook/bar.md) (`ax.barh + mv.highlight`)
+- **Start with:** [Sorted bar of the derived count, footnoted as an estimate](cookbook/bar.md) (`mv.bar`)
 - **Option** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest), and only if the headline is about the volume and the rate together: [Treemap: tile area = the count, shade = the rate](cookbook/treemap.md): people and the rate in one picture
 - **Avoid:** A derived count presented as a recorded one
 - **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out
@@ -236,7 +236,7 @@ Yes/no (1/0) membership columns with a count per combination.
 **How much do the groups overlap?** (relationships)
 
 - **Start with:** [Venn, 3 sets at most](cookbook/venn.md)
-- **Go further** when more than 3 sets: [Sorted bar of the combinations](cookbook/bar.md)
+- **Go further** when more than 3 sets: [Sorted bar of the combinations](cookbook/bar.md) (`mv.bar`)
 - **Avoid:** A Venn with 4 or more sets
 - **Color:** Focus (default)
 
