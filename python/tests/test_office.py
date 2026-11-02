@@ -436,6 +436,7 @@ def figure_with_titles():
     return fig
 
 
+@pytest.mark.filterwarnings("ignore:picture_slide")             # built at 10 x 5.6 on purpose
 def test_picture_slide_says_each_title_once():
     fig = figure_with_titles()
     r = office.picture_slide(office.deck(), fig, headline="A rose every quarter", subtitle="Metric (%)",
@@ -458,6 +459,21 @@ def test_picture_figure_fills_the_chart_area_and_is_placed_as_built():
         assert Emu(r.picture.width).inches > 0.9 * office.picture_size(takeaways)[0]
 
 
+def test_a_smaller_figure_fills_the_area_and_says_how_to_build_it():
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots(figsize=(6, 2.5))                   # built at its own size, as an agent might
+    ax.barh(["A", "B"], [1, 2])
+    with pytest.warns(UserWarning, match=r"office.picture_figure\(\)"):
+        r = office.picture_slide(office.deck(), fig, headline="h", source="s")
+    w, h = Emu(r.picture.width).inches, Emu(r.picture.height).inches
+    area_w, area_h = office.picture_size()
+    assert w > 0.6 * area_w or h > 0.6 * area_h                # enlarged towards the area, not left small
+    assert w <= area_w + 0.01 and h <= area_h + 0.01
+    assert w <= 1.5 * 6.2                                      # text grows 1.5x at most
+
+
+@pytest.mark.filterwarnings("ignore:picture_slide")
 def test_picture_stays_in_the_chart_area():
     for kw in ({}, {"takeaways": [("4", "A at the end"), ("2x", "B's rise")]}):
         r = office.picture_slide(office.deck(), figure_with_titles(), headline="h", source="s", **kw)

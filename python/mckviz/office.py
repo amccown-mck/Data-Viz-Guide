@@ -1441,6 +1441,7 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
 
 
 PICTURE_TOP, PICTURE_BOTTOM = CARD_TOP - 0.1, FOOT_TOP - 0.1     # the picture's area on the slide (inches)
+MAX_PICTURE_SCALE = 1.5       # a smaller figure is enlarged to fill the area, but its text no more than this
 
 
 def picture_size(takeaways: bool = False) -> tuple[float, float]:
@@ -1468,8 +1469,9 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
                   dpi: int = 200):
     """A chart that has no native PowerPoint slide yet (Sankey, strip, treemap, heatmap, ...) as a picture on the slide
     grid: the mckviz figure drawn as its builder laid it out (resizing it afterwards would move labels onto each other
-    or away from their columns), then scaled down only as far as the chart area needs. Start the figure with
-    picture_figure() so it fills the area at its true point sizes. The slide
+    or away from their columns), then scaled to fill the chart area (down as far as needed, up by 1.5x at most, with
+    a warning when it wasn't built at the slide's size). Start the figure with picture_figure() so it fills the area
+    at its true point sizes. The slide
     carries the headline, subtitle and source, so any that mv.titles / mv.source put on the figure are taken off first
     (show the figure's PNG with them as the preview, then pass the same figure here). The speaker notes say the chart
     is a picture.
@@ -1501,7 +1503,13 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
     buf.seek(0)
     w_px, h_px = Image.open(buf).size
     w_in, h_in = w_px / dpi, h_px / dpi
-    scale = min(1.0, fw / w_in, slot_h / h_in)                 # natural size unless too big: then all of it shrinks
+    scale = min(fw / w_in, slot_h / h_in, MAX_PICTURE_SCALE)   # fill the area; text scales too, so 1.5x at most
+    fill_w, fill_h = w_in * scale / fw, h_in * scale / slot_h
+    if min(fill_w, fill_h) < 0.85 or not 0.85 <= scale <= 1.15:   # built at another size or shape: say so
+        warnings.warn(f"picture_slide: the figure was built at {w_in:.1f} x {h_in:.1f} in, so on the {fw:.1f} x "
+                      f"{slot_h:.1f} in chart area it fills {fill_w:.0%} of the width and {fill_h:.0%} of the height "
+                      f"(scaled {scale:.2f}x, text with it). Build it with office.picture_figure("
+                      f"{'takeaways=True' if takeaways else ''}) to fill the slide at true point sizes", stacklevel=2)
     buf.seek(0)
     default_notes = ("This chart is a picture: it has no native PowerPoint version yet. To change it, rebuild it from "
                      "the data with mckviz and replace the picture.")
