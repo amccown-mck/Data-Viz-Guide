@@ -56,6 +56,7 @@ Once the theme is applied, the color picker's top rows are the McKesson palette,
 
 Each chart type's click-by-click recipe is in its cookbook page under **Excel and PowerPoint**, for example [bar.md](cookbook/bar.md#excel-and-powerpoint).
 
+<!-- portable,repo -->
 ## A native chart from code with pptxgenjs
 **Where Python runs (Microsoft 365 Copilot, Claude Code, the repo), use `mckviz.office` instead:** it builds the slide on the McKesson branded template (master, logo, footer), which pptxgenjs can't load. This section is for environments without Python.
 
@@ -93,6 +94,7 @@ Say in the speaker notes that the overlays are shapes and must be moved by hand 
 **Known limits.** pptxgenjs colors data labels per series, not per point, so on a diverging or highlighted bar the native labels are one color (the label role grey); when a label must carry the focus or orange, draw it as a text box in `MCK.text.labelFocus` or `MCK.colors.negativeText`. Focus category labels on a slide are **Bold navy** (`MCK.text.labelFocus`), the same as the Python builders; Medium is for ordinary data labels. For a stacked chart (100% stacked, or a waterfall built as a stacked column with a hidden white base series, as in the starter deck) start from `MCK.stackedColumnChart` or `MCK.stackedBarChart`: PowerPoint rejects outside-end labels on a stacked series as a corrupt file, so those presets put labels in the centre and leave values to drawn text.
 
 **Theme colors.** pptxgenjs's `theme` option sets the fonts only, so the deck's color picker shows Office's default scheme unless the deck starts from the kit's `.potx` or its `theme1.xml` carries the McKesson scheme (`MCK.schemeColors`: `dk2` McKesson Blue for titles, `lt2` Light Sand, `accent1`–`accent6` in the categorical order). The chart and text options name every color explicitly, so the slide looks right either way; apply **Design › Variants › Colors › McKesson Data Viz** afterwards to get the palette into the picker.
+<!-- /portable,repo -->
 
 ## Starter deck, slide by slide
 Every slide uses the *Title Only* layout: the headline goes in the title placeholder (Bold 26 pt McKesson Blue `#005A8C`, from the master), the subtitle is a 14 pt `#505050` text box at 1.32 in, and the footnote and source are Libre Franklin Light 9 pt `#737373`, bottom-left, ending at 6.95 in. Charts are native: **right-click › Edit Data** changes the numbers. Data labels are Libre Franklin Medium (Bold where the headline points). Drawn shapes are flat (no shadow, square corners). Headlines are written from the sample data, so rewrite them for yours. The speaker notes on each slide repeat the steps below. The chart workbook has the same charts, plus formulas, on the sheets named in each entry.

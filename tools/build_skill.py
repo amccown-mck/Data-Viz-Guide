@@ -133,10 +133,18 @@ MODES = {
 }
 
 
-def fill(text: str, mode: str) -> str:
-    """Keep the <!-- mode --> blocks (or <!-- a,b --> blocks naming the mode), drop the others, fill placeholders."""
-    text = re.sub(r"<!-- ([a-z]+(?:,[a-z]+)*) -->\n(.*?)<!-- /\1 -->\n?",
+def editions(text: str, mode: str) -> str:
+    """Keep the <!-- mode --> blocks (or <!-- a,b --> blocks naming the mode) and drop the other editions' blocks. Docs
+    use it too: a section of a shared page that one edition must not carry (the pptxgenjs recipe in office-setup.md,
+    which pulled the Copilot agent off mv.office) sits in a block naming the editions that keep it."""
+    names = "|".join(MODES)
+    return re.sub(rf"<!-- ((?:{names})(?:,(?:{names}))*) -->\n(.*?)<!-- /\1 -->\n?",
                   lambda m: m.group(2) if mode in m.group(1).split(",") else "", text, flags=re.S)
+
+
+def fill(text: str, mode: str) -> str:
+    """Keep this edition's blocks, drop the others (editions), fill placeholders."""
+    text = editions(text, mode)
     values = {"version": VERSION, "repo_url": REPO_URL, **MODES[mode]}
     values["description"] = json.dumps(values["description"], ensure_ascii=False)  # quoted: valid YAML with any ':'
     text = re.sub(r"\{\{(\w+)\}\}", lambda m: values[m.group(1)], text)
@@ -216,18 +224,14 @@ def build(wheel: bool = False) -> Path:
         shutil.rmtree(OUT)
     ref = OUT / "references"
     (ref / "cookbook").mkdir(parents=True)
-    pages = [(ROOT / "docs" / d, ref / d) for d in DOCS]
-    pages += [(p, ref / "cookbook" / p.name) for p in sorted((ROOT / "docs" / "cookbook").glob("*.md"))
-              if not p.name.startswith("_")]
+    pages = [(src, ref / rel) for src, rel in doc_pages()]
     for src, dest in pages:                                 # copy first, so link checks see every shipped page
         shutil.copyfile(src, dest)
     data = set()
     for src, dest in pages:
-        text = portable_links(src.read_text(encoding="utf-8"), src, dest)
+        text = doc_page(src, dest, "portable")
         if dest.parent.name == "cookbook":
-            data |= set(re.findall(r"(?<![\w/])examples/data/([\w.-]+\.csv)", text))
-            for old, new in COOKBOOK_PATHS.items():
-                text = re.sub(rf"(?<![\w/]){re.escape(old)}", new, text)
+            data |= set(re.findall(r"(?<![\w/])assets/data/([\w.-]+\.csv)", text))
         dest.write_text(text, encoding="utf-8", newline="\n")
     (OUT / "assets" / "data").mkdir(parents=True)
     for name in sorted(data):                               # only the CSVs a snippet reads
@@ -275,6 +279,23 @@ def build(wheel: bool = False) -> Path:
           "and .github/skills/mck-chart/ (SKILL.md and the task guides)")
     build_copilot()
     return OUT
+
+
+def doc_pages() -> list[tuple[Path, Path]]:
+    """(source in docs/, path under references/) for every page the skill ships: DOCS and the cookbook."""
+    pages = [(ROOT / "docs" / d, Path(d)) for d in DOCS]
+    return pages + [(p, Path("cookbook") / p.name) for p in sorted((ROOT / "docs" / "cookbook").glob("*.md"))
+                    if not p.name.startswith("_")]
+
+
+def doc_page(src: Path, dest: Path, mode: str) -> str:
+    """A docs page as an edition ships it: its edition blocks, links that resolve in the skill, skill data paths.
+    dest is where the portable skill puts it (link checks look there)."""
+    text = portable_links(editions(src.read_text(encoding="utf-8"), mode), src, dest)
+    if dest.parent.name == "cookbook":
+        for old, new in COOKBOOK_PATHS.items():
+            text = re.sub(rf"(?<![\w/]){re.escape(old)}", new, text)
+    return text
 
 
 def write_guides(dest: Path, mode: str) -> None:
@@ -328,6 +349,9 @@ def build_copilot() -> Path:
     shutil.copytree(pkg / "geodata", COPILOT_OUT / "assets" / "geodata", ignore=shutil.ignore_patterns("__pycache__"))
 
     shutil.copytree(OUT / "references", COPILOT_OUT / "references")  # after assets/, so links can check what ships
+    for src, rel in doc_pages():                              # the docs again, with the Copilot edition's blocks
+        (COPILOT_OUT / "references" / rel).write_text(doc_page(src, OUT / "references" / rel, "copilot"),
+                                                      encoding="utf-8", newline="\n")
     for p in (COPILOT_OUT / "references").rglob("*.md"):
         p.write_text(copilot_links(p.read_text(encoding="utf-8"), p), encoding="utf-8", newline="\n")
     write_guides(COPILOT_OUT / "references", "copilot")       # replaces the portable fill of the task guides
@@ -370,9 +394,42 @@ def check_copilot() -> None:
         problems.append('SKILL.md front matter must be exactly "name: <lowercase-name>" and "description: "<quoted>""')
     elif len(desc) > COPILOT_MAX["description"]:
         problems.append(f"description is {len(desc)} characters (max {COPILOT_MAX['description']})")
+    problems += copilot_guidance()
     if problems:
         raise SystemExit("tools/build_skill.py: the Copilot edition breaks Agent Builder's skill rules:\n  "
                          + "\n  ".join(problems))
+
+
+# Advice the Copilot edition must never give: slides go through mv.office (PptxGenJS can't load the McKesson master) and
+# charts save with mv.save (the sandbox turns savefig and show into its own "Chart" card). A line may name them to rule
+# them out ("never PptxGenJS"); a line that recommends them pulls the agent off the house path.
+COPILOT_NEVER = {"PptxGenJS": r"pptxgenjs",   # (Plotly's fig.show is fine: the sandbox patches matplotlib only)
+                 "matplotlib's savefig or show": r"\bplt\.(?:savefig|show)\b|\bfig\.savefig\b"}
+RULED_OUT = re.compile(r"\b(?:never|not|don't|instead)\b", re.I)
+
+
+def copilot_guidance() -> list[str]:
+    """What the Copilot edition says, checked: placeholders filled, no advice it must never give, every path SKILL.md
+    and the task guides point to ships, and every task guide has its line in SKILL.md (or the agent never reads it)."""
+    problems = []
+    texts = {p.relative_to(COPILOT_OUT).as_posix(): p.read_text(encoding="utf-8") for p in COPILOT_OUT.rglob("*")
+             if p.suffix in (".md", ".py") and "mckviz_src" not in p.parts}
+    for rel, text in texts.items():
+        if re.search(r"\{\{\w+\}\}", text):
+            problems.append(f"{rel}: an unfilled {{{{placeholder}}}}")
+        for n, line in enumerate(text.splitlines(), 1):
+            for name, pattern in COPILOT_NEVER.items():
+                if rel.endswith(".md") and re.search(pattern, line, re.I) and not RULED_OUT.search(line):
+                    problems.append(f"{rel}:{n}: names {name} without ruling it out; put that section in a "
+                                    "<!-- portable,repo --> block")
+    guides = sorted(p.name for p in TASK_GUIDES.glob("*.md"))
+    for rel in ["SKILL.md", *(f"references/{g}" for g in guides)]:
+        for path in sorted(set(re.findall(r"(?<![\w/.-])((?:references|scripts)/[\w./-]*[\w/])", texts[rel]))):
+            if not (COPILOT_OUT / path).exists():
+                problems.append(f"{rel} points to {path}, which isn't in the Copilot edition")
+    problems += [f"SKILL.md has no line pointing to the task guide references/{g}" for g in guides
+                 if f"references/{g}" not in texts["SKILL.md"]]
+    return problems
 
 
 def zip_copilot(dest: Path = COPILOT_ZIP) -> Path:
