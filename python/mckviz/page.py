@@ -28,7 +28,7 @@ from html import escape
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-from . import TOKENS, _find_fonts, colors, layout
+from . import TOKENS, _find_fonts, colors, layout, working_path
 
 _C = TOKENS["color"]
 _FONT_WEIGHTS = {"Light": 300, "Regular": 400, "SemiBold": 600, "Bold": 700}
@@ -196,7 +196,8 @@ def options_page(path: str | Path, title: str, options: Sequence[Option], *, led
                  findings: Sequence[str | tuple[str, str]] = (), recommendation: str | None = None,
                  lead: int | None = None, notes: Mapping[str, str] | None = None, source: str | None = None,
                  label: str | None = None) -> Path:
-    """Write the options page to `path` (.html) and return the path.
+    """Write the options page to `path` (.html) and return the path. In Copilot, write it to /tmp, make its PDF
+    (page_pdf) and hand both over with mv.deliver; a path in /mnt/data is refused (mv.working_path).
 
     title           the page title, e.g. "GenAI exposure by role: four ways to show it"
     options         the Option list, in the order to read them (2 to 8)
@@ -212,7 +213,7 @@ def options_page(path: str | Path, title: str, options: Sequence[Option], *, led
         raise ValueError(f"an options page needs 2 to 8 options, got {len(options)}")
     if lead is not None and not 1 <= lead <= len(options):
         raise ValueError(f"lead={lead} is not an option number (1 to {len(options)})")
-    path = Path(path)
+    path = working_path(path, "the options page")
     stem = _slug(path.stem) or "chart"
     heads = [_headline(o) for o in options]
 
@@ -272,11 +273,11 @@ def page_pdf(path: str | Path) -> Path | None:
     Download and Copy buttons. Uses weasyprint (in Copilot's sandbox); returns None where it isn't installed or its
     native libraries are missing (most Windows machines), so callers can fall back to the page's Save as PDF button.
     """
+    path = working_path(path, "the options page")             # its PDF goes beside it: both in /tmp, then deliver
     try:
         from weasyprint import HTML
     except Exception:  # noqa: BLE001  (ImportError, or OSError when Pango/GTK is missing)
         return None
-    path = Path(path)
     pdf = path.with_suffix(".pdf")
     try:
         HTML(filename=str(path)).write_pdf(str(pdf))

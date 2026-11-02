@@ -496,10 +496,24 @@ def clean_axes(ax, keep: Sequence[str] = ("bottom",), grid: str | None = "y") ->
     ax.set_axisbelow(True)
 
 
-def save(fig, path: str | Path, **kw) -> Path:
-    """Lay out headline/subtitle/source, then save (PNG for slides, SVG/PDF for print)."""
-    layout(fig)
+def working_path(path: str | Path, what: str = "the file") -> Path:
+    """`path`, checked: outside the delivery folder. Where /mnt/data exists (Copilot, whose working directory it is,
+    so a bare "chart.png" lands there too), writing into it is refused with what to do instead: every write there,
+    even after a delete, becomes another copy in the user's OneDrive (Copilot > Created)."""
     path = Path(path)
+    if DELIVER_DIR.is_dir() and (path.resolve() == DELIVER_DIR.resolve() or
+                                 DELIVER_DIR.resolve() in path.resolve().parents):
+        raise ValueError(f"save {what} to /tmp first (/tmp/{path.name}), check it there (mv.look), then "
+                         f"mv.deliver('/tmp/{path.name}') hands it to the user once: every write to {DELIVER_DIR} "
+                         "becomes another copy in their OneDrive")
+    return path
+
+
+def save(fig, path: str | Path, **kw) -> Path:
+    """Lay out headline/subtitle/source, then save (PNG for slides, SVG/PDF for print). In Copilot, save to /tmp and
+    hand the file over with deliver(); a path in /mnt/data is refused (working_path)."""
+    path = working_path(path, "the chart")
+    layout(fig)
     path.parent.mkdir(parents=True, exist_ok=True)
     if kw.get("transparent"):
         fig.savefig(path, **kw)
@@ -699,7 +713,7 @@ __all__ = [
     "use", "register_fonts", "highlight", "categorical", "sequential_cmap", "diverging_cmap", "text_on", "signed", "rgba",
     "fmt_num", "suppress_small",
     "MINUS", "halo", "titles", "source", "layout", "label_bars", "label_line_ends", "callout", "shade_period", "clean_axes", "save",
-    "deliver", "clear_delivered", "look", "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
+    "working_path", "deliver", "clear_delivered", "look", "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
     # chart builders (mckviz/charts.py)
     "bar", "story_order", "line", "share_bar", "strip", "dot_plot", "sankey",
     "waterfall", "hstack", "diverging_bars", "label_points", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",

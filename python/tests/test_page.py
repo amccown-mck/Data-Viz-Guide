@@ -117,3 +117,21 @@ def test_pdf_is_written_beside_the_page(tmp_path, monkeypatch):
     pdf = mv.page_pdf(path)
     assert pdf == path.with_suffix(".pdf") and pdf.read_bytes().startswith(b"%PDF")
     assert calls["src"] == str(path)
+
+
+def test_working_files_stay_out_of_the_delivery_folder(tmp_path, monkeypatch):
+    onedrive = tmp_path / "mnt-data"                      # stands in for Copilot's /mnt/data
+    onedrive.mkdir()
+    monkeypatch.setattr(mv, "DELIVER_DIR", onedrive)
+    monkeypatch.chdir(onedrive)                           # the sandbox starts there, so a bare name lands in it
+    fig = chart("Group B leads by a wide margin on this view")
+    for attempt in (lambda: mv.save(fig, "chart.png"), lambda: mv.save(fig, onedrive / "chart.png"),
+                    lambda: mv.options_page(onedrive / "views.html", "t", [option(1), option(2)]),
+                    lambda: mv.page_pdf(onedrive / "views.html")):
+        with pytest.raises(ValueError, match="/tmp first.*mv.deliver"):
+            attempt()
+    assert not list(onedrive.iterdir())                   # nothing written there
+    work = tmp_path / "work"
+    page = mv.options_page(work / "views.html", "Two groups: two ways to show it", [option(1), option(2)])
+    png = mv.save(fig, work / "chart.png")
+    assert mv.deliver(png, page) == [onedrive / "chart.png", onedrive / "views.html"]
