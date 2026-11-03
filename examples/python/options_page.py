@@ -15,7 +15,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
-from matplotlib.ticker import StrMethodFormatter  # noqa: E402
 
 import mckviz as mv  # noqa: E402
 
@@ -98,43 +97,15 @@ mv.source(fig3, SOURCE, footnote="Exposed work (an estimate) = headcount × shar
                                  "every role works the same hours.\n" + DEF)
 
 # 4. Exposure vs. pay, sized by people (the scatter-bubble cookbook page) ---------------------------------------------
-b = df.sort_values("headcount", ascending=False)
 focus4 = set(top2.role)                                                         # the two most exposed
-least = b.loc[b.genai_exposure_pct.idxmin()]                                    # the one exception: navy accent
-named = df[df.role.isin(focus4 | {least.role})]
+least = df.loc[df.genai_exposure_pct.idxmin()]                                  # the one exception: navy accent
 pay_cap = 55
-assert (named.median_pay_k < pay_cap).all(), "the headline's pay claim no longer holds"
-K = 1800 / b.headcount.max()                                                     # marker area per person
+assert (df[df.role.isin(focus4 | {least.role})].median_pay_k < pay_cap).all(), "the headline's pay claim no longer holds"
 fig4, ax = plt.subplots(figsize=(10, 5.8))
-ax.axhspan(50, 72, color=C.surface_subtle, lw=0, zorder=0)
-ax.text(151, 70.5, "High exposure: 50%+ of task hours", ha="right", va="top", fontsize=9, fontweight="bold",
-        color=C.annotation)
-ax.axhline(avg, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=1)
-ax.text(151, avg + 1, f"Workforce average {avg:.0f}%", ha="right", va="bottom", fontsize=9, color=C.annotation)
-ax.scatter(b.median_pay_k, b.genai_exposure_pct, s=b.headcount * K,
-           c=mv.highlight(b.role, focus=focus4, accent=least.role), alpha=0.9, edgecolors="white", linewidths=1,
-           zorder=2)
-for row in named.itertuples():
-    pad = (row.headcount * K) ** 0.5 / 2 + 3
-    left = row.role == "Customer Care"
-    ax.annotate(f"{row.role}\n{row.genai_exposure_pct:.0f}%, ${row.median_pay_k:.0f}K",
-                (row.median_pay_k, row.genai_exposure_pct), xytext=(-pad if left else pad, 0),
-                textcoords="offset points", ha="right" if left else "left", va="center", fontsize=10,
-                fontweight="bold", color=C.headline, path_effects=mv.halo(), zorder=3)
-key = {1_000: 119, 5_000: 130, 10_000: 144}
-ax.text(115, 21, "Headcount (bubble area)", fontsize=9, color=C.text_muted)
-for v, x in key.items():
-    ax.scatter(x, 10, s=v * K, color=C.context_light, edgecolors=C.axis, linewidths=0.75, zorder=2)
-    ax.annotate(f"{v:,}", (x, 10), xytext=(0, -((v * K) ** 0.5 / 2 + 2)), textcoords="offset points",
-                ha="center", va="top", fontsize=9, color=C.text_muted)
-ax.set_xlim(28, 152)
-ax.set_ylim(0, 72)
-ax.xaxis.set_major_formatter(StrMethodFormatter("${x:,.0f}K"))
-ax.yaxis.set_major_formatter(StrMethodFormatter("{x:.0f}%"))
-ax.set_xlabel("Median base pay")
-ax.set_ylabel("Task hours exposed to gen AI", rotation=0, ha="left", va="bottom")
-ax.yaxis.set_label_coords(0, 1.03)
-mv.clean_axes(ax, keep=("bottom",), grid="both")
+mv.bubble(ax, df.median_pay_k, df.genai_exposure_pct, df.headcount, df.role, focus=focus4, accent=least.role,
+          detail="{y:.0f}%, ${x:.0f}K", size_label="Headcount", zone_y=(50, None),
+          zone_label="High exposure: 50%+ of task hours", ref_y=avg, ref_y_label=f"Workforce average {avg:.0f}%",
+          xfmt="${x:,.0f}K", yfmt="{x:.0f}%", xlabel="Median base pay", ylabel="Task hours exposed to gen AI")
 mv.titles(fig4, f"Pay doesn't predict exposure: the two most exposed roles and the least exposed are all paid under "
                 f"${pay_cap}K",
           "Share of task hours exposed to gen AI vs. median base pay, by role, 2026; bubble area = headcount")

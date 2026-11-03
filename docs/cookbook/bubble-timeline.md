@@ -90,10 +90,7 @@ for i, _ in enumerate(rows):
 ev = events.sort_values("roles", ascending=False)         # draw largest first so small bubbles stay visible on top
 ax.scatter(ev.date, ev.sector.map(rows.index), s=ev.roles * AREA, c=mv.highlight(ev.sector, focus=focus),
            edgecolors="white", linewidths=1, alpha=0.9, zorder=2)
-for v in (1000, 5000, 10000):                             # size key, top-left above the plot
-    ax.scatter([], [], s=v * AREA, color=C.context, label=f"{v:,}")
-ax.legend(title="Roles affected", loc="lower left", bbox_to_anchor=(0, 1.02), ncols=3, frameon=False, fontsize=10,
-          title_fontsize=10, alignment="left", borderaxespad=0, handlelength=3.5, columnspacing=2, handletextpad=1.4)
+mv.size_key(ax, [1_000, 5_000, 10_000], AREA, title="Roles affected", side="left")   # above the plot, top left
 
 ax.set_yticks(range(len(rows)), rows)
 ax.set_ylim(len(rows) - 0.4, -0.9)

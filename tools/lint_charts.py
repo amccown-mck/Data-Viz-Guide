@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import itertools
 import sys
 from pathlib import Path
 
@@ -55,7 +56,7 @@ def main() -> int:
     args = ap.parse_args()
     mv.use()
     errors = 0
-    for label, fig, texts in [*matplotlib_charts(), *plotly_charts()]:
+    for label, fig, texts in itertools.chain(matplotlib_charts(), plotly_charts()):   # each linted before it closes
         found = mv.lint(fig, quiet=True, **texts)
         n_err = sum(f.level == "error" for f in found)
         errors += n_err

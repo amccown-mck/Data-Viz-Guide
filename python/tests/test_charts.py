@@ -609,3 +609,78 @@ def test_highlights_follow_the_headline_and_warn_only_when_most_are_blue():
         mv.bar(ax, labels[:5], range(1, 6), focus=set("abcd"))
     with pytest.warns(UserWarning, match="none stands out"):
         mv.highlight(labels[:4], focus=set("abc"))
+
+
+def _bubble(fig, ax, pay_scale=1.0, exposure_scale=1.0, **kw):
+    import pandas as pd
+
+    df = pd.read_csv(DATA / "automation_exposure.csv")
+    focus = set(df.role[df.genai_exposure_pct >= 50])                # the same four roles, whatever the scale
+    df = df.assign(median_pay_k=df.median_pay_k * pay_scale, genai_exposure_pct=df.genai_exposure_pct * exposure_scale)
+    avg = (df.genai_exposure_pct * df.headcount).sum() / df.headcount.sum()
+    args = dict(focus=focus, size_label="Headcount",
+                zone_y=(50, None), zone_label="High exposure: 50%+ of task hours", ref_y=avg,
+                ref_y_label=f"Workforce average {avg:.0f}%", xfmt="${x:,.0f}K", yfmt="{x:.0f}%",
+                xlabel="Median base pay", ylabel="Task hours exposed to gen AI")
+    ns = mv.bubble(ax, df.median_pay_k, df.genai_exposure_pct, df.headcount, df.role, **{**args, **kw})
+    mv.titles(fig, "Four support roles carry the highest gen AI exposure", "Exposure vs. pay; bubble area = headcount")
+    mv.source(fig, "Source: Synthetic data for illustration only")
+    return df, ns
+
+
+@pytest.mark.parametrize("scale", [(1.0, 1.0), (1.25, 0.6), (0.7, 1.3)], ids=["cookbook", "shifted", "squeezed"])
+@pytest.mark.parametrize("slide", [False, True], ids=["png", "slide"])
+def test_bubble_layout_fits_any_data_with_nothing_on_the_bubbles(tmp_path, scale, slide):
+    fig, ax = mv.office.picture_figure() if slide else plt.subplots(figsize=(10, 5.8))
+    df, ns = _bubble(fig, ax, *scale)
+    mv.save(fig, tmp_path / "b.png", dpi=100)                  # lays out the titles: the plot changes size
+    r = fig.canvas.get_renderer()
+    frame = ax.get_window_extent(r)
+    px = r.points_to_pixels(1.0)
+    for (x, y), s in zip(ax.transData.transform(ns.points.get_offsets()), ns.points.get_sizes()):
+        rad = s ** 0.5 / 2 * px
+        assert frame.x0 - 1 <= x - rad and x + rad <= frame.x1 + 1 and frame.y0 - 1 <= y - rad <= y + rad <= frame.y1 + 1
+    rules = {f.rule for f in mv.lint(fig, quiet=True)}
+    assert not rules & {"label-on-data", "label-overlap", "off-canvas"}, rules
+    key = ns.key.get_window_extent(r)
+    assert key.y0 >= frame.y1                                  # above the plot, never among the data
+    assert fig._mck["sub"].get_window_extent(r).y0 >= key.y1 - 1  # and the subtitle clear of it
+
+
+def test_bubble_area_follows_the_count_and_colors_follow_the_headline():
+    fig, ax = plt.subplots(figsize=(10, 5.8))
+    df, ns = _bubble(fig, ax, accent="Distribution Center Associate", label={"Customer Care"})
+    sizes = dict(zip(ns.order, ns.points.get_sizes()))
+    hc = dict(zip(df.role, df.headcount))
+    assert sizes["Distribution Center Associate"] == pytest.approx(1800)            # the largest gets max_area
+    assert sizes["Pharmacy Technician"] / sizes["Sales"] == pytest.approx(hc["Pharmacy Technician"] / hc["Sales"])
+    assert ns.order[0] == "Distribution Center Associate"                           # largest drawn first
+    fc = {n: to_hex(c).upper() for n, c in zip(ns.order, ns.points.get_facecolors())}
+    assert fc["Customer Care"] == C.focus.upper() and fc["Sales"] == C.context.upper()
+    assert fc["Distribution Center Associate"] == C.accent.upper()
+    assert [t.get_text() for t in ns.labels] == ["Customer Care"]
+
+
+def test_plain_scatter_has_equal_blue_dots_and_no_key():
+    fig, ax = plt.subplots()
+    ns = mv.bubble(ax, [1, 2, 3, 4], [4, 3, 5, 1])
+    assert ns.key is None and len(set(ns.points.get_sizes())) == 1
+    assert {to_hex(c).upper() for c in ns.points.get_facecolors()} == {C.focus.upper()}
+
+
+def test_bubble_refuses_what_it_cannot_draw():
+    fig, ax = plt.subplots()
+    with pytest.raises(ValueError, match="not in the data"):
+        mv.bubble(ax, [1, 2], [1, 2], [5, 6], ["a", "b"], focus={"c"})
+    with pytest.raises(ValueError, match="log x"):
+        mv.bubble(ax, [0, 2], [1, 2], logx=True)
+    with pytest.raises(ValueError, match="same length"):
+        mv.bubble(ax, [1, 2], [1])
+
+
+def test_size_key_values_are_round_and_span_the_data():
+    from mckviz.charts import _key_values
+
+    assert _key_values(450, 11_800) == [1_000, 5_000, 10_000]
+    assert _key_values(300, 6_200) == [500, 2_000, 5_000]
+    assert _key_values(4_000, 9_000) == [2_000, 5_000]                              # no key bubble far below the data

@@ -153,7 +153,7 @@ One row per category with two or more measures in different units (a scorecard; 
 
 **Do two measures move together?** (correlation)
 
-- **Start with:** [Scatter; bubble scatter when a count can be the bubble area](cookbook/scatter-bubble.md) (`mv.label_points`)
+- **Start with:** [Scatter; bubble scatter when a count can be the bubble area](cookbook/scatter-bubble.md) (`mv.bubble`)
 - **Go further** when 6 or fewer categories: [Two aligned bar charts, one per measure](cookbook/bar.md)
 - **Avoid:** Dual axes
 - **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out

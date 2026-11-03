@@ -564,6 +564,291 @@ def label_points(ax, xs: Sequence[float], ys: Sequence[float], names: Sequence[s
     return out
 
 
+# ------------------------------------------------------------------ BUBBLE SCATTER
+def _key_values(lo: float, hi: float) -> list[float]:
+    """Two or three round values for a size key: the largest 1-2-5 value at or under the biggest bubble, about half
+    of it and a tenth of it (10,000 / 5,000 / 1,000), dropping a tenth smaller than every bubble."""
+    if hi <= 0:
+        return []
+    e = 10 ** math.floor(math.log10(hi))
+    m = max(k for k in (1, 2, 5) if k * e <= hi)
+    top = m * e
+    vals = [top / 10, top / (2.5 if m == 5 else 2), top]
+    return [v for v in vals if v >= lo / 2 or v == top]
+
+
+def size_key(ax, values: Sequence[float], area: float, *, title: str = "Bubble area", fmt: str = "{:,.0f}",
+             side: str = "right", color: str | None = None):
+    """A size key for a bubble chart, above the plot, so it can never sit on the data or pass for a data bubble.
+
+        K = 1800 / df.headcount.max()                     # marker area (pt², scatter's s=) per person
+        ax.scatter(df.x, df.y, s=df.headcount * K, ...)
+        mv.size_key(ax, [1_000, 5_000, 10_000], K, title="Headcount (bubble area)")
+
+    values: two or three round values in the data's units. area: the marker area per unit, the scale the bubbles use,
+    so each key circle is the size a data bubble of that value is. side: "right" (default) or "left" end of the plot's
+    top edge. The key counts as part of the plot, so mv.layout keeps the subtitle clear of it. Returns the key box.
+    """
+    from matplotlib.offsetbox import AnchoredOffsetbox, DrawingArea, HPacker, TextArea
+    from matplotlib.patches import Circle
+
+    if side not in ("right", "left"):
+        raise ValueError('side is "right" or "left"')
+    text = dict(fontsize=SMALL, color=C.text_muted)
+    entries = []
+    for v in values:
+        d = max(math.sqrt(max(v, 0) * area), 2.0)          # scatter's s is the marker's square: a circle sqrt(s) across
+        da = DrawingArea(d, d, 0, 0)
+        da.add_artist(Circle((d / 2, d / 2), d / 2, fc=color or C.context_light, ec=C.axis, lw=0.75))
+        entries.append(HPacker(children=[da, TextArea(fmt.format(v), textprops=text)], align="center", pad=0, sep=4))
+    row = HPacker(children=[TextArea(title, textprops=text)] + entries, align="center", pad=0, sep=12)
+    box = AnchoredOffsetbox(loc=f"lower {side}", child=row, pad=0, borderpad=0, frameon=False,
+                            bbox_to_anchor=(1 if side == "right" else 0, 1),
+                            bbox_transform=_offset(ax.transAxes, ax.figure, 0, 8))
+    box.set_zorder(6)
+    ax.add_artist(box)
+    box.set_clip_on(False)                                    # as a legend: outside the plot, and measured there
+    return box
+
+
+def _overlap(bb, circles, rects, frame) -> float:
+    """How badly a text box collides: pixels of bubble it covers, of other labels it covers, and of it outside the
+    plot frame. 0 means clear."""
+    score = 0.0
+    for cx, cy, r in circles:
+        dx = max(bb.x0 - cx, 0, cx - bb.x1)
+        dy = max(bb.y0 - cy, 0, cy - bb.y1)
+        score += max(r - math.hypot(dx, dy), 0)
+    for o in rects:
+        w = min(bb.x1, o.x1) - max(bb.x0, o.x0)
+        h = min(bb.y1, o.y1) - max(bb.y0, o.y0)
+        if w > 0 and h > 0:
+            score += math.sqrt(w * h)
+    score += max(frame.x0 - bb.x0, 0) + max(bb.x1 - frame.x1, 0) + max(frame.y0 - bb.y0, 0) + max(bb.y1 - frame.y1, 0)
+    return score
+
+
+def _placer(ax, points, jobs):
+    """Place a chart's labels each time the figure is drawn, so they stay clear of the bubbles at the final size:
+    mv.layout and picture slides resize the plot after the builder ran, and bubble sizes are in points, not data.
+    jobs: (text, options) pairs, placed in order; each takes its first option that collides with nothing."""
+    from matplotlib.artist import Artist
+    from matplotlib.transforms import Bbox
+
+    def put(text, anchor, off, ha, va):
+        text.xy = anchor
+        text.set_position(off)
+        text.set_ha(ha)
+        text.set_va(va)
+
+    class Placer(Artist):
+        def draw(self, renderer):
+            pts = renderer.points_to_pixels(1.0)
+            xy = ax.transData.transform(points.get_offsets())
+            circles = [(cx, cy, math.sqrt(s) / 2 * pts) for (cx, cy), s in zip(xy, points.get_sizes())]
+            frame = ax.get_window_extent(renderer)
+            placed = []
+            for text, options in jobs:
+                best = None
+                for opt in options:
+                    put(text, *opt)
+                    bb = text.get_window_extent(renderer)
+                    score = _overlap(bb.expanded(1.02, 1.04), circles, placed, frame)
+                    if best is None or score < best[0] - 0.5:
+                        best = (score, opt, bb)
+                    if score <= 0.5:
+                        break
+                put(text, *best[1])
+                placed.append(best[2])
+
+        def get_window_extent(self, renderer=None):
+            return Bbox.null()
+
+    p = Placer()
+    p.set_in_layout(False)
+    p.set_zorder(-100)                                         # drawn first, so the labels draw where it put them
+    ax.add_artist(p)
+    return p
+
+
+def _point_options(x, y, r, right_first: bool):
+    """Where a point's label may go, best first: beside the bubble, then above, below and the diagonals."""
+    d, q = r + 3, 0.72 * r + 2
+    right, left = ((d, 0), "left", "center"), ((-d, 0), "right", "center")
+    sides = [right, left] if right_first else [left, right]
+    sides += [((0, d), "center", "bottom"), ((0, -d), "center", "top"),
+              ((q, q), "left", "bottom"), ((-q, q), "right", "bottom"), ((q, -q), "left", "top"), ((-q, -q), "right", "top")]
+    return [((x, y), off, ha, va) for off, ha, va in sides]
+
+
+def bubble(ax, x: Sequence[float], y: Sequence[float], size: Sequence[float] | None = None,
+           names: Sequence[str] | None = None, *, focus: Iterable[str] = (), accent: str | None = None,
+           label: Iterable[str] | None = None, detail: str | None = None, size_label: str | None = None,
+           key: bool | Sequence[float] = True, key_fmt: str = "{:,.0f}", max_area: float = 1800.0,
+           zone_x: tuple | None = None, zone_y: tuple | None = None, zone_label: str | None = None,
+           ref_x: float | None = None, ref_x_label: str | None = None, ref_y: float | None = None,
+           ref_y_label: str | None = None, xfmt: str | None = None, yfmt: str | None = None,
+           xlabel: str | None = None, ylabel: str | None = None, logx: bool = False):
+    """A scatter or bubble scatter, laid out from the data: grey context, the headline's points blue and named, bubble
+    area in proportion to `size`, a size key above the plot, and every label placed clear of the bubbles.
+
+        df = pd.read_csv("examples/data/automation_exposure.csv")     # role, headcount, genai_exposure_pct, median_pay_k
+        avg = (df.genai_exposure_pct * df.headcount).sum() / df.headcount.sum()
+        mv.bubble(ax, df.median_pay_k, df.genai_exposure_pct, df.headcount, df.role,
+                  focus=set(df.role[df.genai_exposure_pct >= 50]), size_label="Headcount",
+                  zone_y=(50, None), zone_label="High exposure: 50%+ of task hours",
+                  ref_y=avg, ref_y_label=f"Workforce average {avg:.0f}%",
+                  xfmt="${x:,.0f}K", yfmt="{x:.0f}%", xlabel="Median base pay", ylabel="Task hours exposed to gen AI")
+
+    size: the third measure (headcount, open requisitions); None draws a plain scatter of equal dots, with no key.
+        The largest bubble gets `max_area` (pt²); the rest scale by area, never diameter. Largest drawn first.
+    focus / accent: the points the headline names, blue / one navy exception (as mv.highlight); with neither, every
+        point is blue. label: the names to write on the chart (default: focus and accent); detail: a second line for
+        each, formatted with x, y and size ("{y:.0f}%, ${x:.0f}K").
+    key: True picks two or three round values; or pass them; False for none. It sits above the plot, top right,
+        titled "<size_label> (bubble area)". Say what the area means in the subtitle as well.
+    zone_x / zone_y: (low, high) shaded behind the data (None for the axis edge; both for one quadrant), named by
+        zone_label. ref_x / ref_y: a dashed navy reference line (an average, a target, 1.0 = balanced), named by its
+        label. xfmt / yfmt: tick formats ("${x:,.0f}K"). ylabel sits level at the top left, never rotated.
+    logx: a log x axis, for a measure spanning orders of magnitude (write "(log scale)" in xlabel).
+    The axis limits fit every bubble, and the labels are placed when the figure is drawn, so they stay clear at
+    the final size. Returns SimpleNamespace(points, labels, key, area, order).
+    """
+    from matplotlib.ticker import StrMethodFormatter
+
+    from . import clean_axes, highlight
+
+    xs, ys = _floats(x, "x"), _floats(y, "y")
+    n = len(xs)
+    if len(ys) != n:
+        raise ValueError("x and y must have the same length")
+    if np.isnan(xs).any() or np.isnan(ys).any():
+        raise ValueError("x and y have missing values: drop those rows first")
+    if logx and (xs <= 0).any():
+        raise ValueError("a log x axis needs every x above zero")
+    nm = [str(s) for s in names] if names is not None else [""] * n
+    if len(nm) != n:
+        raise ValueError("names must have the same length as x")
+    focus = {str(f) for f in focus}
+    hot = focus | ({str(accent)} if accent is not None else set())
+    missing = sorted(hot - set(nm))
+    if missing:
+        raise ValueError(f"focus / accent names not in the data: {', '.join(missing)}")
+    if size is not None:
+        sz = _floats(size, "size")
+        if len(sz) != n or (sz < 0).any() or not sz.max() > 0:
+            raise ValueError("size must have one value per point, none negative")
+        area = max_area / sz.max()
+        s = sz * area
+    else:
+        sz, area = None, None
+        s = np.full(n, (TOKENS["chart"]["marker"]["size_px"] * 0.75 * 1.6) ** 2)
+    colors = highlight(nm, focus=focus, accent=accent) if hot else [C.focus] * n
+    order = sorted(range(n), key=lambda i: -s[i])               # largest first, so small bubbles stay on top
+    pts = ax.scatter(xs[order], ys[order], s=s[order], c=[colors[i] for i in order], alpha=0.9, edgecolors="white",
+                     linewidths=1, zorder=2)
+    if logx:
+        ax.set_xscale("log")
+
+    # Limits that hold every bubble whole: grow each side by the bubbles' radii, in the plot's own pixels, with room
+    # to spare because the headline takes height from the plot later.
+    fig = ax.figure
+    box = ax.get_position()
+    w_pt = box.width * fig.get_figwidth() * 72
+    h_pt = box.height * fig.get_figheight() * 72 * 0.8
+    r = np.sqrt(s) / 2 + 4
+    tx = np.log10(xs) if logx else xs
+
+    def fit(v, rad, extent, extra):
+        vals = list(v) + [e for e in extra if e is not None]
+        lo, hi = min(vals), max(vals)
+        span = (hi - lo) or (abs(hi) or 1.0)
+        a, b = lo, hi
+        for _ in range(4):
+            per = (b - a) / extent
+            a = min(lo, float(np.min(v - rad * per)))
+            b = max(hi, float(np.max(v + rad * per)))
+        return (a - 0.02 * span, b + 0.02 * span)
+
+    zx, zy = zone_x or (None, None), zone_y or (None, None)
+    xe = [ref_x, *zx]
+    x0, x1 = fit(tx, r, w_pt, [np.log10(e) if (logx and e is not None) else e for e in xe])
+    y0, y1 = fit(ys, r, h_pt, [ref_y, *zy])
+    if logx:
+        x0, x1 = 10 ** x0, 10 ** x1
+    ax.set_xlim(x0, x1)
+    ax.set_ylim(y0, y1)
+
+    jobs = []
+    if zone_x is not None or zone_y is not None:
+        from matplotlib.patches import Rectangle
+        a = x0 if zx[0] is None else zx[0]
+        b = x1 if zx[1] is None else zx[1]
+        c = y0 if zy[0] is None else zy[0]
+        d = y1 if zy[1] is None else zy[1]
+        ax.add_patch(Rectangle((a, c), b - a, d - c, color=C.surface_subtle, lw=0, zorder=0))
+        if zone_label:
+            t = ax.annotate(zone_label, (b, d), xytext=(-4, -4), textcoords="offset points", fontsize=SMALL,
+                            fontweight="bold", color=C.annotation, zorder=4)
+            jobs.append((t, [((b, d), (-4, -4), "right", "top"), ((a, d), (4, -4), "left", "top"),
+                             ((b, c), (-4, 4), "right", "bottom"), ((a, c), (4, 4), "left", "bottom")]))
+    for val, lab, horizontal in ((ref_y, ref_y_label, True), (ref_x, ref_x_label, False)):
+        if val is None:
+            continue
+        (ax.axhline if horizontal else ax.axvline)(val, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=1)
+        if lab:
+            if horizontal:
+                end, start = (x1, val), (x0, val)
+                opts = [(end, (-2, 3), "right", "bottom"), (end, (-2, -3), "right", "top"),
+                        (start, (2, 3), "left", "bottom"), (start, (2, -3), "left", "top")]
+            else:
+                top, bot = (val, y1), (val, y0)
+                opts = [(top, (3, -3), "left", "top"), (top, (-3, -3), "right", "top"),
+                        (bot, (3, 3), "left", "bottom"), (bot, (-3, 3), "right", "bottom")]
+            t = ax.annotate(lab, opts[0][0], xytext=opts[0][1], textcoords="offset points", fontsize=SMALL,
+                            color=C.annotation, path_effects=halo(), zorder=4)
+            jobs.append((t, opts))
+
+    named = list(label) if label is not None else [v for v in nm if v in hot]
+    named = {str(v) for v in named}
+    lx0, lx1 = math.log10(x0) if logx else x0, math.log10(x1) if logx else x1
+    texts = []
+    point_jobs = []
+    for i in order[::-1]:                                       # smallest first: they have fewest places to go
+        if nm[i] not in named:
+            continue
+        bold = nm[i] in hot
+        text = nm[i]
+        if detail:
+            text += "\n" + detail.format(x=xs[i], y=ys[i], size=sz[i] if sz is not None else None)
+        right_first = (tx[i] - lx0) < 0.75 * (lx1 - lx0)
+        opts = _point_options(xs[i], ys[i], math.sqrt(s[i]) / 2, right_first)
+        t = ax.annotate(text, (xs[i], ys[i]), xytext=opts[0][1], textcoords="offset points", ha=opts[0][2],
+                        va=opts[0][3], fontsize=LABEL - 1 + (1 if bold else 0), fontweight=700 if bold else 400,
+                        color=C.headline if bold else C.text_muted, linespacing=1.1, path_effects=halo(), zorder=5)
+        texts.append(t)
+        point_jobs.append((t, opts))
+    _placer(ax, pts, point_jobs + jobs)                         # the names first, then the zone and line labels
+
+    kbox = None
+    if sz is not None and key is not False:
+        vals = _key_values(float(sz.min()), float(sz.max())) if key is True else list(key)
+        title = f"{size_label} (bubble area)" if size_label else "Bubble area"
+        kbox = size_key(ax, vals, area, title=title, fmt=key_fmt)
+
+    if xfmt or logx:
+        ax.xaxis.set_major_formatter(StrMethodFormatter(xfmt or "{x:g}"))
+    if yfmt:
+        ax.yaxis.set_major_formatter(StrMethodFormatter(yfmt))
+    if xlabel:
+        ax.set_xlabel(xlabel)
+    if ylabel:
+        ax.set_ylabel(ylabel, rotation=0, ha="left", va="bottom")
+        ax.yaxis.set_label_coords(0, 1.03)
+    clean_axes(ax, keep=("bottom",), grid="both")
+    return SimpleNamespace(points=pts, labels=texts, key=kbox, area=area, order=[nm[i] for i in order])
+
+
 # ------------------------------------------------------------------ RANK SLOPE
 def rank_slope(ax, names: Sequence[str], before: Sequence[int], after: Sequence[int], *, focus: Iterable[str] = (),
                worse: Iterable[str] = (), headers: tuple[str, str] = ("Before", "After"), nums: bool = True,

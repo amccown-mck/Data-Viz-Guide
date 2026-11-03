@@ -427,7 +427,7 @@
           "start": {
             "chart": "Scatter; bubble scatter when a count can be the bubble area",
             "page": "scatter-bubble",
-            "helper": "mv.label_points"
+            "helper": "mv.bubble"
           },
           "further": [
             {

@@ -312,6 +312,78 @@ def _x_repeats(xdata) -> bool:
     return bool((d < 0).any() and (d > 0).any() and len(np.unique(x)) < len(x))
 
 
+def _undrawn_ticks(axes) -> set[int]:
+    """Tick labels outside the axis range: matplotlib keeps them as visible Text but never draws them."""
+    out = set()
+    for ax in axes:
+        for axis in (ax.xaxis, ax.yaxis):
+            lo, hi = sorted(axis.get_view_interval())
+            for tick in axis.get_major_ticks() + axis.get_minor_ticks():
+                loc = tick.get_loc()
+                if loc is None or not lo - 1e-9 * (abs(lo) + abs(hi) + 1) <= loc <= hi + 1e-9 * (abs(lo) + abs(hi) + 1):
+                    out.update((id(tick.label1), id(tick.label2)))
+    return out
+
+
+def _short(t) -> str:
+    return " ".join(t.get_text().split())[:40]
+
+
+def _overlap_findings(axes, renderer) -> list[Finding]:
+    """Labels, keys and legends that sit on scatter markers or on each other. A label wholly inside one bubble (a
+    value printed in it) is deliberate; one that straddles a bubble's edge, or covers another label, is a collision."""
+    from matplotlib.collections import PathCollection
+    from matplotlib.text import Annotation, Text
+
+    on_marks, on_text = [], []
+    for ax in axes:
+        px = renderer.points_to_pixels(1.0)
+        circles = []
+        for coll in ax.collections:
+            if not (isinstance(coll, PathCollection) and coll.get_visible()) or not len(coll.get_offsets()):
+                continue
+            sizes = coll.get_sizes()
+            if not len(sizes):
+                continue
+            xy = coll.get_offset_transform().transform(coll.get_offsets())
+            sizes = sizes if len(sizes) == len(xy) else [sizes[0]] * len(xy)
+            circles += [(x, y, (s ** 0.5) / 2 * px) for (x, y), s in zip(xy, sizes) if s > 0]
+        boxes = []
+        for t in ax.texts + [c for c in ax.get_children() if isinstance(c, Annotation) and c not in ax.texts]:
+            if isinstance(t, Text) and t.get_visible() and t.get_text().strip():
+                bb = t.get_window_extent(renderer)
+                if bb.width > 0 and bb.height > 0:
+                    boxes.append((f'"{_short(t)}"', bb))
+        leg = ax.get_legend()
+        if leg is not None and leg.get_visible():
+            boxes.append(("the legend", leg.get_window_extent(renderer)))
+        for name, bb in boxes:
+            for cx, cy, rad in circles:
+                corners = [(bb.x0, bb.y0), (bb.x0, bb.y1), (bb.x1, bb.y0), (bb.x1, bb.y1)]
+                if all((x - cx) ** 2 + (y - cy) ** 2 <= rad ** 2 for x, y in corners):
+                    continue                                  # a label printed inside its bubble
+                dx = max(bb.x0 - cx, 0, cx - bb.x1)
+                dy = max(bb.y0 - cy, 0, cy - bb.y1)
+                if rad - (dx * dx + dy * dy) ** 0.5 > max(2.0, 0.2 * rad):
+                    on_marks.append(name)
+                    break
+        for i, (a, ba) in enumerate(boxes):
+            for b, bb in boxes[i + 1:]:
+                w = min(ba.x1, bb.x1) - max(ba.x0, bb.x0)
+                h = min(ba.y1, bb.y1) - max(ba.y0, bb.y0)
+                if w > 2 and h > 2:
+                    on_text.append(f"{a} and {b}")
+    out = []
+    if on_marks:
+        out.append(Finding("warn", "label-on-data", f"{'; '.join(list(dict.fromkeys(on_marks))[:3])} "
+                                                    "sits on the data markers: move it beside its point or into "
+                                                    "empty space (mv.bubble and mv.label_points place labels clear "
+                                                    "of the bubbles; a size key goes above the plot, mv.size_key)"))
+    if on_text:
+        out.append(Finding("warn", "label-overlap", f"{'; '.join(on_text[:3])} overlap: move one of them"))
+    return out
+
+
 def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
     import numpy as np
     from matplotlib.container import BarContainer
@@ -440,15 +512,17 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
     # mv.layout wraps the footnote and source line, so they are skipped here.
     fig.canvas.draw()
     r, width = fig.canvas.get_renderer(), fig.bbox.width
+    hidden = _undrawn_ticks(axes)
     off = []
     for t in fig.findobj(Text):
-        if t.get_visible() and t.get_text().strip() and t is not fur.get("foot"):
+        if t.get_visible() and t.get_text().strip() and t is not fur.get("foot") and id(t) not in hidden:
             e = t.get_window_extent(r)
             if e.x1 > width * 1.1 or e.x0 < -width * 0.1:      # a little is normal: long tick labels
                 off.append(" ".join(t.get_text().split())[:40])
     if off:
         out.append(Finding("warn", "off-canvas", f"text runs past the figure edge ({'; '.join(off[:3])}); the saved "
                                                  "image widens to fit it and the chart shrinks: wrap or shorten it"))
+    out += _overlap_findings(axes, r)
     missing: dict[str, str] = {}
     for t in fig.findobj(Text):
         if t.get_visible() and t.get_text().strip():

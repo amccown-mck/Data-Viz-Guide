@@ -25,7 +25,7 @@
 | Element | Rule |
 |---|---|
 | Color | Grey everything, then color the entities the headline names. Context marks: `chart.context` `#B4B0A5`. Focus marks: `chart.focus` `#005A8C`. One exception may use `chart.accent` navy `#143359`. Shade a highlight zone or quadrant in `surface.subtle` `#EFEDE7`, behind the marks. Draw reference lines (average, target, a "1.0 = balanced" line) in `chart.total` `#143359`, dashed, 0.75 pt. Use categorical colors (`#005A8C`, `#143359`, `#66C4FF`, `#00AF9D`) only when color **encodes a real variable** (e.g., business unit), with ≤ 4 groups and a key. Never color by position or range. Give bubbles ~90% opacity and a 1 px white outline so overlaps stay readable. |
-| Labels | Label **only the focus points** (≤ 5), in bold Navy `#143359`, placed beside the bubble with a white halo. Name everything else in tooltips, not on the chart. Label zones in place with a bold navy title (e.g., "High exposure: 50%+ of task hours"). Label reference lines at their right end ("Workforce average 27%"). Bubble charts get a **size key** with 2–3 round values (1,000 / 5,000 / 10,000), placed top-right above the plot or in an empty corner. Name the size measure in the subtitle ("bubble area = headcount"). |
+| Labels | Label **only the focus points** (≤ 5), in bold Navy `#143359`, placed beside the bubble with a white halo. Name everything else in tooltips, not on the chart. Label zones in place with a bold navy title (e.g., "High exposure: 50%+ of task hours"). Label reference lines at their right end ("Workforce average 27%"). Bubble charts get a **size key** with 2–3 round values (1,000 / 5,000 / 10,000), above the plot at the top right, never among the data, where a key bubble passes for a data point (`mv.size_key`; `mv.bubble` adds it). Name the size measure in the subtitle ("bubble area = headcount"). |
 | Axes / gridlines | Both axes carry units. X = the driver or context measure, Y = the outcome. The Y-axis title sits horizontally at the top-left, never rotated. Use light gridlines in `chart.grid` `#E6E4DE` (both directions are fine) and a baseline in `chart.axis` `#8C8C8C`. Axes need not start at zero, but say so when a cut-off is part of the population filter. Use a **log scale** when an axis spans more than ~2 orders of magnitude (team size 5–5,000; postings per candidate 0.2–8). Tick at readable values (1, 2, 5, 10 or doubling), and write "(log scale)" in the axis title. Never log-scale bubble size. |
 | Sort / order | Draw the **largest bubbles first**, so small bubbles sit on top and stay visible. When color encodes a group, keep the key in the same order as the categorical palette, and keep each group's color constant across the deck. Name quadrants the same way every time they appear (e.g., "Reskill first" top-left). |
 | Proportions | **Area ∝ value**, never diameter: matplotlib `s = value × k`, Plotly `sizemode="area"`, ggplot2 `scale_size_area()`, Excel **Size represents: Area of bubbles**. The smallest bubble must be ≥ ~6 px across. A plain scatter uses `chart.marker.size_px` = 6 px. Use the same size scale across charts that are compared. Keep the plot close to square when both axes share a unit, otherwise 16:9 (full slide) or 4:3 (half slide). |
@@ -61,51 +61,22 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.ticker import StrMethodFormatter
 
 import mckviz as mv
 
 mv.use()
-C = mv.colors
 
 df = pd.read_csv(Path("assets/data/automation_exposure.csv"))
-df = df[df.headcount >= 10].sort_values("headcount", ascending=False)    # n >= 10; big bubbles drawn first
-focus = set(df.role[df.genai_exposure_pct >= 50])
+df = df[df.headcount >= 10]                                              # n >= 10
 avg = (df.genai_exposure_pct * df.headcount).sum() / df.headcount.sum()  # headcount-weighted
-K = 1800 / df.headcount.max()                                            # marker area (pt^2) per person -> area ∝ value
 
 fig, ax = plt.subplots(figsize=(10, 5.8))
-ax.axhspan(50, 72, color=C.surface_subtle, lw=0, zorder=0)               # highlight zone
-ax.text(151, 70.5, "High exposure: 50%+ of task hours", ha="right", va="top", fontsize=9, fontweight="bold",
-        color=C.annotation)
-ax.axhline(avg, color=C.total, lw=0.75, ls=(0, (3, 3)), zorder=1)        # labelled reference line
-ax.text(151, avg + 1, f"Workforce average {avg:.0f}%", ha="right", va="bottom", fontsize=9, color=C.annotation)
-ax.scatter(df.median_pay_k, df.genai_exposure_pct, s=df.headcount * K, c=mv.highlight(df.role, focus=focus),
-           alpha=0.9, edgecolors="white", linewidths=1, zorder=2)
-
-label_left = {"Customer Care", "HR Operations"}                          # only the focus points get labels
-for r in df[df.role.isin(focus)].itertuples():
-    pad = (r.headcount * K) ** 0.5 / 2 + 3
-    left = r.role in label_left
-    ax.annotate(r.role, (r.median_pay_k, r.genai_exposure_pct), xytext=(-pad if left else pad, 0),
-                textcoords="offset points", ha="right" if left else "left", va="center", fontsize=10,
-                fontweight="bold", color=C.headline, path_effects=mv.halo(), zorder=3)
-
-key = {1_000: 119, 5_000: 130, 10_000: 144}                            # size key on the same scale, empty corner
-ax.text(115, 21, "Headcount (bubble area)", fontsize=9, color=C.text_muted)
-for v, x in key.items():
-    ax.scatter(x, 10, s=v * K, color=C.context_light, edgecolors=C.axis, linewidths=0.75, zorder=2)
-    ax.annotate(f"{v:,}", (x, 10), xytext=(0, -((v * K) ** 0.5 / 2 + 2)), textcoords="offset points",
-                ha="center", va="top", fontsize=9, color=C.text_muted)
-
-ax.set_xlim(28, 152)
-ax.set_ylim(0, 72)
-ax.xaxis.set_major_formatter(StrMethodFormatter("${x:,.0f}K"))
-ax.yaxis.set_major_formatter(StrMethodFormatter("{x:.0f}%"))
-ax.set_xlabel("Median base pay")
-ax.set_ylabel("Task hours exposed to gen AI", rotation=0, ha="left", va="bottom")
-ax.yaxis.set_label_coords(0, 1.03)
-mv.clean_axes(ax, keep=("bottom",), grid="both")
+mv.bubble(ax, df.median_pay_k, df.genai_exposure_pct, df.headcount, df.role,
+          focus=set(df.role[df.genai_exposure_pct >= 50]),             # the roles the headline names
+          size_label="Headcount",                                      # key above the plot: "Headcount (bubble area)"
+          zone_y=(50, None), zone_label="High exposure: 50%+ of task hours",
+          ref_y=avg, ref_y_label=f"Workforce average {avg:.0f}%",
+          xfmt="${x:,.0f}K", yfmt="{x:.0f}%", xlabel="Median base pay", ylabel="Task hours exposed to gen AI")
 
 mv.titles(fig, "Four support roles carry the highest gen AI exposure \u2013 start redesign and reskilling there",
           "Share of task hours exposed to gen AI vs. median base pay, by role, 2026; bubble area = headcount")
@@ -114,7 +85,7 @@ mv.source(fig, "Source: Synthetic data for illustration only",
                    "Average weighted by headcount.")
 mv.save(fig, Path(tempfile.gettempdir()) / "ck_scatdual_scatter-bubble.png", dpi=200)
 ```
-For a log axis, add `ax.set_xscale("log")` and `ax.xaxis.set_major_formatter(StrMethodFormatter("{x:g}"))`, with ticks at readable values (`ax.set_xticks([0.5, 1, 2, 4])`). For a plain scatter, drop `s=` (the default marker is 6 px) and the size key. For quadrants, draw one `axvline` and one `axhline` in `C.total` at the thresholds and shade only the quadrant the headline names.
+`mv.bubble` works the layout out from the data: axis limits that hold every bubble whole, the largest drawn first, area in proportion to the count, the size key above the plot, and each name, the zone label and the line label placed clear of the bubbles at the size the chart is finally drawn (on a slide too). Change the data, `focus` and the labels; leave the positions to it. `accent=` adds one navy exception, `detail="{y:.0f}%, ${x:.0f}K"` a line of values under each name, and `label=` names points beyond the focus. For a plain scatter, pass no size (equal dots, no key). For a log axis, `logx=True` with "(log scale)" in `xlabel`. For a quadrant, give both `zone_x` and `zone_y` (shading only the quadrant the headline names), with `ref_x` and `ref_y` at the thresholds.
 
 ### Python — Plotly / HTML
 ```python

@@ -112,35 +112,13 @@ def waterfall():
 
 def bubble_scatter():
     df = pd.read_csv(DATA / "automation_exposure.csv")
-    focus = set(df.role[df.genai_exposure_pct >= 50])
-    left_side = {"Customer Care", "HR Operations", "Software Engineering"}
-    below: set = set()
-    fig, ax = plt.subplots(figsize=(10, 5.6))
-    sizes = df.headcount / df.headcount.max() * 1800
-    ax.axhspan(50, 72, color=C.surface_subtle, lw=0, zorder=0)
-    ax.axhline(50, color=C.axis, lw=0.75, ls=(0, (3, 3)), zorder=1)
-    ax.text(151, 71, "High exposure: 50%+ of task hours", ha="right", va="top", fontsize=8, color=C.annotation, fontweight="bold")
-    ax.scatter(df.median_pay_k, df.genai_exposure_pct, s=sizes, c=mv.highlight(df.role, focus=focus),
-               alpha=0.9, edgecolors="white", linewidths=1.2, zorder=2)
-    for r, s in zip(df.itertuples(), sizes):
-        rad = np.sqrt(s / np.pi) + 3
-        bold = r.role in focus
-        if r.role in below:
-            off, ha, va = (0, -rad), "center", "top"
-        elif r.role in left_side:
-            off, ha, va = (-rad, 0), "right", "center"
-        else:
-            off, ha, va = (rad, 0), "left", "center"
-        ax.annotate(r.role, (r.median_pay_k, r.genai_exposure_pct), xytext=off, textcoords="offset points", ha=ha, va=va,
-                    fontsize=9 if bold else 8, fontweight="bold" if bold else "normal",
-                    color=C.headline if bold else C.text_muted, path_effects=mv.halo(), zorder=3)
-    ax.set_xlim(28, 152)
-    ax.set_ylim(0, 72)
-    ax.xaxis.set_major_formatter(StrMethodFormatter("${x:,.0f}K"))
-    ax.set_xlabel("Median base pay")
-    ax.set_ylabel("Task hours exposed to gen AI (%)", rotation=0, ha="left", va="bottom")
-    ax.yaxis.set_label_coords(0, 1.01)
-    mv.clean_axes(ax, keep=("bottom",), grid="y")
+    avg = (df.genai_exposure_pct * df.headcount).sum() / df.headcount.sum()
+    fig, ax = plt.subplots(figsize=(10, 5.8))
+    mv.bubble(ax, df.median_pay_k, df.genai_exposure_pct, df.headcount, df.role,
+              focus=set(df.role[df.genai_exposure_pct >= 50]), size_label="Headcount",
+              zone_y=(50, None), zone_label="High exposure: 50%+ of task hours",
+              ref_y=avg, ref_y_label=f"Workforce average {avg:.0f}%",
+              xfmt="${x:,.0f}K", yfmt="{x:.0f}%", xlabel="Median base pay", ylabel="Task hours exposed to gen AI")
     mv.titles(fig, "Four support roles carry the highest gen AI exposure \u2013 start redesign and reskilling there",
               "Share of task hours exposed to gen AI (%) vs. median base pay ($K) by role, 2026; bubble area = headcount")
     mv.source(fig, SRC, footnote="Exposure = share of task hours matched to gen-AI-capable activities in an external task taxonomy.")

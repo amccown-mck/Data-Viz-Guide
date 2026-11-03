@@ -394,3 +394,32 @@ def test_hand_built_line_habits_are_flagged_and_mv_line_is_clean():
     mv.source(fig, "Source: Synthetic data for illustration only")
     assert not rules(mv.lint(fig, quiet=True), "warn") & {"line-markers", "reference-line", "axis-title", "text-contrast"}
     plt.close(fig)
+
+
+def test_a_label_on_a_bubble_warns_but_a_value_inside_one_does_not():
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.scatter([1, 2], [1, 1], s=[3000, 3000])
+    ax.set_xlim(0, 3)
+    ax.set_ylim(0, 2)
+    ax.text(1, 1, "9%", ha="center", va="center")              # printed inside its bubble: deliberate
+    rules = {f.rule for f in mv.lint(fig, quiet=True)}
+    assert "label-on-data" not in rules
+    ax.text(2, 1.05, "Headcount (bubble area)", ha="left")     # straddles the bubble's edge
+    on = [f for f in mv.lint(fig, quiet=True) if f.rule == "label-on-data"]
+    assert on and "Headcount (bubble area)" in on[0].message and "mv.size_key" in on[0].message
+
+
+def test_overlapping_labels_warn():
+    fig, ax = plt.subplots()
+    ax.plot([0, 1], [0, 1])
+    ax.text(0.5, 0.5, "Workforce average 27%")
+    ax.text(0.52, 0.51, "High exposure")
+    assert "label-overlap" in {f.rule for f in mv.lint(fig, quiet=True)}
+
+
+def test_tick_labels_outside_the_axis_range_are_not_off_canvas():
+    fig = plt.figure(figsize=(10, 4))
+    ax = fig.add_axes([0.0, 0.1, 1.0, 0.8])                    # the plot fills the figure, as on a picture slide
+    ax.plot([25, 155], [0, 1])
+    ax.set_xlim(25, 155)
+    assert "off-canvas" not in {f.rule for f in mv.lint(fig, quiet=True)}
