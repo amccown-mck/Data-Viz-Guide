@@ -16,14 +16,14 @@ Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026
 
 One thing at a time, each checked with the one eval that covers it (the agent repo's `evals/prompts.md`). **Principle: fix with good code defaults and general tips, not rules written to pass a test.**
 
-1. **Insight callouts**, then further agent refinements (the owner's list).
+1. **Insights and annotations** (branch `feat/insights`): the insights panel is built and approved (2026-11-03); next the four annotations (numbered markers, bracket, gap, point callout), then the agent's guidance for both. Then further agent refinements (the owner's list).
 2. **The published guide, in one pass** once those land: everything it must pick up is logged in [`docs/guide-refresh.md`](docs/guide-refresh.md).
 3. **Fold `docs/agent-architecture.md` into `AGENTS.md`** and delete it: the migration is done apart from item 4.
 4. **The `savefig`/`show` override** in `mck_setup.py` (so a slip can't produce Copilot's Chart card): needs a sandbox probe first; only if it's simple and reliable. Then SKILL.md's "never savefig" line and the Chart-card recovery sentence go.
 
 ## Later
 
-- **The takeaways card on slides:** redesign it; the owner isn't a fan of it as built (it tends to repeat the chart's numbers).
+- **Story building across a deck** (a longer horizon; the focus now is the fundamentals of each chart and the analytical thinking behind it): horizontal and vertical deck flow and storyboarding, so a set of slides carries one argument. Starts with a synthesis of the source material (Nancy Duarte and other experts) before any rules or code; builds on the insights panel and annotations.
 - **More one-call builders:** stacked area, treemap, Venn, parallel coordinates. Then lint for hand-built bars, stacks and tables.
 - **SharePoint for the rest:** the Office template and fonts (the guide is there; the release links point at a private GitHub repo colleagues can't open).
 - **Colleague feedback:** probably a Microsoft Loop page; design its structure with the owner.
@@ -34,6 +34,7 @@ One thing at a time, each checked with the one eval that covers it (the agent re
 ## Decisions
 
 - **Name and voice:** `docs/positioning.md`. Platform priority: HTML and Python, then Excel and PowerPoint, then Power BI; R is a nice-to-have.
+- **Insights and annotations (2026-11-03):** the slide's side panel is numbered insights (a bold claim the chart doesn't show on its own, then the evidence), a big number only when one derived number is the point, and at most one implication, worded as what the finding means; recommendations only when the user asks and works one out with the agent, never volunteered. Annotations (markers, brackets, gaps, point callouts) are fit for purpose: less is more, and they must help, not compete.
 - **Color:** McKesson Blue for what the headline names, grey context, a navy accent; no fixed number of highlights (2026-11-02), the builders warn when most are blue; orange only for "worse"; categorical order blue, navy, bright blue, teal, mint.
 - **The agent:** one skill, `mck-chart`, a second only for a substantial reason; "Think deeper" by default, never "Auto"; no sensitivity label; replies in plain words for colleagues who live in Excel and PowerPoint; one guide link, to the HTML on SharePoint (the PDF on request); slides on the McKesson branded template, native for bar, column, line, 100% stack, waterfall and dumbbell, a picture for the rest; options pages as HTML + PDF, with a recommended lead; files reach the user's OneDrive once (`mv.deliver`).
 - **How we work:** the owner tests in Copilot and brings back screenshots and the reasoning; one change at a time; the four `core` evals before each push to the shared agent.
