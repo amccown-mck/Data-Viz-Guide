@@ -15,6 +15,8 @@ At the end of a working session, add one entry at the top: the date, what was do
 - The sandbox's matplotlib (3.8.4) can't be installed on this machine (Python 3.14 only), so the APIs were checked by hand; the Copilot run confirmed them.
 - builders-4 (a bubble chart on new data, then a slide) and core-1 to core-4 passed on the local agent; shipped as shared agent 1.0.17.
 
+Then the bubble strip: the tree offered it for two leaves but pointed at the distribution page, which never described one. New `docs/cookbook/bubble-strip.md` and `mv.bubble_strip` (bubbles packed along one value axis, the same key and placer). The placer learned to keep names off reference lines, to hang a name from a bubble's edge, and, in a crowded strip, to put names on steps with a vertical leader: a name merely beside two bubbles read as the neighbour's, and the first leader lines started from the text's centre because matplotlib reads `relpos` only when the annotation is made. builders-5 and core passed on the local agent.
+
 **Decided (owner):** keep feature branches tidy, deleted once merged (both repos).
 
 ## 2026-11-02

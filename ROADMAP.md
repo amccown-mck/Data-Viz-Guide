@@ -6,11 +6,11 @@ Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026
 
 ## Now
 
-- **The kit:** release 1.2.0 (2026-10-18); `main` has much more since (CHANGELOG, "Unreleased"): the decision tree and `mv.suggest`, one-call builders (now including `mv.bar` and `mv.bubble`), the options page, `mckviz.office`, highlights with no fixed cap, and the agent guidance restructured by layer.
+- **The kit:** release 1.2.0 (2026-10-18); `main` has much more since (CHANGELOG, "Unreleased"): the decision tree and `mv.suggest`, one-call builders (now including `mv.bar`, `mv.bubble` and `mv.bubble_strip`), the options page, `mckviz.office`, highlights with no fixed cap, and the agent guidance restructured by layer.
 - **The agent:** "WI Data Storytelling Agent" in Microsoft 365 Copilot ([its repo](https://github.com/amccown-mck/WI-Data-Storytelling-Agent)), version 1.0.17, shared with twelve Workforce Innovation colleagues, running `main` as of 2026-11-03. Plain-words replies and an onboarding starter (demo chart, then a numbered menu); the guide linked on SharePoint.
 - **Guidance by layer** (`AGENTS.md`, "Where agent guidance goes"): code first, then the agent's instructions (2,516 of 4,000: only what must hold with no skill loaded), the Copilot `SKILL.md` (11,107 of 14,000: the workflow plus a router to task guides), task guides, reference docs, evals. One skill (decided 2026-11-02).
 - **Last core run** (local agent, 2026-11-02): core-1 to core-4 and journey-1 passed. The three known issues of 10-27 (bar order, options-page copies, small Sankey slide) are fixed in code.
-- **Bubble charts** (2026-11-03): `mv.bubble` lays them out from the data (key above the plot, labels clear of the bubbles, PNG and slide alike) and lint warns on labels on the data; builders-4 and core-1 to core-4 passed on the local agent; on the shared agent as 1.0.17.
+- **Bubble charts** (2026-11-03): `mv.bubble` lays them out from the data (key above the plot, labels clear of the bubbles, PNG and slide alike) and lint warns on labels on the data; builders-4 and core-1 to core-4 passed on the local agent; on the shared agent as 1.0.17. `mv.bubble_strip` and its cookbook page followed (builders-5 and core passed on the local agent); not yet on the shared agent.
 
 ## Next
 
@@ -23,7 +23,7 @@ One thing at a time, each checked with the one eval that covers it (the agent re
 ## Later
 
 - **The takeaways card on slides:** redesign it; the owner isn't a fan of it as built (it tends to repeat the chart's numbers).
-- **More one-call builders:** bubble strip (next: the same size key and label placer as `mv.bubble`), stacked area, treemap, Venn, parallel coordinates. Then lint for hand-built bars, stacks and tables.
+- **More one-call builders:** stacked area, treemap, Venn, parallel coordinates. Then lint for hand-built bars, stacks and tables.
 - **SharePoint for the rest:** the Office template and fonts (the guide is there; the release links point at a private GitHub repo colleagues can't open).
 - **Colleague feedback:** probably a Microsoft Loop page; design its structure with the owner.
 - **Release 1.3.0** of the kit with the unreleased work.
