@@ -825,3 +825,24 @@ def test_too_many_annotations_warn_that_less_is_more():
     mv.titles(fig, "Two frontline job families lose about 1 in 4 people a year", "Attrition by job family, FY26 (%)")
     mv.source(fig, "Source: Synthetic data for illustration only")
     assert "annotations" in {f.rule for f in mv.lint(fig, quiet=True)}
+
+
+def test_a_picture_numbers_its_insights_only_when_the_figure_marks_each_one():
+    from mckviz import office
+
+    for marks, numbered in (([1, 2], True), ([1], False)):
+        fig, ax = office.picture_figure(insights=True)
+        ns, _ = _attrition_bar(ax)
+        for n, name in zip(marks, ["Pharmacy Technician", "Customer Care"]):
+            mv.mark(ax, n, name, chart=ns)
+        ins = [("Two families account for most exits", "73% of exits, from 58% of headcount"),
+               ("Customer Care is the one to watch", "Just under the enterprise rate")]
+        with warnings.catch_warnings(record=True):
+            warnings.simplefilter("always")
+            r = office.picture_slide(office.deck(), fig, headline="h", source="s", insights=ins)
+        names = [s.name for s in office_group(r.slide, "Insights").shapes]
+        assert any(n.endswith("marker") for n in names) == numbered
+
+
+def office_group(slide, name):
+    return next(s for s in slide.shapes if s.name == name)

@@ -1097,7 +1097,7 @@ def _annotations(ax):
     from matplotlib.patches import Rectangle
     from matplotlib.transforms import Bbox
 
-    reg = SimpleNamespace(jobs=[], before=[], count=0)
+    reg = SimpleNamespace(jobs=[], before=[], count=0, marks=[])
 
     def obstacles(renderer, own):
         pts = renderer.points_to_pixels(1.0)
@@ -1221,6 +1221,7 @@ def mark(ax, n: int, target, *, chart=None):
         t = ax.annotate(str(n), xy, xycoords=tr, xytext=opts[0][0], textcoords="offset points", **style)
         reg.jobs.append((t, [(xy, *o) for o in opts], ()))
     reg.count += 1
+    reg.marks.append(int(n))                                    # a picture slide numbers its insights to match
     return t
 
 

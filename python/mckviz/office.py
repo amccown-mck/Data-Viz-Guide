@@ -321,30 +321,49 @@ def _marked(insights) -> set[str]:
 
 
 def insights_panel(slide, insights, *, implication: str | None = None, big: tuple[str, str] | None = None,
-                   title: str = "Key insights", shown: Iterable[str] = (), anchors: dict | None = None):
+                   title: str = "Key insights", shown: Iterable[str] = (), anchors: dict | None = None,
+                   marked: Iterable[int] = ()):
     """Chart + insights: the right third of the slide (TAKE_LEFT, TAKE_W) beside a two-thirds chart, top-aligned with
     the plot, in the quiet consulting style: a small capitals label over a navy hairline, no box, no fill.
 
     insights: one to three (claim, evidence) pairs, or (claim, evidence, at): the claim a bold navy line (two at
         most) that says something the chart doesn't show on its own (what the bars add up to, a comparison, a cause),
-        the evidence one to three lines under it; numbered when there are two or more, and `at` puts the same number
-        on the chart, at that bar or point (native slides). implication: an optional last item under "What it means": what the finding
-        means for the business, from the data, never a recommendation. big: (number, caption) at the top, only when
+        the evidence one to three lines under it. `at` names the bar or column the insight is about, and puts its
+        number there (native bar and column slides; on a picture, mv.mark on the figure). The insights are numbered
+        only when every one has its marker on the chart; otherwise none is, since a number with no match on the chart
+        reads as a mistake. implication: an optional last item under "What it means": what the finding means for the
+        business, from the data (a recommendation is the user's call, worked out with them). big: (number, caption) at the top, only when
         one derived number is the whole point ("73%", "of voluntary exits come from two job families").
     shown: the labels the chart carries; an insight that only repeats them raises a warning. anchors: {name: (x, y)}
-    where each bar's marker goes (the slide builders pass it). Returns the group."""
+    where each bar's marker goes (the slide builders pass it); marked: the mv.mark numbers already on a picture.
+    Returns the group."""
     items = _check_insights(insights, implication, big, shown)
-    for i, (_, _, at) in enumerate(items, 1):
-        if at is None:
-            continue
-        if anchors is None:
+    ats = [at for *_, at in items]
+    for i, at in enumerate(ats, 1):
+        if at is not None and anchors is None:
             raise ValueError(f"insight {i}: this slide type can't place a marker yet (at={at!r}). On a picture slide, "
                              "put it on the figure with mv.mark(ax, n, ...); on bar and column slides, at= names a bar")
-        if at not in anchors:
+        if at is not None and at not in anchors:
             raise ValueError(f"insight {i}: at={at!r} is not a bar on the chart: {', '.join(anchors)}")
-        _marker(slide, *anchors[at], i, f"Marker {i}: {at}")
+    marked = set(marked)
+    if any(ats):                                                # numbered only if every insight has its marker
+        numbered = all(ats)
+        if not numbered:
+            loose = [str(i) for i, at in enumerate(ats, 1) if at is None]
+            warnings.warn(f"insight {', '.join(loose)} has no at=, so no marker on the chart: the insights are shown "
+                          "unnumbered and no markers are drawn. Give every insight an at=, or none", stacklevel=3)
+        else:
+            for i, at in enumerate(ats, 1):
+                _marker(slide, *anchors[at], i, f"Marker {i}: {at}")
+    elif marked:                                                # a picture whose figure carries mv.mark numbers
+        numbered = marked == set(range(1, len(items) + 1))
+        if not numbered:
+            warnings.warn(f"the figure's markers ({', '.join(map(str, sorted(marked)))}) don't match insights 1 to "
+                          f"{len(items)}: the insights are shown unnumbered. Mark each insight once, or none",
+                          stacklevel=3)
+    else:
+        numbered = False
     x, w = TAKE_LEFT, TAKE_W
-    numbered = len(items) > 1 or any(at for *_, at in items)    # one insight alone needs no number
     mark, gap_x = (0.30, 0.14) if numbered else (0.0, 0.0)    # number marker, and the gap before the text
     tx, tw = x + mark + gap_x, w - mark - gap_x
     lh = {14: 0.235, 12: 0.205, 13: 0.22, 40: 0.62}          # line heights (in) at each size, 1.2 x the size
@@ -1690,6 +1709,7 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
     from matplotlib.text import Text
 
     shown = [a.get_text() for a in fig.findobj(Text) if a.get_visible()]   # what the picture already says
+    marked = [n for a in fig.axes for n in getattr(getattr(a, "_mck_notes", None), "marks", [])]
     fur = getattr(fig, "_mck", {})
     for key in ("head", "sub", "foot"):                        # the slide's own text replaces the figure's
         if fur.get(key) is not None:
@@ -1722,5 +1742,5 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
     pic.name = "Chart"
     pic._element.nvPicPr.cNvPr.set("descr", alt or headline)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=shown)
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, marked=marked, shown=shown)
     return SimpleNamespace(slide=slide, picture=pic)

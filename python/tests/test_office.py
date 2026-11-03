@@ -159,13 +159,16 @@ INSIGHTS = [("Two families account for most exits", "Pharmacy Technician and DC 
             ("The rest sit below the enterprise rate", "All eight other families are under it")]
 
 
-def test_insights_take_the_right_third_numbered_with_no_box():
+def test_insights_take_the_right_third_with_no_box_and_number_only_what_the_chart_marks():
     r = bar(insights=INSIGHTS, implication="Retention effort here reaches most voluntary exits.")
     frame = next(s for s in r.slide.shapes if s.has_chart)
     assert Emu(frame.width).inches == pytest.approx(office.SIDE_CHART_W, abs=0.01)
     panel = named(r.slide, "Insights")
     names = [s.name for s in panel.shapes]
-    assert "Insight 1: marker" in names and "Insight 2: marker" in names and "Implication" in names
+    assert "Implication" in names and not any(n.endswith("marker") for n in names)   # nothing on the chart to match
+    with pytest.warns(UserWarning, match="shown unnumbered"):
+        r = bar(insights=[INSIGHTS[0] + ("Pharmacy Technician",), INSIGHTS[1]])        # only one points at a bar
+    assert not any(s.name.startswith("Marker") for s in r.slide.shapes)
     assert not any("card" in n.lower() for n in names)            # no filled box behind the text
     left = min(Emu(s.left).inches for s in panel.shapes)
     assert left == pytest.approx(office.TAKE_LEFT, abs=0.01)
