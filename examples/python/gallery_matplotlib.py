@@ -125,6 +125,20 @@ def bubble_scatter():
     return fig
 
 
+def bubble_strip():
+    df = pd.read_csv(DATA / "automation_exposure.csv")
+    avg = (df.genai_exposure_pct * df.headcount).sum() / df.headcount.sum()
+    fig, ax = plt.subplots(figsize=(10, 4.2))
+    mv.bubble_strip(ax, df.genai_exposure_pct, df.headcount, df.role, focus={"Pharmacy Technician"},
+                    size_label="Headcount", ref=avg, ref_label=f"Workforce average {avg:.0f}%", xfmt="{x:.0f}%",
+                    xlabel="Share of task hours exposed to gen AI")
+    mv.titles(fig, "Pharmacy technicians are only 22% exposed, but at 6,200 people they hold the second-largest "
+                   "share of exposed work", "Share of task hours exposed to gen AI by role, 2026; bubble area = headcount")
+    mv.source(fig, SRC, footnote="Exposure = share of task hours matched to gen-AI-capable activities in an external "
+                                 "task taxonomy. Average weighted by headcount.")
+    return fig
+
+
 def dumbbell():
     df = pd.read_csv(DATA / "pay_vs_market.csv").sort_values("gap_pct").reset_index(drop=True)
     fig, ax = plt.subplots(figsize=(10, 5.6))
@@ -422,7 +436,7 @@ def venn():
 
 
 def main():
-    charts = {"bar-highlight": bar_highlight, "line-gap": line_gap, "waterfall": waterfall, "bubble-scatter": bubble_scatter,
+    charts = {"bar-highlight": bar_highlight, "line-gap": line_gap, "waterfall": waterfall, "bubble-scatter": bubble_scatter, "bubble-strip": bubble_strip,
               "dumbbell": dumbbell, "heatmap-diverging": heatmap_diverging, "slope": slope, "stacked-100": stacked_100,
               "distribution-strip": distribution_strip, "heat-table": heat_table, "venn": venn}
     for name, fn in charts.items():

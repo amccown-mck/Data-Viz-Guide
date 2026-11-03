@@ -351,7 +351,9 @@ def _overlap_findings(axes, renderer) -> list[Finding]:
         boxes = []
         for t in ax.texts + [c for c in ax.get_children() if isinstance(c, Annotation) and c not in ax.texts]:
             if isinstance(t, Text) and t.get_visible() and t.get_text().strip():
-                bb = t.get_window_extent(renderer)
+                if isinstance(t, Annotation):                 # the text alone, not its leader line
+                    t.update_positions(renderer)
+                bb = Text.get_window_extent(t, renderer)
                 if bb.width > 0 and bb.height > 0:
                     boxes.append((f'"{_short(t)}"', bb))
         leg = ax.get_legend()

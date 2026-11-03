@@ -75,8 +75,8 @@ One row per category (job family, site, role) with a measure, maybe a count colu
 - **Go further** when values bunched far from zero (the smallest is more than half the largest): [Dot plot](cookbook/dot-plot-dumbbell.md) (`mv.dot_plot`): bars must start at zero, which hides small differences
 - **Go further** when the largest value is more than 20 times the smallest: [Proportional bubbles, or split the chart](cookbook/bubble-chart.md)
 - **Go further** when more than 12 categories: [Sorted bar with the tail grouped into Other](cookbook/bar.md) (`group the tail, then mv.bar`)
-- **Option** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest), and only if the headline is about how many people each one covers, not only the rate: [Bubble strip: position = the measure, bubble area = the count](cookbook/distribution.md): shows how close the categories are and how many people each one covers
-- **Go further** when more than 20 categories: [Bubble strip with only the outliers and largest named](cookbook/distribution.md)
+- **Option** when a count column (headcount, employees, moves) whose values differ a lot (largest at least 5 times the smallest), and only if the headline is about how many people each one covers, not only the rate: [Bubble strip: position = the measure, bubble area = the count](cookbook/bubble-strip.md) (`mv.bubble_strip`): shows how close the categories are and how many people each one covers
+- **Go further** when more than 20 categories: [Bubble strip with only the outliers and largest named](cookbook/bubble-strip.md) (`mv.bubble_strip`)
 - **Avoid:** Rainbow, 3D or cut-off bars
 - **Color:** Focus (default); Focus + accent when the headline names a group and one member stands out; Uniform + accent when every item is part of the story and one is the exception
 

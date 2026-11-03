@@ -25,7 +25,7 @@ This table mirrors the chart chooser in the guide (`dist/guide/chooser.html`); k
 
 | Question type | Start with | Also | Avoid |
 |---|---|---|---|
-| Magnitude | [Sorted bar](cookbook/bar.md) | [Dot plot](cookbook/dot-plot-dumbbell.md) for values far from zero; paired bars; [proportional bubbles](cookbook/bubble-chart.md) for huge ranges | Rainbow, 3D or cut-off bars |
+| Magnitude | [Sorted bar](cookbook/bar.md) | [Dot plot](cookbook/dot-plot-dumbbell.md) for values far from zero; paired bars; [proportional bubbles](cookbook/bubble-chart.md) for huge ranges; a [bubble strip](cookbook/bubble-strip.md) when how many people each one covers matters | Rainbow, 3D or cut-off bars |
 | Part-to-whole | [100% stacked bar](cookbook/stacked-bar.md) | [Waterfall](cookbook/waterfall.md) between totals; [treemap](cookbook/treemap.md) for many parts | Pies or [donuts](cookbook/donut-pie.md) over 5 slices |
 | Change over time | [Line](cookbook/line.md), focus series in blue | [Stacked area](cookbook/stacked-area.md); [small multiples](cookbook/small-multiples.md); [bubble timeline](cookbook/bubble-timeline.md) for events | Ten colored lines |
 | Ranking | [Sorted bar](cookbook/bar.md); [slope](cookbook/slope-bump.md) for change in rank | [Dumbbell](cookbook/dot-plot-dumbbell.md) for us vs. them; [heat table](cookbook/tables.md) | A color for every line |

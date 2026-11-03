@@ -703,3 +703,52 @@ def test_bubble_labels_sort_out_a_crowded_corner(tmp_path, slide):
     mv.save(fig, tmp_path / "q.png", dpi=100)
     rules = {f.rule for f in mv.lint(fig, quiet=True)}
     assert not rules & {"label-on-data", "label-overlap"}, rules
+
+
+def _bubble_row(fig, ax, **kw):
+    import pandas as pd
+
+    df = pd.read_csv(DATA / "automation_exposure.csv")
+    avg = (df.genai_exposure_pct * df.headcount).sum() / df.headcount.sum()
+    ns = mv.bubble_strip(ax, df.genai_exposure_pct, df.headcount, df.role, size_label="Headcount", ref=avg,
+                         ref_label=f"Workforce average {avg:.0f}%", xfmt="{x:.0f}%", xlabel="Exposure", **kw)
+    mv.titles(fig, "Pharmacy technicians hold the second-largest share of exposed work", "Exposure by role, 2026")
+    mv.source(fig, "Source: Synthetic data for illustration only")
+    return df, ns
+
+
+@pytest.mark.parametrize("kw", [{"focus": {"Pharmacy Technician"}}, {},
+                                {"focus": {"Customer Care", "Claims & Billing Specialist", "Finance Operations",
+                                           "HR Operations"}, "zone": (50, None), "zone_label": "High exposure: 50%+"}],
+                         ids=["one", "no-focus", "crowded-zone"])
+@pytest.mark.parametrize("slide", [False, True], ids=["png", "slide"])
+def test_bubble_strip_packs_the_row_and_keeps_labels_clear(tmp_path, kw, slide):
+    fig, ax = mv.office.picture_figure() if slide else plt.subplots(figsize=(10, 4.2))
+    df, ns = _bubble_row(fig, ax, **kw)
+    mv.save(fig, tmp_path / "s.png", dpi=100)
+    r = fig.canvas.get_renderer()
+    frame = ax.get_window_extent(r)
+    px = r.points_to_pixels(1.0)
+    xy = ns.points.get_offset_transform().transform(ns.points.get_offsets())
+    rad = np.sqrt(ns.points.get_sizes()) / 2 * px
+    for i in range(len(xy)):
+        assert frame.x0 - 1 <= xy[i, 0] - rad[i] and xy[i, 0] + rad[i] <= frame.x1 + 1
+        assert frame.y0 - 1 <= xy[i, 1] - rad[i] and xy[i, 1] + rad[i] <= frame.y1 + 1     # the row fits the plot
+        for j in range(i):
+            assert np.hypot(*(xy[i] - xy[j])) >= rad[i] + rad[j] - 0.5                    # packed, never overlapping
+    rules = {f.rule for f in mv.lint(fig, quiet=True)}
+    assert not rules & {"label-on-data", "label-overlap", "off-canvas"}, rules
+    assert ns.key.get_window_extent(r).y0 >= frame.y1
+
+
+def test_bubble_strip_area_follows_the_count_and_names_the_extremes_without_a_focus():
+    fig, ax = plt.subplots(figsize=(10, 4.2))
+    df, ns = _bubble_row(fig, ax)
+    sizes = dict(zip(ns.order, ns.points.get_sizes()))
+    hc = dict(zip(df.role, df.headcount))
+    assert sizes["Pharmacy Technician"] / sizes["Sales"] == pytest.approx(hc["Pharmacy Technician"] / hc["Sales"])
+    big3 = set(df.nlargest(3, "headcount").role)
+    ends = {df.role[df.genai_exposure_pct.idxmin()], df.role[df.genai_exposure_pct.idxmax()]}
+    assert {t.get_text() for t in ns.labels} == big3 | ends
+    with pytest.raises(ValueError, match="not in the data"):
+        mv.bubble_strip(ax, [1, 2], [3, 4], ["a", "b"], focus={"c"})

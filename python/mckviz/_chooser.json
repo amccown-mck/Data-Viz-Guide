@@ -189,16 +189,16 @@
             {
               "when": "has_size",
               "chart": "Bubble strip: position = the measure, bubble area = the count",
-              "page": "distribution",
-              "helper": null,
+              "page": "bubble-strip",
+              "helper": "mv.bubble_strip",
               "why": "shows how close the categories are and how many people each one covers",
               "only_if": "the headline is about how many people each one covers, not only the rate"
             },
             {
               "when": "very_many_categories",
               "chart": "Bubble strip with only the outliers and largest named",
-              "page": "distribution",
-              "helper": null
+              "page": "bubble-strip",
+              "helper": "mv.bubble_strip"
             }
           ],
           "avoid": "Rainbow, 3D or cut-off bars",
