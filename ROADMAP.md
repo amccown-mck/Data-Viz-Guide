@@ -6,20 +6,26 @@ Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026
 
 ## Now
 
-- **The kit:** release 1.2.0 (2026-10-18); `main` has much more since (CHANGELOG, "Unreleased"): the decision tree and `mv.suggest`, one-call builders (now including `mv.bar`, `mv.bubble` and `mv.bubble_strip`), the options page, `mckviz.office`, highlights with no fixed cap, and the agent guidance restructured by layer.
-- **The agent:** "WI Data Storytelling Agent" in Microsoft 365 Copilot ([its repo](https://github.com/amccown-mck/WI-Data-Storytelling-Agent)), version 1.0.20, shared with twelve Workforce Innovation colleagues, running `main` as of 2026-11-03. Plain-words replies and an onboarding starter (demo chart, then a numbered menu); the guide linked on SharePoint.
-- **Guidance by layer** (`AGENTS.md`, "Where agent guidance goes"): code first, then the agent's instructions (2,516 of 4,000: only what must hold with no skill loaded), the Copilot `SKILL.md` (11,107 of 14,000: the workflow plus a router to task guides), task guides, reference docs, evals. One skill (decided 2026-11-02).
-- **Last core run** (local agent, 2026-11-02): core-1 to core-4 and journey-1 passed. The three known issues of 10-27 (bar order, options-page copies, small Sankey slide) are fixed in code.
-- **Bubble charts** (2026-11-03): `mv.bubble` lays them out from the data (key above the plot, labels clear of the bubbles, PNG and slide alike) and lint warns on labels on the data; builders-4 and core-1 to core-4 passed on the local agent; on the shared agent as 1.0.17. `mv.bubble_strip` and its cookbook page followed (builders-5 and core passed on the local agent); on the shared agent as 1.0.18.
-- **Insights and annotations** (2026-11-03, shared agent 1.0.19): the slides' insights panel (numbered claims with evidence, a big number only when the headline doesn't already say it, "What it means" or a user-decided "Recommendation"), four annotations (`mv.mark`, `mv.bracket`, `mv.gap`, `mv.note`) and the task guide `references/insights.md`. slides-5 and core passed on the local agent, including a recommendation worked out with the owner.
+- **The kit:** release 1.2.0 (2026-10-18); `main` has much more since (CHANGELOG, "Unreleased"): the decision tree and `mv.suggest`, one-call builders (`mv.bar`, `mv.bubble`, `mv.bubble_strip` among them), the options page, `mckviz.office` with the insights panel and annotations, highlights with no fixed cap, and the agent guidance restructured by layer.
+- **The agent:** "WI Data Storytelling Agent" in Microsoft 365 Copilot ([its repo](https://github.com/amccown-mck/WI-Data-Storytelling-Agent)), version 1.0.21, shared with thirteen colleagues (the list is in the agent repo's `CLAUDE.md`), running `main` as of 2026-11-03.
+- **Guidance by layer** (`AGENTS.md`, "Where agent guidance goes"): code first, then the agent's instructions (2,673 of 4,000), the Copilot `SKILL.md` (11,214 of 14,000), task guides (`options`, `review`, `native-formats`, `insights`), reference docs, evals. One skill.
+- **Shipped 2026-11-03** (each passed its eval and core on the local agent):
+  - 1.0.17: bubble charts lay themselves out (`mv.bubble`, `mv.size_key`); lint warns on labels on the data.
+  - 1.0.18: the bubble strip (`mv.bubble_strip` and its cookbook page); crowded labels go on steps with leaders.
+  - 1.0.19: the insights panel (numbered claims with evidence, a big number only when the headline doesn't say it, "What it means" or a user-decided "Recommendation") and four annotations (`mv.mark`, `mv.bracket`, `mv.gap`, `mv.note`), with the task guide `references/insights.md`.
+  - 1.0.20: insight markers on line slides.
+  - 1.0.21: `savefig` and `plt.show` are safe in Copilot's sandbox (probe 4), so `SKILL.md` lost its "never savefig" line.
+- **The published guide** on SharePoint is release 1.2.0; what the next rebuild must pick up is logged in [`docs/guide-refresh.md`](docs/guide-refresh.md).
 
 ## Next
 
 One thing at a time, each checked with the one eval that covers it (the agent repo's `evals/prompts.md`). **Principle: fix with good code defaults and general tips, not rules written to pass a test.**
 
-1. **Further agent refinements** (the owner's list): chart fundamentals and the analytical thinking behind them.
-2. **The published guide, in one pass** once those land: everything it must pick up is logged in [`docs/guide-refresh.md`](docs/guide-refresh.md).
-3. **A figure left open in the notebook** (probe 4's second message ran outside the notebook, so it is untested): if it can't produce a Chart card, `SKILL.md`'s Chart-card recovery line can go too. Low priority: the habit of closing figures covers it.
+1. **The font and template on SharePoint** (planned for 2026-11-04): colleagues without Libre Franklin see a substitute font that wraps differently (Copilot's preview showed it), and the agent's links for the font and Office template point at GitHub, which colleagues can't open. The owner uploads the files; then the links and one hand-back line ("install the McKesson font from ...").
+2. **Colleague feedback page:** draft the structure (what they asked, what they got, a screenshot, a rating) for the owner to build in Loop, so real use sets the next fixes.
+3. **Further agent refinements** (the owner's list): chart fundamentals and the analytical thinking behind them.
+4. **The published guide, in one pass**, once those land.
+5. **Small follow-ups:** a figure left open in the notebook (probe 4 ran outside it): if it can't produce a Chart card, `SKILL.md`'s recovery line goes; the insights repeat check could catch near-matches (617 vs. the headline's "~620"; the owner is fine without it).
 
 ## Later
 
