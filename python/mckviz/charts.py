@@ -611,27 +611,37 @@ def size_key(ax, values: Sequence[float], area: float, *, title: str = "Bubble a
     return box
 
 
-def _overlap(bb, circles, rects, frame) -> float:
+def _overlap(bb, circles, rects, frame, own=None) -> float:
     """How badly a text box collides: pixels of bubble it covers, of other labels it covers, and of it outside the
-    plot frame. 0 means clear."""
+    plot frame. For a point's name (own = its bubble), also how much nearer it sits to another bubble than to its
+    own, so a name can't read as another point's. 0 means clear."""
     score = 0.0
+    gaps = []
     for cx, cy, r in circles:
         dx = max(bb.x0 - cx, 0, cx - bb.x1)
         dy = max(bb.y0 - cy, 0, cy - bb.y1)
-        score += max(r - math.hypot(dx, dy), 0)
+        d = math.hypot(dx, dy)
+        score += max(r - d, 0)
+        gaps.append(d - r)
     for o in rects:
         w = min(bb.x1, o.x1) - max(bb.x0, o.x0)
         h = min(bb.y1, o.y1) - max(bb.y0, o.y0)
         if w > 0 and h > 0:
             score += math.sqrt(w * h)
     score += max(frame.x0 - bb.x0, 0) + max(bb.x1 - frame.x1, 0) + max(frame.y0 - bb.y0, 0) + max(bb.y1 - frame.y1, 0)
+    if own is not None and len(gaps) > 1:
+        mine = gaps[own]
+        nearest = min(g for k, g in enumerate(gaps) if k != own)
+        score += 0.5 * max(mine - nearest, 0)
     return score
 
 
 def _placer(ax, points, jobs):
     """Place a chart's labels each time the figure is drawn, so they stay clear of the bubbles at the final size:
     mv.layout and picture slides resize the plot after the builder ran, and bubble sizes are in points, not data.
-    jobs: (text, options) pairs, placed in order; each takes its first option that collides with nothing."""
+    jobs: (text, options, own) triples, own = the index of the label's bubble in `points` (None for a zone or line
+    label). Each label first takes its earliest clear option; then each is moved, in turn, to its best option given
+    where the others sit, until nothing improves (a crowded corner gets sorted out, not just the first label)."""
     from matplotlib.artist import Artist
     from matplotlib.transforms import Bbox
 
@@ -647,19 +657,41 @@ def _placer(ax, points, jobs):
             xy = ax.transData.transform(points.get_offsets())
             circles = [(cx, cy, math.sqrt(s) / 2 * pts) for (cx, cy), s in zip(xy, points.get_sizes())]
             frame = ax.get_window_extent(renderer)
-            placed = []
-            for text, options in jobs:
+            boxes = {}                                         # (job, option) -> text box, measured once per draw
+
+            def box(k, m):
+                if (k, m) not in boxes:
+                    put(jobs[k][0], *jobs[k][1][m])
+                    boxes[k, m] = jobs[k][0].get_window_extent(renderer).expanded(1.02, 1.04)
+                return boxes[k, m]
+
+            def score(k, m, chosen):
+                others = [box(o, c) for o, c in chosen.items() if o != k]
+                return _overlap(box(k, m), circles, others, frame, jobs[k][2])
+
+            chosen = {}
+            for k, (_, options, _) in enumerate(jobs):         # first pass: the earliest clear option
                 best = None
-                for opt in options:
-                    put(text, *opt)
-                    bb = text.get_window_extent(renderer)
-                    score = _overlap(bb.expanded(1.02, 1.04), circles, placed, frame)
-                    if best is None or score < best[0] - 0.5:
-                        best = (score, opt, bb)
-                    if score <= 0.5:
+                for m in range(len(options)):
+                    s = score(k, m, chosen)
+                    if best is None or s < best[0] - 0.5:
+                        best = (s, m)
+                    if s <= 0.5:
                         break
-                put(text, *best[1])
-                placed.append(best[2])
+                chosen[k] = best[1]
+            for _ in range(4):                                 # then improve one label at a time
+                moved = False
+                for k, (_, options, _) in enumerate(jobs):
+                    now = score(k, chosen[k], chosen)
+                    if now <= 0.5:
+                        continue
+                    s, m = min((score(k, m, chosen), m) for m in range(len(options)))
+                    if s < now - 0.5:
+                        chosen[k], moved = m, True
+                if not moved:
+                    break
+            for k, m in chosen.items():
+                put(jobs[k][0], *jobs[k][1][m])
 
         def get_window_extent(self, renderer=None):
             return Bbox.null()
@@ -791,7 +823,9 @@ def bubble(ax, x: Sequence[float], y: Sequence[float], size: Sequence[float] | N
             t = ax.annotate(zone_label, (b, d), xytext=(-4, -4), textcoords="offset points", fontsize=SMALL,
                             fontweight="bold", color=C.annotation, zorder=4)
             jobs.append((t, [((b, d), (-4, -4), "right", "top"), ((a, d), (4, -4), "left", "top"),
-                             ((b, c), (-4, 4), "right", "bottom"), ((a, c), (4, 4), "left", "bottom")]))
+                             ((b, c), (-4, 4), "right", "bottom"), ((a, c), (4, 4), "left", "bottom"),
+                             ((b, d), (-4, 3), "right", "bottom"), ((a, d), (4, 3), "left", "bottom"),
+                             ((b, c), (-4, -3), "right", "top"), ((a, c), (4, -3), "left", "top")], None))
     for val, lab, horizontal in ((ref_y, ref_y_label, True), (ref_x, ref_x_label, False)):
         if val is None:
             continue
@@ -807,7 +841,7 @@ def bubble(ax, x: Sequence[float], y: Sequence[float], size: Sequence[float] | N
                         (bot, (3, 3), "left", "bottom"), (bot, (-3, 3), "right", "bottom")]
             t = ax.annotate(lab, opts[0][0], xytext=opts[0][1], textcoords="offset points", fontsize=SMALL,
                             color=C.annotation, path_effects=halo(), zorder=4)
-            jobs.append((t, opts))
+            jobs.append((t, opts, None))
 
     named = list(label) if label is not None else [v for v in nm if v in hot]
     named = {str(v) for v in named}
@@ -827,7 +861,7 @@ def bubble(ax, x: Sequence[float], y: Sequence[float], size: Sequence[float] | N
                         va=opts[0][3], fontsize=LABEL - 1 + (1 if bold else 0), fontweight=700 if bold else 400,
                         color=C.headline if bold else C.text_muted, linespacing=1.1, path_effects=halo(), zorder=5)
         texts.append(t)
-        point_jobs.append((t, opts))
+        point_jobs.append((t, opts, order.index(i)))       # its bubble's index in the drawn points
     _placer(ax, pts, point_jobs + jobs)                         # the names first, then the zone and line labels
 
     kbox = None

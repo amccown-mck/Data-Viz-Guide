@@ -684,3 +684,22 @@ def test_size_key_values_are_round_and_span_the_data():
     assert _key_values(450, 11_800) == [1_000, 5_000, 10_000]
     assert _key_values(300, 6_200) == [500, 2_000, 5_000]
     assert _key_values(4_000, 9_000) == [2_000, 5_000]                              # no key bubble far below the data
+
+
+@pytest.mark.parametrize("slide", [False, True], ids=["png", "slide"])
+def test_bubble_labels_sort_out_a_crowded_corner(tmp_path, slide):
+    """Four named bubbles packed into the shaded corner, with the zone label competing for the same space."""
+    names = ["Memphis", "Dallas", "Phoenix", "Kansas City", "Louisville", "Atlanta", "Orlando", "Sacramento",
+             "Harrisburg", "Columbus", "Reno", "Denver"]
+    span = [26, 24, 22, 25, 21, 18, 17, 15, 13, 12, 9, 10]
+    eng = [58, 61, 63, 60, 68, 70, 66, 74, 72, 78, 76, 81]
+    size = [840, 620, 410, 120, 700, 520, 450, 260, 380, 300, 90, 150]
+    fig, ax = mv.office.picture_figure() if slide else plt.subplots(figsize=(10, 5.8))
+    mv.bubble(ax, span, eng, size, names, focus=set(names[:4]), size_label="Team size", zone_x=(20, None),
+              zone_y=(None, 65), zone_label="Span over 20, engagement under 65", xlabel="Direct reports per manager",
+              ylabel="Engagement index")
+    mv.titles(fig, "All four DCs with wide spans and low engagement are large sites", "Engagement vs. span, 2026")
+    mv.source(fig, "Source: Synthetic data for illustration only")
+    mv.save(fig, tmp_path / "q.png", dpi=100)
+    rules = {f.rule for f in mv.lint(fig, quiet=True)}
+    assert not rules & {"label-on-data", "label-overlap"}, rules
