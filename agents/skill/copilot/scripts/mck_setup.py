@@ -71,8 +71,15 @@ def guard_saving(mv) -> None:
 
     def show(*args, **kwargs):
         try:
+            from IPython import get_ipython
             from IPython.display import Image, display
-        except ImportError:                                    # not a notebook: nothing to show inline
+        except ImportError:
+            get_ipython = None
+        shell = get_ipython() if get_ipython else None
+        if shell is None or not hasattr(shell, "kernel"):      # a script run outside the notebook: no chat to show in
+            print("plt.show: nothing to show a chart in here; save it with mv.save(fig, '/tmp/<name>.png') and look "
+                  "at it with mv.look")
+            plt.close("all")
             return None
         for num in plt.get_fignums():
             fig = plt.figure(num)

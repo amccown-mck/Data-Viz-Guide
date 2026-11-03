@@ -67,7 +67,7 @@ QA:           pass | exceptions: <list>
     - **matplotlib** for slides, PNG, PDF and print: `mv.highlight` for colors, `mv.titles` / `mv.source` / `mv.save` for the frame, `mv.label_bars` / `mv.label_line_ends` for labels.
     - **Copy the cookbook page's runnable snippet and change only the data, labels and focus.** The headline, subtitle and source come from `mv.titles` and `mv.source`, never `fig.text`; when a name is wrong, the error lists the right ones.
 <!-- copilot -->
-    - **Save only with `mv.save(fig, "/tmp/<name>.png", dpi=200)`**, then `plt.close(fig)`. Never `plt.savefig`, `fig.savefig` or `plt.show`: the sandbox turns them into Copilot's "Chart" card, without the house style. Plotly only for an interactive HTML file the user asks for.
+    - **Save with `mv.save(fig, "/tmp/<name>.png", dpi=200)`**, then `plt.close(fig)`. Plotly only for an interactive HTML file the user asks for.
 <!-- /copilot -->
 <!-- portable,repo -->
     - **Plotly** when the output is interactive or HTML: `mv.pl_highlight` for colors, `mv.pl_finish(fig, headline, subtitle, source_text)` for the frame, then `fig.write_html(...)`.
