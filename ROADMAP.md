@@ -1,29 +1,30 @@
 # Roadmap
 
-Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026-11-02.** This page is rewritten at the end of every working session, not added to. What happened and why: [`docs/worklog.md`](docs/worklog.md). What shipped: [`CHANGELOG.md`](CHANGELOG.md). How to build, release and extend: [`docs/maintaining.md`](docs/maintaining.md).
+Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026-11-03.** This page is rewritten at the end of every working session, not added to. What happened and why: [`docs/worklog.md`](docs/worklog.md). What shipped: [`CHANGELOG.md`](CHANGELOG.md). How to build, release and extend: [`docs/maintaining.md`](docs/maintaining.md).
 
 **The goal:** turn the kit from a "could we do this?" experiment into something any McKesson team can use, with Workforce Innovation as the first user and workforce data in the examples. The repo is the engine (tokens, rules, lint, `mckviz`, the skill); the guide, the Office kit and the Copilot agent are the products on it.
 
 ## Now
 
-- **The kit:** release 1.2.0 (2026-10-18); `main` has much more since (CHANGELOG, "Unreleased"): the decision tree and `mv.suggest`, one-call builders (now including `mv.bar`), the options page, `mckviz.office`, highlights with no fixed cap, and the agent guidance restructured by layer.
+- **The kit:** release 1.2.0 (2026-10-18); `main` has much more since (CHANGELOG, "Unreleased"): the decision tree and `mv.suggest`, one-call builders (now including `mv.bar` and `mv.bubble`), the options page, `mckviz.office`, highlights with no fixed cap, and the agent guidance restructured by layer.
 - **The agent:** "WI Data Storytelling Agent" in Microsoft 365 Copilot ([its repo](https://github.com/amccown-mck/WI-Data-Storytelling-Agent)), version 1.0.16, shared with twelve Workforce Innovation colleagues, running `main` as of 2026-11-02. Plain-words replies and an onboarding starter (demo chart, then a numbered menu); the guide linked on SharePoint.
 - **Guidance by layer** (`AGENTS.md`, "Where agent guidance goes"): code first, then the agent's instructions (2,516 of 4,000: only what must hold with no skill loaded), the Copilot `SKILL.md` (11,107 of 14,000: the workflow plus a router to task guides), task guides, reference docs, evals. One skill (decided 2026-11-02).
 - **Last core run** (local agent, 2026-11-02): core-1 to core-4 and journey-1 passed. The three known issues of 10-27 (bar order, options-page copies, small Sankey slide) are fixed in code.
+- **Bubble charts** (2026-11-03): `mv.bubble` lays them out from the data (key above the plot, labels clear of the bubbles, PNG and slide alike) and lint warns on labels on the data; builders-4 passed on the local agent. Not yet on the shared agent (needs the core run).
 
 ## Next
 
 One thing at a time, each checked with the one eval that covers it (the agent repo's `evals/prompts.md`). **Principle: fix with good code defaults and general tips, not rules written to pass a test.**
 
-1. **Legend collisions** (seen in the 11-02 core run): find which builders place a legend or key over data, and fix the default placement in code.
-2. **The published guide:** rebuild `dist/guide` and upload it to SharePoint again (the highlight wording changed on four pages).
+1. **Shared agent:** the four `core` evals on the local agent, then push `main` (with `mv.bubble`) to the shared agent.
+2. **The published guide:** rebuild `dist/guide` and upload it to SharePoint again (the highlight wording changed on four pages; the scatter cookbook page now builds with `mv.bubble`).
 3. **Fold `docs/agent-architecture.md` into `AGENTS.md`** and delete it: the migration is done apart from item 4.
 4. **The `savefig`/`show` override** in `mck_setup.py` (so a slip can't produce Copilot's Chart card): needs a sandbox probe first; only if it's simple and reliable. Then SKILL.md's "never savefig" line and the Chart-card recovery sentence go.
 
 ## Later
 
 - **The takeaways card on slides:** redesign it; the owner isn't a fan of it as built (it tends to repeat the chart's numbers).
-- **More one-call builders:** bubble strip, stacked area, treemap, Venn, parallel coordinates. Then lint for hand-built bars, stacks and tables.
+- **More one-call builders:** bubble strip (next: the same size key and label placer as `mv.bubble`), stacked area, treemap, Venn, parallel coordinates. Then lint for hand-built bars, stacks and tables.
 - **SharePoint for the rest:** the Office template and fonts (the guide is there; the release links point at a private GitHub repo colleagues can't open).
 - **Colleague feedback:** probably a Microsoft Loop page; design its structure with the owner.
 - **Release 1.3.0** of the kit with the unreleased work.

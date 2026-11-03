@@ -4,6 +4,19 @@ What happened on the kit and the WI Data Storytelling Agent, and why: findings, 
 
 At the end of a working session, add one entry at the top: the date, what was done, what was found (with the evidence, such as an eval ID or a probe), and what was decided and by whom. Keep each entry to what a person resuming the work needs; the commits hold the rest.
 
+## 2026-11-03
+
+**Done:** the legend collisions from the 11-02 core run. Bubble charts were the worst case, in the PNG and on the picture slide alike: the scatter-bubble snippet placed its size key, zone and line labels and label sides at coordinates picked for the sample data, and the agent, told to change only data, labels and focus, kept them. New `mv.bubble` (limits that hold every bubble, area in proportion to the count, the key above the plot, labels placed at draw time so they hold after `mv.layout` and on a slide) and `mv.size_key` (the bubble timeline's legend had spilled its large markers over the subtitle). New lint rules `label-on-data` and `label-overlap`. The tree, the cookbook page, the gallery and the options-page example build with `mv.bubble`. Ten merged branches deleted; branches now go once merged.
+
+**Found:**
+- The first, greedy label placer failed on the new eval's data before it reached Copilot: four named bubbles in one shaded corner left the zone label no free spot. Now each label is moved in turn to its best option given the others, and a name may not sit nearer another bubble than its own.
+- `tools/lint_charts.py` had been failing: it collected every gallery figure before linting, and each was closed by then.
+- Tick labels outside the axis range counted as off-canvas text (a false warning on picture figures).
+- The sandbox's matplotlib (3.8.4) can't be installed on this machine (Python 3.14 only), so the APIs were checked by hand; the Copilot run confirmed them.
+- builders-4 (a bubble chart on new data, then a slide) passed on the local agent.
+
+**Decided (owner):** keep feature branches tidy, deleted once merged (both repos).
+
 ## 2026-11-02
 
 **Done:** shared agent 1.0.15 (plain-words hand-back, an onboarding starter with a demo chart and a numbered menu, the guide linked on SharePoint), then the guidance rework, shipped as 1.0.16. `AGENTS.md` gained the six layers and how they stay that way; the build checks the Copilot edition's pointers, placeholders and "never" advice, and the agent repo checks the instruction budget. An inventory (`docs/agent-architecture.md`) classed every always-loaded line; the owner reviewed the eleven that came from real failures and approved them all. Code took over what prose had carried: `mv.bar` (story on top, shared with `bar_slide`), `mv.save` / `options_page` / `page_pdf` refusing `/mnt/data`, picture slides that fill the chart area, `mv.colors` and lint errors that name the fix. Then `SKILL.md` became the workflow plus a router (13,997 to 11,107) and `instruction.txt` kept only the no-skill rules (3,903 to 2,516).
