@@ -713,10 +713,10 @@ def pl_highlight(labels: Iterable, focus=None, accent=None, base: str | None = N
 
 
 from .lint import Finding, LintError, lint  # noqa: E402  (needs the names above)
-from .charts import (STATUS_ORDER, bar, big, bubble, bubble_strip, delta_label, diverging_bars, dot_plot, dumbbell, heat, hstack,  # noqa: E402
-                     key_strip, kpi_card, kpi_row, label_points, line, multiples, rank_slope, ring, roadmap, sdot, small,
-                     size_key, status, sankey, share_bar, status_column, status_key, story_order, strip, tracker,
-                     waterfall)
+from .charts import (STATUS_ORDER, bar, big, bracket, bubble, bubble_strip, delta_label, diverging_bars, dot_plot,  # noqa: E402
+                     dumbbell, gap, heat, hstack, key_strip, kpi_card, kpi_row, label_points, line, mark,
+                     multiples, note, rank_slope, ring, roadmap, sankey, sdot, share_bar, size_key, small, status,
+                     status_column, status_key, story_order, strip, tracker, waterfall)
 from .page import Option, options_page, page_pdf  # noqa: E402
 from .chooser import suggest  # noqa: E402
 from .table import Col, table  # noqa: E402
@@ -740,7 +740,7 @@ __all__ = [
     "working_path", "deliver", "clear_delivered", "look", "plotly_template", "pl_finish", "pl_highlight", "lint", "Finding", "LintError",
     # chart builders (mckviz/charts.py)
     "bar", "story_order", "line", "share_bar", "strip", "dot_plot", "sankey",
-    "bubble", "bubble_strip", "size_key", "waterfall", "hstack", "diverging_bars", "label_points", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
+    "bubble", "bubble_strip", "size_key", "mark", "bracket", "gap", "note", "waterfall", "hstack", "diverging_bars", "label_points", "dumbbell", "rank_slope", "heat", "key_strip", "big", "small", "ring", "kpi_card",
     "kpi_row", "delta_label", "sdot", "status", "status_key", "status_column", "tracker", "roadmap", "multiples",
     "STATUS_ORDER",
     # tables, the decision tree, options pages

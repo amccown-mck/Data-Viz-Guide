@@ -1079,6 +1079,245 @@ def bubble_strip(ax, values: Sequence[float], sizes: Sequence[float], names: Seq
     return SimpleNamespace(points=pts, labels=texts, key=kbox, area=area, order=[nm[i] for i in order])
 
 
+# ------------------------------------------------------------------ ANNOTATIONS
+# Four, each one call, used only where they help: a number marker tying a point to an insight on the slide, a bracket
+# stating what a group adds up to, a gap between two values, and a short note on one point. They are placed each time
+# the figure is drawn, clear of the bars, bubbles, lines and labels already there, so they hold at the final size.
+MARK_PT = 9                                     # the number in a marker
+NOTE_PT = SMALL + 1                             # 10 pt: notes, bracket and gap labels
+
+
+def _annotations(ax):
+    """The axes' annotation placer, made on first use: a draw-time artist that positions every annotation."""
+    reg = getattr(ax, "_mck_notes", None)
+    if reg is not None:
+        return reg
+    from matplotlib.artist import Artist
+    from matplotlib.collections import PathCollection
+    from matplotlib.patches import Rectangle
+    from matplotlib.transforms import Bbox
+
+    reg = SimpleNamespace(jobs=[], before=[], count=0)
+
+    def obstacles(renderer, own):
+        pts = renderer.points_to_pixels(1.0)
+        circles, rects = [], []
+        for coll in ax.collections:                             # scatter markers and bubbles
+            if isinstance(coll, PathCollection) and coll.get_visible() and len(coll.get_offsets()):
+                xy = coll.get_offset_transform().transform(coll.get_offsets())
+                sizes = coll.get_sizes()
+                sizes = sizes if len(sizes) == len(xy) else [sizes[0]] * len(xy)
+                circles += [(x, y, math.sqrt(s) / 2 * pts) for (x, y), s in zip(xy, sizes) if s > 0]
+        for p in ax.patches:                                    # bars (not shaded zones, drawn under everything)
+            if isinstance(p, Rectangle) and p.get_visible() and p.get_fill() and p.get_zorder() >= 1:
+                rects.append(p.get_window_extent(renderer))
+        for ln in ax.get_lines():                               # lines, sampled every few pixels
+            if not ln.get_visible() or ln.get_linestyle() in ("None", "none", "") or ln in own:
+                continue
+            xy = ln.get_transform().transform(np.column_stack(ln.get_data(orig=False)))
+            for (x0, y0), (x1, y1) in zip(xy[:-1], xy[1:]):
+                k = max(int(math.hypot(x1 - x0, y1 - y0) / 6), 1)
+                circles += [(x0 + (x1 - x0) * j / k, y0 + (y1 - y0) * j / k, 2.5) for j in range(k + 1)]
+        for t in ax.texts:                                      # labels already on the chart
+            if t.get_visible() and t.get_text().strip() and t not in own:
+                rects.append(_text_box(t, renderer))
+        return circles, rects
+
+    class Placer(Artist):
+        def draw(self, renderer):
+            for step in reg.before:                             # geometry that follows the labels (brackets)
+                step(renderer)
+            own = {j[0] for j in reg.jobs} | {x for j in reg.jobs for x in j[2]}
+            circles, rects = obstacles(renderer, own)
+            frame = ax.get_window_extent(renderer)
+            for text, options, _ in reg.jobs:
+                best = None
+                for opt in options:
+                    _put(text, *opt)
+                    bb = _text_box(text, renderer)
+                    s = _overlap(bb.expanded(1.04, 1.1), circles, rects, frame)
+                    if best is None or s < best[0] - 0.5:
+                        best = (s, opt, bb)
+                    if s <= 0.5:
+                        break
+                _put(text, *best[1])
+                rects.append(best[2])
+
+        def get_window_extent(self, renderer=None):
+            return Bbox.null()
+
+    p = Placer()
+    p.set_in_layout(False)
+    p.set_zorder(-99)                                           # after the builders' own label placers
+    ax.add_artist(p)
+    ax._mck_notes = reg
+    return reg
+
+
+def _put(text, anchor, off, ha, va, leader=False, relpos=(0.5, 0.5)):
+    text.xy = anchor
+    text.set_position(off)
+    text.set_ha(ha)
+    text.set_va(va)
+    if getattr(text, "arrow_patch", None) is not None:
+        text.arrow_patch.set_visible(leader)
+        text._arrow_relpos = relpos
+
+
+def _target(ax, target, chart):
+    """Resolve what an annotation points at: an (x, y) in data, a Text (a label), or a name in a builder's result
+    (a bar of mv.bar; a bubble of mv.bubble or mv.bubble_strip). Returns (kind, value, radius_pt)."""
+    from matplotlib.text import Text
+
+    if isinstance(target, Text):
+        return "text", target, 0.0
+    if isinstance(target, str):
+        if chart is None or not hasattr(chart, "order"):
+            raise ValueError(f"{target!r}: pass chart= (what mv.bar, mv.bubble or mv.bubble_strip returned) to find "
+                             "it by name, or give the point as (x, y)")
+        if target not in chart.order:
+            raise ValueError(f"{target!r} is not on the chart: {', '.join(chart.order)}")
+        i = chart.order.index(target)
+        if hasattr(chart, "bars"):                              # mv.bar: the value label at the bar's end
+            return "text", chart.labels[i], 0.0
+        xy = chart.points.get_offsets()[i]
+        return "point", (tuple(xy), chart.points.get_offset_transform()), math.sqrt(chart.points.get_sizes()[i]) / 2
+    x, y = target
+    return "point", ((float(x), float(y)), ax.transData), 0.0
+
+
+def _ring(r, rings=(0, 14, 30), leader_from=1):
+    """Spots around a point, nearest first: beside, above, below and the diagonals, ring by ring outwards."""
+    out = []
+    for k, extra in enumerate(rings):
+        d, q = r + 4 + extra, 0.72 * (r + extra) + 3
+        lead = k >= leader_from
+        out += [((d, 0), "left", "center", lead), ((-d, 0), "right", "center", lead),
+                ((0, d), "center", "bottom", lead), ((0, -d), "center", "top", lead),
+                ((q, q), "left", "bottom", lead), ((-q, q), "right", "bottom", lead),
+                ((q, -q), "left", "top", lead), ((-q, -q), "right", "top", lead)]
+    return out
+
+
+def mark(ax, n: int, target, *, chart=None):
+    """A number marker on the chart, the same number as the insight it backs on the slide (office insights): a small
+    navy circle with a white number.
+
+        ns = mv.bar(ax, df.job_family, df.rate, focus=focus, fmt="{:.1f}%")
+        mv.mark(ax, 1, "Pharmacy Technician", chart=ns)        # after that bar's value label
+        mv.mark(ax, 2, (2023.5, 41.0))                         # or beside a point, in data coordinates
+
+    target: a name on `chart` (what mv.bar, mv.bubble or mv.bubble_strip returned), a label (a Text), or (x, y).
+    Placed clear of the data when the figure is drawn. Returns the marker's Text."""
+    kind, where, r = _target(ax, target, chart)
+    style = dict(fontsize=MARK_PT, fontweight=700, color="white", zorder=7,
+                 bbox=dict(boxstyle="circle,pad=0.28", fc=C.headline, ec="none"))
+    reg = _annotations(ax)
+    if kind == "text":                                          # just after the label it belongs to
+        t = ax.annotate(str(n), (1, 0.5), xycoords=where, xytext=(9, 0), textcoords="offset points", ha="center",
+                        va="center", annotation_clip=False, **style)
+    else:
+        (xy, tr), opts = where, _ring(r + 2, rings=(0, 10), leader_from=9)
+        t = ax.annotate(str(n), xy, xycoords=tr, xytext=opts[0][0], textcoords="offset points", **style)
+        reg.jobs.append((t, [(xy, *o) for o in opts], ()))
+    reg.count += 1
+    return t
+
+
+def note(ax, target, text: str, *, chart=None):
+    """A short note on one bar, point or period, with a hairline leader to it ("Hiring freeze, Q3"; "New pay
+    range"): for what the data can't say itself. Placed clear of the data and the labels when the figure is drawn.
+
+        mv.note(ax, (2024.25, 18.2), "Hiring freeze announced")
+        mv.note(ax, "Customer Care", "Includes the 2025 transfer", chart=ns)
+
+    target: (x, y) in data, a name on `chart`, or a label (Text). Keep it to a few words. Returns the note's Text."""
+    kind, where, r = _target(ax, target, chart)
+    if kind == "text":
+        lab = where
+        t = ax.annotate(text, (1, 0.5), xycoords=lab, xytext=(14, 0), textcoords="offset points", ha="left",
+                        va="center", fontsize=NOTE_PT, color=C.annotation, path_effects=halo(), zorder=6,
+                        annotation_clip=False)
+    else:
+        (xy, tr) = where
+        opts = _ring(r, rings=(10, 24, 40), leader_from=0)
+        t = ax.annotate(text, xy, xycoords=tr, xytext=opts[0][0], textcoords="offset points", fontsize=NOTE_PT,
+                        color=C.annotation, path_effects=halo(), zorder=6, linespacing=1.15,
+                        arrowprops=dict(arrowstyle="-", color=C.axis, lw=0.6, shrinkA=1, shrinkB=r + 2))
+        _annotations(ax).jobs.append((t, [(xy, *o) for o in opts], ()))
+    _annotations(ax).count += 1
+    return t
+
+
+def gap(ax, a, b, text: str):
+    """The difference between two values, as a thin span with end ticks and its label beside it ("+5.2 pts",
+    "2.1x"): between two lines at one x, two columns, or a point and its target.
+
+        mv.gap(ax, (x, us), (x, market), "-6.3 pts")           # same x: a vertical span, label to the side
+        mv.gap(ax, (2.0, y), (5.5, y), "3.5 years")            # same y: a horizontal span, label above
+
+    a, b: (x, y) in data. Returns SimpleNamespace(span, label)."""
+    (x0, y0), (x1, y1) = (tuple(map(float, a)), tuple(map(float, b)))
+    span = ax.annotate("", (x1, y1), xytext=(x0, y0), arrowprops=dict(
+        arrowstyle="|-|,widthA=0.25,widthB=0.25", color=C.annotation, lw=0.75, shrinkA=0, shrinkB=0), zorder=6)
+    mid = ((x0 + x1) / 2, (y0 + y1) / 2)
+    if x0 == x1:                                                # a vertical span: the label to its side
+        opts = [(mid, (6, 0), "left", "center"), (mid, (-6, 0), "right", "center")]
+    else:
+        opts = [(mid, (0, 5), "center", "bottom"), (mid, (0, -5), "center", "top")]
+    t = ax.annotate(text, mid, xytext=opts[0][1], textcoords="offset points", ha=opts[0][2], va=opts[0][3],
+                    fontsize=NOTE_PT, fontweight=600, color=C.headline, path_effects=halo(), zorder=6)
+    reg = _annotations(ax)
+    reg.jobs.append((t, opts, (span,)))
+    reg.count += 1
+    return SimpleNamespace(span=span, label=t)
+
+
+def bracket(ax, chart, names: Iterable[str], text: str):
+    """A bracket beside a group of bars, saying what they add up to ("73% of all voluntary exits"): drawn just right
+    of the group's value labels, with the text beside it. The axis widens to make room.
+
+        ns = mv.bar(ax, df.job_family, df.rate, focus=top2, fmt="{:.1f}%")
+        mv.bracket(ax, ns, top2, f"{share:.0f}% of all\\nvoluntary exits")
+
+    chart: what mv.bar returned; names: two or more of its bars, next to each other. Returns the label's Text."""
+    from matplotlib.lines import Line2D
+    from matplotlib.transforms import IdentityTransform
+
+    if not hasattr(chart, "bars"):
+        raise ValueError("bracket groups bars: pass what mv.bar returned")
+    rows = sorted(chart.order.index(n) for n in names) if all(n in chart.order for n in names) else None
+    if rows is None:
+        raise ValueError(f"not all of {list(names)} are on the chart: {', '.join(chart.order)}")
+    if len(rows) < 2 or rows != list(range(rows[0], rows[-1] + 1)):
+        raise ValueError("a bracket spans two or more bars next to each other")
+    fig = ax.figure
+    width_pt = max(_text_width_pt(ax, line, NOTE_PT, 600) for line in text.split("\n")) + 22
+    x0, x1 = ax.get_xlim()
+    w_pt = ax.get_position().width * fig.get_figwidth() * 72
+    ax.set_xlim(x0, x1 + (x1 - x0) * width_pt / max(w_pt - width_pt, 1))     # room for the bracket and its text
+    line = Line2D([], [], color=C.annotation, lw=0.75, transform=IdentityTransform(), zorder=6, clip_on=False)
+    line.set_gid("mck-annotation")                             # lint reads it as a mark, not a data line
+    ax.add_line(line)
+    t = ax.annotate(text, (0, 0), xycoords="figure pixels", xytext=(0, 0), textcoords="offset points", ha="left",
+                    va="center", fontsize=NOTE_PT, fontweight=600, color=C.headline, linespacing=1.15, zorder=6,
+                    annotation_clip=False)
+
+    def place(renderer):
+        px = renderer.points_to_pixels(1.0)
+        bars = [chart.bars[i].get_window_extent(renderer) for i in rows]
+        labels = [_text_box(chart.labels[i], renderer) for i in rows]
+        x = max(b.x1 for b in bars + labels) + 5 * px
+        top, bottom = max(b.y1 for b in bars), min(b.y0 for b in bars)
+        tick = 4 * px
+        line.set_data([x, x + tick, x + tick, x], [top, top, bottom, bottom])
+        t.xy = (x + tick + 4 * px, (top + bottom) / 2)
+
+    reg = _annotations(ax)
+    reg.before.append(place)
+    reg.count += 1
+    return t
+
 # ------------------------------------------------------------------ RANK SLOPE
 def rank_slope(ax, names: Sequence[str], before: Sequence[int], after: Sequence[int], *, focus: Iterable[str] = (),
                worse: Iterable[str] = (), headers: tuple[str, str] = ("Before", "After"), nums: bool = True,

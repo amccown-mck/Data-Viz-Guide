@@ -423,6 +423,8 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
             if im.get_visible():
                 used.extend(_image_colors(im))
         for ln in ax.get_lines():
+            if ln.get_gid() == "mck-annotation":               # a bracket: drawn by mv.bracket, not data
+                continue
             if ln.get_visible() and ln.get_linestyle() not in ("None", "none", ""):
                 h = _hex(ln.get_color())
                 if h:
@@ -480,6 +482,10 @@ def _lint_matplotlib(fig, headline, subtitle, source) -> list[Finding]:
         wedges = [p for p in ax.patches if isinstance(p, Wedge)]
         if len(wedges) > 5:
             out.append(Finding("error", "pie-max-5", f"{len(wedges)} pie/donut segments; use ≤ 5 or a sorted bar"))
+        notes = getattr(getattr(ax, "_mck_notes", None), "count", 0)
+        if notes > 3:
+            out.append(Finding("warn", "annotations", f"{notes} annotations on one chart compete for the eye: keep the "
+                                                      "one or two that carry the headline (less is more)"))
         leg = ax.get_legend()
         if leg is not None and leg.get_visible():
             n = len(leg.get_texts())

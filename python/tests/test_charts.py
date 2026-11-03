@@ -752,3 +752,76 @@ def test_bubble_strip_area_follows_the_count_and_names_the_extremes_without_a_fo
     assert {t.get_text() for t in ns.labels} == big3 | ends
     with pytest.raises(ValueError, match="not in the data"):
         mv.bubble_strip(ax, [1, 2], [3, 4], ["a", "b"], focus={"c"})
+
+
+def _attrition_bar(ax):
+    import pandas as pd
+
+    df = pd.read_csv(DATA / "attrition_by_job_family.csv")
+    top2 = ["Pharmacy Technician", "Distribution Center Associate"]
+    ns = mv.bar(ax, df.job_family, df.vol_attrition_pct, focus=set(top2), benchmark=19.9,
+                benchmark_label="Enterprise 19.9%", fmt="{:.1f}%")
+    return ns, top2
+
+
+def _frame(fig, tmp_path):
+    mv.titles(fig, "Two frontline job families lose about 1 in 4 people a year", "Attrition by job family, FY26 (%)")
+    mv.source(fig, "Source: Synthetic data for illustration only")
+    mv.save(fig, tmp_path / "a.png", dpi=100)
+    fig.canvas.draw()                                          # annotations are placed again at the screen dpi
+    return fig.canvas.get_renderer()
+
+
+def test_bracket_sits_right_of_its_bars_labels_and_spans_them(tmp_path):
+    fig, ax = plt.subplots(figsize=(10, 5.6))
+    ns, top2 = _attrition_bar(ax)
+    label = mv.bracket(ax, ns, top2, "73% of all\nvoluntary exits")
+    r = _frame(fig, tmp_path)
+    line = next(ln for ln in ax.get_lines() if ln.get_gid() == "mck-annotation")
+    xs, ys = line.get_data()
+    labels = [ns.labels[ns.order.index(n)].get_window_extent(r) for n in top2]
+    bars = [ns.bars[ns.order.index(n)].get_window_extent(r) for n in top2]
+    assert min(xs) > max(b.x1 for b in labels)                              # after the value labels
+    assert max(ys) == pytest.approx(max(b.y1 for b in bars)) and min(ys) == pytest.approx(min(b.y0 for b in bars))
+    assert label.get_window_extent(r).x1 <= ax.get_window_extent(r).x1 + 2   # the axis made room for the text
+    rules = {f.rule for f in mv.lint(fig, quiet=True)}
+    assert not rules & {"x-repeats", "label-overlap", "label-on-data", "off-canvas"}, rules
+    with pytest.raises(ValueError, match="next to each other"):
+        mv.bracket(ax, ns, ["Pharmacy Technician", "Finance"], "x")
+
+
+def test_marks_and_notes_find_their_target_and_keep_clear(tmp_path):
+    fig, ax = plt.subplots(figsize=(10, 5.6))
+    ns, _ = _attrition_bar(ax)
+    m = mv.mark(ax, 1, "Pharmacy Technician", chart=ns)
+    n = mv.note(ax, (14.2, 3), "Includes the 2025 transfer")
+    r = _frame(fig, tmp_path)
+    lab = ns.labels[0].get_window_extent(r)
+    mb = m.get_window_extent(r)
+    assert mb.x0 >= lab.x1 and abs((mb.y0 + mb.y1) / 2 - (lab.y0 + lab.y1) / 2) < 2       # just after the label
+    assert n.arrow_patch is not None
+    rules = {f.rule for f in mv.lint(fig, quiet=True)}
+    assert not rules & {"label-overlap", "label-on-data"}, rules
+    with pytest.raises(ValueError, match="not on the chart"):
+        mv.mark(ax, 2, "Nobody", chart=ns)
+    with pytest.raises(ValueError, match="pass chart="):
+        mv.note(ax, "Pharmacy Technician", "x")
+
+
+def test_gap_spans_two_values_with_its_label_beside(tmp_path):
+    fig, ax = plt.subplots(figsize=(10, 5.6))
+    mv.line(ax, ["Q1", "Q2", "Q3", "Q4"], {"Us": [20, 21, 22, 24], "Market": [18, 18, 19, 19]}, focus={"Us"})
+    g = mv.gap(ax, (3.2, 24), (3.2, 19), "+5 pts")
+    r = _frame(fig, tmp_path)
+    span = g.span.arrow_patch.get_window_extent(r)
+    assert g.label.get_window_extent(r).x0 >= span.x1 - 1 or g.label.get_window_extent(r).x1 <= span.x0 + 1
+
+
+def test_too_many_annotations_warn_that_less_is_more():
+    fig, ax = plt.subplots()
+    ns, top2 = _attrition_bar(ax)
+    for i, nm in enumerate(ns.order[:4], 1):
+        mv.mark(ax, i, nm, chart=ns)
+    mv.titles(fig, "Two frontline job families lose about 1 in 4 people a year", "Attrition by job family, FY26 (%)")
+    mv.source(fig, "Source: Synthetic data for illustration only")
+    assert "annotations" in {f.rule for f in mv.lint(fig, quiet=True)}

@@ -306,8 +306,22 @@ def _check_insights(insights, implication, big, shown) -> list[tuple[str, str, s
     return items
 
 
+MARKER = 0.24                                              # a number marker on the chart (in)
+
+
+def _marker(target, x, y, n, name) -> None:
+    """A navy circle with a white number, centred on (x, y): ties a point on the chart to its insight."""
+    dot = shape(target, MSO_SHAPE.OVAL, x - MARKER / 2, y - MARKER / 2, MARKER, MARKER, C.headline, name=name)
+    shape_text(dot, str(n), 10, "#FFFFFF", font=FONT, bold=True)
+
+
+def _marked(insights) -> set[str]:
+    """The names the insights put a marker on (their `at`)."""
+    return {str(it[2]) for it in insights or () if not isinstance(it, str) and len(it) == 3 and it[2] is not None}
+
+
 def insights_panel(slide, insights, *, implication: str | None = None, big: tuple[str, str] | None = None,
-                   title: str = "Key insights", shown: Iterable[str] = ()):
+                   title: str = "Key insights", shown: Iterable[str] = (), anchors: dict | None = None):
     """Chart + insights: the right third of the slide (TAKE_LEFT, TAKE_W) beside a two-thirds chart, top-aligned with
     the plot, in the quiet consulting style: a small capitals label over a navy hairline, no box, no fill.
 
@@ -317,8 +331,18 @@ def insights_panel(slide, insights, *, implication: str | None = None, big: tupl
         on the chart, at that bar or point (native slides). implication: an optional last item under "What it means": what the finding
         means for the business, from the data, never a recommendation. big: (number, caption) at the top, only when
         one derived number is the whole point ("73%", "of voluntary exits come from two job families").
-    shown: the labels the chart carries; an insight that only repeats them raises a warning. Returns the group."""
+    shown: the labels the chart carries; an insight that only repeats them raises a warning. anchors: {name: (x, y)}
+    where each bar's marker goes (the slide builders pass it). Returns the group."""
     items = _check_insights(insights, implication, big, shown)
+    for i, (_, _, at) in enumerate(items, 1):
+        if at is None:
+            continue
+        if anchors is None:
+            raise ValueError(f"insight {i}: this slide type can't place a marker yet (at={at!r}). On a picture slide, "
+                             "put it on the figure with mv.mark(ax, n, ...); on bar and column slides, at= names a bar")
+        if at not in anchors:
+            raise ValueError(f"insight {i}: at={at!r} is not a bar on the chart: {', '.join(anchors)}")
+        _marker(slide, *anchors[at], i, f"Marker {i}: {at}")
     x, w = TAKE_LEFT, TAKE_W
     numbered = len(items) > 1 or any(at for *_, at in items)    # one insight alone needs no number
     mark, gap_x = (0.30, 0.14) if numbered else (0.0, 0.0)    # number marker, and the gap before the text
@@ -676,7 +700,7 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
               subtitle: str | None = None, footnote: str | None = None, focus: Iterable[str] = (),
               accent: str | None = None, benchmark: float | None = None, benchmark_label: str | None = None,
               fmt="{:,.0f}", sort: bool | str = True, insights: Sequence[tuple] | None = None, implication: str | None = None,
-              big: tuple[str, str] | None = None, takeaways=None,
+              big: tuple[str, str] | None = None, takeaways=None, bracket: tuple | None = None,
               alt: str | None = None, notes: str | None = None):
     """A ranking as a native, editable horizontal bar chart on a slide: bars sorted with the story on top, grey
     context with the headline's bars in McKesson Blue (navy for one accent), the value at
@@ -692,7 +716,8 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     True puts the story on top: largest first, or smallest first when the highlighted bars are the small ones (a
     "lagging" or "lowest" headline); "descending" / "ascending" force the order; False keeps the given order (a
     natural order). insights, implication, big: the insights panel in the right third (insights_panel); the chart
-    then takes two-thirds. alt: the chart's alt text (default: the headline). Values must
+    then takes two-thirds; an insight's `at` puts its number marker after that bar's label. bracket: (names, text),
+    a bracket beside two or more adjacent bars saying what they add up to ("73% of all\nvoluntary exits"). alt: the chart's alt text (default: the headline). Values must
     be zero or more (bars start at zero; use a diverging bar for signed changes). Returns SimpleNamespace(slide,
     chart, order, x_max, inside).
     """
@@ -724,7 +749,16 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     plot_in = pw * fw
     texts = [_fmt(fmt, v) for v in vals]
     lab_w = [text_width(t, LABEL_PT, "Bold" if n in hot else "Medium") for n, t in zip(names, texts)]
-    x_max = max(v * plot_in / (plot_in - LABEL_PAD - lw - 0.05) for v, lw in zip(vals, lab_w))
+    marked = _marked(insights)
+    rows, bw = [], 0.0
+    if bracket is not None:
+        b_names, b_text = bracket
+        rows = sorted(names.index(str(n)) for n in b_names if str(n) in names)
+        if len(rows) != len(list(b_names)) or len(rows) < 2 or rows != list(range(rows[0], rows[-1] + 1)):
+            raise ValueError("bracket: (names, text) with two or more bars that sit next to each other once sorted")
+        bw = max(text_width(s, NOTE_PT, "SemiBold") for s in b_text.split("\n")) + 0.26
+    extra = [(MARKER + 0.08 if n in marked else 0) + (bw if i in rows else 0) for i, n in enumerate(names)]
+    x_max = max(v * plot_in / (plot_in - LABEL_PAD - lw - e - 0.05) for v, lw, e in zip(vals, lab_w, extra))
     if benchmark is not None:
         x_max = max(x_max, benchmark * 1.03)
     x_max = x_max or 1.0
@@ -789,8 +823,31 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
         slide.notes_slide.notes_text_frame.text += (
             f"\n\nThe dashed benchmark line is a drawn shape at {_fmt(fmt, benchmark)} on an axis of 0 to "
             f"{_fmt(fmt, x_max)} (Format Axis › Maximum). If the benchmark or the axis changes, move the line.")
+    fl, ft, fh = (Emu(v).inches for v in (frame.left, frame.top, frame.height))
+    band = fh * ph / len(names)
+    ends = []                                                   # where each bar's label (and marker) ends, and its row
+    anchors = {}
+    for i, (n, v, lw) in enumerate(zip(names, vals, lab_w)):
+        end = fl + fw * px + v * to_in
+        right = end + 0.05 if n in inside else end + LABEL_PAD + lw
+        y = ft + fh * PLOT_Y + (i + 0.5) * band
+        if n in marked:
+            anchors[n] = (right + 0.06 + MARKER / 2, y)
+            right += 0.06 + MARKER
+        ends.append((right, y))
+    if rows:
+        x = max(ends[i][0] for i in rows) + 0.08
+        half = band * 50 / (100 + BAND_GAP)                     # half a bar's height
+        top, bottom = ends[rows[0]][1] - half, ends[rows[-1]][1] + half
+        for x1, y1, x2, y2 in ((x, top, x + 0.06, top), (x + 0.06, top, x + 0.06, bottom), (x, bottom, x + 0.06, bottom)):
+            line_shape(slide, x1, y1, x2, y2, C.annotation, dash=False, name="Bracket")
+        lines = bracket[1].split("\n")
+        h = len(lines) * 0.19
+        text_box(slide, x + 0.14, (top + bottom) / 2 - h / 2, bw, h, bracket[1], NOTE_PT, C.headline, font=SEMI,
+                 anchor=MSO_ANCHOR.MIDDLE, name="Bracket label")
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, vals))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=anchors,
+                       shown=_shown(slide, vals))
     return SimpleNamespace(slide=slide, chart=chart, order=names, x_max=x_max, inside=inside)
 
 
@@ -835,7 +892,8 @@ def column_slide(prs, labels: Sequence[str], values: Sequence[float], *, headlin
     if (widest := max(text_width(n, TICK_PT) for n in names)) > 0.95 * band:
         warnings.warn(f"category labels up to {widest:.1f} in wide don't fit a {band:.1f} in column and will wrap; "
                       "shorten them or use bar_slide", stacklevel=2)
-    y_max = max(vals) * plot_h / (plot_h - LABEL_PAD - LINE_H - 0.05)
+    room = [MARKER + 0.08 if n in _marked(insights) else 0 for n in names]
+    y_max = max(v * plot_h / (plot_h - LABEL_PAD - LINE_H - r - 0.05) for v, r in zip(vals, room))
     if benchmark is not None:
         y_max = max(y_max, benchmark * 1.05)
     y_max = y_max or 1.0
@@ -896,8 +954,19 @@ def column_slide(prs, labels: Sequence[str], values: Sequence[float], *, headlin
         slide.notes_slide.notes_text_frame.text += (
             f"\n\nThe dashed benchmark line is a drawn shape at {_fmt(fmt, benchmark)} on an axis of 0 to "
             f"{_fmt(fmt, y_max)} (Format Axis › Maximum). If the benchmark or the axis changes, move the line.")
+    anchors = {}
+    marked = _marked(insights)
+    if marked:
+        fl, ft, _, fh = _frame_in(frame)
+        left, step = fl + fw * px, fw * pw / len(names)
+        for i, (n, v) in enumerate(zip(names, vals)):
+            if n in marked:
+                top = ft + fh * (PLOT_Y + PLOT_H) - v * to_in
+                above = top - 0.05 if n in inside else top - LABEL_PAD - LINE_H
+                anchors[n] = (left + (i + 0.5) * step, above - 0.06 - MARKER / 2)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, vals))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=anchors,
+                       shown=_shown(slide, vals))
     return SimpleNamespace(slide=slide, chart=chart, y_max=y_max, inside=inside)
 
 
@@ -1127,7 +1196,7 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
         text_box(slide, xc + 0.06, top, 1.0, LINE_H, "Forecast", NOTE_PT, C.text_muted, name="Forecast label",
                  wrap=False)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, [v for vs in data_in.values() for v in vs]))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=_shown(slide, [v for vs in data_in.values() for v in vs]))
     return SimpleNamespace(slide=slide, chart=chart, order=names, colors=color, y_range=(lo, hi))
 
 
@@ -1273,7 +1342,7 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
             text_box(slide, bx, cy - LINE_H / 2, reserve, LINE_H, t, LABEL_PT - 1, C.text_muted, anchor=MSO_ANCHOR.MIDDLE,
                      name=f"Base: {cats[i]}", wrap=False)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, [v for _, vs in items for v in vs]))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=_shown(slide, [v for _, vs in items for v in vs]))
     return SimpleNamespace(slide=slide, chart=chart, order=[nm for nm, _ in items], colors=colors)
 
 
@@ -1414,7 +1483,7 @@ def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: S
                 line_shape(slide, cx - bar_w / 2 - 0.03, y0 + dy + 0.05, cx + bar_w / 2 + 0.03, y0 + dy - 0.05,
                            "#FFFFFF", width_pt=2.5, dash=False, name="Axis break")
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, vals))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=_shown(slide, vals))
     return SimpleNamespace(slide=slide, chart=chart, tops=tops, ends=ends, colors=cols, y_range=(lo, hi))
 
 
@@ -1547,7 +1616,7 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
                  anchor=MSO_ANCHOR.MIDDLE, wrap=False)
         kx += d + 0.06 + tw + 0.25
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, a + b))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=_shown(slide, a + b))
     return SimpleNamespace(slide=slide, chart=chart, flagged=np.array(flagged), gaps=np.array(gaps),
                            x_range=(x_min, x_max))
 
@@ -1653,5 +1722,5 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
     pic.name = "Chart"
     pic._element.nvPicPr.cNvPr.set("descr", alt or headline)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, shown=shown)
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=shown)
     return SimpleNamespace(slide=slide, picture=pic)

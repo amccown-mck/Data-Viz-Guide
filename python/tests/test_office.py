@@ -622,3 +622,19 @@ def test_save_once_with_the_headline_as_title(tmp_path):
 def test_most_bars_highlighted_warns_instead_of_refusing():
     with pytest.warns(UserWarning, match="3 of 3 items highlighted"):
         office.bar_slide(office.deck(), ["A", "B", "C"], [1, 2, 3], focus={"A", "B", "C"}, headline="h", source="s")
+
+
+def test_insight_markers_sit_after_their_bars_and_a_bracket_spans_its_group():
+    r = bar(insights=[("Two families account for most exits", "73% of exits, from 58% of headcount", "Pharmacy Technician"),
+                      ("Customer Care is the one to watch", "Just under the enterprise rate", "Customer Care")],
+            bracket=(["Pharmacy Technician", "Distribution Center Associate"], "73% of all\nvoluntary exits"))
+    names = [s.name for s in r.slide.shapes]
+    assert "Marker 1: Pharmacy Technician" in names and "Marker 2: Customer Care" in names
+    assert names.count("Bracket") == 3 and "Bracket label" in names
+    frame = next(s for s in r.slide.shapes if s.has_chart)
+    right = Emu(frame.left + frame.width).inches
+    for s in r.slide.shapes:
+        if s.name.startswith("Marker") or s.name.startswith("Bracket"):
+            assert Emu(s.left + s.width).inches <= right + 0.05            # inside the chart's two-thirds
+    with pytest.raises(ValueError, match="is not a bar on the chart"):
+        bar(insights=[("A claim", "Its evidence", "Nobody"), ("B claim", "More evidence")])
