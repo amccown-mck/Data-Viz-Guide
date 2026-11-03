@@ -333,8 +333,8 @@ def insights_panel(slide, insights, *, implication: str | tuple | None = None, b
 
     insights: one to three (claim, evidence) pairs, or (claim, evidence, at): the claim a bold navy line (two at
         most) that says something the chart doesn't show on its own (what the bars add up to, a comparison, a cause),
-        the evidence one to three lines under it. `at` names the bar or column the insight is about, and puts its
-        number there (native bar and column slides; on a picture, mv.mark on the figure). The insights are numbered
+        the evidence one to three lines under it. `at` names the bar, column or line the insight is about, and puts its
+        number there (native bar, column and line slides; on a picture, mv.mark on the figure). The insights are numbered
         only when every one has its marker on the chart; otherwise none is, since a number with no match on the chart
         reads as a mistake. implication: an optional last item under "What it means": what the finding means for the
         business, from the data. A recommendation is the user's call: once they have worked one out with you, pass
@@ -353,9 +353,10 @@ def insights_panel(slide, insights, *, implication: str | tuple | None = None, b
     for i, at in enumerate(ats, 1):
         if at is not None and anchors is None:
             raise ValueError(f"insight {i}: this slide type can't place a marker yet (at={at!r}). On a picture slide, "
-                             "put it on the figure with mv.mark(ax, n, ...); on bar and column slides, at= names a bar")
+                             "put it on the figure with mv.mark(ax, n, ...); on bar, column and line slides, at= names a bar or line")
         if at is not None and at not in anchors:
-            raise ValueError(f"insight {i}: at={at!r} is not a bar on the chart: {', '.join(anchors)}")
+            raise ValueError(f"insight {i}: at={at!r} is not on the chart (a bar, column or line): "
+                             f"{', '.join(anchors)}")
     marked = set(marked)
     if any(ats):                                                # numbered only if every insight has its marker
         numbered = all(ats)
@@ -1144,8 +1145,10 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
     # label; the first and last periods sit on the plot's edges.
     tick_w = max(text_width(_fmt(tick_fmt, t), TICK_PT) for t in ticks)
     end_w = {nm: text_width(t, LABEL_PT, "Bold" if nm in strong else "Medium") for nm, _, _, t in ends}
+    marked = _marked(insights)                                  # lines an insight's number marker goes after
+    room = {nm: w + (0.14 + MARKER if nm in marked else 0) for nm, w in end_w.items()}
     px = (tick_w + 0.2) / fw
-    pw = 1 - px - (max(end_w.values()) + LABEL_PAD + 0.1) / fw
+    pw = 1 - px - (max(room.values()) + LABEL_PAD + 0.1) / fw
     plot_w, plot_h = pw * fw, PLOT_H * CHART_H
     if pw < 0.45:
         warnings.warn("the end labels take over half the chart's width; shorten the series names", stacklevel=2)
@@ -1169,6 +1172,10 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
     for nm, i, v, _ in sorted(ends, key=lambda e: slide_y(e[2])):
         y = slide_y(v) if prev is None else max(slide_y(v), prev + LINE_H)
         placed[nm] = prev = y
+    anchors = {}                                                # a marker right after the line's end label
+    for nm, i, _, _ in ends:
+        x_end = fl + fw * px + plot_w * i / (n - 1)
+        anchors[nm] = (x_end + LABEL_PAD + end_w[nm] + 0.14 + MARKER / 2, placed[nm])   # Office sets labels a touch wider
     for k, s in enumerate(chart.plots[0].series):
         nm = names[k]
         width = Pt(TOKENS["chart"]["line"]["width_pt"] if nm in strong else TOKENS["chart"]["line"]["context_width_px"])
@@ -1238,7 +1245,7 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
         text_box(slide, xc + 0.06, top, 1.0, LINE_H, "Forecast", NOTE_PT, C.text_muted, name="Forecast label",
                  wrap=False)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None,
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=anchors,
                        shown=_shown(slide, [v for vs in data_in.values() for v in vs]))
     return SimpleNamespace(slide=slide, chart=chart, order=names, colors=color, y_range=(lo, hi))
 

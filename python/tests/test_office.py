@@ -639,7 +639,7 @@ def test_insight_markers_sit_after_their_bars_and_a_bracket_spans_its_group():
     for s in r.slide.shapes:
         if s.name.startswith("Marker") or s.name.startswith("Bracket"):
             assert Emu(s.left + s.width).inches <= right + 0.05            # inside the chart's two-thirds
-    with pytest.raises(ValueError, match="is not a bar on the chart"):
+    with pytest.raises(ValueError, match="is not on the chart"):
         bar(insights=[("A claim", "Its evidence", "Nobody"), ("B claim", "More evidence")])
 
 
@@ -651,3 +651,17 @@ def test_a_big_number_that_repeats_the_headline_is_refused_and_claims_carry_thei
     box = next(s for s in named(r.slide, "Insights").shapes if s.name == "Insight 1")
     paras = box.text_frame.paragraphs
     assert [p.text for p in paras] == list(INSIGHTS[0])                # claim, then evidence, in one flowing box
+
+
+def test_line_insight_markers_sit_after_the_end_labels_inside_the_chart():
+    names = list(LINES)
+    r = line(insights=[("Pharmacy technicians are coming down", "Down 3.6 points in two years", names[0]),
+                       ("The others hold steady", "Within a point of where they started", names[1])])
+    shapes = {s.name: s for s in r.slide.shapes}
+    m1, m2 = shapes[f"Marker 1: {names[0]}"], shapes[f"Marker 2: {names[1]}"]
+    frame = next(s for s in r.slide.shapes if s.has_chart)
+    right = Emu(frame.left + frame.width).inches
+    for m in (m1, m2):
+        assert Emu(m.left + m.width).inches <= right + 0.05           # room kept inside the chart's two-thirds
+    assert abs(Emu(m1.top).inches - Emu(m2.top).inches) >= office.LINE_H - 0.01   # each beside its own end label
+    assert named(r.slide, "Insights") is not None
