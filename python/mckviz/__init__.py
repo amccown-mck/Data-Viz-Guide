@@ -538,11 +538,18 @@ def save(fig, path: str | Path, **kw) -> Path:
     path = working_path(path, "the chart")
     layout(fig)
     path.parent.mkdir(parents=True, exist_ok=True)
-    if kw.get("transparent"):
-        fig.savefig(path, **kw)
+    # What Figure.savefig calls. Going to it directly skips sandboxes that patch savefig, such as Copilot's, which writes
+    # a JSON chart spec beside the PNG and then shows a bare interactive re-plot instead of this image.
+    if kw.pop("transparent", False):                          # as savefig(transparent=True): no figure or plot fill
+        faces = [(a.patch, a.patch.get_facecolor()) for a in fig.axes]
+        for patch, _ in faces:
+            patch.set_facecolor("none")
+        try:
+            fig.canvas.print_figure(path, facecolor="none", edgecolor="none", **kw)
+        finally:
+            for patch, color in faces:
+                patch.set_facecolor(color)
     else:
-        # What Figure.savefig calls. Going to it directly skips sandboxes that patch savefig, such as Copilot's, which
-        # writes a JSON chart spec beside the PNG and then shows a bare interactive re-plot instead of this image.
         fig.canvas.print_figure(path, **kw)
     return path
 

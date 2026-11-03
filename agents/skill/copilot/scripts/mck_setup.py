@@ -51,6 +51,43 @@ def assemble(root: Path = MCKVIZ_PATH) -> Path:
     return root
 
 
+def guard_saving(mv) -> None:
+    """Route matplotlib's own save and show through mckviz, so a slip can't bring back Copilot's Chart card: the
+    sandbox's patched savefig and show write a JSON spec beside the image, which Copilot shows instead of it.
+    fig.savefig / plt.savefig become mv.save (house layout, the PNG only; a path in /mnt/data gets mv.save's error,
+    which says to build in /tmp and deliver), and plt.show shows each open figure as a plain image, then closes it."""
+    import io
+
+    import matplotlib.pyplot as plt
+    from matplotlib.figure import Figure
+
+    def savefig(self, fname, *args, **kwargs):
+        if args:
+            raise TypeError("savefig takes the file name, then keyword arguments (dpi=..., transparent=...)")
+        return mv.save(self, fname, **kwargs)
+
+    def plt_savefig(*args, **kwargs):
+        return plt.gcf().savefig(*args, **kwargs)
+
+    def show(*args, **kwargs):
+        try:
+            from IPython.display import Image, display
+        except ImportError:                                    # not a notebook: nothing to show inline
+            return None
+        for num in plt.get_fignums():
+            fig = plt.figure(num)
+            mv.layout(fig)
+            buf = io.BytesIO()
+            fig.canvas.print_figure(buf, format="png", dpi=150)
+            display(Image(data=buf.getvalue()))
+        plt.close("all")
+
+    savefig.__qualname__ = "mckviz_guarded_savefig"
+    Figure.savefig = savefig
+    plt.savefig = plt_savefig
+    plt.show = show
+
+
 def load():
     """Assemble, import and style. Returns (mv, warning messages)."""
     root = str(assemble())
@@ -68,13 +105,16 @@ def load():
     # it sets its own style (a Microsoft palette, edges on every bar, rounded legends, outward ticks), and its savefig
     # writes a JSON spec beside each PNG that Copilot shows as an interactive chart card instead of our image. Start
     # from matplotlib's defaults so none of that style survives mv.use(); mv.save renders without the patched savefig.
-    patched = "patched" in getattr(Figure.savefig, "__qualname__", "")
+    patched = ("patched" in getattr(Figure.savefig, "__qualname__", "")
+               or getattr(Figure.savefig, "__module__", "matplotlib.figure") != "matplotlib.figure")   # <run_path>
     mpl.rcdefaults()
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         mv.use()
     if patched:
-        print("sandbox chart patch found: its style was reset, and mv.save writes the PNG only (no chart card)")
+        guard_saving(mv)
+        print("sandbox chart patch found: its style was reset, and savefig, plt.show and mv.save write the PNG only "
+              "(no chart card)")
     return mv, [str(w.message) for w in caught]
 
 
