@@ -121,7 +121,7 @@ def test_no_fixed_cap_on_highlights():
     pages = FILES + [str(p.relative_to(REPO)).replace("\\", "/") for p in
                      [*(REPO / "docs").rglob("*.md"), *(REPO / "guide" / "pages").glob("*.html"),
                       *(REPO / "agents").rglob("*.md")]]
-    hits = [f"{rel}:{i}" for rel in sorted(set(pages)) if "worklog" not in rel and "agent-architecture" not in rel
+    hits = [f"{rel}:{i}" for rel in sorted(set(pages)) if "worklog" not in rel
             for i, line in enumerate(read(rel).splitlines(), 1)
             if HIGHLIGHT_CAP.search(line) and "segments" not in line]
     assert not hits, "a fixed number of highlights: say 'what the headline names' instead: " + ", ".join(hits)

@@ -19,8 +19,7 @@ One thing at a time, each checked with the one eval that covers it (the agent re
 
 1. **Further agent refinements** (the owner's list): chart fundamentals and the analytical thinking behind them.
 2. **The published guide, in one pass** once those land: everything it must pick up is logged in [`docs/guide-refresh.md`](docs/guide-refresh.md).
-3. **Fold `docs/agent-architecture.md` into `AGENTS.md`** and delete it: the migration is done apart from item 4.
-4. **The `savefig`/`show` override** in `mck_setup.py` (so a slip can't produce Copilot's Chart card): needs a sandbox probe first; only if it's simple and reliable. Then SKILL.md's "never savefig" line and the Chart-card recovery sentence go.
+3. **The `savefig`/`show` override** in `mck_setup.py` (so a slip can't produce Copilot's Chart card): needs a sandbox probe first; only if it's simple and reliable. Then SKILL.md's "never savefig" line and the Chart-card recovery sentence go.
 
 ## Later
 
