@@ -7,17 +7,17 @@ Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026
 ## Now
 
 - **The kit:** release 1.2.0 (2026-10-18); `main` has much more since (CHANGELOG, "Unreleased"): the decision tree and `mv.suggest`, one-call builders (now including `mv.bar`, `mv.bubble` and `mv.bubble_strip`), the options page, `mckviz.office`, highlights with no fixed cap, and the agent guidance restructured by layer.
-- **The agent:** "WI Data Storytelling Agent" in Microsoft 365 Copilot ([its repo](https://github.com/amccown-mck/WI-Data-Storytelling-Agent)), version 1.0.18, shared with twelve Workforce Innovation colleagues, running `main` as of 2026-11-03. Plain-words replies and an onboarding starter (demo chart, then a numbered menu); the guide linked on SharePoint.
+- **The agent:** "WI Data Storytelling Agent" in Microsoft 365 Copilot ([its repo](https://github.com/amccown-mck/WI-Data-Storytelling-Agent)), version 1.0.19, shared with twelve Workforce Innovation colleagues, running `main` as of 2026-11-03. Plain-words replies and an onboarding starter (demo chart, then a numbered menu); the guide linked on SharePoint.
 - **Guidance by layer** (`AGENTS.md`, "Where agent guidance goes"): code first, then the agent's instructions (2,516 of 4,000: only what must hold with no skill loaded), the Copilot `SKILL.md` (11,107 of 14,000: the workflow plus a router to task guides), task guides, reference docs, evals. One skill (decided 2026-11-02).
 - **Last core run** (local agent, 2026-11-02): core-1 to core-4 and journey-1 passed. The three known issues of 10-27 (bar order, options-page copies, small Sankey slide) are fixed in code.
 - **Bubble charts** (2026-11-03): `mv.bubble` lays them out from the data (key above the plot, labels clear of the bubbles, PNG and slide alike) and lint warns on labels on the data; builders-4 and core-1 to core-4 passed on the local agent; on the shared agent as 1.0.17. `mv.bubble_strip` and its cookbook page followed (builders-5 and core passed on the local agent); on the shared agent as 1.0.18.
-- **Insights and annotations** (2026-11-03, on `main`, not yet shared): the slides' insights panel (numbered claims with evidence, a big number only when the headline doesn't already say it, "What it means" or a user-decided "Recommendation"), four annotations (`mv.mark`, `mv.bracket`, `mv.gap`, `mv.note`) and the task guide `references/insights.md`. slides-5 passed on the local agent, including a recommendation worked out with the owner.
+- **Insights and annotations** (2026-11-03, shared agent 1.0.19): the slides' insights panel (numbered claims with evidence, a big number only when the headline doesn't already say it, "What it means" or a user-decided "Recommendation"), four annotations (`mv.mark`, `mv.bracket`, `mv.gap`, `mv.note`) and the task guide `references/insights.md`. slides-5 and core passed on the local agent, including a recommendation worked out with the owner.
 
 ## Next
 
 One thing at a time, each checked with the one eval that covers it (the agent repo's `evals/prompts.md`). **Principle: fix with good code defaults and general tips, not rules written to pass a test.**
 
-1. **Shared agent:** the four `core` evals on the local agent, then push `main` (insights and annotations) to the shared agent. Then further agent refinements (the owner's list).
+1. **Further agent refinements** (the owner's list): chart fundamentals and the analytical thinking behind them.
 2. **The published guide, in one pass** once those land: everything it must pick up is logged in [`docs/guide-refresh.md`](docs/guide-refresh.md).
 3. **Fold `docs/agent-architecture.md` into `AGENTS.md`** and delete it: the migration is done apart from item 4.
 4. **The `savefig`/`show` override** in `mck_setup.py` (so a slip can't produce Copilot's Chart card): needs a sandbox probe first; only if it's simple and reliable. Then SKILL.md's "never savefig" line and the Chart-card recovery sentence go.
