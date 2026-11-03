@@ -1,0 +1,36 @@
+<!-- {{generated_note}} -->
+# Insights and annotations
+
+Read this when a slide gets insights beside its chart, or a chart needs an annotation (a bracket, numbered points, a gap, a note). The workflow in `SKILL.md` still applies: the headline carries the finding; insights and annotations add what the reader needs next, and nothing that competes with it.
+
+## The insights panel
+
+Any `mv.office` slide builder takes `insights=[(claim, evidence), ...]`: the chart takes two-thirds of the slide, and the insights the right third.
+
+- **One to three insights.** One strong insight beats three weak ones.
+- **The claim says what the chart means, not what it shows:** what a group adds up to, how two things compare, a change over time, a pattern the data supports ("Two families account for most exits"). Bold, one line, two at most.
+- **The evidence is the fact behind the claim, computed in code** ("73% of all voluntary exits, from 58% of headcount"): a derived number the chart doesn't print. Restating a bar's label adds nothing; the builder warns when an insight only repeats the chart's numbers.
+- **`big=(number, caption)`** leads the panel only when one derived number is the whole point (a share of the total, a gap, a multiple), never a number already on the chart.
+- **`implication="..."`**, optional, one sentence: what the finding means for the business, from the data ("Retention effort on these two families reaches 73% of voluntary exits"). It goes under "What it means".
+- **Numbers tie insights to the chart.** Give each insight a third item, the bar or column it is about (`(claim, evidence, "Pharmacy Technician")`), and the slide puts the same number on the chart there. On a picture slide, put them on the figure with `mv.mark(ax, n, name, chart=ns)`. The panel is numbered only when every insight has its marker; when an insight is about the whole chart (a trend, a goal), leave the markers off all of them.
+
+## Annotations: only where they help
+
+One or two per chart at most, each carrying part of the headline or an insight; more compete for the eye (`mv.lint` warns past three). Each is one call, placed clear of the bars, bubbles, lines and labels.
+
+| Use | When | Call |
+|---|---|---|
+| **Bracket** | The point is what a group adds up to, a number the chart doesn't show ("73% of all voluntary exits") | `mv.bracket(ax, ns, names, text)`; on a native bar slide `bracket=(names, text)` |
+| **Number marker** | The slide's insights are numbered: mark only the points they are about | `mv.mark(ax, n, name, chart=ns)`; on bar and column slides, the insight's third item |
+| **Gap** | The headline states a difference: to a target, to the market, between two lines | `mv.gap(ax, (x, a), (x, b), "+5.2 pts")` |
+| **Note** | Context the data can't show: a policy change, a reorg, a new definition, in a few words | `mv.note(ax, (x, y), "Pay range reset")`, or a name with `chart=` |
+
+`ns` is what the builder returned (`mv.bar`, `mv.bubble`, `mv.bubble_strip`). Leave annotations out when they would restate a label, repeat a benchmark line the builder already draws (`benchmark=`, `target=`), or add emphasis the color already gives. For a live presentation, the guide's build-up works well: the chart in grey, then the highlight, then the annotation (`{{docs}}formats.md`).
+
+## Recommendations: worked out with the user
+
+A recommendation (what to do about the finding) is the user's call, so it comes from working one out together. When you hand back a slide with insights, the next-steps line can offer it: "Want to work out a recommendation together?" When the user takes it up:
+
+1. Ask what decision it is for and what matters most (budget, timing, risk, who is affected).
+2. Lay out two or three options, each with what the data says for and against it, and what the data can't tell you.
+3. Let the user weigh them. Once they have chosen, put it on the slide in their words: `implication=("Recommendation", "...")`.

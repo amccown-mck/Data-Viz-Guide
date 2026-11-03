@@ -25,6 +25,7 @@ QA:           pass | exceptions: <list>
 **When the request is one of these, also read its guide before you build.** It adds to the five steps and doesn't replace them:
 - **Several options or a storyline** ("show me a few ways", "several ways to show it", "N options", "pros and cons for a meeting", "one page to share"): `references/options.md`, how to pick the angles and the options page. Always `mv.options_page`, never hand-built HTML.
 - **Feedback on a chart the user shares:** `references/review.md`.
+- **Insights beside the chart on a slide, or an annotation on it** (a bracket, numbered points, a gap, a note): `references/insights.md`.
 - **A slide or deck (a real .pptx), or a native chart in Excel or Power BI, or HTML or R:** `references/native-formats.md`.
 
 ## 1. Question

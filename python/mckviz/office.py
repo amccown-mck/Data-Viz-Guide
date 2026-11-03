@@ -265,12 +265,14 @@ def line_shape(slide, x1, y1, x2, y2, color, width_pt=0.75, dash=True, arrow=Fal
     return ln
 
 
-_NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
+_NUM = re.compile(r"(?<![\w.])\d[\d,]*(?:\.\d+)?")           # not the 25 in FY25 or the 2 in Q2
 
 
 def _numbers(text: str) -> set[str]:
-    """The numbers written in a text, commas dropped ("6,200" -> "6200"), to compare an insight with the chart."""
-    return {n.replace(",", "") for n in _NUM.findall(text)}
+    """The data numbers written in a text, commas dropped ("6,200" -> "6200"), to compare an insight with the chart.
+    Years (1900-2100) are context, not data, so they are left out."""
+    nums = {n.replace(",", "") for n in _NUM.findall(text)}
+    return {n for n in nums if not (n.isdigit() and len(n) == 4 and 1900 <= int(n) <= 2100)}
 
 
 def _tracked(box, spacing_pt: float) -> None:
@@ -320,7 +322,7 @@ def _marked(insights) -> set[str]:
     return {str(it[2]) for it in insights or () if not isinstance(it, str) and len(it) == 3 and it[2] is not None}
 
 
-def insights_panel(slide, insights, *, implication: str | None = None, big: tuple[str, str] | None = None,
+def insights_panel(slide, insights, *, implication: str | tuple | None = None, big: tuple[str, str] | None = None,
                    title: str = "Key insights", shown: Iterable[str] = (), anchors: dict | None = None,
                    marked: Iterable[int] = ()):
     """Chart + insights: the right third of the slide (TAKE_LEFT, TAKE_W) beside a two-thirds chart, top-aligned with
@@ -332,11 +334,16 @@ def insights_panel(slide, insights, *, implication: str | None = None, big: tupl
         number there (native bar and column slides; on a picture, mv.mark on the figure). The insights are numbered
         only when every one has its marker on the chart; otherwise none is, since a number with no match on the chart
         reads as a mistake. implication: an optional last item under "What it means": what the finding means for the
-        business, from the data (a recommendation is the user's call, worked out with them). big: (number, caption) at the top, only when
-        one derived number is the whole point ("73%", "of voluntary exits come from two job families").
+        business, from the data. A recommendation is the user's call: once they have worked one out with you, pass
+        implication=("Recommendation", "...") and it goes under that label instead. big: (number, caption) at the
+        top, only when one derived number is the whole point ("73%", "of voluntary exits come from two job
+        families").
     shown: the labels the chart carries; an insight that only repeats them raises a warning. anchors: {name: (x, y)}
     where each bar's marker goes (the slide builders pass it); marked: the mv.mark numbers already on a picture.
     Returns the group."""
+    label_text = "WHAT IT MEANS"
+    if isinstance(implication, tuple):                         # ("Recommendation", "...") once the user has decided
+        label_text, implication = str(implication[0]).upper(), implication[1]
     items = _check_insights(insights, implication, big, shown)
     ats = [at for *_, at in items]
     for i, at in enumerate(ats, 1):
@@ -412,7 +419,7 @@ def insights_panel(slide, insights, *, implication: str | None = None, big: tupl
     if implication:
         line_shape(g, x, y, x + w, y, C.headline, dash=False, name="Implication rule")
         y += 0.16
-        lab = text_box(g, x, y, w, 0.2, "WHAT IT MEANS", 10, C.focus, bold=True, name="Implication label", wrap=False)
+        lab = text_box(g, x, y, w, 0.2, label_text, 10, C.focus, bold=True, name="Implication label", wrap=False)
         _tracked(lab, 1.2)
         y += 0.28
         n = wrapped_lines(implication, 13, w)
@@ -718,7 +725,8 @@ def _no_takeaways(takeaways) -> None:
 def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: str, source: str,
               subtitle: str | None = None, footnote: str | None = None, focus: Iterable[str] = (),
               accent: str | None = None, benchmark: float | None = None, benchmark_label: str | None = None,
-              fmt="{:,.0f}", sort: bool | str = True, insights: Sequence[tuple] | None = None, implication: str | None = None,
+              fmt="{:,.0f}", sort: bool | str = True,
+              insights: Sequence[tuple] | None = None, implication: str | tuple | None = None,
               big: tuple[str, str] | None = None, takeaways=None, bracket: tuple | None = None,
               alt: str | None = None, notes: str | None = None):
     """A ranking as a native, editable horizontal bar chart on a slide: bars sorted with the story on top, grey
@@ -736,9 +744,9 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     "lagging" or "lowest" headline); "descending" / "ascending" force the order; False keeps the given order (a
     natural order). insights, implication, big: the insights panel in the right third (insights_panel); the chart
     then takes two-thirds; an insight's `at` puts its number marker after that bar's label. bracket: (names, text),
-    a bracket beside two or more adjacent bars saying what they add up to ("73% of all\nvoluntary exits"). alt: the chart's alt text (default: the headline). Values must
-    be zero or more (bars start at zero; use a diverging bar for signed changes). Returns SimpleNamespace(slide,
-    chart, order, x_max, inside).
+    a bracket beside two or more adjacent bars saying what they add up to ("73% of all\nvoluntary exits"). alt: the
+    chart's alt text (default: the headline). Values must be zero or more (bars start at zero; use a diverging bar
+    for signed changes). Returns SimpleNamespace(slide, chart, order, x_max, inside).
     """
     from .charts import story_order                           # shared with mv.bar, so the chart and slide agree
 
@@ -873,8 +881,8 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
 def column_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: str, source: str,
                  subtitle: str | None = None, footnote: str | None = None, focus: Iterable[str] = (),
                  accent: str | None = None, benchmark: float | None = None, benchmark_label: str | None = None,
-                 fmt="{:,.0f}", insights: Sequence[tuple] | None = None, implication: str | None = None,
-              big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None,
+                 fmt="{:,.0f}", insights: Sequence[tuple] | None = None, implication: str | tuple | None = None,
+                 big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None,
                  notes: str | None = None):
     """A few values in their natural order (fiscal years, quarters, stages) as native, editable columns: grey with the
     headline's columns in McKesson Blue (navy for one accent), the value on top of each
@@ -1025,7 +1033,7 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
                footnote: str | None = None, focus: Iterable[str] = (), accent: str | None = None,
                target: float | None = None, target_label: str | None = None, forecast_from=None,
                fmt="{:,.1f}", ylim: tuple[float, float] | None = None,
-               insights: Sequence[tuple] | None = None, implication: str | None = None,
+               insights: Sequence[tuple] | None = None, implication: str | tuple | None = None,
                big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None, notes: str | None = None):
     """Lines over time as a native, editable line chart, with mv.line's house rules: grey context, the headline's
     series in McKesson Blue (one navy accent at most), labels at the line ends instead of a legend (name and value
@@ -1041,9 +1049,9 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
     categorical colors; more than four raises (name the focus). target: a dashed navy line across the plot, named by
     target_label. forecast_from: the last actual period (a label in x, or a 0-based position); every line is dashed
     after it, with a dotted divider. fmt: the format of the end values; the value axis uses it with the decimals its
-    step needs. ylim: fixed axis limits (a line may start above zero). insights, implication, big, alt, notes: as in bar_slide.
-    mv.line's event shading and scenario bands have no native version: use picture_slide for those. Returns
-    SimpleNamespace(slide, chart, order, colors, y_range).
+    step needs. ylim: fixed axis limits (a line may start above zero). insights, implication, big, alt, notes: as in
+    bar_slide. mv.line's event shading and scenario bands have no native version: use picture_slide for those.
+    Returns SimpleNamespace(slide, chart, order, colors, y_range).
     """
     import math
 
@@ -1215,7 +1223,8 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
         text_box(slide, xc + 0.06, top, 1.0, LINE_H, "Forecast", NOTE_PT, C.text_muted, name="Forecast label",
                  wrap=False)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=_shown(slide, [v for vs in data_in.values() for v in vs]))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None,
+                       shown=_shown(slide, [v for vs in data_in.values() for v in vs]))
     return SimpleNamespace(slide=slide, chart=chart, order=names, colors=color, y_range=(lo, hi))
 
 
@@ -1231,7 +1240,7 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
                 footnote: str | None = None, story=None, accent: str | None = None, uniform: bool = False,
                 colors: Sequence[str] | None = None, label_min: float = 0, fmt="{:.0f}%",
                 base: Sequence[float] | None = None, base_label: str = "n",
-                insights: Sequence[tuple] | None = None, implication: str | None = None,
+                insights: Sequence[tuple] | None = None, implication: str | tuple | None = None,
                 big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None, notes: str | None = None):
     """Parts of a whole as native, editable 100% stacked bars, with mv.hstack's rules: the first category on top, the
     story segments first on the baseline (blue; navy for one accent; the rest greys, or light blues with
@@ -1245,7 +1254,8 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
     parts: [(name, values)] or {name: values} in stack order; each category's parts should add up to 100 (the chart
     draws shares either way, but the labels show the values given). story / accent / uniform / colors: as in
     mv.hstack (with neither story nor colors, the first part is the story). Sort the categories first (by the story
-    segment, say). insights, implication, big, alt, notes: as in bar_slide. Returns SimpleNamespace(slide, chart, order, colors).
+    segment, say). insights, implication, big, alt, notes: as in bar_slide. Returns SimpleNamespace(slide, chart,
+    order, colors).
     """
     from .charts import _STACK_GREYS, _STACK_LIGHT_BLUES
 
@@ -1361,14 +1371,15 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
             text_box(slide, bx, cy - LINE_H / 2, reserve, LINE_H, t, LABEL_PT - 1, C.text_muted, anchor=MSO_ANCHOR.MIDDLE,
                      name=f"Base: {cats[i]}", wrap=False)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=_shown(slide, [v for _, vs in items for v in vs]))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None,
+                       shown=_shown(slide, [v for _, vs in items for v in vs]))
     return SimpleNamespace(slide=slide, chart=chart, order=[nm for nm, _ in items], colors=colors)
 
 
 def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: Sequence[str] | None = None, *,
                     headline: str, source: str, subtitle: str | None = None, footnote: str | None = None,
                     focus: Iterable[str] = (), semantic: str | None = None, floor: float | None = None, fmt=None,
-                    insights: Sequence[tuple] | None = None, implication: str | None = None,
+                    insights: Sequence[tuple] | None = None, implication: str | tuple | None = None,
                     big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None,
                     notes: str | None = None):
     """A bridge from a start total to an end total as a native, editable waterfall, with mv.waterfall's rules: totals
@@ -1383,8 +1394,8 @@ def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: S
     semantic: "up" (an increase is favorable: green up, orange down) or "down" (an increase is unfavorable, e.g.
     cost), with ▲/▼ on the steps, instead of focus. floor: start the value axis here, so small steps are readable;
     the totals get two white break marks and the footnote says where the axis starts. fmt: callable(value, kind) ->
-    label (default: totals "4,210", steps "+120" with a true minus). insights, implication, big, alt, notes: as in bar_slide. Returns
-    SimpleNamespace(slide, chart, tops, ends, colors, y_range).
+    label (default: totals "4,210", steps "+120" with a true minus). insights, implication, big, alt, notes: as in
+    bar_slide. Returns SimpleNamespace(slide, chart, tops, ends, colors, y_range).
     """
     import textwrap
 
@@ -1511,7 +1522,7 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
                    compare_name: str = "Market", value_name: str = "McKesson", flag_below: float | None = -5.0,
                    flag_name: str | None = None, gap: str = "pct", decimals: int = 1, tick_fmt: str = "{:,.0f}",
                    xlim: tuple[float, float] | None = None, focus: Iterable[str] | None = None,
-                   insights: Sequence[tuple] | None = None, implication: str | None = None,
+                   insights: Sequence[tuple] | None = None, implication: str | tuple | None = None,
                    big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None,
                    notes: str | None = None):
     """Us vs. a comparator per row as a native, editable dumbbell, with mv.dumbbell's rules: the comparator's dot
@@ -1524,8 +1535,8 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
 
     The first row is on top; sort the rows first (largest shortfall first, say). gap: "pct" (value vs. compare in %)
     or "abs" (in units). tick_fmt: the x-axis format, as a Python format string. Built as an XY chart with one series
-    per row, so Edit Data changes the dots; the gap labels are typed text. insights, implication, big, alt, notes: as in bar_slide.
-    Returns SimpleNamespace(slide, chart, flagged, gaps, x_range).
+    per row, so Edit Data changes the dots; the gap labels are typed text. insights, implication, big, alt, notes:
+    as in bar_slide. Returns SimpleNamespace(slide, chart, flagged, gaps, x_range).
     """
     import numpy as np
     from matplotlib.ticker import MaxNLocator
@@ -1635,7 +1646,8 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
                  anchor=MSO_ANCHOR.MIDDLE, wrap=False)
         kx += d + 0.06 + tw + 0.25
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, shown=_shown(slide, a + b))
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None,
+                       shown=_shown(slide, a + b))
     return SimpleNamespace(slide=slide, chart=chart, flagged=np.array(flagged), gaps=np.array(gaps),
                            x_range=(x_min, x_max))
 
@@ -1682,8 +1694,8 @@ def _fit_top(fig, margin: float = 0.01) -> None:
 
 
 def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None = None, footnote: str | None = None,
-                  alt: str | None = None, insights: Sequence[tuple] | None = None, implication: str | None = None,
-              big: tuple[str, str] | None = None, takeaways=None, notes: str | None = None,
+                  alt: str | None = None, insights: Sequence[tuple] | None = None, implication: str | tuple | None = None,
+                  big: tuple[str, str] | None = None, takeaways=None, notes: str | None = None,
                   dpi: int = 200):
     """A chart that has no native PowerPoint slide yet (Sankey, strip, treemap, heatmap, ...) as a picture on the slide
     grid: the mckviz figure drawn as its builder laid it out (resizing it afterwards would move labels onto each other
@@ -1742,5 +1754,6 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
     pic.name = "Chart"
     pic._element.nvPicPr.cNvPr.set("descr", alt or headline)
     if insights or big:
-        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, marked=marked, shown=shown)
+        insights_panel(slide, insights or (), implication=implication, big=big, anchors=None, marked=marked,
+                       shown=shown)
     return SimpleNamespace(slide=slide, picture=pic)

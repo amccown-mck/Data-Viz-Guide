@@ -17,7 +17,8 @@ The published guide (the HTML and PDF on the People Analytics SharePoint) is reb
 - [ ] **`magnitude.html` and `chooser.html`, options:** a **bubble strip** (`mv.bubble_strip`, `docs/cookbook/bubble-strip.md`, 2026-11-03) when how many people each category covers matters; today the page offers only proportional bubbles for a wide range.
 - [ ] **`toolkit.html`, what `mv.lint` checks:** add labels, keys and legends that sit on the data or on each other (`label-on-data`, `label-overlap`, 2026-11-03).
 - [ ] **Insights panel** (2026-11-03, branch `feat/insights`): wherever the guide shows or describes the slide's "Key takeaways" card (the chart + takeaways layout), show the insights panel: numbered claims with evidence, a big number only when one derived number is the point, "What it means" for one implication.
-- [ ] **Annotations** (in progress): `formats.html`'s "Presentations: build it up" step 3 shows a benchmark and a bracket callout drawn by hand in the guide's figure; show the annotation builders once they land, and whatever guidance on choosing them goes to the pages.
+- [ ] **Annotations** (2026-11-03, branch `feat/insights`): `formats.html`'s "Presentations: build it up" step 3 shows a benchmark and a bracket drawn by hand in the guide's figure; draw it with `mv.bracket`, and say on the page which annotation fits which job (bracket, number marker, gap, note; one or two per chart), as `references/insights.md` does.
+- [ ] **`toolkit.html`, the mckviz list:** the annotation helpers (`mv.mark`, `mv.bracket`, `mv.gap`, `mv.note`) and lint's `annotations` warning.
 
 ## Worth a look at the rebuild (no change known yet)
 

@@ -46,7 +46,7 @@ from mckviz.office import (AUTHOR, BAND_GAP, BODY_BOTTOM, BODY_TOP, CARD_BOTTOM,
                            MASTER_NAME, PLOT_H, PLOT_Y, RIGHT, SEMI, SIDE_CHART_W, TITLE_H, TITLE_PT, TITLE_TOP, W,
                            add_chart, baseline, dlbl, fill, flat, layout, legend_top_left, line_shape, no_fill,
                            no_rounded_corners, plot_layout, point_label, points_on_edges, rgb, shape, shape_text,
-                           takeaways_card as takeaways, text_box)
+                           insights_panel, text_box)
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "examples" / "data"
@@ -565,10 +565,11 @@ def column_data() -> SimpleNamespace:
                          f"highest in {WORDS[len(df)]} years"),
         subtitle=f"Share of open roles filled by internal candidates, {fy.iloc[0]}–{fy.iloc[-1]} (%)",
         footnote="Internal fill rate = roles filled by internal candidates ÷ all roles filled.",
-        points=[(f"+{now - first} points", f"Since {fy.iloc[0]}, from {first}% to {now}% of roles filled internally"),
-                (f"+{now - prior} points", f"In {fy.iloc[-1]} alone, more than the {WORDS[len(df) - 2]} years before it "
-                                           f"combined ({mv.signed(before, 0)})"),
-                (fy.iloc[dip], f"The one down year: the rate slipped from {v.iloc[dip - 1]}% to {v.iloc[dip]}%")])
+        insights=[("The latest year did the most work",
+                   f"A {now - prior}-point gain, more than the {WORDS[len(df) - 2]} years before it added together "
+                   f"({mv.signed(before, 0)})"),
+                  ("Not a straight line", f"{fy.iloc[dip]} was the one down year, and the rate recovered the year "
+                                          "after")])
 
 
 def dumbbell_data() -> SimpleNamespace:
@@ -587,10 +588,11 @@ def dumbbell_data() -> SimpleNamespace:
                   f"the widest gaps of {len(df)} benchmarked roles"),
         subtitle="Median base pay, McKesson vs. market, by role, 2026 ($K)",
         footnote="External market = posted-pay median for comparable roles and metros.",
-        points=[(f"{len(below)} of {len(df)}", f"Roles paid below market; the other {WORDS[len(above)]} are "
-                                               f"{above.gap_pct.min():.1f}–{above.gap_pct.max():.1f}% above it"),
-                (usd_k(usd.min()), f"{widest}s, the widest gap in dollars "
-                                   f"({mv.signed(df.gap_pct[usd.idxmin()], 1, '%')}); {a.lower()}: {usd_k(usd[low.index[0]])}")])
+        insights=[("Most roles trail the market", f"{len(below)} of {len(df)} are paid below it; the other "
+                                                   f"{WORDS[len(above)]} sit {above.gap_pct.min():.1f}–"
+                                                   f"{above.gap_pct.max():.1f}% above"),
+                  ("In dollars, the widest gap is elsewhere",
+                   f"{widest}s have the largest gap in pay, though not in percent: a higher-paid role")])
 
 
 def slope_data() -> SimpleNamespace:
@@ -615,11 +617,11 @@ def slope_data() -> SimpleNamespace:
         headline=f"{focus}'s internal fill rate rose {top:.0f} points in FY26, {times} the next-largest gain",
         subtitle="Internal fill rate by business unit, FY25 and FY26 (% of roles filled internally)",
         footnote="Internal fill rate = roles filled by internal candidates ÷ all roles filled.",
-        points=[(f"{len(w)} of {len(w)}", f"Units raised their internal fill rate, by {w.d.min():.0f} to "
-                                             f"{w.d.max():.0f} points"),
-                (f"+{w.FY26[focus] - w.FY26[runner]:.0f} points", f"{focus}'s lead over the next unit; it ranked "
-                                                                 f"{ordinal[int(rank25[focus])]} in FY25"),
-                (f"{spread(w.FY26)} points", f"Gap between the highest and lowest unit, up from {spread(w.FY25)} in FY25")])
+        insights=[("Every unit improved", f"Gains of {w.d.min():.0f} to {w.d.max():.0f} points from FY25 to FY26"),
+                  (f"{focus} went from {ordinal[int(rank25[focus])]} to first",
+                   f"Now {w.FY26[focus] - w.FY26[runner]:.0f} points ahead of the next unit"),
+                  ("The units are pulling apart", f"The gap from highest to lowest widened from {spread(w.FY25)} to "
+                                                  f"{spread(w.FY26)} points")])
 
 
 def bubble_data() -> SimpleNamespace:
@@ -637,9 +639,10 @@ def bubble_data() -> SimpleNamespace:
         headline=(f"The two roles most exposed to Gen AI, {a} and {b}, employ {int(top.headcount.sum()):,} people"),
         subtitle="Share of tasks exposed to Gen AI vs. median pay, by role, 2026 (bubble area = headcount)",
         footnote="Exposure = share of task hours matched to gen-AI-capable activities in an external task taxonomy.",
-        points=[(f"${pay[0]}–{pay[1]}K", f"Median pay in the two most exposed roles, vs. ${med:.0f}K across all "
-                                            f"{len(df)}"),
-                (f"{big.genai_exposure_pct}%", f"Of tasks exposed in the largest role, {big.role}")])
+        insights=[("Exposure falls on lower-paid work", f"The two most exposed roles earn ${pay[0]}–{pay[1]}K, "
+                                                         f"against a ${med:.0f}K median across all {len(df)}"),
+                  ("The largest role is the least exposed",
+                   f"{big.role}: {big.genai_exposure_pct}% of tasks")])
 
 
 # ====================================================================== drawn-shape helpers
@@ -1078,7 +1081,7 @@ def slide_column(prs):
     df = D.df
     built = office.column_slide(
         prs, df.fiscal_year, df.internal_fill_pct, focus={df.fiscal_year.iloc[-1]}, fmt="{:.0f}%",
-        headline=D.headline, subtitle=D.subtitle, footnote=D.footnote, source=SRC, takeaways=D.points,
+        headline=D.headline, subtitle=D.subtitle, footnote=D.footnote, source=SRC, insights=D.insights,
         notes="Column highlight: one blue column (the one the headline names), the rest grey; labels on top, value "
               "axis and gridlines deleted, columns from zero. Edit Data to change the numbers; the labels follow. To "
               f"move the highlight, click a column twice › Fill › {C.focus}, and set the others to {C.context}.")
@@ -1093,7 +1096,7 @@ def slide_dumbbell(prs):
     return office.dumbbell_slide(
         prs, df.role, df.market_median_k, df.internal_median_k, tick_fmt="${:,.0f}K", flag_below=widest,
         flag_name="McKesson, widest gaps", headline=D.headline, subtitle=D.subtitle, footnote=D.footnote, source=SRC,
-        takeaways=D.points).slide
+        insights=D.insights).slide
 
 
 def slide_slope(prs):
@@ -1158,7 +1161,7 @@ def slide_slope(prs):
     axis_ticks(ca, 12, C.headline)
     ca.tick_label_position = XL_TICK_LABEL_POSITION.HIGH                 # period headers on top
     points_on_edges(chart)
-    takeaways(slide, D.points)
+    insights_panel(slide, D.insights)
     return slide
 
 
@@ -1214,7 +1217,7 @@ def slide_bubble(prs):
         r = tf.paragraphs[0].runs[0]
         r.font.size, r.font.bold, r.font.name = Pt(11), False, FONT
         r.font.color.rgb = rgb(C.text_muted)
-    takeaways(slide, D.points)
+    insights_panel(slide, D.insights)
     return slide
 
 

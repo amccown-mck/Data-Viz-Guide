@@ -38,6 +38,7 @@ QA:           pass | exceptions: <list>
 **When the request is one of these, also read its guide before you build.** It adds to the five steps and doesn't replace them:
 - **Several options or a storyline** ("show me a few ways", "several ways to show it", "N options", "pros and cons for a meeting", "one page to share"): `{{refs}}options.md`, how to pick the angles and the options page. Always `mv.options_page`, never hand-built HTML.
 - **Feedback on a chart the user shares:** `{{refs}}review.md`.
+- **Insights beside the chart on a slide, or an annotation on it** (a bracket, numbered points, a gap, a note): `{{refs}}insights.md`.
 - **A slide or deck (a real .pptx), or a native chart in Excel or Power BI, or HTML or R:** `{{refs}}native-formats.md`.
 <!-- copilot -->
 - **mckviz won't load, or no code can run:** `{{refs}}native-formats.md`, "When mckviz won't load".
@@ -104,7 +105,7 @@ Write for a busy colleague who knows Excel and PowerPoint, not chart terms. Lead
 - **Before you share:** placeholders left in the chart (source, as-of date, period), data assumptions (definitions, exclusions, groups left out for privacy) and QA exceptions.
 - **Alt text:** one line.
 
-Leave the brief's labels (Path, Mode, Focus, QA) and tool names out of the reply. When it helps, end with one line offering two or three next steps (a slide, other ways to show it, a different highlight); not while the user is making small edits.
+Leave the brief's labels (Path, Mode, Focus, QA) and tool names out of the reply. When it helps, end with one line offering two or three next steps (a slide, other ways to show it, a different highlight; after a slide with insights, "Want to work out a recommendation together?"); not while the user is making small edits.
 
 **Files reach the user's OneDrive once, through `mv.deliver`:** build and check in `/tmp/` (`mv.look(png)` shows a render), `mv.deliver(path, ...)` as the last step, and link only what it returns; never `cp`, `mv` or `rm` in `/mnt/data/`. A revision the user asks for goes under a new name (`revision=`). **Show a chart inline as an image** (`![<headline>](sandbox:/mnt/data/<name>.png)`) with a download link under it, and the code only if asked. If a "Chart" card appears instead (a bare re-plot, axes "X" and "Y"), rebuild with `mv.save` and deliver it under a new name.
 <!-- /copilot -->
