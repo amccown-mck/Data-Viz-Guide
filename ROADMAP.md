@@ -16,9 +16,10 @@ Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026
 
 One thing at a time, each checked with the one eval that covers it (the agent repo's `evals/prompts.md`). **Principle: fix with good code defaults and general tips, not rules written to pass a test.**
 
-1. **The published guide:** rebuild `dist/guide` and upload it to SharePoint again (the highlight wording changed on four pages; the scatter cookbook page now builds with `mv.bubble`).
-2. **Fold `docs/agent-architecture.md` into `AGENTS.md`** and delete it: the migration is done apart from item 3.
-3. **The `savefig`/`show` override** in `mck_setup.py` (so a slip can't produce Copilot's Chart card): needs a sandbox probe first; only if it's simple and reliable. Then SKILL.md's "never savefig" line and the Chart-card recovery sentence go.
+1. **Insight callouts**, then further agent refinements (the owner's list).
+2. **The published guide, in one pass** once those land: everything it must pick up is logged in [`docs/guide-refresh.md`](docs/guide-refresh.md).
+3. **Fold `docs/agent-architecture.md` into `AGENTS.md`** and delete it: the migration is done apart from item 4.
+4. **The `savefig`/`show` override** in `mck_setup.py` (so a slip can't produce Copilot's Chart card): needs a sandbox probe first; only if it's simple and reliable. Then SKILL.md's "never savefig" line and the Chart-card recovery sentence go.
 
 ## Later
 

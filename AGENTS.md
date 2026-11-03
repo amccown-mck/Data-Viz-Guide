@@ -140,7 +140,7 @@ C = mv.colors                # roles: C.focus, C.focus_light, C.context, C.conte
 - **Gallery charts** must be rendered and looked at after every change. Check for overlaps, clipping, and that the headline still matches the data.
 - **Never commit** the McKinsey source images or the brand PDFs. They stay in OneDrive (`Desktop\McK-Data-Viz\`).
 - **Platform priority:** HTML and Python first, then Excel and PowerPoint, then Power BI. R is a nice-to-have.
-- Commit after each step. At the end of a working session, **rewrite** `ROADMAP.md` (Now, Next, Later, Decisions; one screen, never appended to) and add one dated entry at the top of `docs/worklog.md` (what was done, found and decided). Build and release steps live in `docs/maintaining.md`.
+- Commit after each step. At the end of a working session, **rewrite** `ROADMAP.md` (Now, Next, Later, Decisions; one screen, never appended to) and add one dated entry at the top of `docs/worklog.md` (what was done, found and decided). Build and release steps live in `docs/maintaining.md`. The published guide is rebuilt in one pass: when a change alters what the guide shows or says, add a line to [`docs/guide-refresh.md`](docs/guide-refresh.md) in the same commit.
 
 ### The Copilot agent consumes this repo
 The Microsoft 365 Copilot agent "WI Data Storytelling Agent" (https://github.com/amccown-mck/WI-Data-Storytelling-Agent, private) ships the Copilot edition of the `mck-chart` skill, built from this repo and pinned to a commit. This repo stays the single source for everything about charts, so the guide (for people) and the skill (for agents) never drift apart; the agent repo never edits the skill. Its `docs/keeping-in-sync.md` has the loop. What it means here:
