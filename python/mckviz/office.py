@@ -56,13 +56,13 @@ FOOT_TOP = 6.45                                            # source / footnote b
 BODY_TOP, BODY_BOTTOM = 1.32, 6.95                         # content area: under the title box, above the source line
 # Footer (as in the Standard Template): page number | thin blue rule | confidentiality line | date, centred on 7.2 in.
 FOOTER_TOP, FOOTER_H, FOOTER_PT = 7.08, 0.24, 8
-# Two chart widths on a one-chart slide: full width, or chart + takeaways (the chart two-thirds, a gutter as wide as
-# the two-charts slide's, and the takeaways panel the right third).
+# Two chart widths on a one-chart slide: full width, or chart + insights (the chart two-thirds, a gutter as wide as
+# the two-charts slide's, and the insights panel the right third).
 GUTTER = 0.5
 SIDE_CHART_W = (W - LEFT - RIGHT - GUTTER) * 2 / 3          # 8.04 in
 TAKE_LEFT = LEFT + SIDE_CHART_W + GUTTER
 TAKE_W = W - RIGHT - TAKE_LEFT                               # 4.02 in
-# The takeaways card sits in the same place on every slide; plot areas line up with it (PLOT_Y, PLOT_H are fractions
+# The insights panel sits in the same place on every slide; plot areas line up with it (PLOT_Y, PLOT_H are fractions
 # of the chart frame), so the chart's top and baseline meet the card's top and bottom edges.
 CARD_TOP, CARD_BOTTOM = CHART_TOP + 0.15, 6.0
 PLOT_Y, PLOT_H = (CARD_TOP - CHART_TOP) / CHART_H, (CARD_BOTTOM - CARD_TOP) / CHART_H
@@ -265,46 +265,133 @@ def line_shape(slide, x1, y1, x2, y2, color, width_pt=0.75, dash=True, arrow=Fal
     return ln
 
 
-def takeaways_card(slide, points, title="Key takeaways"):
-    """Chart + takeaways: a flat card in the right third of the slide (TAKE_LEFT, TAKE_W) beside a two-thirds chart
-    (SIDE_CHART_W), in the same place on every slide (CARD_TOP to CARD_BOTTOM; the chart's plot area uses PLOT_Y and
-    PLOT_H to line up with it). Light fill, a blue rule along the top (the guide's flat card), the label, then two or
-    three points spread down the card with hairlines between them: each a Bold navy number on one line and a caption
-    of at most two lines, written from the data. Facts, not advice."""
-    if not 2 <= len(points) <= 3:
-        raise ValueError("two or three takeaways")
-    pad, label_h, num_h, cap_h = 0.25, 0.42, 0.42, 0.46
-    x, w = TAKE_LEFT + pad, TAKE_W - 2 * pad
-    for num, cap in points:
-        if wrapped_lines(num, 24, w, "Bold") != 1:
-            raise ValueError(f"takeaway number wraps; shorten it: {num!r}")
-        if wrapped_lines(cap, 14, w) > 2:
-            raise ValueError(f"takeaway caption over two lines; shorten it: {cap!r}")
-    y0 = CARD_TOP + pad + label_h
-    item = num_h + cap_h
-    gap = min((CARD_BOTTOM - pad - y0 - len(points) * item) / (len(points) - 1), 0.6)
+_NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def _numbers(text: str) -> set[str]:
+    """The numbers written in a text, commas dropped ("6,200" -> "6200"), to compare an insight with the chart."""
+    return {n.replace(",", "") for n in _NUM.findall(text)}
+
+
+def _tracked(box, spacing_pt: float) -> None:
+    """Letter-spacing on every run of a text box (PowerPoint's character spacing), for the small capitals labels."""
+    for para in box.text_frame.paragraphs:
+        for run in para.runs:
+            run._r.get_or_add_rPr().set("spc", str(int(spacing_pt * 100)))
+
+
+def _check_insights(insights, implication, big, shown) -> list[tuple[str, str, str | None]]:
+    """Normalise the panel's content and say when it only repeats the chart: an insight whose numbers are all already
+    labels on the chart adds nothing the reader can't see. Returns (claim, evidence, at) triples."""
+    items = []
+    for it in insights or ():
+        if isinstance(it, str) or not 2 <= len(it) <= 3:
+            raise ValueError("each insight is (claim, evidence) or (claim, evidence, at): a bold one-line claim, then "
+                             "the evidence behind it; `at` names the bar or point its number marker goes on")
+        items.append((str(it[0]), str(it[1]), str(it[2]) if len(it) == 3 and it[2] is not None else None))
+    if not 1 <= len(items) + bool(big) <= 4 or len(items) > 3:
+        raise ValueError("one to three insights (plus a big number, if one derived number is the point)")
+    seen = set().union(*(_numbers(s) for s in shown)) if shown else set()
+    for i, (claim, evidence, _) in enumerate(items, 1):
+        nums = _numbers(claim + " " + evidence)
+        if nums and nums <= seen:
+            warnings.warn(f"insight {i} only repeats numbers the chart already shows ({', '.join(sorted(nums))}): say "
+                          "what they add up to, how they compare, or why, so the panel adds to the chart",
+                          stacklevel=4)
+    if big and _numbers(big[0]) and _numbers(big[0]) <= seen:
+        warnings.warn(f"the big number {big[0]!r} is already a label on the chart: use it for a derived number "
+                      "(a share of the total, a gap, a multiple), or drop it", stacklevel=4)
+    if implication is not None and not str(implication).strip():
+        raise ValueError("implication is a sentence, or None")
+    return items
+
+
+def insights_panel(slide, insights, *, implication: str | None = None, big: tuple[str, str] | None = None,
+                   title: str = "Key insights", shown: Iterable[str] = ()):
+    """Chart + insights: the right third of the slide (TAKE_LEFT, TAKE_W) beside a two-thirds chart, top-aligned with
+    the plot, in the quiet consulting style: a small capitals label over a navy hairline, no box, no fill.
+
+    insights: one to three (claim, evidence) pairs, or (claim, evidence, at): the claim a bold navy line (two at
+        most) that says something the chart doesn't show on its own (what the bars add up to, a comparison, a cause),
+        the evidence one to three lines under it; numbered when there are two or more, and `at` puts the same number
+        on the chart, at that bar or point (native slides). implication: an optional last item under "What it means": what the finding
+        means for the business, from the data, never a recommendation. big: (number, caption) at the top, only when
+        one derived number is the whole point ("73%", "of voluntary exits come from two job families").
+    shown: the labels the chart carries; an insight that only repeats them raises a warning. Returns the group."""
+    items = _check_insights(insights, implication, big, shown)
+    x, w = TAKE_LEFT, TAKE_W
+    numbered = len(items) > 1 or any(at for *_, at in items)    # one insight alone needs no number
+    mark, gap_x = (0.30, 0.14) if numbered else (0.0, 0.0)    # number marker, and the gap before the text
+    tx, tw = x + mark + gap_x, w - mark - gap_x
+    lh = {14: 0.235, 12: 0.205, 13: 0.22, 40: 0.62}          # line heights (in) at each size, 1.2 x the size
+    for claim, evidence, _ in items:
+        if wrapped_lines(claim, 14, tw, "Bold") > 2:
+            raise ValueError(f"insight claim over two lines; make it one short claim: {claim!r}")
+        if wrapped_lines(evidence, 12, tw) > 3:
+            raise ValueError(f"insight evidence over three lines; keep the one fact that backs the claim: {evidence!r}")
+    if big:
+        if wrapped_lines(big[0], 40, w, "Bold") != 1:
+            raise ValueError(f"big number wraps; shorten it: {big[0]!r}")
+        if wrapped_lines(big[1], 14, w) > 2:
+            raise ValueError(f"big number caption over two lines; shorten it: {big[1]!r}")
+    if implication and wrapped_lines(implication, 13, w) > 4:
+        raise ValueError(f"implication over four lines; one or two sentences: {implication!r}")
+
     g = slide.shapes.add_group_shape()
-    g.name = "Takeaways"
-    shape(g, MSO_SHAPE.RECTANGLE, TAKE_LEFT, CARD_TOP, TAKE_W, CARD_BOTTOM - CARD_TOP, C.surface_subtle,
-          name="Takeaways card")
-    shape(g, MSO_SHAPE.RECTANGLE, TAKE_LEFT, CARD_TOP, TAKE_W, 0.04, C.focus, name="Takeaways rule")
-    text_box(g, x, CARD_TOP + pad, w, 0.26, title, 14, C.headline, font=SEMI, name="Takeaways label")
-    for i, (num, cap) in enumerate(points):
-        y = y0 + i * (item + gap)
-        if i:
-            line_shape(g, x, y - gap / 2, x + w, y - gap / 2, C.context_light, dash=False, name=f"Takeaway rule {i}")
-        text_box(g, x, y, w, num_h, num, 24, C.headline, bold=True, name=f"Takeaway {i + 1}: number")
-        text_box(g, x, y + num_h, w, cap_h, cap, 14, C.text, name=f"Takeaway {i + 1}: caption")
+    g.name = "Insights"
+    y = CARD_TOP
+    label = text_box(g, x, y, w, 0.2, title.upper(), 10, C.focus, bold=True, name="Insights label", wrap=False)
+    _tracked(label, 1.2)
+    y += 0.27
+    line_shape(g, x, y, x + w, y, C.headline, dash=False, name="Insights rule")
+    y += 0.22
+    if big:
+        text_box(g, x, y, w, lh[40], big[0], 40, C.focus, bold=True, name="Big number")
+        y += lh[40]
+        n = wrapped_lines(big[1], 14, w)
+        text_box(g, x, y, w, n * lh[14], big[1], 14, C.text, name="Big number caption")
+        y += n * lh[14] + 0.2
+        if items or implication:
+            line_shape(g, x, y, x + w, y, C.context_light, dash=False, name="Big number rule")
+            y += 0.2
+    for i, (claim, evidence, _) in enumerate(items, 1):
+        if i > 1:
+            line_shape(g, tx, y, x + w, y, C.context_light, dash=False, name=f"Insight rule {i}")
+            y += 0.2
+        if numbered:
+            dot = shape(g, MSO_SHAPE.OVAL, x, y + 0.01, mark, mark, C.headline, name=f"Insight {i}: marker")
+            shape_text(dot, str(i), 11, "#FFFFFF", font=FONT, bold=True)
+        nc, ne = wrapped_lines(claim, 14, tw, "Bold"), wrapped_lines(evidence, 12, tw)
+        text_box(g, tx, y, tw, nc * lh[14], claim, 14, C.headline, bold=True, name=f"Insight {i}: claim")
+        y += nc * lh[14] + 0.05
+        text_box(g, tx, y, tw, ne * lh[12], evidence, 12, C.text, name=f"Insight {i}: evidence")
+        y += ne * lh[12] + 0.2
+    if implication:
+        line_shape(g, x, y, x + w, y, C.headline, dash=False, name="Implication rule")
+        y += 0.16
+        lab = text_box(g, x, y, w, 0.2, "WHAT IT MEANS", 10, C.focus, bold=True, name="Implication label", wrap=False)
+        _tracked(lab, 1.2)
+        y += 0.28
+        n = wrapped_lines(implication, 13, w)
+        text_box(g, x, y, w, n * lh[13], implication, 13, C.headline, name="Implication")
+        y += n * lh[13]
+    if y > CARD_BOTTOM + 0.3:
+        raise ValueError(f"the insights run {y - CARD_BOTTOM:.1f} in past the chart's bottom: fewer insights, or "
+                         "shorter evidence")
     nf = slide.notes_slide.notes_text_frame
-    nf.text += (f"\n\nLayout: chart + takeaways. The chart is two-thirds of the width ({SIDE_CHART_W:.2f} in); the "
-                f"takeaways card is the right third ({TAKE_W:.2f} in) after a {GUTTER} in gutter, in the same place on "
-                f"every slide ({CARD_TOP:.2f}-{CARD_BOTTOM:.2f} in), and the plot area lines up with it. Keep 2-3 "
-                "points, each a number and a caption of one or two lines: facts from the chart, no advice. Retype them "
-                "for your data (each is its own text box in the Takeaways group).")
+    nf.text += (f"\n\nLayout: chart + insights. The chart is two-thirds of the width ({SIDE_CHART_W:.2f} in); the "
+                f"insights are the right third ({TAKE_W:.2f} in), top-aligned with the plot. Each insight is a claim the "
+                "chart doesn't show on its own, then the fact behind it; its number matches the marker on the chart. "
+                "Retype them for your data (each is its own text box in the Insights group).")
     return g
 
 
-# ====================================================================== native chart helpers
+def takeaways_card(slide, points, title="Key takeaways"):
+    """Replaced by insights_panel (2026-11-03): the (number, caption) card repeated the chart's numbers."""
+    raise TypeError("takeaways are now insights: insights=[(claim, evidence), ...], each a bold claim the chart "
+                    "doesn't show on its own and the fact behind it (office.insights_panel)")
+
+
 def add_chart(slide, chart_type, data, top=CHART_TOP, height=CHART_H, left=LEFT, width=None):
     width = width or (W - LEFT - RIGHT)
     frame = slide.shapes.add_chart(chart_type, Inches(left), Inches(top), Inches(width), Inches(height), data)
@@ -570,10 +657,26 @@ def _frame_in(frame) -> tuple[float, float, float, float]:
     return tuple(Emu(v).inches for v in (frame.left, frame.top, frame.width, frame.height))
 
 
+def _shown(slide, values=()) -> list[str]:
+    """What the slide already says: the text on it (headline, subtitle, typed labels, the benchmark) and the chart's
+    values as they are written (27.4, or 27 for a whole number), for the insights panel's repetition check."""
+    out = [s.text_frame.text for s in slide.shapes if s.has_text_frame]
+    for v in values:                                           # 27.4 as 27.4; only a whole number as 27
+        out += [f"{v:.0f}"] if float(v).is_integer() else [f"{v:.1f}", f"{v:g}"]
+    return out
+
+
+def _no_takeaways(takeaways) -> None:
+    if takeaways is not None:
+        raise TypeError("takeaways= is now insights=[(claim, evidence), ...] (with implication= and big= when "
+                        "needed): each a bold claim the chart doesn't show on its own, then the fact behind it")
+
+
 def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: str, source: str,
               subtitle: str | None = None, footnote: str | None = None, focus: Iterable[str] = (),
               accent: str | None = None, benchmark: float | None = None, benchmark_label: str | None = None,
-              fmt="{:,.0f}", sort: bool | str = True, takeaways: Sequence[tuple[str, str]] | None = None,
+              fmt="{:,.0f}", sort: bool | str = True, insights: Sequence[tuple] | None = None, implication: str | None = None,
+              big: tuple[str, str] | None = None, takeaways=None,
               alt: str | None = None, notes: str | None = None):
     """A ranking as a native, editable horizontal bar chart on a slide: bars sorted with the story on top, grey
     context with the headline's bars in McKesson Blue (navy for one accent), the value at
@@ -588,8 +691,8 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     Python format string; the common ones become the chart's number format, so the labels follow Edit Data. sort:
     True puts the story on top: largest first, or smallest first when the highlighted bars are the small ones (a
     "lagging" or "lowest" headline); "descending" / "ascending" force the order; False keeps the given order (a
-    natural order). takeaways: two or three (number, caption) pairs for the card in
-    the right third; the chart then takes two-thirds. alt: the chart's alt text (default: the headline). Values must
+    natural order). insights, implication, big: the insights panel in the right third (insights_panel); the chart
+    then takes two-thirds. alt: the chart's alt text (default: the headline). Values must
     be zero or more (bars start at zero; use a diverging bar for signed changes). Returns SimpleNamespace(slide,
     chart, order, x_max, inside).
     """
@@ -606,7 +709,8 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
     default_notes = f"Ranking bar (mckviz.office.bar_slide). {edit} To recolor a bar: click it twice to select only " \
                     "that bar › Format Data Point › Fill."
     slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
-    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    _no_takeaways(takeaways)
+    fw = SIDE_CHART_W if (insights or big) else W - LEFT - RIGHT
 
     # Geometry from the text: the plot starts right after the longest category label and ends at the frame's
     # right edge; the axis maximum leaves room for the widest value label at the end of its bar.
@@ -685,15 +789,16 @@ def bar_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: 
         slide.notes_slide.notes_text_frame.text += (
             f"\n\nThe dashed benchmark line is a drawn shape at {_fmt(fmt, benchmark)} on an axis of 0 to "
             f"{_fmt(fmt, x_max)} (Format Axis › Maximum). If the benchmark or the axis changes, move the line.")
-    if takeaways:
-        takeaways_card(slide, takeaways)
+    if insights or big:
+        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, vals))
     return SimpleNamespace(slide=slide, chart=chart, order=names, x_max=x_max, inside=inside)
 
 
 def column_slide(prs, labels: Sequence[str], values: Sequence[float], *, headline: str, source: str,
                  subtitle: str | None = None, footnote: str | None = None, focus: Iterable[str] = (),
                  accent: str | None = None, benchmark: float | None = None, benchmark_label: str | None = None,
-                 fmt="{:,.0f}", takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None,
+                 fmt="{:,.0f}", insights: Sequence[tuple] | None = None, implication: str | None = None,
+              big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None,
                  notes: str | None = None):
     """A few values in their natural order (fiscal years, quarters, stages) as native, editable columns: grey with the
     headline's columns in McKesson Blue (navy for one accent), the value on top of each
@@ -715,7 +820,8 @@ def column_slide(prs, labels: Sequence[str], values: Sequence[float], *, headlin
     default_notes = f"Columns (mckviz.office.column_slide). {edit} To recolor a column: click it twice to select " \
                     "only that column › Format Data Point › Fill."
     slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
-    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    _no_takeaways(takeaways)
+    fw = SIDE_CHART_W if (insights or big) else W - LEFT - RIGHT
 
     # Geometry: the benchmark's name sits right of the plot, so the plot ends before it; the axis maximum leaves room
     # for a label on top of the tallest column.
@@ -790,8 +896,8 @@ def column_slide(prs, labels: Sequence[str], values: Sequence[float], *, headlin
         slide.notes_slide.notes_text_frame.text += (
             f"\n\nThe dashed benchmark line is a drawn shape at {_fmt(fmt, benchmark)} on an axis of 0 to "
             f"{_fmt(fmt, y_max)} (Format Axis › Maximum). If the benchmark or the axis changes, move the line.")
-    if takeaways:
-        takeaways_card(slide, takeaways)
+    if insights or big:
+        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, vals))
     return SimpleNamespace(slide=slide, chart=chart, y_max=y_max, inside=inside)
 
 
@@ -831,7 +937,8 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
                footnote: str | None = None, focus: Iterable[str] = (), accent: str | None = None,
                target: float | None = None, target_label: str | None = None, forecast_from=None,
                fmt="{:,.1f}", ylim: tuple[float, float] | None = None,
-               takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None, notes: str | None = None):
+               insights: Sequence[tuple] | None = None, implication: str | None = None,
+               big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None, notes: str | None = None):
     """Lines over time as a native, editable line chart, with mv.line's house rules: grey context, the headline's
     series in McKesson Blue (one navy accent at most), labels at the line ends instead of a legend (name and value
     for the highlighted lines, name only for the grey ones, nudged apart so they never overlap), light horizontal
@@ -846,7 +953,7 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
     categorical colors; more than four raises (name the focus). target: a dashed navy line across the plot, named by
     target_label. forecast_from: the last actual period (a label in x, or a 0-based position); every line is dashed
     after it, with a dotted divider. fmt: the format of the end values; the value axis uses it with the decimals its
-    step needs. ylim: fixed axis limits (a line may start above zero). takeaways, alt, notes: as in bar_slide.
+    step needs. ylim: fixed axis limits (a line may start above zero). insights, implication, big, alt, notes: as in bar_slide.
     mv.line's event shading and scenario bands have no native version: use picture_slide for those. Returns
     SimpleNamespace(slide, chart, order, colors, y_range).
     """
@@ -919,7 +1026,8 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
                      "their nudges apart are fixed, so check they don't overlap. To recolor a line: Format Data "
                      "Series › Line.")
     slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
-    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    _no_takeaways(takeaways)
+    fw = SIDE_CHART_W if (insights or big) else W - LEFT - RIGHT
 
     # Geometry from the text: the plot starts after the widest value-axis label and ends before the widest end
     # label; the first and last periods sit on the plot's edges.
@@ -1018,8 +1126,8 @@ def line_slide(prs, x: Sequence, series, *, headline: str, source: str, subtitle
         divider.line.dash_style = 3                             # MSO_LINE_DASH_STYLE.ROUND_DOT
         text_box(slide, xc + 0.06, top, 1.0, LINE_H, "Forecast", NOTE_PT, C.text_muted, name="Forecast label",
                  wrap=False)
-    if takeaways:
-        takeaways_card(slide, takeaways)
+    if insights or big:
+        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, [v for vs in data_in.values() for v in vs]))
     return SimpleNamespace(slide=slide, chart=chart, order=names, colors=color, y_range=(lo, hi))
 
 
@@ -1035,7 +1143,8 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
                 footnote: str | None = None, story=None, accent: str | None = None, uniform: bool = False,
                 colors: Sequence[str] | None = None, label_min: float = 0, fmt="{:.0f}%",
                 base: Sequence[float] | None = None, base_label: str = "n",
-                takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None, notes: str | None = None):
+                insights: Sequence[tuple] | None = None, implication: str | None = None,
+                big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None, notes: str | None = None):
     """Parts of a whole as native, editable 100% stacked bars, with mv.hstack's rules: the first category on top, the
     story segments first on the baseline (blue; navy for one accent; the rest greys, or light blues with
     uniform=True), white lines between segments, values inside every segment wide enough to hold one (and at least
@@ -1048,7 +1157,7 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
     parts: [(name, values)] or {name: values} in stack order; each category's parts should add up to 100 (the chart
     draws shares either way, but the labels show the values given). story / accent / uniform / colors: as in
     mv.hstack (with neither story nor colors, the first part is the story). Sort the categories first (by the story
-    segment, say). takeaways, alt, notes: as in bar_slide. Returns SimpleNamespace(slide, chart, order, colors).
+    segment, say). insights, implication, big, alt, notes: as in bar_slide. Returns SimpleNamespace(slide, chart, order, colors).
     """
     from .charts import _STACK_GREYS, _STACK_LIGHT_BLUES
 
@@ -1089,7 +1198,8 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
                      "bar's value starts level. Right-click › Edit Data to change the numbers; the labels follow. The "
                      "segment names above the top bar are text boxes: move them if the top bar's split changes.")
     slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
-    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    _no_takeaways(takeaways)
+    fw = SIDE_CHART_W if (insights or big) else W - LEFT - RIGHT
     base_txt = [f"{b:,.0f}" for b in base] if base is not None else []
     reserve = (max(text_width(t, LABEL_PT - 1) for t in base_txt + [base_label]) + 0.3) if base is not None else 0.0
     px = _label_column(cats, fw)
@@ -1162,15 +1272,16 @@ def stack_slide(prs, categories: Sequence[str], parts, *, headline: str, source:
             cy = ft + fh * py + band * (i + 0.5)
             text_box(slide, bx, cy - LINE_H / 2, reserve, LINE_H, t, LABEL_PT - 1, C.text_muted, anchor=MSO_ANCHOR.MIDDLE,
                      name=f"Base: {cats[i]}", wrap=False)
-    if takeaways:
-        takeaways_card(slide, takeaways)
+    if insights or big:
+        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, [v for _, vs in items for v in vs]))
     return SimpleNamespace(slide=slide, chart=chart, order=[nm for nm, _ in items], colors=colors)
 
 
 def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: Sequence[str] | None = None, *,
                     headline: str, source: str, subtitle: str | None = None, footnote: str | None = None,
                     focus: Iterable[str] = (), semantic: str | None = None, floor: float | None = None, fmt=None,
-                    takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None,
+                    insights: Sequence[tuple] | None = None, implication: str | None = None,
+                    big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None,
                     notes: str | None = None):
     """A bridge from a start total to an end total as a native, editable waterfall, with mv.waterfall's rules: totals
     navy, steps grey, the headline's steps in McKesson Blue, each value above its column (steps with
@@ -1184,7 +1295,7 @@ def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: S
     semantic: "up" (an increase is favorable: green up, orange down) or "down" (an increase is unfavorable, e.g.
     cost), with ▲/▼ on the steps, instead of focus. floor: start the value axis here, so small steps are readable;
     the totals get two white break marks and the footnote says where the axis starts. fmt: callable(value, kind) ->
-    label (default: totals "4,210", steps "+120" with a true minus). takeaways, alt, notes: as in bar_slide. Returns
+    label (default: totals "4,210", steps "+120" with a true minus). insights, implication, big, alt, notes: as in bar_slide. Returns
     SimpleNamespace(slide, chart, tops, ends, colors, y_range).
     """
     import textwrap
@@ -1240,7 +1351,8 @@ def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: S
                      "(Format Data Label › Text): retype them too. Office 2016+ also has Insert › Waterfall, but it "
                      "can't break the axis or color single steps by rule.")
     slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
-    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    _no_takeaways(takeaways)
+    fw = SIDE_CHART_W if (insights or big) else W - LEFT - RIGHT
     px, pw = 0.02, 0.96
     plot_w, plot_h = pw * fw, PLOT_H * CHART_H
     band = plot_w / n
@@ -1301,8 +1413,8 @@ def waterfall_slide(prs, steps: Sequence[str], values: Sequence[float], kinds: S
             for dy in (0.0, 0.09):
                 line_shape(slide, cx - bar_w / 2 - 0.03, y0 + dy + 0.05, cx + bar_w / 2 + 0.03, y0 + dy - 0.05,
                            "#FFFFFF", width_pt=2.5, dash=False, name="Axis break")
-    if takeaways:
-        takeaways_card(slide, takeaways)
+    if insights or big:
+        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, vals))
     return SimpleNamespace(slide=slide, chart=chart, tops=tops, ends=ends, colors=cols, y_range=(lo, hi))
 
 
@@ -1311,7 +1423,8 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
                    compare_name: str = "Market", value_name: str = "McKesson", flag_below: float | None = -5.0,
                    flag_name: str | None = None, gap: str = "pct", decimals: int = 1, tick_fmt: str = "{:,.0f}",
                    xlim: tuple[float, float] | None = None, focus: Iterable[str] | None = None,
-                   takeaways: Sequence[tuple[str, str]] | None = None, alt: str | None = None,
+                   insights: Sequence[tuple] | None = None, implication: str | None = None,
+                   big: tuple[str, str] | None = None, takeaways=None, alt: str | None = None,
                    notes: str | None = None):
     """Us vs. a comparator per row as a native, editable dumbbell, with mv.dumbbell's rules: the comparator's dot
     grey, ours blue (orange where we are `flag_below`% or more below), joined by a light bar; the gap after each pair
@@ -1323,7 +1436,7 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
 
     The first row is on top; sort the rows first (largest shortfall first, say). gap: "pct" (value vs. compare in %)
     or "abs" (in units). tick_fmt: the x-axis format, as a Python format string. Built as an XY chart with one series
-    per row, so Edit Data changes the dots; the gap labels are typed text. takeaways, alt, notes: as in bar_slide.
+    per row, so Edit Data changes the dots; the gap labels are typed text. insights, implication, big, alt, notes: as in bar_slide.
     Returns SimpleNamespace(slide, chart, flagged, gaps, x_range).
     """
     import numpy as np
@@ -1363,7 +1476,8 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
                      "Edit Data changes the dots; the gap labels at the right are typed text, so retype them too. The "
                      "key above the top row is shapes.")
     slide = chart_slide(prs, headline, subtitle, footnote, notes or default_notes, source)
-    fw = SIDE_CHART_W if takeaways else W - LEFT - RIGHT
+    _no_takeaways(takeaways)
+    fw = SIDE_CHART_W if (insights or big) else W - LEFT - RIGHT
     hot = [f or r in focus for r, f in zip(rows, flagged)]
     name_w = max(text_width(r, TICK_PT, "SemiBold" if h else "Regular") for r, h in zip(rows, hot))
     px = min(name_w * 1.05 + TICK_GAP, 0.45 * fw) / fw
@@ -1432,8 +1546,8 @@ def dumbbell_slide(prs, labels: Sequence[str], compare: Sequence[float], value: 
         text_box(g, kx + d + 0.06, ky - LINE_H / 2, tw, LINE_H, lab, NOTE_PT, tone, font=SEMI if strong else None,
                  anchor=MSO_ANCHOR.MIDDLE, wrap=False)
         kx += d + 0.06 + tw + 0.25
-    if takeaways:
-        takeaways_card(slide, takeaways)
+    if insights or big:
+        insights_panel(slide, insights or (), implication=implication, big=big, shown=_shown(slide, a + b))
     return SimpleNamespace(slide=slide, chart=chart, flagged=np.array(flagged), gaps=np.array(gaps),
                            x_range=(x_min, x_max))
 
@@ -1442,28 +1556,46 @@ PICTURE_TOP, PICTURE_BOTTOM = CARD_TOP - 0.1, FOOT_TOP - 0.1     # the picture's
 MAX_PICTURE_SCALE = 1.5       # a smaller figure is enlarged to fill the area, but its text no more than this
 
 
-def picture_size(takeaways: bool = False) -> tuple[float, float]:
+def picture_size(insights: bool = False, *, takeaways: bool | None = None) -> tuple[float, float]:
     """The figure size (inches) that fills a picture slide's chart area: full width, or two-thirds beside the
-    takeaways card."""
-    return (SIDE_CHART_W if takeaways else W - LEFT - RIGHT), PICTURE_BOTTOM - PICTURE_TOP
+    insights panel. (takeaways= is the old name.)"""
+    side = insights if takeaways is None else takeaways
+    return (SIDE_CHART_W if side else W - LEFT - RIGHT), PICTURE_BOTTOM - PICTURE_TOP
 
 
-def picture_figure(takeaways: bool = False):
+def picture_figure(insights: bool = False, *, takeaways: bool | None = None):
     """A figure and axes for a chart going onto picture_slide: the chart area's size, with the plot filling it
     before the chart is drawn (builders such as mv.sankey measure their labels against the plot when they draw, so
     margins added later leave empty space or crowd the labels). Returns (fig, ax).
 
-        fig, ax = office.picture_figure()                       # picture_figure(takeaways=True) beside a card
+        fig, ax = office.picture_figure()                       # picture_figure(insights=True) beside the insights
         mv.sankey(ax, flows, ...); mv.titles(fig, ...); mv.source(fig, ...)"""
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(figsize=picture_size(takeaways))
+    fig, ax = plt.subplots(figsize=picture_size(insights, takeaways=takeaways))
     fig.subplots_adjust(left=0.02, right=0.98, bottom=0.04, top=0.96)
     return fig, ax
 
 
+def _fit_top(fig, margin: float = 0.01) -> None:
+    """Lower the plots until what sits above them (a size key, a level y-axis title) is inside the figure: past the
+    top edge, the tight crop would make the picture taller and the slide would shrink it."""
+    axes = [a for a in fig.axes if a.get_visible()]
+    if not axes:
+        return
+    for _ in range(4):
+        fig.canvas.draw()
+        r = fig.canvas.get_renderer()
+        top = max(a.get_tightbbox(r).y1 for a in axes) / fig.bbox.height
+        excess = top - (1 - margin)
+        if abs(excess) < 0.003 or (excess < 0 and fig.subplotpars.top >= 0.97):
+            break
+        fig.subplots_adjust(top=min(0.97, fig.subplotpars.top - excess))
+
+
 def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None = None, footnote: str | None = None,
-                  alt: str | None = None, takeaways: Sequence[tuple[str, str]] | None = None, notes: str | None = None,
+                  alt: str | None = None, insights: Sequence[tuple] | None = None, implication: str | None = None,
+              big: tuple[str, str] | None = None, takeaways=None, notes: str | None = None,
                   dpi: int = 200):
     """A chart that has no native PowerPoint slide yet (Sankey, strip, treemap, heatmap, ...) as a picture on the slide
     grid: the mckviz figure drawn as its builder laid it out (resizing it afterwards would move labels onto each other
@@ -1474,27 +1606,32 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
     (show the figure's PNG with them as the preview, then pass the same figure here). The speaker notes say the chart
     is a picture.
 
-        fig, ax = office.picture_figure()                       # picture_figure(takeaways=True) beside a card
+        fig, ax = office.picture_figure()                       # picture_figure(insights=True) beside the insights
         mv.sankey(ax, ...); mv.titles(fig, ...); mv.source(fig, ...)
         mv.save(fig, "/tmp/preview.png")                        # the inline preview
         office.picture_slide(prs, fig, headline=..., subtitle=..., source=...)
 
-    alt: the picture's alt text (default: the headline). takeaways: as in bar_slide. Returns SimpleNamespace(slide,
+    alt: the picture's alt text (default: the headline). insights, implication, big: as in bar_slide. Returns SimpleNamespace(slide,
     picture).
     """
     import io
 
     from PIL import Image
 
+    from matplotlib.text import Text
+
+    shown = [a.get_text() for a in fig.findobj(Text) if a.get_visible()]   # what the picture already says
     fur = getattr(fig, "_mck", {})
     for key in ("head", "sub", "foot"):                        # the slide's own text replaces the figure's
         if fur.get(key) is not None:
             fur[key].remove()
     fig._mck = {}
-    fw, slot_h = picture_size(bool(takeaways))
+    _no_takeaways(takeaways)
+    fw, slot_h = picture_size(bool(insights or big))
     top = PICTURE_TOP
     if fur.get("head") is not None or fur.get("sub") is not None:
         fig.subplots_adjust(top=0.97)                          # mv.layout had lowered the plot under the titles
+    _fit_top(fig)                                              # a size key or axis title above the plot stays inside
     buf = io.BytesIO()
     fig.canvas.print_figure(buf, format="png", dpi=dpi, bbox_inches="tight", pad_inches=0.05,
                             facecolor="white")                 # as mv.save: never the sandbox's patched savefig
@@ -1507,7 +1644,7 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
         warnings.warn(f"picture_slide: the figure was built at {w_in:.1f} x {h_in:.1f} in, so on the {fw:.1f} x "
                       f"{slot_h:.1f} in chart area it fills {fill_w:.0%} of the width and {fill_h:.0%} of the height "
                       f"(scaled {scale:.2f}x, text with it). Build it with office.picture_figure("
-                      f"{'takeaways=True' if takeaways else ''}) to fill the slide at true point sizes", stacklevel=2)
+                      f"{'insights=True' if (insights or big) else ''}) to fill the slide at true point sizes", stacklevel=2)
     buf.seek(0)
     default_notes = ("This chart is a picture: it has no native PowerPoint version yet. To change it, rebuild it from "
                      "the data with mckviz and replace the picture.")
@@ -1515,6 +1652,6 @@ def picture_slide(prs, fig, *, headline: str, source: str, subtitle: str | None 
     pic = slide.shapes.add_picture(buf, Inches(LEFT), Inches(top), Inches(w_in * scale), Inches(h_in * scale))
     pic.name = "Chart"
     pic._element.nvPicPr.cNvPr.set("descr", alt or headline)
-    if takeaways:
-        takeaways_card(slide, takeaways)
+    if insights or big:
+        insights_panel(slide, insights or (), implication=implication, big=big, shown=shown)
     return SimpleNamespace(slide=slide, picture=pic)

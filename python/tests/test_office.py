@@ -155,11 +155,46 @@ def test_short_list_keeps_bars_of_normal_weight():
     assert manual_layout(r.chart)["h"] * office.CHART_H == pytest.approx(3 * office.MAX_BAND)
 
 
-def test_takeaways_take_the_right_third():
-    r = bar(takeaways=[("27.4%", "Pharmacy technicians"), ("2 of 6", "families above the enterprise rate")])
+INSIGHTS = [("Two families account for most exits", "Pharmacy Technician and DC Associate: 73% of exits"),
+            ("The rest sit below the enterprise rate", "All eight other families are under it")]
+
+
+def test_insights_take_the_right_third_numbered_with_no_box():
+    r = bar(insights=INSIGHTS, implication="Retention effort here reaches most voluntary exits.")
     frame = next(s for s in r.slide.shapes if s.has_chart)
     assert Emu(frame.width).inches == pytest.approx(office.SIDE_CHART_W, abs=0.01)
-    assert named(r.slide, "Takeaways")
+    panel = named(r.slide, "Insights")
+    names = [s.name for s in panel.shapes]
+    assert "Insight 1: marker" in names and "Insight 2: marker" in names and "Implication" in names
+    assert not any("card" in n.lower() for n in names)            # no filled box behind the text
+    left = min(Emu(s.left).inches for s in panel.shapes)
+    assert left == pytest.approx(office.TAKE_LEFT, abs=0.01)
+
+
+def test_one_insight_alone_has_no_number_and_a_big_number_can_lead():
+    r = bar(big=("73%", "of all voluntary exits come from two job families"),
+            insights=[("Both run above the enterprise rate", "Each by more than four points")])
+    names = [s.name for s in named(r.slide, "Insights").shapes]
+    assert "Big number" in names and not any(n.endswith("marker") for n in names)
+
+
+def test_an_insight_that_only_repeats_the_chart_warns():
+    with pytest.warns(UserWarning, match="only repeats numbers the chart already shows"):
+        office.bar_slide(office.deck(), ["A", "B", "C"], [27.4, 24.1, 8.1], fmt="{:.1f}%", headline="h",
+                         source="s", insights=[("A leads", "A is at 27.4%")])
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")                             # a derived number (8 families) is not a repeat
+        office.bar_slide(office.deck(), ["A", "B", "C"], [27.4, 24.1, 8.1], fmt="{:.1f}%", headline="h",
+                         source="s", insights=[("A and B lead", "Together 51.5 points; the other 8 trail")])
+
+
+def test_takeaways_now_teach_the_insights_form():
+    with pytest.raises(TypeError, match=r"insights=\[\(claim, evidence\)"):
+        bar(takeaways=[("27.4%", "Pharmacy technicians"), ("2 of 6", "families above the enterprise rate")])
+    with pytest.raises(ValueError, match="one to three insights"):
+        bar(insights=INSIGHTS * 2)
+    with pytest.raises(ValueError, match="claim over two lines"):
+        bar(insights=[("A very long claim " * 6, "evidence")])
 
 
 @pytest.mark.parametrize("fmt, code", [
@@ -446,15 +481,14 @@ def test_picture_slide_says_each_title_once():
 
 
 def test_picture_figure_fills_the_chart_area_and_is_placed_as_built():
-    for takeaways in (False, True):
-        fig, ax = office.picture_figure(takeaways)
-        assert tuple(fig.get_size_inches()) == pytest.approx(office.picture_size(takeaways))
+    for side in (False, True):
+        fig, ax = office.picture_figure(side)
+        assert tuple(fig.get_size_inches()) == pytest.approx(office.picture_size(side))
         assert ax.get_position().width > 0.9                   # the plot fills it, before the chart is drawn
         ax.barh(["A", "B"], [1, 2])
-        r = office.picture_slide(office.deck(), fig, headline="h", source="s",
-                                 takeaways=[("1", "a"), ("2", "b")] if takeaways else None)
-        assert tuple(fig.get_size_inches()) == pytest.approx(office.picture_size(takeaways))   # never resized
-        assert Emu(r.picture.width).inches > 0.9 * office.picture_size(takeaways)[0]
+        r = office.picture_slide(office.deck(), fig, headline="h", source="s", insights=INSIGHTS if side else None)
+        assert tuple(fig.get_size_inches()) == pytest.approx(office.picture_size(side))   # never resized
+        assert Emu(r.picture.width).inches > 0.9 * office.picture_size(side)[0]
 
 
 def test_a_smaller_figure_fills_the_area_and_says_how_to_build_it():
@@ -473,7 +507,7 @@ def test_a_smaller_figure_fills_the_area_and_says_how_to_build_it():
 
 @pytest.mark.filterwarnings("ignore:picture_slide")
 def test_picture_stays_in_the_chart_area():
-    for kw in ({}, {"takeaways": [("4", "A at the end"), ("2x", "B's rise")]}):
+    for kw in ({}, {"insights": INSIGHTS}):
         r = office.picture_slide(office.deck(), figure_with_titles(), headline="h", source="s", **kw)
         pic = r.picture
         right = office.LEFT + (office.SIDE_CHART_W if kw else office.W - office.LEFT - office.RIGHT)
