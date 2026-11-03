@@ -13,7 +13,7 @@ At the end of a working session, add one entry at the top: the date, what was do
 - `tools/lint_charts.py` had been failing: it collected every gallery figure before linting, and each was closed by then.
 - Tick labels outside the axis range counted as off-canvas text (a false warning on picture figures).
 - The sandbox's matplotlib (3.8.4) can't be installed on this machine (Python 3.14 only), so the APIs were checked by hand; the Copilot run confirmed them.
-- builders-4 (a bubble chart on new data, then a slide) passed on the local agent.
+- builders-4 (a bubble chart on new data, then a slide) and core-1 to core-4 passed on the local agent; shipped as shared agent 1.0.17.
 
 **Decided (owner):** keep feature branches tidy, deleted once merged (both repos).
 
