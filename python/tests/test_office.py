@@ -182,7 +182,7 @@ def test_one_insight_alone_has_no_number_and_a_big_number_can_lead():
 
 
 def test_an_insight_that_only_repeats_the_chart_warns():
-    with pytest.warns(UserWarning, match="only repeats numbers the chart already shows"):
+    with pytest.warns(UserWarning, match="only repeats numbers the slide already shows"):
         office.bar_slide(office.deck(), ["A", "B", "C"], [27.4, 24.1, 8.1], fmt="{:.1f}%", headline="h",
                          source="s", insights=[("A leads", "A is at 27.4%")])
     with warnings.catch_warnings():
@@ -641,3 +641,13 @@ def test_insight_markers_sit_after_their_bars_and_a_bracket_spans_its_group():
             assert Emu(s.left + s.width).inches <= right + 0.05            # inside the chart's two-thirds
     with pytest.raises(ValueError, match="is not a bar on the chart"):
         bar(insights=[("A claim", "Its evidence", "Nobody"), ("B claim", "More evidence")])
+
+
+def test_a_big_number_that_repeats_the_headline_is_refused_and_claims_carry_their_evidence():
+    with pytest.raises(ValueError, match="the headline already says 73%"), pytest.warns(UserWarning, match="repeats"):
+        bar(headline="Two frontline job families drive 73% of estimated voluntary exits",
+            big=("73%", "of estimated voluntary exits"), insights=INSIGHTS)
+    r = bar(insights=INSIGHTS)
+    box = next(s for s in named(r.slide, "Insights").shapes if s.name == "Insight 1")
+    paras = box.text_frame.paragraphs
+    assert [p.text for p in paras] == list(INSIGHTS[0])                # claim, then evidence, in one flowing box

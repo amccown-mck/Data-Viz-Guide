@@ -10,7 +10,7 @@ Any `mv.office` slide builder takes `insights=[(claim, evidence), ...]`: the cha
 - **One to three insights.** One strong insight beats three weak ones.
 - **The claim says what the chart means, not what it shows:** what a group adds up to, how two things compare, a change over time, a pattern the data supports ("Two families account for most exits"). Bold, one line, two at most.
 - **The evidence is the fact behind the claim, computed in code** ("73% of all voluntary exits, from 58% of headcount"): a derived number the chart doesn't print. Restating a bar's label adds nothing; the builder warns when an insight only repeats the chart's numbers.
-- **`big=(number, caption)`** leads the panel only when one derived number is the whole point (a share of the total, a gap, a multiple), never a number already on the chart.
+- **`big=(number, caption)`** leads the panel only when one derived number is the whole point (a share of the total, a gap, a multiple) and neither the chart nor the headline already says it. When the headline carries the number, lead with the insights instead (the builder refuses a big number that repeats the headline).
 - **`implication="..."`**, optional, one sentence: what the finding means for the business, from the data ("Retention effort on these two families reaches 73% of voluntary exits"). It goes under "What it means".
 - **Numbers tie insights to the chart.** Give each insight a third item, the bar or column it is about (`(claim, evidence, "Pharmacy Technician")`), and the slide puts the same number on the chart there. On a picture slide, put them on the figure with `mv.mark(ax, n, name, chart=ns)`. The panel is numbered only when every insight has its marker; when an insight is about the whole chart (a trend, a goal), leave the markers off all of them.
 
@@ -29,7 +29,7 @@ One or two per chart at most, each carrying part of the headline or an insight; 
 
 ## Recommendations: worked out with the user
 
-A recommendation (what to do about the finding) is the user's call, so it comes from working one out together. When you hand back a slide with insights, the next-steps line can offer it: "Want to work out a recommendation together?" When the user takes it up:
+A recommendation (what to do about the finding) is the user's call, so it comes from working one out together. Every time you hand back a slide with insights, end the reply by asking: "Want to work out a recommendation together?" When the user takes it up:
 
 1. Ask what decision it is for and what matters most (budget, timing, risk, who is affected).
 2. Lay out two or three options, each with what the data says for and against it, and what the data can't tell you.

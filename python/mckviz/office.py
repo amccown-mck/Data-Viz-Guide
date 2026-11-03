@@ -282,7 +282,7 @@ def _tracked(box, spacing_pt: float) -> None:
             run._r.get_or_add_rPr().set("spc", str(int(spacing_pt * 100)))
 
 
-def _check_insights(insights, implication, big, shown) -> list[tuple[str, str, str | None]]:
+def _check_insights(insights, implication, big, shown, headline: str = "") -> list[tuple[str, str, str | None]]:
     """Normalise the panel's content and say when it only repeats the chart: an insight whose numbers are all already
     labels on the chart adds nothing the reader can't see. Returns (claim, evidence, at) triples."""
     items = []
@@ -297,9 +297,12 @@ def _check_insights(insights, implication, big, shown) -> list[tuple[str, str, s
     for i, (claim, evidence, _) in enumerate(items, 1):
         nums = _numbers(claim + " " + evidence)
         if nums and nums <= seen:
-            warnings.warn(f"insight {i} only repeats numbers the chart already shows ({', '.join(sorted(nums))}): say "
-                          "what they add up to, how they compare, or why, so the panel adds to the chart",
+            warnings.warn(f"insight {i} only repeats numbers the slide already shows ({', '.join(sorted(nums))}): say "
+                          "what they add up to, how they compare, or why, so the panel adds to the chart and headline",
                           stacklevel=4)
+    if big and _numbers(big[0]) and _numbers(big[0]) <= _numbers(headline):
+        raise ValueError(f"the headline already says {big[0]}: a big number that repeats it adds nothing. Lead the "
+                         "panel with the insights (big=None), or make the big number one the headline doesn't give")
     if big and _numbers(big[0]) and _numbers(big[0]) <= seen:
         warnings.warn(f"the big number {big[0]!r} is already a label on the chart: use it for a derived number "
                       "(a share of the total, a gap, a multiple), or drop it", stacklevel=4)
@@ -344,7 +347,8 @@ def insights_panel(slide, insights, *, implication: str | tuple | None = None, b
     label_text = "WHAT IT MEANS"
     if isinstance(implication, tuple):                         # ("Recommendation", "...") once the user has decided
         label_text, implication = str(implication[0]).upper(), implication[1]
-    items = _check_insights(insights, implication, big, shown)
+    headline = slide.shapes.title.text_frame.text if slide.shapes.title is not None else ""
+    items = _check_insights(insights, implication, big, shown, headline)
     ats = [at for *_, at in items]
     for i, at in enumerate(ats, 1):
         if at is not None and anchors is None:
@@ -374,6 +378,11 @@ def insights_panel(slide, insights, *, implication: str | tuple | None = None, b
     mark, gap_x = (0.30, 0.14) if numbered else (0.0, 0.0)    # number marker, and the gap before the text
     tx, tw = x + mark + gap_x, w - mark - gap_x
     lh = {14: 0.235, 12: 0.205, 13: 0.22, 40: 0.62}          # line heights (in) at each size, 1.2 x the size
+
+    def lines(text, size, width, weight="Regular"):
+        """Lines to make room for: measured 8% narrower, as a substitute font (Libre Franklin not installed, or
+        Copilot's preview) sets wider and wraps sooner."""
+        return wrapped_lines(text, size, width * 0.92, weight)
     for claim, evidence, _ in items:
         if wrapped_lines(claim, 14, tw, "Bold") > 2:
             raise ValueError(f"insight claim over two lines; make it one short claim: {claim!r}")
@@ -398,7 +407,7 @@ def insights_panel(slide, insights, *, implication: str | tuple | None = None, b
     if big:
         text_box(g, x, y, w, lh[40], big[0], 40, C.focus, bold=True, name="Big number")
         y += lh[40]
-        n = wrapped_lines(big[1], 14, w)
+        n = lines(big[1], 14, w)
         text_box(g, x, y, w, n * lh[14], big[1], 14, C.text, name="Big number caption")
         y += n * lh[14] + 0.2
         if items or implication:
@@ -411,18 +420,23 @@ def insights_panel(slide, insights, *, implication: str | tuple | None = None, b
         if numbered:
             dot = shape(g, MSO_SHAPE.OVAL, x, y + 0.01, mark, mark, C.headline, name=f"Insight {i}: marker")
             shape_text(dot, str(i), 11, "#FFFFFF", font=FONT, bold=True)
-        nc, ne = wrapped_lines(claim, 14, tw, "Bold"), wrapped_lines(evidence, 12, tw)
-        text_box(g, tx, y, tw, nc * lh[14], claim, 14, C.headline, bold=True, name=f"Insight {i}: claim")
-        y += nc * lh[14] + 0.05
-        text_box(g, tx, y, tw, ne * lh[12], evidence, 12, C.text, name=f"Insight {i}: evidence")
-        y += ne * lh[12] + 0.2
+        nc, ne = lines(claim, 14, tw, "Bold"), lines(evidence, 12, tw)
+        h = nc * lh[14] + 0.05 + ne * lh[12]
+        box = text_box(g, tx, y, tw, h, claim, 14, C.headline, bold=True, name=f"Insight {i}")
+        para = box.text_frame.add_paragraph()                  # the evidence flows under the claim, however it wraps
+        para.space_before = Pt(3)
+        run = para.add_run()
+        run.text = evidence
+        run.font.size, run.font.bold, run.font.name = Pt(12), False, FONT
+        run.font.color.rgb = rgb(C.text)
+        y += h + 0.2
     if implication:
         line_shape(g, x, y, x + w, y, C.headline, dash=False, name="Implication rule")
         y += 0.16
         lab = text_box(g, x, y, w, 0.2, label_text, 10, C.focus, bold=True, name="Implication label", wrap=False)
         _tracked(lab, 1.2)
         y += 0.28
-        n = wrapped_lines(implication, 13, w)
+        n = lines(implication, 13, w)
         text_box(g, x, y, w, n * lh[13], implication, 13, C.headline, name="Implication")
         y += n * lh[13]
     if y > CARD_BOTTOM + 0.3:
@@ -432,7 +446,8 @@ def insights_panel(slide, insights, *, implication: str | tuple | None = None, b
     nf.text += (f"\n\nLayout: chart + insights. The chart is two-thirds of the width ({SIDE_CHART_W:.2f} in); the "
                 f"insights are the right third ({TAKE_W:.2f} in), top-aligned with the plot. Each insight is a claim the "
                 "chart doesn't show on its own, then the fact behind it; its number matches the marker on the chart. "
-                "Retype them for your data (each is its own text box in the Insights group).")
+                "Retype them for your data (each insight is one text box in the Insights group: the claim, then "
+                "the evidence).")
     return g
 
 
