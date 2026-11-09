@@ -159,7 +159,7 @@ The agent should get the right guidance when it needs it, and nothing else. Copi
 6. **Can only Copilot show whether it works? An eval** (`evals/prompts.json` in the agent repo): routing, reading a guide, file handling, how a reply reads. One category per job; run the category a change touches, and the four `core` tests before each push to the shared agent.
 
 How it stays that way:
-- **One skill.** The agent has one skill, `mck-chart` (Copilot allows 8 per agent). A second needs a substantial reason: a job whose guidance would crowd the core `SKILL.md` and that could run without the chart workflow.
+- **One skill per skill tree.** Charting (data viz and data storytelling scenes) stays one skill, `mck-chart`, rather than being split up. A distinct job family gets its own skill (Copilot allows 8 per agent): the agent repo's hand-written `wi-agent-ops` today, a true story-building skill and an analytical skill as the likely next ones.
 - **Headroom is part of the design.** Budgets are hard stops; working levels leave room for the next fix without squeezing something else out.
 - **Fix with code defaults and general tips, not a rule written to pass a test.** When code takes over a behavior, its prose goes in the same change.
 - **Write for the edition's reader.** The Copilot edition's replies are for colleagues who live in Excel and PowerPoint: plain words that teach, with the brief and tool names kept in the agent's reasoning.
