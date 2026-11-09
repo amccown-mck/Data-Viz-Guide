@@ -4,6 +4,17 @@ What happened on the kit and the WI Data Storytelling Agent, and why: findings, 
 
 At the end of a working session, add one entry at the top: the date, what was done, what was found (with the evidence, such as an eval ID or a probe), and what was decided and by whom. Keep each entry to what a person resuming the work needs; the commits hold the rest.
 
+## 2026-11-09
+
+**Done:** colleague feedback shipped: the new `wi-agent-ops` skill writes up a colleague's feedback as a pre-filled Microsoft Form they check and submit (agent repo). A hand-over failure in `core-2` found and softened (below). Shared agent 1.0.27, from `main` 49958ed. Madison Graves added; fourteen colleagues now. The story skill and the analytical toolkit noted under Later.
+
+**Found:**
+- `core-2`'s slide follow-up failed four times: the deck was built and `mv.deliver` ran, but Copilot wouldn't attach it ("access error", or a bare `sandbox:` path). It failed the same way on the shared agent, so the new skill wasn't the cause. Probes 5-7 (the agent repo's `docs/sandbox-probe.md`) cleared the deletion of earlier files and the `bash` route. The failures all had the options page PDF open in the preview, which goes in with the next message as an attachment; with nothing or a `.pptx` open it worked. One run worked with the PDF open, so the PDF isn't the whole cause, and why it matters is unknown.
+- Copilot doesn't make an agent-built URL clickable, so the feedback link sits in a code block, where the user gets a copy button.
+- From the test slides: `mv.bubble_strip`'s ticks round 2.5 steps to 10, 12, 15, 18; and `mv.table`'s total row ran "-1.5" and "38" together, so the agent dropped the total.
+
+**Decided (owner):** one skill per skill tree: charting stays `mck-chart`, a distinct job family gets its own. Feedback is sparing: a change to the work is an edit even if it's called feedback, and the invitation comes only when the user says the work is done, once per chat at most. The font and template on SharePoint moved down (McKesson computers have Libre Franklin). Shipped the hand-over warning and recovery line without knowing the full cause, since their worst case is one unneeded sentence.
+
 ## 2026-11-03
 
 **Done:** the legend collisions from the 11-02 core run. Bubble charts were the worst case, in the PNG and on the picture slide alike: the scatter-bubble snippet placed its size key, zone and line labels and label sides at coordinates picked for the sample data, and the agent, told to change only data, labels and focus, kept them. New `mv.bubble` (limits that hold every bubble, area in proportion to the count, the key above the plot, labels placed at draw time so they hold after `mv.layout` and on a slide) and `mv.size_key` (the bubble timeline's legend had spilled its large markers over the subtitle). New lint rules `label-on-data` and `label-overlap`. The tree, the cookbook page, the gallery and the options-page example build with `mv.bubble`. Ten merged branches deleted; branches now go once merged.

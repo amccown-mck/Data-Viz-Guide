@@ -7,8 +7,9 @@ Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026
 ## Now
 
 - **The kit:** release 1.2.0 (2026-10-18); `main` has much more since (CHANGELOG, "Unreleased"): the decision tree and `mv.suggest`, one-call builders (`mv.bar`, `mv.bubble`, `mv.bubble_strip` among them), the options page, `mckviz.office` with the insights panel and annotations, highlights with no fixed cap, and the agent guidance restructured by layer.
-- **The agent:** "WI Data Storytelling Agent" in Microsoft 365 Copilot ([its repo](https://github.com/amccown-mck/WI-Data-Storytelling-Agent)), version 1.0.21, shared with fourteen colleagues (the list is in the agent repo's `CLAUDE.md`), running `main` as of 2026-11-03.
-- **Guidance by layer** (`AGENTS.md`, "Where agent guidance goes"): code first, then the agent's instructions (2,673 of 4,000), the Copilot `SKILL.md` (11,214 of 14,000), task guides (`options`, `review`, `native-formats`, `insights`), reference docs, evals. One skill per skill tree.
+- **The agent:** "WI Data Storytelling Agent" in Microsoft 365 Copilot ([its repo](https://github.com/amccown-mck/WI-Data-Storytelling-Agent)), version 1.0.27, shared with fourteen colleagues (the list is in the agent repo's `CLAUDE.md`), running `main` as of 2026-11-09.
+- **Guidance by layer** (`AGENTS.md`, "Where agent guidance goes"): code first, then the agent's instructions (3,117 of 4,000), the Copilot `SKILL.md` (11,543 of 14,000), task guides (`options`, `review`, `native-formats`, `insights`), reference docs, evals. One skill per skill tree.
+- **Shipped 2026-11-09** (1.0.27): colleague feedback, a Microsoft Form the agent pre-fills from the chat for the colleague to check and submit (the `wi-agent-ops` skill, agent repo), invited only when someone says the work is done, once per chat at most; and a warning and a recovery line for a deck that won't attach, which happens mostly with the options page PDF open in Copilot's preview (agent repo's `docs/sandbox-probe.md`, probes 5-7).
 - **Shipped 2026-11-03** (each passed its eval and core on the local agent):
   - 1.0.17: bubble charts lay themselves out (`mv.bubble`, `mv.size_key`); lint warns on labels on the data.
   - 1.0.18: the bubble strip (`mv.bubble_strip` and its cookbook page); crowded labels go on steps with leaders.
@@ -21,10 +22,9 @@ Where the kit and its Copilot agent stand, and what's next. **Last updated: 2026
 
 One thing at a time, each checked with the one eval that covers it (the agent repo's `evals/prompts.md`). **Principle: fix with good code defaults and general tips, not rules written to pass a test.**
 
-1. **Colleague feedback, small and light:** one place colleagues report what they asked for, how close the result came, and what got in the way, so we can see where to improve and track it over time (the one signal on real use while usage telemetry is blocked). A Microsoft Form the agent pre-fills from the chat for the colleague to check and submit, in a new `wi-agent-ops` skill (agent repo), being tested on the local agent. Invited only when someone says the work is done, once per chat at most.
-2. **Pick the next big build:** the story skill or the analytical toolkit (both under Later). Each starts with a synthesis of source material, before any rules or code.
-3. **The published guide, in one pass**, once those land.
-4. **Small follow-ups:** a figure left open in the notebook (probe 4 ran outside it): if it can't produce a Chart card, `SKILL.md`'s recovery line goes; the insights repeat check could catch near-matches (617 vs. the headline's "~620"; the owner is fine without it).
+1. **Pick the next big build:** the story skill or the analytical toolkit (both under Later). Each starts with a synthesis of source material, before any rules or code.
+2. **The published guide, in one pass**, once those land.
+3. **Small follow-ups:** `mv.bubble_strip`'s ticks round 2.5 steps unevenly (10, 12, 15, 18); `mv.table`'s total row can run two numbers together ("-1.5" and "38"); watch the feedback form for decks that won't attach, since the cause is only partly understood and the "close the preview" message hasn't fired in a test; a figure left open in the notebook (probe 4 ran outside it): if it can't produce a Chart card, `SKILL.md`'s recovery line goes; the insights repeat check could catch near-matches (617 vs. the headline's "~620"; the owner is fine without it).
 
 ## Later
 
